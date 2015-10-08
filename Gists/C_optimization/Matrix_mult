@@ -1,0 +1,9 @@
+for(i=0;i<N;i++) {
+   for(j=0;j<N;j++) {
+      dest[i][j] = 0;
+      for( k==;k<N;i++) {
+         dest[i][j] += src1[i][k] * src2[k][j];
+      }
+   }
+}
+

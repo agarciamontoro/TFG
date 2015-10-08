@@ -1,0 +1,14 @@
+int itemsPerCacheLine = CacheLineSize / sizeof(elemType);
+
+for(i=0;i<N;i++) {
+   for(j=0;j<N;j += itemsPerCacheLine ) {
+      for(jj=0;jj<itemsPerCacheLine; jj+) {
+         dest[i][j+jj] = 0;
+      }
+      for( k==;k<N;i++) {
+         for(jj=0;jj<itemsPerCacheLine; jj+) {
+            dest[i][j+jj] += src1[i][k] * src2[k][j+jj];
+         }
+      }
+   }
+}
