@@ -5,7 +5,7 @@ This program is created as a test to use pyCUDA to generate a julia fractal.
 """
 import numpy as np
 from pycuda import driver, compiler, gpuarray, tools
-import matplotlib.pyplot as plt
+from PIL import Image
 
 # When importing this module we are initializing the device.
 # Now, we can call the device and send information using
@@ -19,7 +19,8 @@ import pycuda.autoinit
 #  device_nr=0 # Get the device 0 as the device we want to use
 #  cuda.init() # Init pycuda driver
 #  current_dev = cuda.Device(device_nr) # Device we are working on
-#  ctx = current_dev.make_context() # Make a working context --> New concept: context
+#  ctx = current_dev.make_context() # Make a working context -->
+#  New concept: context
 #  ctx.push() # Let context make the lead
 # -----------------------------------------------------------------------------
 
@@ -28,7 +29,7 @@ import pycuda.autoinit
 # must take this into account. This sample kernel only
 # add the two arrays.
 #
-#This Kernel must be written in C/C++.
+# This Kernel must be written in C/C++.
 #
 # The Kernel is a string with the C/C++ code in python so beware of using
 # % and \n in the code because python will interpret these as scape
@@ -97,27 +98,26 @@ struct cuComplex{
  * Obviously, all the variables used in it -including the complex numbers-
  * are stored and computed in the GPU.
  **/
-__device__ unsigned int julia( int x, int y, int DIM, float scale ){
+__device__ float julia( int x, int y, int DIM, float scale ){
     // Interval homomorphism: [0,DIM] |-> [-scale,scale]
     float jx = scale * (float) (DIM/2 - x)/(DIM/2);
     float jy = scale * (float) (DIM/2 - y)/(DIM/2);
 
     int num_iter = 500;
 
-    //cuComplex c(-0.8, 0.156);
+    cuComplex c(-0.8, 0.156);
     //cuComplex c(0.285, -0.01);
-    cuComplex c(-0.4, 0.6);
     cuComplex a(jx, jy);
 
-    unsigned int i = 0;
+    int i=0;
     for (i = 0; i < num_iter; i++) {
         a = a*a + c;
         if(a.magnitude2() > 1000){
-            return i;
+            return (float)i/num_iter; //Previously: return 0;
         }
     }
 
-    return (unsigned int) 0;
+    return 1;
 }
 
 /**
@@ -125,11 +125,12 @@ __device__ unsigned int julia( int x, int y, int DIM, float scale ){
  *
  * The GPU block coordinates are used as the image point coordinates. The
  * function calls julia() with its block coordinates to know how close is the
- * point to belong to the set. This number in [0,1] is used to colour the pixel.
+ * point to belong to the set. This number in [0,1] is used to colour the
+ * pixel.
  *
  * The first argument, ptr, is a pointer to the GPU-stored image data.
  **/
-__global__ void kernel( unsigned int *ptr){
+__global__ void kernel( unsigned char *ptr){
     int x = threadIdx.x + blockIdx.x * blockDim.x;
     int y = threadIdx.y + blockIdx.y * blockDim.y;
 
@@ -137,11 +138,13 @@ __global__ void kernel( unsigned int *ptr){
     float scale = %(SCALE)s;
 
     if(x < DIM && y < DIM){
-        // Offset in the ptr data. Usual serialization of a 2D array.
-        int offset = x + y * DIM ;
+        // Offset in the ptr data. Usual serialization of a 3-channel 2D array
+        int offset = (x + y * DIM) * 3;
 
         float juliaValue = julia( x,y,DIM,scale );
-        ptr[offset] = juliaValue;
+        ptr[offset + 0] = juliaValue*255;
+        ptr[offset + 1] = 0;
+        ptr[offset + 2] = 0;
     }
 }
 """
@@ -152,23 +155,23 @@ __global__ void kernel( unsigned int *ptr){
 Image_size = 2**12
 
 threads_per_block = 32
-blocks_per_grid = int( (Image_size + (threads_per_block-1)) / threads_per_block )
+blocks_per_grid = int((Image_size + (threads_per_block-1)) / threads_per_block)
 
 
 # Create a cpu easily recognized array using numpy.
-## -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # ¡Important note!
 #
 # When this array will be transferred to gpy (next code line) it will arrive
 # at the VRAM as a 1D array flattened by the usual linealisation technique
-# BUT when this array will come back to the CPU it will be re-structured as a 2D
-# array. Yay!
+# BUT when this array will come back to the CPU it will be re-structured as a
+# 2D array. Yay!
 #
 # Now this gif is really usefull:  http://www.reactiongifs.com/r/mgc.gif
 # -----------------------------------------------------------------------------
 
 
-image_cpu = np.zeros((Image_size, Image_size)).astype(np.uint32)
+image_cpu = np.zeros((Image_size, Image_size, 3)).astype(np.uint8)
 
 # Transfer host (CPU) memory to device (GPU) memory
 image_gpu = gpuarray.to_gpu(image_cpu)
@@ -193,28 +196,28 @@ julia_kernel = mod.get_function("kernel")
 start = driver.Event()
 end = driver.Event()
 
-start.record() # start timing
+start.record()  # start timing
 
 # call the kernel on the card
 julia_kernel(
     # inputs
     image_gpu,
     # Grid definition -> number of blocks x number of blocks.
-    grid = (blocks_per_grid,blocks_per_grid),
+    grid=(blocks_per_grid, blocks_per_grid),
     # block definition -> number of threads x number of threads
-    block = (threads_per_block, threads_per_block, 1),
+    block=(threads_per_block, threads_per_block, 1),
     )
 
-end.record() # end timing
+end.record()    # end timing
+
 # calculate the run length
 end.synchronize()
 secs = start.time_till(end)*1e-3
-print "%f seconds" % (secs)
+print(secs, "seconds")
 
 # Copy back the results
 image_cpu = image_gpu.get()
 
 # Print results
-
-imgplot = plt.imshow(image_cpu)
-plt.show()
+img_file = Image.fromarray(image_cpu, 'RGB')
+img_file.save("out.png")
