@@ -36,7 +36,8 @@ import pycuda.autoinit
 # characters. Use %% and \\n instead
 
 kernel_code_template = """
-#define softeningSquared 0.01f		// original plumer softener is 0.025. here the value is square of it.
+// original plumer softener is 0.025. here the value is square of it.
+#define softeningSquared 0.01f
 
 __global__ void galaxyKernel(float * pdata, float step, int bodies)
 {
@@ -52,7 +53,9 @@ __global__ void galaxyKernel(float * pdata, float step, int bodies)
     // position (last frame)
     float px = pdata[posLoc + 0];
     float py = pdata[posLoc + 1];
-    float pz = pdata[posLoc + 2]; // velocity (last frame)
+
+    // velocity (last frame)
+    float pz = pdata[posLoc + 2];
     float vx = pdata[velLoc + 0];
     float vy = pdata[velLoc + 1];
     float vz = pdata[velLoc + 2];
@@ -107,7 +110,6 @@ __global__ void galaxyKernel(float * pdata, float step, int bodies)
     pdata[velLoc + 0] = vx;
     pdata[velLoc + 1] = vy;
     pdata[velLoc + 2] = vz;
-
 }
 """
 
