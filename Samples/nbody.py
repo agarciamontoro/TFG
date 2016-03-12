@@ -123,7 +123,7 @@ d_pos = np.column_stack((data[:, 4:], data[:, 0]))
 d_vel = np.column_stack((data[:, 1:4], np.ones(data.shape[0])))
 
 # Array
-data_cpu = np.concatenate((d_pos, d_vel)).astype(np.float32)
+data_cpu = np.array([d_pos, d_vel]).astype(np.float32)
 
 # Transfer host (CPU) memory to device (GPU) memory
 data_gpu = gpuarray.to_gpu(data_cpu)
@@ -136,7 +136,6 @@ mod = compiler.SourceModule(kernel_code)
 
 # Get the kernel function from the compiled module
 galaxyKernel = mod.get_function("galaxyKernel")
-
 
 # create two timers so we measure time
 start = driver.Event()
@@ -164,5 +163,8 @@ end.synchronize()
 secs = start.time_till(end)*1e-3
 print(secs, "seconds")
 
-# Copy back the results
-data_cpu = data_gpu.get()
+# Copy back the results (the array returned by PyCUDA has the same shape as the
+# one previously sent); i.e., [positions+mass, velocities+1.0]
+d_pos, d_vel = data_gpu.get()
+
+np.savetxt("out.csv", d_pos[:, 0:3])
