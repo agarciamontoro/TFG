@@ -1,31 +1,107 @@
-__device__ float3
-bodyBodyInteraction(float4 bi, float4 bj, float3 ai)
-{
-float3 r;
-// r_ij  [3 FLOPS]
-r.x = bj.x - bi.x;
-r.y = bj.y - bi.y;
-r.z = bj.z - bi.z;
-// distSqr = dot(r_ij, r_ij) + EPS^2  [6 FLOPS]
-float distSqr = r.x * r.x + r.y * r.y + r.z * r.z + EPS2;
-// invDistCube =1/distSqr^(3/2)  [4 FLOPS (2 mul, 1 sqrt, 1 inv)]
-float distSixth = distSqr * distSqr * distSqr;
-float invDistCube = 1.0f/sqrtf(distSixth);
-// s = m_j * invDistCube [1 FLOP]
-float s = bj.w * invDistCube;
-// a_i =  a_i + s * r_ij [6 FLOPS]
-ai.x += r.x * s;
-ai.y += r.y * s;
-ai.z += r.z * s;
-return ai;
-}  
+#define EPS2 {{ EPS2 }}
+#define NUM_BODIES {{ NUM_BODIES }}
+#define TILE_SIZE {{ TILE_SIZE }}
 
+/**
+ * Computes the interaction between two bodies given their positions and the
+ * acceleration of the first one
+ * @param  bi            First body positions and mass
+ * @param  bj            Second body positions and mass
+ * @param  ai            Acceleration of the first body
+ * @return               Updated acceleration for the first body
+ */
+__device__ float3 bodyBodyInteraction(float4 bi, float4 bj, float3 ai){
+    float3 r;
 
+    // Position vector from bi to bj
+    r.x = bj.x - bi.x;
+    r.y = bj.y - bi.y;
+    r.z = bj.z - bi.z;
 
+    // Squared distance between bi and bj
+    float distSqr = r.x * r.x + r.y * r.y + r.z * r.z + EPS2;
 
+    // Inverse of the cube of the distance
+    float distSixth = distSqr * distSqr * distSqr;
+    float invDistCube = 1.0f/sqrtf(distSixth);
 
+    // Final factor to get new acceleration
+    float s = bj.w * invDistCube;
 
+    // New acceleration computation
+    ai.x += r.x * s;
+    ai.y += r.y * s;
+    ai.z += r.z * s;
 
+    return ai;
+}
+
+/**
+ * Computes the acceleration induced by all the bodies in a tile
+ * to the body which description is passed as myPosition
+ * @param  {[type]} float4 myPosition    Position and mass of the body
+ * @param  {[type]} float3 accel         Current acceleration of the body
+ * @param  {[type]} float4* shPosition   Descriptions of all the bodies
+ *                          			 in the tile
+ * @return {[type]}        Updated acceleration for the body
+ */
+__device__ float3 tile_calculation(float4 myPosition, float3 accel, float4* shPosition){
+    int i;
+    // Shared memory declared and populated on the kernel
+    // extern __shared__ float4[] shPosition;
+
+    for (i = 0; i < blockDim.x; i++) {
+        accel = bodyBodyInteraction(myPosition, shPosition[i], accel);
+    }
+
+    return accel;
+}
+
+__global__ void galaxyKernel(void *devPos, void *devVel, float step){
+    // Declaration of shared memory to compute the tiles in a block
+    __shared__ float4 shPosition[TILE_SIZE];
+
+    // Pointers to the positions and accelerations
+    float4 *globalPos = (float4 *)devPos;
+    float4 *globalVel = (float4 *)devVel;
+
+    // The body represented by this thread is the global identifier of the
+    // thread
+    int gtid = blockIdx.x * blockDim.x + threadIdx.x;
+
+    // Position of the body represented by the thread
+    float4 myPosition, myVelocity;
+    myPosition = globalPos[gtid];
+    myVelocity = globalVel[gtid];
+
+    // Loop setup
+    float3 myAcceleration = {0.0f, 0.0f, 0.0f};
+    int i, tile;
+
+    for (i = 0, tile = 0; i < NUM_BODIES; i += TILE_SIZE, tile++) {
+        int idx = tile * blockDim.x + threadIdx.x;
+
+        shPosition[threadIdx.x] = globalPos[idx];
+        __syncthreads();
+
+        myAcceleration = tile_calculation(myPosition, myAcceleration, shPosition);
+        __syncthreads();
+    }
+
+    // Update velocity with updated acceleration
+    myVelocity.x += myAcceleration.x * step;
+    myVelocity.y += myAcceleration.y * step;
+    myVelocity.z += myAcceleration.z * step;
+
+    // Update position with updated velocity
+    myPosition.x += myVelocity.x * step;
+    myPosition.y += myVelocity.y * step;
+    myPosition.z += myVelocity.z * step;
+
+    // Update global array
+    globalVel[gtid] = myVelocity;
+    globalPos[gtid] = myPosition;
+}
 
 
 // // original plumer softener is 0.025. here the value is square of it.

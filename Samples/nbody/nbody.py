@@ -16,6 +16,9 @@ import time
 # the apropiate tools in the pycuda module.
 import pycuda.autoinit
 
+NUM_BODIES = 8192
+TILE_SIZE = 32
+
 # ======================== KERNEL TEMPLATE RENDERING ======================== #
 
 # We must construct a FileSystemLoader object to load templates off
@@ -32,7 +35,9 @@ template = templateEnv.get_template("kernel.cu")
 
 # Specify any input variables to the template as a dictionary.
 templateVars = {
-    "softeningSquared": "0.01f"
+    "EPS2": "0.01f",
+    "NUM_BODIES": str(NUM_BODIES),
+    "TILE_SIZE": str(TILE_SIZE)
 }
 
 # Finally, process the template to produce our final text.
@@ -50,18 +55,21 @@ galaxyKernel = mod.get_function("galaxyKernel")
 
 # Load data from file
 data = np.loadtxt("./Data/dubinski.tab.gz")
+data = data[::len(data) / NUM_BODIES, :]
 
 # Positions and masses of all the objects in the files
-d_pos = np.column_stack((data[:49152:6, 1:4], data[:49152:6, 0]))
+d_pos = np.column_stack((data[:, 1:4], data[:, 0]))
 
 # Velocities (and a fancy 1.0) of all the objects in the files
-d_vel = np.column_stack((data[:49152:6, 4:], np.ones(8192)))
+d_vel = np.column_stack((data[:, 4:], np.ones(NUM_BODIES)))
 
 # Array
-data_cpu = np.array([d_pos, d_vel]).astype(np.float32)
+pos_cpu = np.array(d_pos).astype(np.float32)
+vel_cpu = np.array(d_vel).astype(np.float32)
 
 # Transfer host (CPU) memory to device (GPU) memory
-data_gpu = gpuarray.to_gpu(data_cpu)
+pos_gpu = gpuarray.to_gpu(pos_cpu)
+vel_gpu = gpuarray.to_gpu(vel_cpu)
 
 # ============================ ACTUAL PROCESSING ============================ #
 
@@ -81,18 +89,21 @@ for frame in range(num_frames):
     # Call the kernel on the card
     galaxyKernel(
         # inputs
-        data_gpu,
-        np.float32(1.0),
-        np.int32(1024),
+        pos_gpu,
+        vel_gpu,
+        np.float32(0.5),
 
         # Grid definition -> number of blocks x number of blocks.
-        grid=(16, 16),
+        grid=(int(NUM_BODIES / TILE_SIZE), 1, 1),
         # block definition -> number of threads x number of threads
-        block=(16, 2, 1),
+        block=(TILE_SIZE, 1, 1),
     )
     # Copy back the results (the array returned by PyCUDA has the same shape as
     # the one previously sent); i.e., [positions+mass, velocities+1.0]
-    d_pos, d_vel = data_gpu.get()
+    d_pos = pos_gpu.get()
+    d_vel = vel_gpu.get()
+
+    # Save the updated position to a new file
     np.savetxt("Output/out_%03d.csv" % frame, d_pos[:, 0:3])
 
     # End time measure and update progress bar

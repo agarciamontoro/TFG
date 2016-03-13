@@ -13,7 +13,7 @@ import re
 # Get file list
 data_dir_path = "./Output"
 
-regexp = r'out_[0][0-3][0-9]*\.csv$'
+regexp = r'out_[0-3][0-9]*\.csv$'
 file_list = [f for f in os.listdir(data_dir_path) if re.search(regexp, f)]
 file_list.sort()
 
@@ -49,7 +49,7 @@ for file_name in file_list:
     y = milky_way[:, 1]
     z = milky_way[:, 2]
 
-    scat1 = ax.scatter(x, y, z, c="r", s=2.5, lw=0)
+    scat1 = ax.scatter(x, y, z, c="w", s=2.5, lw=0)
 
     x = andromeda[:, 0]
     y = andromeda[:, 1]
