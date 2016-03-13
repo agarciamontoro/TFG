@@ -10,6 +10,7 @@ from PIL import Image
 import jinja2
 from progress_lib import progress_bar_init
 import time
+# import h5py
 
 # When importing this module we are initializing the device.
 # Now, we can call the device and send information using
@@ -18,6 +19,10 @@ import pycuda.autoinit
 
 NUM_BODIES = 8192
 TILE_SIZE = 32
+
+scaleFactor = 1		# 10.0f, 50
+velFactor = 1.0		# 15.0f, 100
+massFactor = 30.0	# 50000000.0
 
 # ======================== KERNEL TEMPLATE RENDERING ======================== #
 
@@ -55,21 +60,35 @@ galaxyKernel = mod.get_function("galaxyKernel")
 
 # Load data from file
 data = np.loadtxt("./Data/dubinski.tab.gz")
-data = data[::len(data) / NUM_BODIES, :]
+
+# Filter out the last 32768 bodies, belonging to halos
+data = data[:49152, :]
+
+# Filter NUM_BODIES bodies, evenly from disks and bulges.
+skip = int(len(data) / NUM_BODIES)
+data = data[::skip, :]
+
+masses = data[:, 0] * massFactor
+positions = data[:, 1:4] * scaleFactor
+velocities = data[:, 4:] * velFactor
 
 # Positions and masses of all the objects in the files
-d_pos = np.column_stack((data[:, 1:4], data[:, 0]))
+d_pos = np.column_stack((positions, masses))
 
 # Velocities (and a fancy 1.0) of all the objects in the files
-d_vel = np.column_stack((data[:, 4:], np.ones(NUM_BODIES)))
+d_vel = np.column_stack((velocities, np.ones(NUM_BODIES)))
 
 # Array
-pos_cpu = np.array(d_pos).astype(np.float32)
-vel_cpu = np.array(d_vel).astype(np.float32)
+pos_cpu = d_pos.astype(np.float32)
+vel_cpu = d_vel.astype(np.float32)
 
 # Transfer host (CPU) memory to device (GPU) memory
 pos_gpu = gpuarray.to_gpu(pos_cpu)
 vel_gpu = gpuarray.to_gpu(vel_cpu)
+
+# # ============================= DATA CONTAINER ============================= #
+#
+# hdf_root = h5py.File("nbody.hdf5", "w")
 
 # ============================ ACTUAL PROCESSING ============================ #
 
@@ -79,7 +98,7 @@ end = driver.Event()
 
 start.record()  # start timing
 
-num_frames = 750
+num_frames = 300
 progress_bar = progress_bar_init(num_frames-1)
 
 for frame in range(num_frames):
@@ -91,7 +110,7 @@ for frame in range(num_frames):
         # inputs
         pos_gpu,
         vel_gpu,
-        np.float32(0.5),
+        np.float32(0.1),
 
         # Grid definition -> number of blocks x number of blocks.
         grid=(int(NUM_BODIES / TILE_SIZE), 1, 1),
@@ -100,11 +119,14 @@ for frame in range(num_frames):
     )
     # Copy back the results (the array returned by PyCUDA has the same shape as
     # the one previously sent); i.e., [positions+mass, velocities+1.0]
-    d_pos = pos_gpu.get()
-    d_vel = vel_gpu.get()
+    pos_cpu = pos_gpu.get()
+    vel_cpu = vel_gpu.get()
+
+    # # Create file in HDF5 system
+    # dset2 = hdf_root.create_dataset("out_%03d.csv" % frame, data=pos_cpu[:, 0:3])
 
     # Save the updated position to a new file
-    np.savetxt("Output/out_%03d.csv" % frame, d_pos[:, 0:3])
+    np.savetxt("Output/out_%03d.csv" % frame, pos_cpu[:, 0:3])
 
     # End time measure and update progress bar
     pb_end = time.time()

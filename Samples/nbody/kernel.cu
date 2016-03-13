@@ -1,6 +1,7 @@
 #define EPS2 {{ EPS2 }}
 #define NUM_BODIES {{ NUM_BODIES }}
 #define TILE_SIZE {{ TILE_SIZE }}
+#define ep 0.67f						// 0.5f
 
 /**
  * Computes the interaction between two bodies given their positions and the
@@ -10,7 +11,7 @@
  * @param  ai            Acceleration of the first body
  * @return               Updated acceleration for the first body
  */
-__device__ float3 bodyBodyInteraction(float4 bi, float4 bj, float3 ai){
+__device__ float3 bodyBodyInteraction(float4 bi, float4 bj){
     float3 r;
 
     // Position vector from bi to bj
@@ -22,16 +23,20 @@ __device__ float3 bodyBodyInteraction(float4 bi, float4 bj, float3 ai){
     float distSqr = r.x * r.x + r.y * r.y + r.z * r.z + EPS2;
 
     // Inverse of the cube of the distance
-    float distSixth = distSqr * distSqr * distSqr;
-    float invDistCube = 1.0f/sqrtf(distSixth);
+    float distCube = distSqr * distSqr * distSqr;
 
-    // Final factor to get new acceleration
-    float s = bj.w * invDistCube;
+    if (distCube < 1.0f) return make_float3(0., 0., 0.);
+
+    float invDistCube = 1.0f/sqrtf(distCube);
+
+    // Mass product to get final factor
+    float s = bj.w * invDistCube * ep;
 
     // New acceleration computation
-    ai.x += r.x * s;
-    ai.y += r.y * s;
-    ai.z += r.z * s;
+    float3 ai;
+    ai.x = r.x * s;
+    ai.y = r.y * s;
+    ai.z = r.z * s;
 
     return ai;
 }
@@ -45,25 +50,25 @@ __device__ float3 bodyBodyInteraction(float4 bi, float4 bj, float3 ai){
  *                          			 in the tile
  * @return {[type]}        Updated acceleration for the body
  */
-__device__ float3 tile_calculation(float4 myPosition, float3 accel, float4* shPosition){
-    int i;
-    // Shared memory declared and populated on the kernel
-    // extern __shared__ float4[] shPosition;
-
-    for (i = 0; i < blockDim.x; i++) {
-        accel = bodyBodyInteraction(myPosition, shPosition[i], accel);
-    }
-
-    return accel;
-}
+// __device__ float3 tile_calculation(float4 myPosition, float3 accel, float4* shPosition){
+//     int i;
+//     // Shared memory declared and populated on the kernel
+//     // extern __shared__ float4[] shPosition;
+//
+//     for (i = 0; i < TILE_SIZE; i++) {
+//         accel += bodyBodyInteraction(myPosition, shPosition[i]);
+//     }
+//
+//     return accel;
+// }
 
 __global__ void galaxyKernel(void *devPos, void *devVel, float step){
     // Declaration of shared memory to compute the tiles in a block
     __shared__ float4 shPosition[TILE_SIZE];
 
     // Pointers to the positions and accelerations
-    float4 *globalPos = (float4 *)devPos;
-    float4 *globalVel = (float4 *)devVel;
+    float4* globalPos = (float4*)devPos;
+    float4* globalVel = (float4*)devVel;
 
     // The body represented by this thread is the global identifier of the
     // thread
@@ -76,17 +81,28 @@ __global__ void galaxyKernel(void *devPos, void *devVel, float step){
 
     // Loop setup
     float3 myAcceleration = {0.0f, 0.0f, 0.0f};
+    float3 currAcceleration;
     int i, tile;
 
-    for (i = 0, tile = 0; i < NUM_BODIES; i += TILE_SIZE, tile++) {
-        int idx = tile * blockDim.x + threadIdx.x;
+    // for (i = 0, tile = 0; i < NUM_BODIES; i += TILE_SIZE, tile++) {
+    //     int idx = tile * blockDim.x + threadIdx.x;
+    //
+    //     shPosition[threadIdx.x] = globalPos[idx];
+    //     __syncthreads();
+    //
+    //     myAcceleration = tile_calculation(myPosition, myAcceleration, shPosition);
+    //     __syncthreads();
+    // }
+    float4 otherBody;
+    for(i = 0; i < NUM_BODIES; i++){
+        otherBody = globalPos[i];
+        currAcceleration = bodyBodyInteraction(myPosition, otherBody);
 
-        shPosition[threadIdx.x] = globalPos[idx];
-        __syncthreads();
-
-        myAcceleration = tile_calculation(myPosition, myAcceleration, shPosition);
-        __syncthreads();
+        myAcceleration.x += currAcceleration.x;
+        myAcceleration.y += currAcceleration.y;
+        myAcceleration.z += currAcceleration.z;
     }
+
 
     // Update velocity with updated acceleration
     myVelocity.x += myAcceleration.x * step;
@@ -94,9 +110,11 @@ __global__ void galaxyKernel(void *devPos, void *devVel, float step){
     myVelocity.z += myAcceleration.z * step;
 
     // Update position with updated velocity
-    myPosition.x += myVelocity.x * step;
-    myPosition.y += myVelocity.y * step;
-    myPosition.z += myVelocity.z * step;
+    myPosition.x += myVelocity.x * step + (myAcceleration.x * step * step) / 2;
+    myPosition.y += myVelocity.y * step + (myAcceleration.y * step * step) / 2;
+    myPosition.z += myVelocity.z * step + (myAcceleration.z * step * step) / 2;
+
+    __syncthreads();
 
     // Update global array
     globalVel[gtid] = myVelocity;
