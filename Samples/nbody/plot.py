@@ -4,43 +4,62 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-import glob
+from progress_lib import progress_bar_init
 
-file_list = glob.glob("./out_03*.csv")
+import os
+import time
+import re
+
+# Get file list
+data_dir_path = "./Output"
+
+regexp = r'out_[0][0-3][0-9]*\.csv$'
+file_list = [f for f in os.listdir(data_dir_path) if re.search(regexp, f)]
 file_list.sort()
 
+# Setup plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+axes = fig.gca()
+axes.set_xlim([-40, 20])
+axes.set_ylim([-40, 20])
+axes.set_zlim([-40, 20])
+
+axes.set_axis_off()
+ax.set_axis_bgcolor((0.15, 0.15, 0.15))
+
+# Setup progress bar
+progress_bar = progress_bar_init(len(file_list)-1)
+
+# Start
 for file_name in file_list:
+    start = time.time()
+
+    file_name = os.path.join(data_dir_path, file_name)
+
     raw_data = np.loadtxt(file_name)
-    milky_way = raw_data[:16384:24, :]
-    andromeda = raw_data[16384:16384*2:24, :]
 
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
+    disk1, disk2, bulge1, bulge2 = np.split(raw_data, [2730, 5460, 6826])
 
-    axes = plt.gca()
-    axes.set_xlim([-1, 1])
-    axes.set_ylim([-1, 1])
-    axes.set_zlim([-40, 20])
+    milky_way = np.concatenate((disk1, bulge1))
+    andromeda = np.concatenate((disk2, bulge2))
 
     x = milky_way[:, 0]
     y = milky_way[:, 1]
     z = milky_way[:, 2]
 
-    ax.scatter(x, y, z, c="r", s=2.5, lw=0)
+    scat1 = ax.scatter(x, y, z, c="r", s=2.5, lw=0)
 
     x = andromeda[:, 0]
     y = andromeda[:, 1]
     z = andromeda[:, 2]
 
-    ax.scatter(x, y, z, c="b", s=2.5, lw=0)
-
-    # A.x = x[0:1707]
-    # A_x = x[0:1707]
-    # B_x = x[1707:]
-    # A_y = y[0:1707]
-    # B_y = y[1707:]
-    # A_z = z[0:1707]
-    # B_z = z[1707:]
+    scat2 = ax.scatter(x, y, z, c="b", s=2.5, lw=0)
 
     fig.savefig(file_name + ".png")
-    print(file_name + " converted to image")
+    scat1.remove()
+    scat2.remove()
+
+    end = time.time()
+    progress_bar(end - start)
