@@ -1,6 +1,9 @@
 # Atom-sync
 .sync-config.cson
 
+*.hdf5
+*.gif
+
 #=======================  PYTHON  =========================
 # Byte-compiled / optimized / DLL files
 __pycache__/
