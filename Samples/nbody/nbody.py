@@ -6,23 +6,40 @@ N-body simulation running in PyCUDA
 
 import numpy as np
 from pycuda import driver, compiler, gpuarray, tools
-from PIL import Image
 import jinja2
 from progress_lib import progress_bar_init
+import os
 import time
-# import h5py
+import h5py
+import argparse
 
 # When importing this module we are initializing the device.
 # Now, we can call the device and send information using
 # the apropiate tools in the pycuda module.
 import pycuda.autoinit
 
-NUM_BODIES = 8192
 TILE_SIZE = 32
 
-scaleFactor = 1		# 10.0f, 50
-velFactor = 1.0		# 15.0f, 100
-massFactor = 30.0	# 50000000.0
+# ============================= PARSE ARGUMENTS ============================= #
+
+parser = argparse.ArgumentParser(description='Simulates the collision between Andromeda and the Milky Way')
+
+parser.add_argument('-b', '--bodies', dest='numBodies', type=int, default=8192,
+                    help='Number of bodies (it has to be a divisor of 49152). Defaults to 8192.')
+
+parser.add_argument('-g', '--gravity', dest='gConst', type=float, default=1.0,
+                    help='Gravity constant. Defaults to 1.')
+
+parser.add_argument('-d', '--dir', dest='outDir', type=str, default="Output/",
+                    help='Directory where the output CSV files will be stored.')
+
+args = parser.parse_args()
+
+NUM_BODIES = args.numBodies
+G_CONST = args.gConst
+OUT_DIR = args.outDir
+
+print("Computing simulation for %d bodies with gravity constant %.2f.\nOutput stored at %s" % (NUM_BODIES, G_CONST, OUT_DIR))
 
 # ======================== KERNEL TEMPLATE RENDERING ======================== #
 
@@ -40,9 +57,10 @@ template = templateEnv.get_template("kernel.cu")
 
 # Specify any input variables to the template as a dictionary.
 templateVars = {
-    "EPS2": "0.01f",
-    "NUM_BODIES": str(NUM_BODIES),
-    "TILE_SIZE": str(TILE_SIZE)
+    "G_CONST": G_CONST,
+    "EPS2": 0.01,
+    "NUM_BODIES": NUM_BODIES,
+    "TILE_SIZE": TILE_SIZE
 }
 
 # Finally, process the template to produce our final text.
@@ -68,9 +86,9 @@ data = data[:49152, :]
 skip = int(len(data) / NUM_BODIES)
 data = data[::skip, :]
 
-masses = data[:, 0] * massFactor
-positions = data[:, 1:4] * scaleFactor
-velocities = data[:, 4:] * velFactor
+masses = data[:, 0]
+positions = data[:, 1:4]
+velocities = data[:, 4:]
 
 # Positions and masses of all the objects in the files
 d_pos = np.column_stack((positions, masses))
@@ -86,9 +104,12 @@ vel_cpu = d_vel.astype(np.float32)
 pos_gpu = gpuarray.to_gpu(pos_cpu)
 vel_gpu = gpuarray.to_gpu(vel_cpu)
 
-# # ============================= DATA CONTAINER ============================= #
-#
-# hdf_root = h5py.File("nbody.hdf5", "w")
+# ============================= DATA CONTAINER ============================= #
+
+file_name = "nbody.hdf5"
+full_path = os.path.join(OUT_DIR, file_name)
+
+hdf_root = h5py.File(full_path, "w")
 
 # ============================ ACTUAL PROCESSING ============================ #
 
@@ -98,7 +119,7 @@ end = driver.Event()
 
 start.record()  # start timing
 
-num_frames = 300
+num_frames = 400
 progress_bar = progress_bar_init(num_frames-1)
 
 for frame in range(num_frames):
@@ -122,11 +143,11 @@ for frame in range(num_frames):
     pos_cpu = pos_gpu.get()
     vel_cpu = vel_gpu.get()
 
-    # # Create file in HDF5 system
-    # dset2 = hdf_root.create_dataset("out_%03d.csv" % frame, data=pos_cpu[:, 0:3])
-
-    # Save the updated position to a new file
-    np.savetxt("Output/out_%03d.csv" % frame, pos_cpu[:, 0:3])
+    # Create file in HDF5 system
+    hdf_root.create_dataset("out_%03d.csv" % frame,
+                            data=pos_cpu[:, 0:3],
+                            compression="gzip",
+                            compression_opts=9)
 
     # End time measure and update progress bar
     pb_end = time.time()
