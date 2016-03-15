@@ -1,6 +1,7 @@
 #define EPS2 {{ EPS2 }}
 #define NUM_BODIES {{ NUM_BODIES }}
 #define TILE_SIZE {{ TILE_SIZE }}
+#define G_CONST {{ G_CONST }}
 #define ep 0.67f						// 0.5f
 
 /**
@@ -30,7 +31,7 @@ __device__ float3 bodyBodyInteraction(float4 bi, float4 bj){
     float invDistCube = 1.0f/sqrtf(distCube);
 
     // Mass product to get final factor
-    float s = bj.w * invDistCube * ep;
+    float s = G_CONST * bj.w * invDistCube * ep;
 
     // New acceleration computation
     float3 ai;
