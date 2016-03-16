@@ -33,11 +33,16 @@ parser.add_argument('-g', '--gravity', dest='gConst', type=float, default=1.0,
 parser.add_argument('-d', '--dir', dest='outDir', type=str, default="Output/",
                     help='Directory where the output CSV files will be stored.')
 
+parser.add_argument('-f', '--frames', dest='numFrames', type=int,
+                    default=200,
+                    help='Number of steps simulated.')
+
 args = parser.parse_args()
 
 NUM_BODIES = args.numBodies
 G_CONST = args.gConst
 OUT_DIR = args.outDir
+NUM_FRAMES = args.numFrames
 
 print("Computing simulation for %d bodies with gravity constant %.2f.\nOutput stored at %s" % (NUM_BODIES, G_CONST, OUT_DIR))
 
@@ -119,10 +124,9 @@ end = driver.Event()
 
 start.record()  # start timing
 
-num_frames = 400
-progress_bar = progress_bar_init(num_frames-1)
+progress_bar = progress_bar_init(NUM_FRAMES-1)
 
-for frame in range(num_frames):
+for frame in range(NUM_FRAMES):
     # Start time measure
     pb_start = time.time()
 
