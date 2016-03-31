@@ -1,0 +1,60 @@
+\ifglsentryexists{elite}{}%
+{%
+\gls@defglossaryentry{elite}%
+{%
+name={{\'e}lite},%
+sort={elite},%
+type={main},%
+first={{\'e}lite},%
+firstplural={{\'e}lites},%
+text={{\'e}lite},%
+plural={{\'e}lites},%
+description={select group or class},%
+descriptionplural={select group or class},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{elite2}{}%
+{%
+\gls@defglossaryentry{elite2}%
+{%
+name={{\'e}lit2e},%
+sort={elite},%
+type={main},%
+first={{\'e}lit2e},%
+firstplural={{\'e}lit2es},%
+text={{\'e}lit2e},%
+plural={{\'e}lit2es},%
+description={select group 22or class},%
+descriptionplural={select group 22or class},%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={},%
+longplural={},%
+short={},%
+shortplural={},%
+counter={page},%
+parent={},%
+%
+}%
+}%

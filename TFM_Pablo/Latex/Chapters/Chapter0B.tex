@@ -1,0 +1,472 @@
+%********************************************************************
+% Appendix
+%*******************************************************
+% If problems with the headers: get headings in appendix etc. right
+%\markboth{\spacedlowsmallcaps{Appendix}}{\spacedlowsmallcaps{Appendix}}
+\chapter{Numeric code}
+
+\begin{lstlisting}[language=Mathematica,stepnumber=1,]
+Manipulate[
+ 
+ If[
+  ! slidersEnabled,
+    
+  {pT, aI, rI, iL, \[Theta]I, p\[Theta]I, frame, tailLength, 
+    zoomManual} = presetValues;
+  
+  slidersEnabled = True;
+     ];
+ 
+  viewRadius = 10;   
+ 
+ view\[Theta]       = 0.85  \[Pi]/2;
+ view\[Phi]       = 0.35   \[Pi]/2;
+ divergence = 0.05 \[Pi]/2;
+ 
+ rightViewPoint = 
+  
+  viewRadius {
+    Sin[view\[Theta]] Cos[view\[Phi]],
+    Sin[view\[Theta]] Sin[view\[Phi]],
+    Cos[view\[Theta]]
+              };
+ 
+ 
+ leftViewPoint = 
+  
+  viewRadius {
+    Sin[view\[Theta]] Cos[view\[Phi] - divergence],
+    Sin[view\[Theta]] Sin[view\[Phi] - divergence],
+    Cos[view\[Theta]]
+              };
+ 
+  Ee =
+  \[ScriptCapitalE] /.
+   Solve[
+             ( -aI^2 p\[Theta]I^2 + 2 iL^2 rI +
+        2 p\[Theta]I^2 rI - aI^2 rI^2 -
+        iL^2 rI^2 - p\[Theta]I^2 rI^2 +
+        2 rI^3 - rI^4 -
+        4 aI iL rI \[ScriptCapitalE] + 
+        2 aI^2 rI \[ScriptCapitalE]^2 +
+        aI^2 rI^2 \[ScriptCapitalE]^2 + rI^4 \[ScriptCapitalE]^2 +
+        aI^2 (aI^2 + (-2 + 
+              rI) rI) (-1 + \[ScriptCapitalE]^2) Cos[\[Theta]I]^2 -
+        iL^2 (aI^2 + (-2 + rI) rI) Cot[\[Theta]I]^2) == 0
+           ,
+           \[ScriptCapitalE]
+          ][[2]];
+ 
+ Ce =
+  p\[Theta]I^2 + 
+   Cos[\[Theta]I]^2 (aI^2 (1 - Ee^2) + iL^2/Sin[\[Theta]I]^2);
+ 
+ 
+ dynamicEquations =
+  {
+   r'[\[Tau]]   ==  (pr[\[Tau]] (a^2 - 2 r[\[Tau]] + r[\[Tau]]^2))/(
+    a^2 Cos[\[Theta][\[Tau]]]^2 + r[\[Tau]]^2),
+   
+       pr'[\[Tau]]  == (a^4 (-a Ee + L)^2 Cos[\[Theta][\[Tau]]]^2 + 
+       a^4 (L^2 Cos[\[Theta][\[Tau]]]^2 Cot[\[Theta][\[Tau]]]^2 + 
+          p\[Theta][\[Tau]]^2) r[\[Tau]] + 
+       a^2 (-a^2 Ee^2 + 2 a Ee L - L^2 + 
+          2 a Ee (a Ee + L) Cos[\[Theta][\[Tau]]]^2 - 
+          4 L^2 Cot[\[Theta][\[Tau]]]^2 - 
+          4 p\[Theta][\[Tau]]^2) r[\[Tau]]^2 + (4 a^2 Ee^2 - 
+          8 a Ee L + 4 L^2 - 4 a^2 Ee^2 Cos[\[Theta][\[Tau]]]^2 + 
+          4 L^2 Cot[\[Theta][\[Tau]]]^2 + 
+          2 a^2 L^2 Cot[\[Theta][\[Tau]]]^2 + 
+          
+          2 (2 + a^2) p\[Theta][\[Tau]]^2) r[\[Tau]]^3 + (-2 a^2 Ee^2 \
++ 6 a Ee L - 4 L^2 + a^2 Ee^2 Cos[\[Theta][\[Tau]]]^2 - 
+          4 L^2 Cot[\[Theta][\[Tau]]]^2 - 
+          4 p\[Theta][\[Tau]]^2) r[\[Tau]]^4 + (L^2 Csc[\[Theta][\
+\[Tau]]]^2 + p\[Theta][\[Tau]]^2) r[\[Tau]]^5 - Ee^2 r[\[Tau]]^6 + 
+       pr[\[Tau]]^2 (a^2 - 2 r[\[Tau]] + 
+          r[\[Tau]]^2)^2 (a^2 Cos[\[Theta][\[Tau]]]^2 - r[\[Tau]]^2 + 
+          a^2 r[\[Tau]] Sin[\[Theta][\[Tau]]]^2))/((a^2 Cos[\[Theta][\
+\[Tau]]]^2 + r[\[Tau]]^2)^2 (a^2 - 2 r[\[Tau]] + r[\[Tau]]^2)^2),
+   
+   
+       \[Phi]'[\[Tau]]   ==  (a^2 L Cot[\[Theta][\[Tau]]]^2 + 
+       2 (a Ee - L - L Cot[\[Theta][\[Tau]]]^2) r[\[Tau]] + 
+       L Csc[\[Theta][\[Tau]]]^2 r[\[Tau]]^2)/((a^2 Cos[\[Theta][\
+\[Tau]]]^2 + r[\[Tau]]^2) (a^2 - 2 r[\[Tau]] + r[\[Tau]]^2)),
+   
+   
+       \[Theta]'[\[Tau]]   ==  p\[Theta][\[Tau]]/(
+    a^2 Cos[\[Theta][\[Tau]]]^2 + r[\[Tau]]^2),
+   
+   
+       p\[Theta]'[\[Tau]]  == ((2 a^2 Cos[\[Theta][\[Tau]]] ((Ce + 
+               a^2 (-1 + Ee^2) Cos[\[Theta][\[Tau]]]^2 - 
+               L^2 Cot[\[Theta][\[Tau]]]^2) (a^2 - 2 r[\[Tau]] + 
+               r[\[Tau]]^2) - (Ce + (-a Ee + L)^2 + 
+               r[\[Tau]]^2) (a^2 - 2 r[\[Tau]] + r[\[Tau]]^2) + (a L -
+               Ee (a^2 + 
+                 r[\[Tau]]^2))^2) Sin[\[Theta][\[Tau]]])/(a^2 - 
+          2 r[\[Tau]] + r[\[Tau]]^2) - 
+       a^2 p\[Theta][\[Tau]]^2 Sin[2 \[Theta][\[Tau]]] - 
+       a^2 pr[\[Tau]]^2 (a^2 - 2 r[\[Tau]] + r[\[Tau]]^2) Sin[
+         2 \[Theta][\[Tau]]] + (a^2 Cos[\[Theta][\[Tau]]]^2 + 
+          r[\[Tau]]^2) (2 L^2 Cot[\[Theta][\[Tau]]] + 
+          2 L^2 Cot[\[Theta][\[Tau]]]^3 - 
+          a^2 (-1 + Ee^2) Sin[
+            2 \[Theta][\[Tau]]]))/(2 (a^2 Cos[\[Theta][\[Tau]]]^2 + 
+         r[\[Tau]]^2)^2)
+   };
+ 
+ 
+ 
+ (**)
+ initialConditions =
+  {
+   r[0]    ==  rI,
+       pr[0]   ==  0,
+      \[Theta][0]   ==  \[Theta]I,
+      p\[Theta][0]  ==  p\[Theta]I,
+      \[Phi][0]    == 0
+   };
+ 
+ 
+ Quiet[
+  HamiltonianSolve =
+    NDSolve[
+             {
+       
+       dynamicEquations,
+       
+       initialConditions
+       
+        } /. {a -> aI, L -> iL},
+             {r, \[Phi], \[Theta], pr, p\[Theta]},
+             {\[Tau], 0, pT},
+       Method -> {EventLocator, 
+       "Event" -> (r[\[Tau]] - 1.02 holeSize )}
+             ];
+       ];
+ 
+   domain      =    (r /. HamiltonianSolve[[1, 1]])["Domain"];
+ 
+ {begin, end} =     domain[[1]];
+ 
+ 
+ 
+ planetHasPlunged = 
+  
+  Abs[
+    (r[end] /. HamiltonianSolve)[[1]] - holeSize
+     ] <= 0.05 holeSize;
+   
+ 
+ 
+ startPlot =
+  If[
+   (end - tailLength) <= 0
+   ,
+   0
+   ,
+   (end - tailLength)
+    ];
+ 
+ 
+ 
+ If[
+  zoomManual == False,
+  
+  initialOuterRadius = ( r[end] /. HamiltonianSolve)[[1]];
+  
+  frameCantidate =
+   
+   1.05
+    
+    If[
+     initialOuterRadius > rI
+     ,
+      initialOuterRadius
+     ,
+      rI
+     ];
+  
+  
+  frame =
+   If[
+    frameCantidate > frame
+    ,
+    frameCantidate
+    ,
+    frame
+    ];,
+  {}];
+ 
+ 
+ 
+ 
+ planetPosition =      
+                    {
+                     r[end] Sin[\[Theta][end]] Cos[\[Phi][end]],
+                     r[end] Sin[\[Theta][end]] Sin[\[Phi][end]],
+                     r[end] Cos[\[Theta][end]]
+                      } /. HamiltonianSolve;
+ 
+ 
+ 
+ 
+ orbitPlot =
+  
+  ParametricPlot3D[
+                   { 
+                r[\[Tau]] Sin[\[Theta][\[Tau]]] Cos[\[Phi][\[Tau]]],
+                      
+     r[\[Tau]] Sin[\[Theta][\[Tau]]] Sin[\[Phi][\[Tau]]],
+                      r[\[Tau]] Cos[\[Theta][\[Tau]]]
+                     } /. HamiltonianSolve,
+                    {\[Tau], startPlot, end},
+                     PlotRange ->
+                               {
+                                 {-frame, frame},
+                                 {-frame, frame},
+                                 {-frame, frame}
+                               },
+                     PerformanceGoal -> "Speed",
+                     PlotPoints -> 200,
+                     MaxRecursion -> 8,
+                     SphericalRegion -> True,
+                 Mesh -> 4,
+                 Ticks -> Automatic, PlotStyle -> {Blue, Thick}, 
+   Boxed -> False, Axes -> None
+                  ];
+ 
+ 
+ 
+ holeSize = 1 + Sqrt[ 1 - aI^2] ;
+ 
+  planetSize  = 0.02 frame;
+ 
+ 
+ 
+  If[
+  planetHasPlunged
+     ,
+  adjustedPlanetSize  = 0;
+  ,
+  adjustedPlanetSize  = planetSize;
+      ];
+ 
+ 
+ 
+ 
+ noReturnHorizon =
+  
+  Graphics3D[{Black   , Sphere[{0, 0, 0}        , holeSize  ]}];
+ 
+ 
+ 
+ outerErgosphereLimit = 
+  
+  Graphics3D[{
+    Green,
+    Opacity[0.2],
+    Scale[
+     Sphere[],
+     {2, 2, holeSize},
+     {0, 0, 0}
+         ]}
+           ];
+ 
+ 
+ 
+ rightImage =
+   Show[
+       orbitPlot,
+   noReturnHorizon, 
+   outerErgosphereLimit,  
+   planetGraphic,
+   
+   Graphics3D[
+    Text[StringForm["energy = ``", Ee], {1.5 frame, 0, -1.1 frame}]],
+   
+   Graphics3D[
+    Text[StringForm["Carter Q = ``", Chop[Ce]], {1.5 frame, 
+      0, -1.3 frame}]],
+   
+    ViewPoint -> rightViewPoint,
+   ImageSize -> {400, 400}
+   ];
+ 
+ leftImage =
+   Show[
+       orbitPlot,
+   noReturnHorizon, 
+   outerErgosphereLimit,  
+   planetGraphic,
+   ParametricPlot3D[{u, 0, 0}, {u, -5, 5}, 
+    PlotStyle -> {Black, Thick, Dashed}],
+   ParametricPlot3D[{0, u, 0}, {u, -5, 5}, 
+    PlotStyle -> {Black, Thick, Dashed}],
+   ParametricPlot3D[{0, 0, u}, {u, -5, 5}, 
+    PlotStyle -> {Black, Thick, Dashed}],
+   
+    ViewPoint -> leftViewPoint,
+   ImageSize -> {400, 400}
+   ]
+ 
+ ,
+ 
+ 
+ 
+ 
+ {
+     {pT, tailLength, "time"}, 150, 1200,
+     ImageSize -> Tiny,
+  AnimationRate -> 3,
+     DisplayAllSteps -> False,
+  DefaultDuration -> 15,
+  ControlPlacement -> Left
+  },
+ 
+ 
+ Delimiter,
+ 
+ 
+ {
+  {aI, 0.99, "spin rate"}, 0, 0.99, .01,
+  Appearance -> "Labeled",
+  ImageSize -> Tiny,
+  ControlPlacement -> Left
+  },
+ 
+ 
+ 
+ Delimiter,
+ 
+ 
+ 
+ {
+  {rI, 4, "radius"}, 2.1, 30, .01,
+  Appearance -> "Labeled",
+  ImageSize -> Tiny,
+  ControlPlacement -> Left
+  },
+ 
+ 
+ 
+ {
+  {iL, 2, "L"}, -4.5, 4.5, .01,
+  Appearance -> "Labeled",
+  ImageSize -> Tiny,
+  ControlPlacement -> Left
+  },
+ 
+ 
+ 
+ {
+  {\[Theta]I, \[Pi]/3, Subscript["\[Theta]", "I"]}, \[Pi]/7, 
+  6 \[Pi]/7, \[Pi]/210,
+  Appearance -> "Labeled",
+  ImageSize -> Tiny,
+  ControlPlacement -> Left
+  },
+ 
+ 
+ 
+ {
+  {p\[Theta]I, 0.76, Subscript["p", Subscript["\[Theta]", "I"]]}, -3, 
+  3, .01,
+  Appearance -> "Labeled",
+  ImageSize -> Tiny,
+  ControlPlacement -> Left
+  },
+ 
+ 
+ 
+ Delimiter,
+ 
+ 
+ {
+  {tailLength, 1200, "tail"}, 150, 1500,
+  ControlPlacement -> Left,
+  ImageSize -> Tiny
+  },
+ 
+ 
+ 
+ {
+  {frame, 4.5, "zoom"}, 2.5, 100, .01,
+  Appearance -> "Labeled",
+  ImageSize -> Tiny,
+  Enabled -> zoomManual,
+  ControlPlacement -> Left
+  },
+ 
+ 
+ 
+ {
+  {zoomManual, False, ""},
+  {False -> "auto", True -> "manual"},
+  ControlType -> RadioButton,
+  ControlPlacement -> Left
+  },
+ 
+ 
+ 
+ 
+ Delimiter,
+ 
+ 
+ {
+  {slidersEnabled, True, ""},
+  {False -> "orbit preset"},
+  ControlType -> Setter,
+  ImageSize -> Tiny,
+  ControlPlacement -> Left
+  },
+ 
+ 
+ 
+ {{presetValues, {1200,   0.99, 4, 2, \[Pi]/3, 0.767851, 4.5, 1200, 
+    False}, ""},
+  {
+   {300,   0.9, 4, 2.148, 1.037, 0, 4.2, 350, False} -> 
+    Style["closed orbit                      ", 10] ,
+   {1200,   0.99, 4, 2, \[Pi]/3, 0.767851, 4.5, 1200, False} -> 
+    Style["constant radius orbit             ", 10] ,
+   {150,   0.0, 10, 3.5, \[Pi]/2, 0, 4.5, 350, False} -> 
+    Style["spiral capture orbit              ", 10] ,
+   {150,   0.0,   4,     3.99999, \[Pi]/2, 0, 4.5, 350, False} -> 
+    Style["unstable circular orbit capture   ", 10] ,
+   {100,   0.0,   4,     4.00001, \[Pi]/2, 0, 4.5, 350, False} -> 
+    Style[ "unstable circular orbit escape   ", 10] ,
+   {330, 0.99,  25, 2.427, \[Pi]/2, 0, 25, 330, False} -> 
+    Style[ "equatorial (1,1,1) zoom and whirl orbit"] ,
+   {150,  0.9,     4,      - 4.5, \[Pi]/2, 0, 4.2, 350, False} -> 
+    Style["orbit reverse and capture        ", 10],
+   {150,  0.99,     10,   1.05769, \[Pi]/2, 2.89, 4, 150, True} -> 
+    Style["3D zoom and whirl orbit         ", 10]
+   },
+  ControlType -> PopupMenu,
+  ControlPlacement -> Left,
+  ImageSize -> Small
+  },
+ 
+ 
+ 
+ Style[
+  "",
+  Bold, Small
+      ],
+ 
+ 
+ 
+ 
+  SynchronousUpdating -> False,
+ 
+ SaveDefinitions -> True,
+ 
+ TrackedSymbols -> Manipulate,
+ 
+ AutorunSequencing -> {1, 2, 3, 4, 6, 7}
+ ]
+\end{lstlisting}
+
