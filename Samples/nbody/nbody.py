@@ -25,8 +25,8 @@ TILE_SIZE = 32
 parser = argparse.ArgumentParser(description='Simulates the collision between Andromeda and the Milky Way')
 
 parser.add_argument('-b', '--bodies', dest='numBodies', type=int, default=8192,
-                    choices=[i for i in range(1, 49153) if 49152 % i == 0]
-                    help='Number of bodies (it has to be a divisor of 49152). Defaults to 8192.')
+                    choices=[i for i in range(1, 81921) if 81920 % i == 0],
+                    help='Number of bodies (it has to be a divisor of 81920). Defaults to 8192.')
 
 parser.add_argument('-g', '--gravity', dest='gConst', type=float, default=1.0,
                     help='Gravity constant. Defaults to 1.')
