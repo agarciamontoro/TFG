@@ -11,9 +11,9 @@ The program assigns each body in the simulation (81920) to a thread in the GPU. 
 
 The simulated collision can be sen in the following animation, where the blue bodies correspond to Andromeda and the green ones to our galaxy, the Milky Way.
 
-<div style="text-align:center">
-![Nbody simulation gif](https://cloud.githubusercontent.com/assets/3924815/13893566/c74974c8-ed5f-11e5-9536-1533721596aa.gif)
-</div>
+<p align="center">
+<img src="https://cloud.githubusercontent.com/assets/3924815/13893566/c74974c8-ed5f-11e5-9536-1533721596aa.gif" />
+</p>
 
 ### Fractal generation
 The file [`Samples/julia_set/julia_set.py`](https://github.com/agarciamontoro/TFG/blob/master/Samples/julia_set/julia_set.py) implements the generation of the fractal associated to the [Julia set](https://en.wikipedia.org/wiki/Julia_set).
@@ -22,6 +22,6 @@ For every pixel in the final image, the code launches a different thread that co
 
 An example of the results that can be obtained with this code can be seen in the two following figures, which show the set for two different constants:
 
-<div style="text-align:center">
+<p align="center">
 <img src="https://cloud.githubusercontent.com/assets/3924815/11050110/6e21aad2-8743-11e5-8414-6eb5bd86e881.png" width="49%" alt="Julia set fractal"/> <img src="https://cloud.githubusercontent.com/assets/3924815/11050389/bacaeeb4-8745-11e5-8fa5-f45278f62731.png" width="49%" alt="Julia set fractal"/>
-</div>
+</p>
