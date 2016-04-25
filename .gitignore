@@ -90,3 +90,6 @@ ENV/
 
 # Spyder project settings
 .spyderproject
+
+================ DIRS ==================
+Samples/nbody/Output
