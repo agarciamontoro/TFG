@@ -7,7 +7,7 @@ The files [`Samples/nbody/nbody.py`](https://github.com/agarciamontoro/TFG/blob/
 
 The code uses the power of the massively parallel structure of a GPU to compute a simulation on what is generally called an N-body problem.
 
-The program assigns each body in the simulation (49152) to a thread in the GPU. Then, each one of these threads computes the force produced by all the remaining bodies onto itself -using the Newtonian laws-, updating its position and velocity when the acceleration is obtained.
+The program assigns each body in the simulation (81920) to a thread in the GPU. Then, each one of these threads computes the force produced by all the remaining bodies onto itself -using the Newtonian laws-, updating its position and velocity when the acceleration is obtained.
 
 The simulated collision can be sen in the following animation, where the blue bodies correspond to Andromeda and the green ones to our galaxy, the Milky Way.
 
