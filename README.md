@@ -3,7 +3,9 @@ General Relativity massively parallel raytracer - a free software alternative.
 
 ## Learning CUDA
 ### N-body simulation
-The files [`Samples/nbody/nbody.py`](https://github.com/agarciamontoro/TFG/blob/master/Samples/nbody/nbody.py) and [`Samples/nbody/kernel.cu`](https://github.com/agarciamontoro/TFG/blob/master/Samples/nbody/kernel.cu) implement a simulation of an event that will take place in about 4 billion years: the Andromeda–Milky Way collision.
+The files [`Software/Samples/nbody/nbody.py`](https://github.com/agarciamontoro/TFG/blob/master/Samples/nbody/nbody.py) and 
+[`Software/Samples/nbody/kernel.cu`](https://github.com/agarciamontoro/TFG/blob/master/Samples/nbody/kernel.cu) 
+implement a simulation of an event that will take place in about 4 billion years: the Andromeda–Milky Way collision.
 
 The code uses the power of the massively parallel structure of a GPU to compute a simulation on what is generally called an N-body problem.
 
@@ -16,7 +18,8 @@ The simulated collision can be sen in the following animation, where the blue bo
 </p>
 
 ### Fractal generation
-The file [`Samples/julia_set/julia_set.py`](https://github.com/agarciamontoro/TFG/blob/master/Samples/julia_set/julia_set.py) implements the generation of the fractal associated to the [Julia set](https://en.wikipedia.org/wiki/Julia_set).
+The file [`Software/Samples/julia_set/julia_set.py`](https://github.com/agarciamontoro/TFG/blob/master/Samples/julia_set/julia_set.py) implements the generation of the fractal associated to the [Julia 
+set](https://en.wikipedia.org/wiki/Julia_set).
 
 For every pixel in the final image, the code launches a different thread that computes if the associated point in the complex plane belongs to the Julia set. The number of necessary iterations to decide whether it belongs to the set determine the intensity of the colour in the final image.
 
