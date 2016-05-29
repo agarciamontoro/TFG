@@ -1,7 +1,7 @@
 #======================= DIRS =========================
 Software/Samples/nbody/Output
 Res
-imdone
+.imdone
 
 # Atom-sync
 .sync-config.cson
