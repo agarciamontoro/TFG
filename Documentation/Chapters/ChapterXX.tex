@@ -2,7 +2,7 @@
 
 \section{Differentiable manifolds}
 
-Roughly speaking, a manifold is a topological space that, locally, looks like the euclidean space $\Real^n$. This similitude is essential, and will let us control the manifold as if we were working in the euclidean space; generally, its properties will be proved using the known properties of $\Real^n$.
+Roughly speaking, a manifold is a topological space that, locally, looks like the Euclidean space $\Real^n$. This similitude is essential, and will let us control the manifold as if we were working in the Euclidean space; generally, its properties will be proved using the known properties of $\Real^n$.
 
 The following definition specifies the formal concept of a topological manifold:
 
@@ -22,18 +22,30 @@ The first property states that, for every point $p \in M^n$, there exists an ope
 
 with $V \subset \Real^n$ an open set.
 
-The local homeomorphism does not imply the manifold to be Hausdorff, and this will be an essential property throughout the study of these spaces. The usual counterexample is the line with two origins: let $M = \Real \cup p$ be the union of the real line and a point $p \notin \Real$. Define a topology in this space with $\Real \subset M$ as an open set and the neighbourhoods of $p$ being the sets $(U \setminus \{0\}) \cup \{p\}$, where $U$ is a neighbourhood of $0 \in \Real$. This space is locally euclidean but not Hausdorff: the intersection of any two neighbourhoods of the points $0 \in \Real$ and $p$ is non-empty.
+The local homeomorphism does not imply the manifold to be Hausdorff, and this will be an essential property throughout the study of these spaces. The usual counterexample is the line with two origins: let $M = \Real \cup p$ be the union of the real line and a point $p \notin \Real$. Define a topology in this space with $\Real \subset M$ as an open set and the neighbourhoods of $p$ being the sets $(U \setminus \{0\}) \cup \{p\}$, where $U$ is a neighbourhood of $0 \in \Real$. This space is locally Euclidean but not Hausdorff: the intersection of any two neighbourhoods of the points $0 \in \Real$ and $p$ is non-empty.
 
-%TODO:0 add a figure with the two-origins line
+%TODO:0 Add a figure with the two-origins line
 
 The last property will prove to be key in our study, as it will let us define metrics on the manifold.
 
 \subsection{Charts}
 
+%TODO: Add a motivation to the concept of chart (basically, that we need to come down to an Euclidean space; we cannot do much in the ideal world of the manifolds)
+
 \begin{definition}[Coordinate chart]
+    A \emph{coordinate chart} ---or \emph{coordinate system}--- in a topological manifold $M^n$ is a homeomorphism $h \colon U \to V$ from an open subset of the manifold $U \subset M$ onto an open subset of the Euclidean space $V \subset \Real^n$.
+
+    We call $U$ a \emph{coordinate neighbourhood} in $M$.
 \end{definition}
 
 \begin{definition}[Coordinate atlas]
+    Let
+    \[
+    A = \{h_\alpha \colon U_\alpha \to V_\alpha / \alpha \in I\}
+    \]
+    be a set of coordinate charts in a topological manifold $M^n$, where $I$ is a family of indices and the open subsets $U_\alpha \subset M$ are the corresponding coordinate neighbourhoods.
+
+    $A$ is said to be an \emph{atlas} of M if every point is covered with a coordinate neighbourhood; i.e., if $\cup_{\alpha \in I} U_\alpha = M$.
 \end{definition}
 
 % Examples?
