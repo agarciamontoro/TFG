@@ -52,61 +52,67 @@
 % ********************************************************************
 % GO!GO!GO! MOVE IT!
 %*******************************************************
-\begin{document}
-\frenchspacing
-\raggedbottom
-\selectlanguage{british} % american ngerman
-%\renewcommand*{\bibname}{new name}
-%\setbibpreamble{}
-\pagenumbering{roman}
-\pagestyle{plain}
+    \begin{document}
+    \frenchspacing
+    \raggedbottom
+    \selectlanguage{british} % american ngerman
+    %\renewcommand*{\bibname}{new name}
+    %\setbibpreamble{}
+    \pagenumbering{roman}
+    \pagestyle{plain}
+
 %********************************************************************
 % Frontmatter
 %*******************************************************
-%\include{FrontBackmatter/DirtyTitlepage}
-\include{FrontBackmatter/Titlepage}
-\include{FrontBackmatter/Titleback}
-\cleardoublepage\include{FrontBackmatter/Dedication}
-%\cleardoublepage\include{FrontBackmatter/Foreword}
-\cleardoublepage\include{FrontBackmatter/Abstract}
-%\cleardoublepage\include{FrontBackmatter/Publications}
-\cleardoublepage\include{FrontBackmatter/Acknowledgments}
-\pagestyle{scrheadings}
-\cleardoublepage\include{FrontBackmatter/Contents}
+    %\include{FrontBackmatter/DirtyTitlepage}
+    %\include{FrontBackmatter/Titlepage}
+    %\include{FrontBackmatter/Titleback}
+    %\cleardoublepage\include{FrontBackmatter/Dedication}
+    %\cleardoublepage\include{FrontBackmatter/Foreword}
+    %\cleardoublepage\include{FrontBackmatter/Abstract}
+    %\cleardoublepage\include{FrontBackmatter/Publications}
+    %\cleardoublepage\include{FrontBackmatter/Acknowledgments}
+    \pagestyle{scrheadings}
+    %\cleardoublepage\include{FrontBackmatter/Contents}
+
 %********************************************************************
 % Mainmatter
 %*******************************************************
-\cleardoublepage\pagenumbering{arabic}
-%\setcounter{page}{90}
-% use \cleardoublepage here to avoid problems with pdfbookmark
-\cleardoublepage
+    \cleardoublepage\pagenumbering{arabic}
+    %\setcounter{page}{90}
+    % use \cleardoublepage here to avoid problems with pdfbookmark
+    \cleardoublepage
 
-\ctparttext{You can put some informational part preamble text here.
-Illo principalmente su nos. Non message \emph{occidental} angloromanic
-da. Debitas effortio simplificate sia se, auxiliar summarios da que,
-se avantiate publicationes via. Pan in terra summarios, capital
-interlingua se que. Al via multo esser specimen, campo responder que
-da. Le usate medical addresses pro, europa origine sanctificate nos se.}
-\part{Introduction}
-\include{Chapters/ChapterXX}
-\cleardoublepage
+    %\ctparttext{You can put some informational part preamble text here.
+    %Illo principalmente su nos. Non message \emph{occidental} angloromanic
+    %da. Debitas effortio simplificate sia se, auxiliar summarios da que,
+    %se avantiate publicationes via. Pan in terra summarios, capital
+    %interlingua se que. Al via multo esser specimen, campo responder que
+    %da. Le usate medical addresses pro, europa origine sanctificate nos se.}
+
+    \part{Introduction}
+    \include{Chapters/ChapterXX}
+    \cleardoublepage
 
 % ********************************************************************
 % Backmatter
 %*******************************************************
-\appendix
-%\renewcommand{\thechapter}{\alph{chapter}}
-\cleardoublepage
-\part{Appendix}
-\include{Chapters/Chapter0A}
+    %\appendix
+    %\renewcommand{\thechapter}{\alph{chapter}}
+    %\cleardoublepage
+    %\part{Appendix}
+    %\include{Chapters/Chapter0A}
+
 %********************************************************************
 % Other Stuff in the Back
 %*******************************************************
-\cleardoublepage\include{FrontBackmatter/Bibliography}
-\cleardoublepage\include{FrontBackmatter/Declaration}
-\cleardoublepage\include{FrontBackmatter/Colophon}
+    %\cleardoublepage\include{FrontBackmatter/Bibliography}
+    %\cleardoublepage\include{FrontBackmatter/Declaration}
+    %\cleardoublepage\include{FrontBackmatter/Colophon}
+
 % ********************************************************************
 % Game Over: Restore, Restart, or Quit?
 %*******************************************************
-\end{document}
+    \end{document}
+
 % ********************************************************************

@@ -22,7 +22,7 @@ The first property states that, for every point $p \in M^n$, there exists an ope
 
 with $V \subset \Real^n$ an open set.
 
-The local homeomorphism does not imply the manifold to be Hausdorff, and this will be an essential property throughout the study of these spaces. The usual counterexample is the line with two origins: let $M = \Real \cup p$ be the union of the real line and a point $p \notin \Real$. Define a topology in this space with $\Real \subset M$ as an open set and the neighbourhoods of $p$ being the sets $(U \setminus \{0\}) \cup \{p\}$, where $U$ is a neighbourhood of $0 \in \Real$. This space is locally Euclidean but not Hausdorff: the intersection of any two neighbourhoods of the points $0 \in \Real$ and $p$ is non-empty.
+The Hausdorff property has to be added, as the local homeomorphism does not imply this topological characteristic. The usual counterexample is the line with two origins: let $M = \Real \cup p$ be the union of the real line and a point $p \notin \Real$. Define a topology in this space with $\Real \subset M$ as an open set and the neighbourhoods of $p$ being the sets $(U \setminus \{0\}) \cup \{p\}$, where $U$ is a neighbourhood of $0 \in \Real$. This space is locally Euclidean but not Hausdorff: the intersection of any two neighbourhoods of the points $0 \in \Real$ and $p$ is non-empty.
 
 %TODO:0 Add a figure with the two-origins line
 
@@ -52,8 +52,21 @@ The last property will prove to be key in our study, as it will let us define me
 
 \subsection{Differentiable structures}
 
-% Transition maps. Smooth transition maps
-\begin{definition}[Transition maps]
+\begin{definition}[Transition map]
+    Let $M^n$ be a manifold and $(U, \phi)$, $(V, \psi)$ a pair of coordinate charts in $M^n$ with overlapping domains
+    \[
+        U \cap V \neq \emptyset
+    \]
+
+    The homeomorphism between the open sets of the Euclidean space $\Real^n$
+    \[
+        \psi \circ \phi^{-1} \colon \phi(U \cap V) \to \psi(U \cap V)
+    \]
+    is called a \emph{transition map}.
+\end{definition}
+
+\begin{definition}[Smooth overlap]
+    Two charts $(U, \phi)$, $(V, \psi)$ are said to overlap smoothly if their domains are disjoint ---i.e., if $U \cap V  = \emptyset$--- or if the transition map $\psi \circ \phi^{-1}$ is a diffeomorphism.
 \end{definition}
 
 \begin{definition}[Smooth coordinate atlas]
