@@ -2,14 +2,14 @@
 
 \section{Differentiable manifolds}
 
-Roughly speaking, a manifold is a topological space that, locally, looks like the Euclidean space $\Real^n$. This similitude is essential, and will let us control the manifold as if we were working in the Euclidean space; generally, its properties will be proved using the known properties of $\Real^n$.
+Roughly speaking, a manifold is a topological space that, locally, looks like the Euclidean space $\R^n$. This similitude is essential, and will let us control the manifold as if we were working in the Euclidean space; generally, its properties will be proved using the known properties of $\R^n$.
 
 The following definition specifies the formal concept of a topological manifold:
 
 \begin{definition}[N-dimensional topological manifold]
     Let $M^n$ be an $n$-dimensional topological space. The space $M^n$ is called a topological manifold if the following properties are satisfied:
     \begin{enumerate}
-        \item $M^n$ is locally homeomorphic to $\Real^n$. \label{def:manifold:homeo}
+        \item $M^n$ is locally homeomorphic to $\R^n$. \label{def:manifold:homeo}
         \item $M^n$ is a Hausdorff space. \label{def:manifold:haussdorf}
         \item $M^n$ has a countable topological basis. \label{def:manifold:basis}
     \end{enumerate}
@@ -20,9 +20,29 @@ The first property states that, for every point $p \in M^n$, there exists an ope
     h \colon U \to V
 \]
 
-with $V \subset \Real^n$ an open set.
+with $V \subset \R^n$ an open set.
 
-The Hausdorff property has to be added, as the local homeomorphism does not imply this topological characteristic. The usual counterexample is the line with two origins: let $M = \Real \cup p$ be the union of the real line and a point $p \notin \Real$. Define a topology in this space with $\Real \subset M$ as an open set and the neighbourhoods of $p$ being the sets $(U \setminus \{0\}) \cup \{p\}$, where $U$ is a neighbourhood of $0 \in \Real$. This space is locally Euclidean but not Hausdorff: the intersection of any two neighbourhoods of the points $0 \in \Real$ and $p$ is non-empty.
+The Hausdorff property has to be added, as the local homeomorphism does not imply this topological characteristic. The usual counterexample is the line with two origins.
+
+\begin{figure}[bth]
+    \myfloatalign
+    \begin{tikzpicture}
+      \draw[thick] (-5,0) -- (-0.05,0);
+      \draw[very thick,<->] (-1,0) -- (-0.05,0);
+      \draw[fill] (0,0) circle [radius=0.05];
+      \node[below] at (0,0) {0};
+      \draw[thick] (0.05,0) -- (5,0);
+      \draw[very thick,<->] (0.05,0) -- (1,0);
+      \node[right] at (5,0) {$\R$};
+
+      \draw[fill,Maroon] (0,0.5) circle [radius=0.05];
+      \node[right,Maroon] at (0,0.5) {$p$};
+    \end{tikzpicture}
+    \caption[Line with two origins]{Line with two origins.}
+    \label{fig:2origin}
+\end{figure}
+
+Let $M = \R \cup p$ be the union of the real line and a point $p \notin \R$. Define a topology in this space with $\R \subset M$ as an open set and the neighbourhoods of $p$ being the sets $(U \setminus \{0\}) \cup \{p\}$, where $U$ is a neighbourhood of $0 \in \R$. This space is locally Euclidean but not Hausdorff: the intersection of any two neighbourhoods of the points $0 \in \R$ and $p$ is non-empty.
 
 %TODO:0 Add a figure with the two-origins line
 
@@ -33,7 +53,7 @@ The last property will prove to be key in our study, as it will let us define me
 %TODO: Add a motivation to the concept of chart (basically, that we need to come down to an Euclidean space; we cannot do much in the ideal world of the manifolds)
 
 \begin{definition}[Coordinate chart]
-    A \emph{coordinate chart} ---or \emph{coordinate system}--- in a topological manifold $M^n$ is a homeomorphism $h \colon U \to V$ from an open subset of the manifold $U \subset M$ onto an open subset of the Euclidean space $V \subset \Real^n$.
+    A \emph{coordinate chart} ---or \emph{coordinate system}--- in a topological manifold $M^n$ is a homeomorphism $h \colon U \to V$ from an open subset of the manifold $U \subset M$ onto an open subset of the Euclidean space $V \subset \R^n$.
 
     We call $U$ a \emph{coordinate neighbourhood} in $M$.
 \end{definition}
@@ -45,7 +65,7 @@ The last property will prove to be key in our study, as it will let us define me
     \]
     be a set of coordinate charts in a topological manifold $M^n$, where $I$ is a family of indices and the open subsets $U_\alpha \subset M$ are the corresponding coordinate neighbourhoods.
 
-    $A$ is said to be an \emph{atlas} of M if every point is covered with a coordinate neighbourhood; i.e., if $\cup_{\alpha \in I} U_\alpha = M$.
+    $A$ is said to be an \emph{atlas} of M if every point is covered with a coordinate neighbourhood; \ie, if $\cup_{\alpha \in I} U_\alpha = M$.
 \end{definition}
 
 % Examples?
@@ -58,7 +78,7 @@ The last property will prove to be key in our study, as it will let us define me
         U \cap V \neq \emptyset
     \]
 
-    The homeomorphism between the open sets of the Euclidean space $\Real^n$
+    The homeomorphism between the open sets of the Euclidean space $\R^n$
     \[
         \psi \circ \phi^{-1} \colon \phi(U \cap V) \to \psi(U \cap V)
     \]
@@ -66,7 +86,7 @@ The last property will prove to be key in our study, as it will let us define me
 \end{definition}
 
 \begin{definition}[Smooth overlap]
-    Two charts $(U, \phi)$, $(V, \psi)$ are said to overlap smoothly if their domains are disjoint ---i.e., if $U \cap V  = \emptyset$--- or if the transition map $\psi \circ \phi^{-1}$ is a diffeomorphism.
+    Two charts $(U, \phi)$, $(V, \psi)$ are said to overlap smoothly if their domains are disjoint ---\ie, if $U \cap V  = \emptyset$--- or if the transition map $\psi \circ \phi^{-1}$ is a diffeomorphism.
 \end{definition}
 
 \begin{definition}[Smooth coordinate atlas]
