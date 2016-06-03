@@ -2,7 +2,7 @@
 
 \section{Differentiable manifolds}
 
-Roughly speaking, a manifold is a topological space that, locally, looks like the Euclidean space $\R^n$. This similitude is essential, and will let us control the manifold as if we were working in the Euclidean space; generally, its properties will be proved using the known properties of $\R^n$.
+Roughly speaking, a manifold is a topological space that, locally, looks like the Euclidean space $\R^n$. This similitude is essential, and will let us control the manifold as if we were working in the Euclidean space; generally, the definitions concerning manifolds and the properties proved from them will be based on the known properties of $\R^n$.
 
 The following definition specifies the formal concept of a topological manifold:
 
@@ -22,7 +22,9 @@ The first property states that, for every point $p \in M^n$, there exists an ope
 
 with $V \subset \R^n$ an open set.
 
-The Hausdorff property has to be added, as the local homeomorphism does not imply this topological characteristic. The usual counterexample is the line with two origins.
+One could think that the Hausdorff property is redundant, as the local homeomorphism may imply this topological characteristic. This is not true, and the usual counterexample is the line with two origins.
+
+Let $M = \R \cup p$ be the union of the real line and a point $p \notin \R$. Define a topology in this space with $\R \subset M$ as an open set and the neighbourhoods of $p$ being the sets $(U \setminus \{0\}) \cup \{p\}$, where $U$ is a neighbourhood of $0 \in \R$. This space is locally Euclidean but not Hausdorff: the intersection of any two neighbourhoods of the points $0 \in \R$ and $p$ is non-empty.
 
 \begin{figure}[bth]
     \myfloatalign
@@ -42,15 +44,19 @@ The Hausdorff property has to be added, as the local homeomorphism does not impl
     \label{fig:2origin}
 \end{figure}
 
-Let $M = \R \cup p$ be the union of the real line and a point $p \notin \R$. Define a topology in this space with $\R \subset M$ as an open set and the neighbourhoods of $p$ being the sets $(U \setminus \{0\}) \cup \{p\}$, where $U$ is a neighbourhood of $0 \in \R$. This space is locally Euclidean but not Hausdorff: the intersection of any two neighbourhoods of the points $0 \in \R$ and $p$ is non-empty.
-
-%TODO:0 Add a figure with the two-origins line
-
-The last property will prove to be key in our study, as it will let us define metrics on the manifold.
+The last property of the definition will prove to be key in our study, as it will let us define metrics on the manifold.
 
 \subsection{Charts}
 
-%TODO: Add a motivation to the concept of chart (basically, that we need to come down to an Euclidean space; we cannot do much in the ideal world of the manifolds)
+%TODO:0 Proofread this introduction. Particularly: ressemblance, Plato's world of Ideas, lowering, grasp.
+
+The main characteristic of the manifolds, its ressemblance to the Euclidean space, have to be exploited in order to understand the nature of the mathematical object.
+
+It is good to think about the manifolds world as the Plato's world of Ideas, where everything is conceptual in its essence but cannot be understood without studying particular examples.
+
+The idea of the manifold will be understood, then, taking pieces of the manifold and lowering them to the real word; \ie, the Euclidean space, where we will be able to \emph{physically} touch the manifold.
+
+The essential tool to make this happen will be the coordinate charts. These tools are like prisms to see the manifold from the Euclidean perspective, and they will let us grasp the nature of the ideal concept of a manifold.
 
 \begin{definition}[Coordinate chart]
     A \emph{coordinate chart} ---or \emph{coordinate system}--- in a topological manifold $M^n$ is a homeomorphism $h \colon U \to V$ from an open subset of the manifold $U \subset M$ onto an open subset of the Euclidean space $V \subset \R^n$.
