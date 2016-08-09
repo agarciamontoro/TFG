@@ -43,19 +43,12 @@ __device__ int getGlobalId(){
  * @param float* f  Computed value of the function
  */
 __device__ void computeComponent(int comp, float t, float* y, float* f){
-    // int row = threadId*SYSTEM_SIZE;
-    //
-    // f[threadId] = 0;
-    //
-    // for(int i=0; i<SYSTEM_SIZE; i++){
-    //     f[threadId] += globalSystemCoeffs[row + i] * y[i];
-    // }
+    int row = comp*SYSTEM_SIZE;
 
-    if(comp == 0){
-        f[0] = y[1];
-    }
-    else{
-        f[1] = -CONSTANT_A*y[0];
+    f[comp] = 0;
+
+    for(int i=0; i<SYSTEM_SIZE; i++){
+        f[comp] += globalSystemCoeffs[row + i] * y[i];
     }
 
     __syncthreads();
