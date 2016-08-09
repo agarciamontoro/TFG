@@ -17,16 +17,15 @@ import h5py
 # the apropiate tools in the pycuda module.
 import pycuda.autoinit
 
-INIT_W = 1
-INIT_H = 1
+# ================================ CONSTANTS ================================ #
+
+INIT_W = 2
+INIT_H = 2
 NUM_STEPS = 100
 STEP_SIZE = 0.02
 
 CONSTANT_A = 25
 SYSTEM_SIZE = 2
-
-BLOCK_W = 10
-BLOCK_H = 10
 
 OUT_DIR = "./Output"
 
@@ -64,8 +63,9 @@ rungeKutta4 = mod.get_function("rungeKutta4")
 # ============================== DATA LOADING ============================== #
 
 # Load initial conditions
-initConditions = np.random.rand(INIT_W, INIT_H, 3)
-initConditions = np.array([[[-1, 1, 1]]], dtype=np.float32)
+initConditions = np.random.rand(INIT_W, INIT_H, SYSTEM_SIZE+1)
+# initConditions = np.array([[[-1, 1, 1]], [[-1, 2, 2]]], dtype=np.float32)
+
 # Array
 cond_cpu = initConditions.astype(np.float32)
 
@@ -76,8 +76,6 @@ cond_gpu = gpuarray.to_gpu(cond_cpu)
 
 file_name = "rk4.hdf5"
 full_path = os.path.join(OUT_DIR, file_name)
-
-print(full_path)
 
 hdf_root = h5py.File(full_path, "w")
 
@@ -91,8 +89,6 @@ start.record()  # start timing
 
 progress_bar = progress_bar_init(NUM_STEPS-1)
 
-print(cond_cpu)
-
 for step in range(NUM_STEPS):
     # Start time measure
     pb_start = time.time()
@@ -104,26 +100,26 @@ for step in range(NUM_STEPS):
         np.float32(STEP_SIZE),
 
         # Grid definition -> number of blocks x number of blocks.
-        grid=(1, 1, 1),
+        # Each block computes one RK4 step for a single initial condition
+        grid=(INIT_W, INIT_H, 1),
         # block definition -> number of threads x number of threads
-        block=(1, 1, 1),
+        # Each thread in the block computes one RK4 step for one equation
+        block=(SYSTEM_SIZE, 1, 1),
     )
 
     # Copy back the results (the array returned by PyCUDA has the same shape as
     # the one previously sent)
     cond_cpu = cond_gpu.get()
 
-    print(cond_cpu)
-
-    # Create file in HDF5 system
-    hdf_root.create_dataset("out_%03d.csv" % step,
-                            data=cond_cpu[:, :, :],
-                            compression="gzip",
-                            compression_opts=9)
+    # # Create file in HDF5 system
+    # hdf_root.create_dataset("out_%03d.csv" % step,
+    #                         data=cond_cpu,
+    #                         compression="gzip",
+    #                         compression_opts=9)
 
     # End time measure and update progress bar
     pb_end = time.time()
-    # progress_bar(pb_end - pb_start)
+    progress_bar(pb_end - pb_start)
 
 end.record()    # end timing
 
