@@ -50,33 +50,6 @@ __device__ void computeComponent(int comp, float t, float* y, float* f){
     for(int i=0; i<SYSTEM_SIZE; i++){
         f[comp] += globalSystemCoeffs[row + i] * y[i];
     }
-
-    __syncthreads();
-}
-
-__device__ void computeK1(int threadId, float t, float* y, float step, float* k1){
-    computeComponent(threadId, t, y, k1);
-}
-
-__device__ void computeK2(int threadId, float t, float* y, float step, float* k1, float* k2){
-    newValue[threadId] = y[threadId] + step*k1[threadId]/2.0;
-    __syncthreads();
-
-    computeComponent(threadId, t + step/2.0, newValue, k2);
-}
-
-__device__ void computeK3(int threadId, float t, float* y, float step, float* k2, float* k3){
-    newValue[threadId] = y[threadId] + step*k2[threadId]/2.0;
-    __syncthreads();
-
-    computeComponent(threadId, t + step/2.0, newValue, k3);
-}
-
-__device__ void computeK4(int threadId, float t, float* y, float step, float* k3, float* k4){
-    newValue[threadId] = y[threadId] + step*k3[threadId];
-    __syncthreads();
-
-    computeComponent(threadId, t + step, newValue, k4);
 }
 
 __global__ void rungeKutta4(void *devInitCond, void *devSystemCoeffs,
@@ -86,7 +59,7 @@ __global__ void rungeKutta4(void *devInitCond, void *devSystemCoeffs,
     globalSystemCoeffs = (float*)devSystemCoeffs;
 
     // Retrieve the identifier of the thread in the block and the block
-    // identifier, as well as the global identifier.
+    // identifier
     int threadId = getThreadId();
     int blockId = getBlockId();
 
@@ -102,10 +75,31 @@ __global__ void rungeKutta4(void *devInitCond, void *devSystemCoeffs,
                      k3[SYSTEM_SIZE],
                      k4[SYSTEM_SIZE];
 
-    computeK1(threadId, t, y, step, k1);
-    computeK2(threadId, t, y, step, k1, k2);
-    computeK3(threadId, t, y, step, k2, k3);
-    computeK4(threadId, t, y, step, k3, k4);
+
+    // K1 computation
+    computeComponent(threadId, t, y, k1);
+    __syncthreads();
+
+    // K2 computation
+    newValue[threadId] = y[threadId] + step*k1[threadId]/2.0;
+    __syncthreads();
+
+    computeComponent(threadId, t + step/2.0, newValue, k2);
+    __syncthreads();
+
+    // K3 computation
+    newValue[threadId] = y[threadId] + step*k2[threadId]/2.0;
+    __syncthreads();
+
+    computeComponent(threadId, t + step/2.0, newValue, k3);
+    __syncthreads();
+
+    // K4 computation
+    newValue[threadId] = y[threadId] + step*k3[threadId];
+    __syncthreads();
+
+    computeComponent(threadId, t + step, newValue, k4);
+    __syncthreads();
 
     // Update time (do it just once)
     if(threadId == 0)
