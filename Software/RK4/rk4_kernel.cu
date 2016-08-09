@@ -24,18 +24,6 @@ __device__ int getThreadId(){
 }
 
 /**
- * Returns the thread identifier in a 2D grid with 2D blocks
- * @return int Global identifier of the running thread
- */
-__device__ int getGlobalId(){
-   int blockId = getBlockId();
-   int threadId = blockId * (blockDim.x * blockDim.y) +
-                 getThreadId();
-
-   return threadId;
-}
-
-/**
  * Computes the value of the threadId-th component of the function
  * F(t) = (f1(t), ..., fn(t)) and stores it in the memory pointed by f
  * @param float  t  Value of the time

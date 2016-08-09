@@ -1,6 +1,18 @@
+// Cosas:
+// nvar es el numbero de ecuaciones del sistema
+// x0 es el valor del punto donde se esta calculando
+// ( El tiempo en el que se esta haciendo el paso, vaya)
+// dx es el paso
+// y0 es un puntero a las condiciones iniciales
+// tiene que tener dimension nvar obviamente
+// Y finalmente
+// rhs
+// es un puntero a una fiuncion
+// rhs( t0, condiciones iniciales, vector de ks) que evalua las ecuaciones
+
 
 /* ********************************************************************* */
-int RK4Solve (double *y0, int nvar, double x0, 
+int RK4Solve (double *y0, int nvar, double x0,
               double dx, void (*rhs)(double, double *, double *))
 /*
  *
