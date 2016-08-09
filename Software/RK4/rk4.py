@@ -20,7 +20,7 @@ import pycuda.autoinit
 # ================================ CONSTANTS ================================ #
 
 INIT_W = 2
-INIT_H = 2
+INIT_H = 1
 NUM_STEPS = 100
 STEP_SIZE = 0.02
 
@@ -63,14 +63,20 @@ rungeKutta4 = mod.get_function("rungeKutta4")
 # ============================== DATA LOADING ============================== #
 
 # Load initial conditions
-initConditions = np.random.rand(INIT_W, INIT_H, SYSTEM_SIZE+1)
-# initConditions = np.array([[[-1, 1, 1]], [[-1, 2, 2]]], dtype=np.float32)
+# initConditions = np.random.rand(INIT_W, INIT_H, SYSTEM_SIZE+1)
+initConditions = np.array([[[-1, 1, 1]], [[-1, 2, 2]]], dtype=np.float32)
+
+# Coefficient matrix that defines the linear system
+systemCoeffs = np.array([[0, 1],
+                         [-CONSTANT_A, 0]])
 
 # Array
 cond_cpu = initConditions.astype(np.float32)
+coeff_cpu = systemCoeffs.astype(np.float32)
 
 # Transfer host (CPU) memory to device (GPU) memory
 cond_gpu = gpuarray.to_gpu(cond_cpu)
+coeff_gpu = gpuarray.to_gpu(coeff_cpu)
 
 # ============================= DATA CONTAINER ============================= #
 
@@ -87,7 +93,7 @@ end = driver.Event()
 
 start.record()  # start timing
 
-progress_bar = progress_bar_init(NUM_STEPS-1)
+# progress_bar = progress_bar_init(NUM_STEPS-1)
 
 for step in range(NUM_STEPS):
     # Start time measure
@@ -97,6 +103,7 @@ for step in range(NUM_STEPS):
     rungeKutta4(
         # inputs
         cond_gpu,
+        coeff_gpu,
         np.float32(STEP_SIZE),
 
         # Grid definition -> number of blocks x number of blocks.
@@ -104,12 +111,14 @@ for step in range(NUM_STEPS):
         grid=(INIT_W, INIT_H, 1),
         # block definition -> number of threads x number of threads
         # Each thread in the block computes one RK4 step for one equation
-        block=(SYSTEM_SIZE, 1, 1),
+        block=(1, 1, 1),
     )
 
     # Copy back the results (the array returned by PyCUDA has the same shape as
     # the one previously sent)
     cond_cpu = cond_gpu.get()
+
+    print(cond_cpu)
 
     # # Create file in HDF5 system
     # hdf_root.create_dataset("out_%03d.csv" % step,
@@ -119,7 +128,7 @@ for step in range(NUM_STEPS):
 
     # End time measure and update progress bar
     pb_end = time.time()
-    progress_bar(pb_end - pb_start)
+    # progress_bar(pb_end - pb_start)
 
 end.record()    # end timing
 
