@@ -21,8 +21,8 @@ import pycuda.autoinit
 
 INIT_W = 2
 INIT_H = 1
-NUM_STEPS = 100
-STEP_SIZE = 0.02
+NUM_STEPS = 10
+STEP_SIZE = 0.1
 
 CONSTANT_A = 25
 SYSTEM_SIZE = 2
@@ -64,7 +64,7 @@ rungeKutta4 = mod.get_function("rungeKutta4")
 
 # Load initial conditions
 # initConditions = np.random.rand(INIT_W, INIT_H, SYSTEM_SIZE+1)
-initConditions = np.array([[[-1, 1, 1]], [[-1, 2, 2]]], dtype=np.float32)
+initConditions = np.array([[[0, 1, 1]], [[0, 2, 2]]], dtype=np.float32)
 
 # Coefficient matrix that defines the linear system
 systemCoeffs = np.array([[0, 1],
@@ -111,7 +111,7 @@ for step in range(NUM_STEPS):
         grid=(INIT_W, INIT_H, 1),
         # block definition -> number of threads x number of threads
         # Each thread in the block computes one RK4 step for one equation
-        block=(1, 1, 1),
+        block=(SYSTEM_SIZE, 1, 1),
     )
 
     # Copy back the results (the array returned by PyCUDA has the same shape as

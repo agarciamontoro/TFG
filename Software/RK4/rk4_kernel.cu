@@ -4,11 +4,6 @@
 // Global pointer to the system coefficients
 __device__ float* globalSystemCoeffs;
 
-// Block and thread identifiers
-__device__ int blockId;
-__device__ int threadId;
-__device__ int globalId;
-
 // Auxiliar array to store the shared computations
 __shared__ float newValue[SYSTEM_SIZE];
 
@@ -47,41 +42,48 @@ __device__ int getGlobalId(){
  * @param float* y  Initial conditions
  * @param float* f  Computed value of the function
  */
-__device__ void computeComponent(float t, float* y, float* f){
-    int row = threadId*SYSTEM_SIZE;
+__device__ void computeComponent(int comp, float t, float* y, float* f){
+    // int row = threadId*SYSTEM_SIZE;
+    //
+    // f[threadId] = 0;
+    //
+    // for(int i=0; i<SYSTEM_SIZE; i++){
+    //     f[threadId] += globalSystemCoeffs[row + i] * y[i];
+    // }
 
-    f[threadId] = 0;
-    
-    for(int i=0; i<SYSTEM_SIZE; i++){
-        f[threadId] += globalSystemCoeffs[row + i] * y[i];
+    if(comp == 0){
+        f[0] = y[1];
+    }
+    else{
+        f[1] = -CONSTANT_A*y[0];
     }
 
     __syncthreads();
 }
 
-__device__ void computeK1(float t, float* y, float step, float* k1){
-    computeComponent(t, y, k1);
+__device__ void computeK1(int threadId, float t, float* y, float step, float* k1){
+    computeComponent(threadId, t, y, k1);
 }
 
-__device__ void computeK2(float t, float* y, float step, float* k1, float* k2){
+__device__ void computeK2(int threadId, float t, float* y, float step, float* k1, float* k2){
     newValue[threadId] = y[threadId] + step*k1[threadId]/2.0;
     __syncthreads();
 
-    computeComponent(t + step/2.0, newValue, k2);
+    computeComponent(threadId, t + step/2.0, newValue, k2);
 }
 
-__device__ void computeK3(float t, float* y, float step, float* k2, float* k3){
+__device__ void computeK3(int threadId, float t, float* y, float step, float* k2, float* k3){
     newValue[threadId] = y[threadId] + step*k2[threadId]/2.0;
     __syncthreads();
 
-    computeComponent(t + step/2.0, newValue, k3);
+    computeComponent(threadId, t + step/2.0, newValue, k3);
 }
 
-__device__ void computeK4(float t, float* y, float step, float* k3, float* k4){
+__device__ void computeK4(int threadId, float t, float* y, float step, float* k3, float* k4){
     newValue[threadId] = y[threadId] + step*k3[threadId];
     __syncthreads();
 
-    computeComponent(t + step, newValue, k4);
+    computeComponent(threadId, t + step, newValue, k4);
 }
 
 __global__ void rungeKutta4(void *devInitCond, void *devSystemCoeffs,
@@ -92,9 +94,8 @@ __global__ void rungeKutta4(void *devInitCond, void *devSystemCoeffs,
 
     // Retrieve the identifier of the thread in the block and the block
     // identifier, as well as the global identifier.
-    threadId = getThreadId();
-    blockId = getBlockId();
-    globalId = getGlobalId();
+    int threadId = getThreadId();
+    int blockId = getBlockId();
 
     // Initial conditions used by the block
     // TODO: Copy to shared memory
@@ -108,10 +109,10 @@ __global__ void rungeKutta4(void *devInitCond, void *devSystemCoeffs,
                      k3[SYSTEM_SIZE],
                      k4[SYSTEM_SIZE];
 
-    computeK1(t, y, step, k1);
-    computeK2(t, y, step, k1, k2);
-    computeK3(t, y, step, k2, k3);
-    computeK4(t, y, step, k3, k4);
+    computeK1(threadId, t, y, step, k1);
+    computeK2(threadId, t, y, step, k1, k2);
+    computeK3(threadId, t, y, step, k2, k3);
+    computeK4(threadId, t, y, step, k3, k4);
 
     // Update time (do it just once)
     if(threadId == 0)

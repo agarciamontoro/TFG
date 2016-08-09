@@ -304,7 +304,8 @@
 \def\phat{\widehat{p}}
 \def\that{T}
 
-\newenvironment{Proof}{\noindent { \textbf{Proof.}}}{\hfill$\blacksquare$ \vs}
+\usepackage{amssymb}
+\newenvironment{proof}{\noindent{\textbf{Proof.}}}{\hfill$\blacksquare$\vs}
 
 \newenvironment{Remark}{\stepcounter{theorem} \noindent {\textbf{Remark
 \thetheorem}.}
