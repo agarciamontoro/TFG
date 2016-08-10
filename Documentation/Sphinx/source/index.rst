@@ -20,6 +20,10 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+Testing
+=======
+
 .. currentmodule:: rk4
 
 .. autoclass:: RK4Solver

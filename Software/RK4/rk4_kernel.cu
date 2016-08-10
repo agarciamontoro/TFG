@@ -26,9 +26,9 @@ __device__ inline int getThreadId(){
  *                  shall be the same as the number of equations in the system
  */
 __device__ void computeComponent(int threadId, float x, float* y, float* f){
+    // Jinja template that renders to a switch in which every thread computes
+    // a different equation and stores it in the corresponding position in f
     switch(threadId) {
-        // Jinja template that renders to a switch in which every case computes
-        // a different equation and stores it in the corresponding thread
         {% for i, function in SYSTEM_FUNCTIONS %}
             case {{ i }}:
                 f[threadId] = {{ function }};

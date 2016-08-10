@@ -1,7 +1,7 @@
+import os
 import numpy as np
 from pycuda import driver, compiler, gpuarray, tools
 import jinja2
-from progress_lib import progress_bar_init
 
 # When importing this module we are initializing the device.
 # Now, we can call the device and send information using
@@ -111,7 +111,8 @@ class RK4Solver:
 
         # We must construct a FileSystemLoader object to load templates off
         # the filesystem
-        templateLoader = jinja2.FileSystemLoader(searchpath="./")
+        currentDirectory = os.path.dirname(os.path.abspath(__file__))
+        templateLoader = jinja2.FileSystemLoader(searchpath=currentDirectory)
 
         # An environment provides the data necessary to read and
         # parse our templates.  We pass in the loader object here.
@@ -130,8 +131,6 @@ class RK4Solver:
         # Finally, process the template to produce our final text.
         kernel = template.render(templateVars)
 
-        print(kernel)
-
         # ======================= KERNEL COMPILATION ======================= #
 
         # Compile the kernel code using pycuda.compiler
@@ -145,9 +144,22 @@ class RK4Solver:
         # Transfer host (CPU) memory to device (GPU) memory
         self.y0GPU = gpuarray.to_gpu(self.y0)
 
+        # Create two timers to measure the time
+        self.start = driver.Event()
+        self.end = driver.Event()
+
+        self.totalTime = 0.
+
     def solve(self):
-        """Computes one step of the system evolution
+        """Computes one step of the system evolution.
+
+        The system is evolved a single step, using the initial conditions x0
+        and y0 provided in the constructor. These variables are then updated to
+        their new computed values.
         """
+
+        self.start.record()  # start timing
+
         # Call the kernel on the card
         self.RK4Solve(
             # Inputs
@@ -162,6 +174,12 @@ class RK4Solver:
             # Each thread in the block computes one RK4 step for one equation
             block=(self.SYSTEM_SIZE, 1, 1),
         )
+
+        self.end.record()    # end timing
+
+        # calculate the run length
+        self.end.synchronize()
+        self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
 
         # Update the time in which the system solution is computed
         self.x0 = self.x0 + self.STEP_SIZE
