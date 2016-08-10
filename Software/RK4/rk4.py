@@ -1,9 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-4th order Runge-Kutta
-"""
-
 import numpy as np
 from pycuda import driver, compiler, gpuarray, tools
 import jinja2
@@ -16,8 +10,81 @@ import pycuda.autoinit
 
 
 class RK4Solver:
+    """4th order Runge Kutta solver.
+
+    This class numerically solves systems of the form :math:`y'(x) = F(x, y,
+    y')``, where :math:`x \in \mathbb{R}`, :math:`y(x) = (y_0(x), y_1(x),
+    \dots, y_{n-1}(x))\in\mathbb{R}^n` and :math:`F(x, y)` is a function in
+    :math:`\mathbb{R}^n`.
+
+    The solver works with an arbitrary shaped matrix of initial conditions,
+    each of one with a lenght of :math:`n` elements. The computation is
+    parallelized against these initial conditions and within the algorithm
+    itself, using CUDA.
+
+    Attributes:
+        x0: A float with the value of the time the system is being solved.
+        y0: A numpy array storing the state of the system.
+    """
+
     def __init__(self, x0, y0, dx, systemFunctions):
-        """Builds a RungeKutta solver of 4h order"""
+        """Builds the RungeKutta4 solver.
+
+        Args:
+            x0: A float with the value of the time the system will be solved.
+            y0: A :math:`(w, h, n)` shaped numpy array of initial conditions,
+                where :math:`w` and :math:`h` are the widht and height of the
+                matrix and :math:`n` the number of initial conditions, that
+                shall be the same as the number of equations in the system.
+            dx: A float containing the step size for the evolution of the
+                system.
+            systemFunctions: A list of :math:`n` strings containing the
+                functions of the system, written in C.
+
+        Example:
+            Let :math:`y''(x) = -25y(x)` be the equation to solve. If we make
+            the usual variable change to get a first order system of ODEs;
+            i.e., we call :math:`Y = \\begin{pmatrix} y_0 \\\\ y_1
+            \\end{pmatrix}`, where :math:`y_0 = y` and :math:`y_1 = y'` then
+            the system to solve is
+
+            .. math::
+                \\begin{eqnarray}
+                    y_0'(x) =& y_1(x) \\\\
+                    y_1'(x) =& -25y_0(x)
+                \\end{eqnarray}
+
+            The system function is then
+
+            .. math::
+                F(x, Y) = \\begin{cases}
+                    y_1 \\\\
+                    -25y_0
+                \\end{cases}
+
+            If we want to solve this system for two different initial
+            conditions :math:`Y(x_0) = (1, 1)` and :math:`Y(x_0) = (2, 2)`,
+            both of them with starting point :math:`x_0 = -1`, and a step size
+            of :math:`dx=0.02` we can call the solver as follows:
+
+            >>> x0 = -1
+            >>> initCond = np.array([[[1, 1]], [[2, 2]]])
+            >>> dx = 0.02
+            >>> functions = ["y[1]",
+            ...              "-25*y[0]"]
+            >>> solver = RK4Solver(x0, initCond, dx, functions)
+
+            .. note::
+                Please note that the functions provided to the solver has to be
+                written in plain C. You can use the following variables,
+                already defined in the code for you to freely use them.
+
+                - :code:`float x`: A float containing the value of the
+                  independent variable :math:`x`.
+                - :code:`float y[n]`: An array of :code:`n` elements containing
+                  the value of the initial conditions :math:`Y(x) = (y_0(x),
+                  \\dots, y_{n-1}(x))`.
+        """
 
         # ============================ CONSTANTS ============================ #
 
@@ -79,6 +146,8 @@ class RK4Solver:
         self.y0GPU = gpuarray.to_gpu(self.y0)
 
     def solve(self):
+        """Computes one step of the system evolution
+        """
         # Call the kernel on the card
         self.RK4Solve(
             # Inputs
