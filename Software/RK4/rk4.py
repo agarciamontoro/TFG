@@ -23,7 +23,7 @@ class RK4Solver:
     itself, using CUDA.
 
     Attributes:
-        x0: A float with the value of the time the system is being solved.
+        x0: A real with the value of the time the system is being solved.
         y0: A numpy array storing the state of the system.
     """
 
@@ -31,12 +31,14 @@ class RK4Solver:
         """Builds the RungeKutta4 solver.
 
         Args:
-            x0: A float with the value of the time the system will be solved.
+            x0: A real with the value of the time the system will be solved.
             y0: A :math:`(w, h, n)` shaped numpy array of initial conditions,
                 where :math:`w` and :math:`h` are the widht and height of the
                 matrix and :math:`n` the number of initial conditions, that
-                shall be the same as the number of equations in the system.
-            dx: A float containing the step size for the evolution of the
+                shall be the same as the number of equations in the system. The
+                solver forces the types of x0 and dx to be the same as the type
+                of y0.
+            dx: A real containing the step size for the evolution of the
                 system.
             systemFunctions: A list of :math:`n` strings containing the
                 functions of the system, written in C.
@@ -79,12 +81,22 @@ class RK4Solver:
                 written in plain C. You can use the following variables,
                 already defined in the code for you to freely use them.
 
-                - :code:`float x`: A float containing the value of the
+                - :code:`Real x`: A real containing the value of the
                   independent variable :math:`x`.
-                - :code:`float y[n]`: An array of :code:`n` elements containing
+                - :code:`Real y[n]`: An array of :code:`n` elements containing
                   the value of the initial conditions :math:`Y(x) = (y_0(x),
                   \\dots, y_{n-1}(x))`.
         """
+
+        # ======================= INITIAL CONDITIONS ======================= #
+
+        # Get precision: single or double
+        self.type = y0.dtype
+        assert(self.type == np.float32 or self.type == np.float64)
+
+        # Convert x0 to the same type of y0
+        self.x0 = np.array(x0).astype(self.type)
+        self.y0 = y0
 
         # ============================ CONSTANTS ============================ #
 
@@ -96,16 +108,12 @@ class RK4Solver:
         # Number of equations on the system
         self.SYSTEM_SIZE = y0.shape[2]
 
-        # Size of the step
-        self.STEP_SIZE = np.float32(dx)
+        # Convert dx to the same type of y0
+        self.STEP_SIZE = np.array(dx).astype(self.type)
 
         # System function
         self.F = [(str(i), f) for i, f in enumerate(systemFunctions)]
 
-        # ======================= INITIAL CONDITIONS ======================= #
-
-        self.x0 = np.float32(x0)
-        self.y0 = y0.astype(np.float32)
 
         # ==================== KERNEL TEMPLATE RENDERING ==================== #
 
@@ -122,10 +130,13 @@ class RK4Solver:
         # This also constructs our Template object.
         template = templateEnv.get_template("rk4_kernel.cu")
 
+        codeType = "float" if self.type == np.float32 else "double"
+
         # Specify any input variables to the template as a dictionary.
         templateVars = {
             "SYSTEM_SIZE": self.SYSTEM_SIZE,
-            "SYSTEM_FUNCTIONS": self.F
+            "SYSTEM_FUNCTIONS": self.F,
+            "Real": codeType
         }
 
         # Finally, process the template to produce our final text.
