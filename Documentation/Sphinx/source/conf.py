@@ -17,6 +17,8 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
+import sphinx_bootstrap_theme
+
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../../'))
@@ -358,3 +360,7 @@ texinfo_documents = [
 #     app.connect("autodoc-skip-member", skip)
 
 autodoc_default_flags = ['members', 'special-members']
+
+# Activate the theme.
+html_theme = 'bootstrap'
+html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()

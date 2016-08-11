@@ -9,6 +9,11 @@ import jinja2
 import pycuda.autoinit
 
 
+# Kindly borrowed from http://stackoverflow.com/a/14267825
+def nextPowerOf2(x):
+    return 1 << (x-1).bit_length()
+
+
 class RK4Solver:
     """4th order Runge Kutta solver.
 
@@ -27,7 +32,7 @@ class RK4Solver:
         y0: A numpy array storing the state of the system.
     """
 
-    def __init__(self, x0, y0, dx, systemFunctions):
+    def __init__(self, x0, y0, dx, systemFunctions, tolerance=1e-5):
         """Builds the RungeKutta4 solver.
 
         Args:
@@ -108,12 +113,18 @@ class RK4Solver:
         # Number of equations on the system
         self.SYSTEM_SIZE = y0.shape[2]
 
+        # Number of threads in the block
+        self.THREADS_NUM = nextPowerOf2(self.SYSTEM_SIZE)
+
         # Convert dx to the same type of y0
-        self.STEP_SIZE = np.array(dx).astype(self.type)
+        self.step = np.array(dx).astype(self.type)
+        self.stepGPU = gpuarray.to_gpu(self.step)
 
         # System function
         self.F = [(str(i), f) for i, f in enumerate(systemFunctions)]
 
+        # Convert tolerance to the same type of y0
+        self.tolerance = np.array(tolerance).astype(self.type)
 
         # ==================== KERNEL TEMPLATE RENDERING ==================== #
 
@@ -176,24 +187,28 @@ class RK4Solver:
             # Inputs
             self.x0,
             self.y0GPU,
-            self.STEP_SIZE,
+            self.stepGPU,
+            self.tolerance,
 
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes one RK4 step for a single initial condition
             grid=(self.INIT_W, self.INIT_H, 1),
             # block definition -> number of threads x number of threads
             # Each thread in the block computes one RK4 step for one equation
-            block=(self.SYSTEM_SIZE, 1, 1),
+            block=(self.THREADS_NUM, 1, 1),
         )
 
-        self.end.record()    # end timing
-
-        # calculate the run length
+        self.end.record()   # end timing
         self.end.synchronize()
+
+        # Calculate the run length
         self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
 
+        # Update step from the adaptive method
+        self.step = self.stepGPU.get()
+
         # Update the time in which the system solution is computed
-        self.x0 = self.x0 + self.STEP_SIZE
+        self.x0 = self.x0 + self.step
 
         # Return the new data
         y1 = self.y0GPU.get()
