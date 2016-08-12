@@ -80,17 +80,3 @@ class TestRK4(unittest.TestCase):
 if __name__ == '__main__':
     # Run all the tests
     unittest.main()
-
-    # testing(-10, [0.040241238486441955, 0.99626504413279049])
-    # testing2()
-    # functions = ["1+y[0]*y[0]"]
-    # x0 = 0
-    # y0 = np.array([[[0]]], dtype=np.float32)
-    # dx = 0.1
-    #
-    # solver = RK4Solver(x0, y0, dx, functions, tolerance=2e-5)
-    #
-    # while(solver.x0 < 1.4):
-    #     solver.solve()
-    #
-    #     print(solver.x0, "\t", solver.step, "\t", solver.y0[0, 0, :])
