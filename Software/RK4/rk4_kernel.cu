@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #define SYSTEM_SIZE {{ SYSTEM_SIZE }}
 
 typedef {{ Real }} Real;
@@ -21,6 +23,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
                 break;
         {% endfor %}
     }
+    printf("ThreadId %d - COMPU: %.5f, %.5f, %.5f, %5f\n", threadId, x, y[0], y[1], f[threadId]);
 }
 
 /**
@@ -35,7 +38,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
  *                      step size computation.
  * @return Real The new step size.
  */
-__global__ void RK4Solve(Real x0, void *devInitCond, void* step, Real tolerance){
+__global__ void RK4Solve(void* devX0, void *devInitCond, void* devStep, Real tolerance){
     // Retrieve the identifiers of the thread in the block and of the block in
     // the grid
     int threadId = threadIdx.x + threadIdx.y * blockDim.x;
@@ -47,12 +50,12 @@ __global__ void RK4Solve(Real x0, void *devInitCond, void* step, Real tolerance)
         __shared__ Real rk4[SYSTEM_SIZE], rk5[SYSTEM_SIZE];
 
         // First try of the step size
-        Real* globalStep = (Real*)step;
+        Real* globalStep = (Real*)devStep;
         Real dx = *globalStep;
 
-        // Boolean to know if the step has to be computed again (when the error
-        // exceeds the tolerance)
-        bool repeatStep;
+        // Time
+        Real* globalX0 = (Real*)devX0;
+        Real x0 = *globalX0;
 
         // Retrieve the initial conditions this block will work with
         Real* globalInitCond = (Real*)devInitCond + blockId*SYSTEM_SIZE;
@@ -73,12 +76,10 @@ __global__ void RK4Solve(Real x0, void *devInitCond, void* step, Real tolerance)
 
         // Local errors
         __shared__ Real errors[SYSTEM_SIZE];
-        __shared__ Real R, delta;
+        Real delta, R = 0.0;
+        Real err;
 
         do{
-            // Reset while-condition
-            repeatStep = false;
-
             // K1 computation
             y1[threadId] = y0;
             __syncthreads();
@@ -86,96 +87,120 @@ __global__ void RK4Solve(Real x0, void *devInitCond, void* step, Real tolerance)
             __syncthreads();
 
             // K2 computation
-            y1[threadId] = y0 + dx*(1/4)*k1[threadId];
+            y1[threadId] = y0 + dx*(1./4.)*k1[threadId];
             __syncthreads();
-            computeComponent(threadId, x0 + (1/4)*dx, y1, k2);
+            computeComponent(threadId, x0 + (1./4.)*dx, y1, k2);
             __syncthreads();
 
             // K3 computation
-            y1[threadId] = y0 + dx*((3/32)*k1[threadId] +
-                                    (9/32)*k2[threadId]);
+            y1[threadId] = y0 + dx*((3./32.)*k1[threadId] +
+                                    (9./32.)*k2[threadId]);
             __syncthreads();
-            computeComponent(threadId, x0 + (3/8)*dx, y1, k3);
+            computeComponent(threadId, x0 + (3./8.)*dx, y1, k3);
             __syncthreads();
 
             // K4 computation
-            y1[threadId] = y0 + dx*(  (1932/2197)*k1[threadId]
-                                    - (7200/2197)*k2[threadId]
-                                    + (7296/2197)*k3[threadId]);
+            y1[threadId] = y0 + dx*(  (1932./2197.)*k1[threadId]
+                                    - (7200./2197.)*k2[threadId]
+                                    + (7296./2197.)*k3[threadId]);
             __syncthreads();
-            computeComponent(threadId, x0 + (12/13)*dx, y1, k4);
+            computeComponent(threadId, x0 + (12./13.)*dx, y1, k4);
             __syncthreads();
 
             // K5 computation
-            y1[threadId] = y0 + dx*( (439/216)*k1[threadId]
-                                    - 8*k2[threadId]
-                                    + (3680/513)*k3[threadId]
-                                    - (845/4104)*k4[threadId]);
+            y1[threadId] = y0 + dx*( (439./216.)*k1[threadId]
+                                    - 8.*k2[threadId]
+                                    + (3680./513.)*k3[threadId]
+                                    - (845./4104.)*k4[threadId]);
             __syncthreads();
             computeComponent(threadId, x0 + dx, y1, k5);
             __syncthreads();
 
             // K6 computation
-            y1[threadId] = y0 + dx*(-(8/27)*k1[threadId]
-                                    + 2*k2[threadId]
-                                    - (3544/2565)*k3[threadId]
-                                    + (1859/4104)*k4[threadId]
-                                    - (11/40)*k5[threadId]);
+            y1[threadId] = y0 + dx*(-(8./27.)*k1[threadId]
+                                    + 2.*k2[threadId]
+                                    - (3544./2565.)*k3[threadId]
+                                    + (1859./4104.)*k4[threadId]
+                                    - (11./40.)*k5[threadId]);
             __syncthreads();
             computeComponent(threadId, x0 + (1/2)*dx, y1, k6);
             __syncthreads();
 
             // Compute fourth and fifth order solutions
-            rk4[threadId] = y0 + dx*( (25/216)*k1[threadId]
-                                    + (1408/2565)*k3[threadId]
-                                    + (2197/4101)*k4[threadId]
-                                    - (1/5)*k5[threadId]);
+            rk4[threadId] = y0 + dx*( (25./216.)*k1[threadId]
+                                    + (1408./2565.)*k3[threadId]
+                                    + (2197./4101.)*k4[threadId]
+                                    - (1./5.)*k5[threadId]);
 
-            rk5[threadId] = y0 + dx*( (16/135)*k1[threadId]
-                                    + (6656/12825)*k3[threadId]
-                                    + (28561/56430)*k4[threadId]
-                                    - (9/50)*k5[threadId]
-                                    + (2/55)*k6[threadId]);
+            rk5[threadId] = y0 + dx*( (16./135.)*k1[threadId]
+                                    + (6656./12825.)*k3[threadId]
+                                    + (28561./56430.)*k4[threadId]
+                                    - (9./50.)*k5[threadId]
+                                    + (2./55.)*k6[threadId]);
 
-            // Retrieve the local errors
-            Real diff = rk5[threadId] - rk4[threadId];
-            errors[threadId] = diff*diff;
-            __syncthreads();
+            // Real sc = tolerance*(1 + fmax(y0, rk5[threadId]));
+            //
+            // // Retrieve the local errors
+            // Real quotient = (rk5[threadId] - rk4[threadId])/tolerance;
+            // errors[threadId] = quotient*quotient;
+            // __syncthreads();
+            //
+            // printf("ThreadId %d - QUOTI: %.20f, %.20f\n", threadId, quotient, tolerance);
+            //
+            // printf("ThreadId %d - K1234: K1:%.7f, K2:%.7f, K3:%.7f, K4:%.7f, K5:%.7f, K6:%.7f\n", threadId, k1[threadId], k2[threadId], k3[threadId], k4[threadId], k5[threadId], k6[threadId]);
+            // printf("ThreadId %d - RK4 5: %.20f, %.20f\n", threadId, rk4[threadId], rk5[threadId]);
+            // printf("ThreadId %d - ERROR: %.20f\n", threadId, errors[threadId]);
+            //
+            // // Compute the distance between both solutions with the usual
+            // // reduction technique, storing it in errors[0]. Note that the
+            // // number of threads has to be a power of 2.
+            // for(int s=(blockDim.x*blockDim.y)/2; s>0; s>>=1){
+            //     if (threadId < s) {
+            //         printf("ThreadId %d - SUMMS: S: %d, error: (%.10f, %.10f)\n", threadId, s, errors[threadId], errors[threadId+s]);
+            //         errors[threadId] = errors[threadId] + errors[threadId + s];
+            //     }
+            //
+            //     __syncthreads();
+            // }
+            //
+            //
+            // if(threadId == 0)
+            //     printf("ThreadId %d - SUMMS: GLOBAL ERROR: %.20f\n", threadId, errors[0]);
+            //
+            // err = sqrt(errors[0]/SYSTEM_SIZE);
+            //
+            // #define FACMAX 1.5
+            // #define FACMIN 0.1
+            // #define FAC 0.8
+            // dx *= fmin(FACMAX, fmax(FACMIN, FAC*pow(1./err, 0.2)));
 
-            // Compute the distance between both solutions with the usual
-            // reduction technique, storing it in errors[0]. Note that the
-            // number of threads has to be a power of 2.
-            for(int s=(blockDim.x*blockDim.y)/2; s>0; s>>=1){
-                if (threadId < s) {
-                    errors[threadId] = errors[threadId] + errors[threadId + s];
-                }
+            // // Update the step
+            // R = sqrt(errors[0])/dx;
+            // if(R > tolerance){
+            //     delta = pow((Real)0.84*(tolerance/R), (Real)0.25);
+            //     dx *= delta;
+            // }
 
-                __syncthreads();
-            }
+            err = 0.;
 
             if(threadId == 0){
-                errors[0] = sqrt(errors[0]);
-                R = errors[0]/dx;
-                delta = pow((Real)0.84*(tolerance/R), (Real)0.25);
+                if(err > 1.){
+                    printf("\n###### CHANGE: err: %.20f, dx: %.20f\n\n", err, dx);
+                }
+                else{
+                    printf("\n###### ======:  err: %.20f, dx: %.20f\n\n", err, dx);
+                }
             }
-            __syncthreads();
-
-            // Update the step
-            dx *= delta;
-
-            // Repeat the step if the error exceeds the tolerance
-            if(R > tolerance){
-                repeatStep = true;
-            }
-
-        }while(repeatStep);
+        }while(err > 1.);
 
         // Update system value in the global memory.
         globalInitCond[threadId] = rk5[threadId];
 
-        // Update global step. Do it just once.
-        if(threadId == 0)
+        // Update global step and time. Do it just once.
+        if(threadId == 0){
             *globalStep = dx;
+            *globalX0 += dx;
+        }
 
     } // If threadId < SYSTEM_SIZE
 }

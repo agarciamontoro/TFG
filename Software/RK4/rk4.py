@@ -32,7 +32,7 @@ class RK4Solver:
         y0: A numpy array storing the state of the system.
     """
 
-    def __init__(self, x0, y0, dx, systemFunctions, tolerance=1e-5):
+    def __init__(self, x0, y0, dx, systemFunctions, tolerance=2e-5):
         """Builds the RungeKutta4 solver.
 
         Args:
@@ -118,7 +118,6 @@ class RK4Solver:
 
         # Convert dx to the same type of y0
         self.step = np.array(dx).astype(self.type)
-        self.stepGPU = gpuarray.to_gpu(self.step)
 
         # System function
         self.F = [(str(i), f) for i, f in enumerate(systemFunctions)]
@@ -185,9 +184,9 @@ class RK4Solver:
         # Call the kernel on the card
         self.RK4Solve(
             # Inputs
-            self.x0,
+            driver.InOut(self.x0),
             self.y0GPU,
-            self.stepGPU,
+            driver.InOut(self.step),
             self.tolerance,
 
             # Grid definition -> number of blocks x number of blocks.
@@ -204,12 +203,10 @@ class RK4Solver:
         # Calculate the run length
         self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
 
-        # Update step from the adaptive method
-        self.step = self.stepGPU.get()
+        # # Update the time in which the system solution is computed
+        # self.x0 = self.x0 + self.step
 
-        # Update the time in which the system solution is computed
-        self.x0 = self.x0 + self.step
+        # Update the new state of the system
+        self.y0 = self.y0GPU.get()
 
-        # Return the new data
-        y1 = self.y0GPU.get()
-        return(y1)
+        return(self.y0)
