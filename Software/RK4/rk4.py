@@ -32,18 +32,21 @@ class RK4Solver:
         y0: A numpy array storing the state of the system.
     """
 
-    def __init__(self, x0, y0, dx, systemFunctions, tolerance=1e-7):
+    # TODO: Make tolerances a SYSTEMS_SIZE-length array
+    def __init__(self, x0, y0, dx, systemFunctions, relativeTol=1e-6,
+                 absoluteTol=1e-12, debug=False):
         """Builds the RungeKutta4 solver.
 
         Args:
-            x0: A real with the value of the time the system will be solved.
+            x0: A real number containing the time where the initial conditions
+                y0 are placed.
             y0: A :math:`(w, h, n)` shaped numpy array of initial conditions,
                 where :math:`w` and :math:`h` are the widht and height of the
                 matrix and :math:`n` the number of initial conditions, that
                 shall be the same as the number of equations in the system. The
                 solver forces the types of x0 and dx to be the same as the type
                 of y0.
-            dx: A real containing the step size for the evolution of the
+            dx: A real number containing the step size for the evolution of the
                 system.
             systemFunctions: A list of :math:`n` strings containing the
                 functions of the system, written in C.
@@ -84,7 +87,7 @@ class RK4Solver:
             .. note::
                 Please note that the functions provided to the solver has to be
                 written in plain C. You can use the following variables,
-                already defined in the code for you to freely use them.
+                already defined in the code for you:.
 
                 - :code:`Real x`: A real containing the value of the
                   independent variable :math:`x`.
@@ -95,13 +98,7 @@ class RK4Solver:
 
         # ======================= INITIAL CONDITIONS ======================= #
 
-        # Get precision: single or double
-        self.type = y0.dtype
-        assert(self.type == np.float32 or self.type == np.float64)
-
-        # Convert x0 to the same type of y0
-        self.x0 = np.array(x0).astype(self.type)
-        self.y0 = y0
+        self.setInitialConditions(x0, y0)
 
         # ============================ CONSTANTS ============================ #
 
@@ -122,8 +119,17 @@ class RK4Solver:
         # System function
         self.F = [(str(i), f) for i, f in enumerate(systemFunctions)]
 
-        # Convert tolerance to the same type of y0
-        self.tolerance = np.array(tolerance).astype(self.type)
+        # Convert tolerances to arrays and copy them to GPU
+        self.relativeTol = np.repeat(relativeTol,
+                                     self.SYSTEM_SIZE).astype(self.type)
+        self.relativeTolGPU = gpuarray.to_gpu(self.relativeTol)
+
+        self.absoluteTol = np.repeat(absoluteTol,
+                                     self.SYSTEM_SIZE).astype(self.type)
+        self.absoluteTolGPU = gpuarray.to_gpu(self.absoluteTol)
+
+        # Debug switch
+        self.debug = debug
 
         # ==================== KERNEL TEMPLATE RENDERING ==================== #
 
@@ -146,7 +152,8 @@ class RK4Solver:
         templateVars = {
             "SYSTEM_SIZE": self.SYSTEM_SIZE,
             "SYSTEM_FUNCTIONS": self.F,
-            "Real": codeType
+            "Real": codeType,
+            "DEBUG": "#define DEBUG" if self.debug else ""
         }
 
         # Finally, process the template to produce our final text.
@@ -162,21 +169,47 @@ class RK4Solver:
 
         # ========================== DATA TRANSFER ========================== #
 
-        # Transfer host (CPU) memory to device (GPU) memory
-        self.y0GPU = gpuarray.to_gpu(self.y0)
-
         # Create two timers to measure the time
         self.start = driver.Event()
         self.end = driver.Event()
 
         self.totalTime = 0.
 
-    def solve(self):
-        """Computes one step of the system evolution.
+    def setInitialConditions(self, x0, y0):
+        # Get precision: single or double
+        self.type = y0.dtype
+        assert(self.type == np.float32 or self.type == np.float64)
 
-        The system is evolved a single step, using the initial conditions x0
-        and y0 provided in the constructor. These variables are then updated to
-        their new computed values.
+        # Convert x0 to the same type of y0
+        self.x0 = np.array(x0).astype(self.type)
+        self.y0 = y0
+
+        # Transfer host (CPU) memory to device (GPU) memory
+        # FIXME: Does this free the previous memory or no?
+        self.y0GPU = gpuarray.to_gpu(self.y0)
+
+    def solve(self, xEnd):
+        """Evolve the system between x0 and xEnd.
+
+        Iteratively calls the DOPRI5 solver to evolve the system between x0 and
+        xEnd, automatically adapting the step size and minimizing the local
+        errors, that should be roughly below rtoler*abs(y[i])+atoler.
+
+        Args:
+            xEnd: A real number with the end of the interval where the system
+                will be evolved; i.e., the system will take as initial
+                conditions :math:`(x_0, y_0)` and will compute the value at
+                :math:`(x_{end}, y_{end})`.
+
+        Returns:
+            Numpy array: A :math:`(w, h, n)` shaped numpy array containing
+                :math:`y_{end}`, the state of the system at :math:`x_{end}`,
+                where :math:`w` and :math:`h` are the widht and height of the
+                matrix and :math:`n` the number of initial conditions, that
+                shall be the same as the number of equations in the system. The
+                solver forces the types of x0 and dx to be the same as the type
+                of y0.
+
         """
 
         self.start.record()  # start timing
@@ -185,9 +218,17 @@ class RK4Solver:
         self.RK4Solve(
             # Inputs
             driver.InOut(self.x0),
+            np.array(xEnd).astype(self.type),
             self.y0GPU,
-            driver.InOut(self.step),
-            self.tolerance,
+            self.step,
+            np.array(xEnd-self.x0).astype(self.type),
+            self.relativeTolGPU,
+            self.absoluteTolGPU,
+            np.array(0.9).astype(self.type),        # safe
+            np.array(0.2).astype(self.type),        # fac1
+            np.array(10.0).astype(self.type),       # fac2
+            np.array(0.04).astype(self.type),       # beta
+            np.array(2.3e-16).astype(self.type),    # uround
 
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes one RK4 step for a single initial condition
@@ -202,9 +243,6 @@ class RK4Solver:
 
         # Calculate the run length
         self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
-
-        # # Update the time in which the system solution is computed
-        # self.x0 = self.x0 + self.step
 
         # Update the new state of the system
         self.y0 = self.y0GPU.get()
