@@ -32,7 +32,7 @@ class RK4Solver:
         y0: A numpy array storing the state of the system.
     """
 
-    def __init__(self, x0, y0, dx, systemFunctions, tolerance=2e-5):
+    def __init__(self, x0, y0, dx, systemFunctions, tolerance=1e-7):
         """Builds the RungeKutta4 solver.
 
         Args:
