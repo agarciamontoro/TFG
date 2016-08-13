@@ -39,8 +39,8 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
  * @return Real The new step size.
  */
  __global__ void RK4Solve(void* devX0, Real xend, void *devInitCond, Real h,
-                          Real hmax, void* globalRtoler, void* globalAtoler, Real safe=0.9, Real fac1=0.2, Real fac2=10.0,
-                          Real beta=0.04, Real uround=2.3e-16){
+                          Real hmax, void* globalRtoler, void* globalAtoler, Real safe, Real fac1, Real fac2, Real beta,
+                          Real uround){
 
 
     // Retrieve the ids of the thread in the block and of the block in the grid
