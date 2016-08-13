@@ -45,8 +45,8 @@ class TestRK4(unittest.TestCase):
         RK4_solver_y = RK4_solver.solve(RK4_solver.x0+intervalSize)[0, 0, :]
         SCI_solver.integrate(RK4_solver.x0)
 
-        # Test that both data are almost the same, up to 3 decimal places
-        np.testing.assert_almost_equal(RK4_solver_y, SCI_solver.y, decimal=5)
+        # Test that both data are almost the same, up to 4 decimal places
+        np.testing.assert_almost_equal(RK4_solver_y, SCI_solver.y, decimal=4)
 
 
     @given(floats(0.01, 9.0))
@@ -65,7 +65,7 @@ class TestRK4(unittest.TestCase):
         RK4_solver_y = RK4_solver.solve(RK4_solver.x0 + intervalSize)[0, 0, :]
         Ai, Aip, Bi, Bip = airy(RK4_solver.x0)
 
-        # Test that both data are almost the same, up to 3 decimal places
+        # Test that both data are almost the same, up to 6 decimal places
         np.testing.assert_almost_equal(RK4_solver_y, [Ai, Aip], decimal=6)
 
 if __name__ == '__main__':

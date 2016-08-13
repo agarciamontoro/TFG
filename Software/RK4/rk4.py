@@ -32,24 +32,41 @@ class RK4Solver:
         y0: A numpy array storing the state of the system.
     """
 
+
     # TODO: Make tolerances a SYSTEMS_SIZE-length array
     def __init__(self, x0, y0, dx, systemFunctions, relativeTol=1e-6,
-                 absoluteTol=1e-12, debug=False):
+                 absoluteTol=1e-12, safe=0.9, fac1=0.2, fac2=10.0, beta=0.04,
+                 uround=2.3e-16, debug=False):
         """Builds the RungeKutta4 solver.
 
         Args:
-            x0: A real number containing the time where the initial conditions
-                y0 are placed.
-            y0: A :math:`(w, h, n)` shaped numpy array of initial conditions,
-                where :math:`w` and :math:`h` are the widht and height of the
-                matrix and :math:`n` the number of initial conditions, that
-                shall be the same as the number of equations in the system. The
-                solver forces the types of x0 and dx to be the same as the type
-                of y0.
-            dx: A real number containing the step size for the evolution of the
-                system.
+            x0 (float): Independent variable value in the initial conditions.
+            y0 (NumPy array): A :math:`(w, h, n)` shaped numpy array of initial
+                conditions, where :math:`w` and :math:`h` are the widht and
+                height of the matrix and :math:`n` the number of initial
+                conditions, that shall be the same as the number of equations
+                in the system. The solver forces the types of x0 and dx to be
+                the same as the type of y0.
+            dx (float): Inital step size provided to the automatic step size
+                detector as a first try.
             systemFunctions: A list of :math:`n` strings containing the
                 functions of the system, written in C.
+            relativeTol (float): Relative tolerance for the local error
+                estimation. Defaults to 1e-6.
+            absoluteTol (float): Absolute tolerance for the local error
+                estimation. Defaults to 1e-12.
+            safe (float): Safe factor for the computation of the step size.
+                Deafaults to 0.9.
+            fac1 (float): Minimum factor difference between two successive step
+                sizes.
+            fac2 (float): Maximum factor difference between two successive step
+                sizes.
+            beta (float): Stabilized step size control factor. Defaults to
+                0.04.
+            uround (float): Rounding unit. Defaults to 2.3e-16.
+            debug (bool): Switch to print out debug messages while running the
+                CUDA kernel.
+
 
         Example:
             Let :math:`y''(x) = -25y(x)` be the equation to solve. If we make
@@ -128,6 +145,13 @@ class RK4Solver:
                                      self.SYSTEM_SIZE).astype(self.type)
         self.absoluteTolGPU = gpuarray.to_gpu(self.absoluteTol)
 
+        # Algorithm parameters
+        self.safe = np.array(safe).astype(self.type)
+        self.fac1 = np.array(fac1).astype(self.type)
+        self.fac2 = np.array(fac2).astype(self.type)
+        self.beta = np.array(beta).astype(self.type)
+        self.uround = np.array(uround).astype(self.type)
+
         # Debug switch
         self.debug = debug
 
@@ -193,22 +217,18 @@ class RK4Solver:
 
         Iteratively calls the DOPRI5 solver to evolve the system between x0 and
         xEnd, automatically adapting the step size and minimizing the local
-        errors, that should be roughly below rtoler*abs(y[i])+atoler.
+        errors, that should be roughly below relativeTol*abs(y[i])+absoluteTol.
 
         Args:
-            xEnd: A real number with the end of the interval where the system
-                will be evolved; i.e., the system will take as initial
-                conditions :math:`(x_0, y_0)` and will compute the value at
-                :math:`(x_{end}, y_{end})`.
+            xEnd (float): End of the interval where the system will be evolved;
+                i.e., the solver will take as initial conditions :math:`(x_0,
+                y_0)` and will compute the value at :math:`(x_{end}, y_{end})`.
 
         Returns:
-            Numpy array: A :math:`(w, h, n)` shaped numpy array containing
+            NumPy array: A :math:`(w, h, n)` shaped numpy array containing
                 :math:`y_{end}`, the state of the system at :math:`x_{end}`,
                 where :math:`w` and :math:`h` are the widht and height of the
-                matrix and :math:`n` the number of initial conditions, that
-                shall be the same as the number of equations in the system. The
-                solver forces the types of x0 and dx to be the same as the type
-                of y0.
+                matrix and :math:`n` the number of initial conditions.
 
         """
 
@@ -224,11 +244,11 @@ class RK4Solver:
             np.array(xEnd-self.x0).astype(self.type),
             self.relativeTolGPU,
             self.absoluteTolGPU,
-            np.array(0.9).astype(self.type),        # safe
-            np.array(0.2).astype(self.type),        # fac1
-            np.array(10.0).astype(self.type),       # fac2
-            np.array(0.04).astype(self.type),       # beta
-            np.array(2.3e-16).astype(self.type),    # uround
+            self.safe,
+            self.fac1,
+            self.fac2,
+            self.beta,
+            self.uround,
 
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes one RK4 step for a single initial condition
