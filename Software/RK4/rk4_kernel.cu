@@ -82,7 +82,6 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
 
         // Local errors
         __shared__ Real errors[SYSTEM_SIZE];
-        Real delta, R = 0.0;
         Real err;
 
         // Initial values for the loop variables
