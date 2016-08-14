@@ -28,12 +28,15 @@ class RK4Solver:
     itself, using CUDA.
 
     Attributes:
-        x0: A real with the value of the time the system is being solved.
-        y0: A numpy array storing the state of the system.
+        x0 (float): Current value of the independent variable of the system
+            status.
+        y0 (NumPy array): A :math:`(w, h, n)` shaped numpy array containing
+            :math:`y_0`, the state of the system at :math:`x_0`,
+            where :math:`w` and :math:`h` are the widht and height of the
+            matrix and :math:`n` the number of initial conditions.
     """
 
-
-    # TODO: Make tolerances a SYSTEMS_SIZE-length array
+    # TODO: Make tolerances a SYSTEM_SIZE-length array
     def __init__(self, x0, y0, dx, systemFunctions, relativeTol=1e-6,
                  absoluteTol=1e-12, safe=0.9, fac1=0.2, fac2=10.0, beta=0.04,
                  uround=2.3e-16, debug=False):

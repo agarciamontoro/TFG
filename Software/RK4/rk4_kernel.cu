@@ -42,7 +42,6 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
                           Real hmax, void* globalRtoler, void* globalAtoler, Real safe, Real fac1, Real fac2, Real beta,
                           Real uround){
 
-
     // Retrieve the ids of the thread in the block and of the block in the grid
     int threadId = threadIdx.x + threadIdx.y * blockDim.x;
     int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
@@ -245,18 +244,14 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
             h = hnew;
 
             #ifdef DEBUG
-            if(threadId == 0){
-                if(err > 1.){
-                    printf("\n###### CHANGE: err: %.20f, h: %.20f\n\n", err, h);
+                if(threadId == 0){
+                    if(err > 1.){
+                        printf("\n###### CHANGE: err: %.20f, h: %.20f\n\n", err, h);
+                    }
+                    else{
+                        printf("\n###### ======:  err: %.20f, h: %.20f\n\n", err, h);
+                    }
                 }
-                else{
-                    printf("\n###### ======:  err: %.20f, h: %.20f\n\n", err, h);
-                }
-            }
-            #endif
-
-            #ifdef DEBUG
-                last = true;
             #endif
         }while(!last);
 
