@@ -186,6 +186,11 @@ class RK4Solver:
         # Finally, process the template to produce our final text.
         kernel = template.render(templateVars)
 
+        if(self.debug):
+            kernelTmpFile = open("lastKernel.cu", "w")
+            kernelTmpFile.write(kernel)
+            kernelTmpFile.close()
+
         # ======================= KERNEL COMPILATION ======================= #
 
         # Compile the kernel code using pycuda.compiler

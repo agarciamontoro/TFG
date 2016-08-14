@@ -191,6 +191,11 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
                                 + (22./525.)*k6[threadId]
                                 - (1./40.)*k7[threadId]);
 
+            #ifdef DEBUG
+                printf("ThreadId %d - K 1-7: K1:%.20f, K2:%.20f, K3:%.20f, K4:%.20f, K5:%.20f, K6:%.20f, K7:%.20f\n", threadId, k1[threadId], k2[threadId], k3[threadId], k4[threadId], k5[threadId], k6[threadId], k7[threadId]);
+                printf("ThreadId %d - Local: sol: %.20f, error: %.20f\n", threadId, solution[threadId], errors[threadId]);
+            #endif
+
             // Compute scale factor
             // PABLO: Explain the scale factor
             Real sk = atoli + rtoli*fmax(abs(y0), abs(solution[threadId]));
@@ -200,6 +205,10 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
             sqr = (errors[threadId])/sk;
             errors[threadId] = sqr*sqr;
             __syncthreads();
+
+            #ifdef DEBUG
+                printf("ThreadId %d - Diffs: sqr: %.20f, sk: %.20f\n", threadId, sqr, sk);
+            #endif
 
             //PABLO: Explain this technique in detail here. Notice that if someone (i.e. you or me)
             // in the future need to change this and completely forgots (or do not know) how the parallel
@@ -220,13 +229,6 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
             // Compute the total error
             err = sqrt(errors[0]/(Real)SYSTEM_SIZE);
 
-            #ifdef DEBUG
-                printf("ThreadId %d - SOLUS: %.20f, %.20f\n", threadId, solution[threadId], errors[threadId]);
-                printf("ThreadId %d - QUOTI: %.20f, %.20f\n", threadId, sqr, sk);
-                printf("ThreadId %d - K1234: K1:%.7f, K2:%.7f, K3:%.7f, K4:%.7f, K5:%.7f, K6:%.7f\n", threadId, k1[threadId], k2[threadId], k3[threadId], k4[threadId], k5[threadId], k6[threadId]);
-                printf("ThreadId %d - ERROR: %.20f\n", threadId, errors[threadId]);
-            #endif
-
             // Explain this steps in more detail. A brief comment paragraph about what is going to happend and why.
             /* computation of hnew */
             fac11 = pow (err, expo1);
@@ -237,8 +239,8 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
             hnew = h / fac;
 
             #ifdef DEBUG
-                printf("ThreadId %d - PREVH: fac11:%.20f, fac:%.20f, fa11/facold**beta:%.20f, facc2:%.20f, fac2:%.20f\n", threadId, fac11, fac, fac11/pow(facold, beta), facc2, fac2);
-                printf("ThreadId %d - H NEW: %.20f, %.20f\n", threadId, hnew);
+                printf("ThreadId %d - H aux: expo1: %.20f, err: %.20f, fac11: %.20f, facold: %.20f, fac: %.20f\n", threadId, expo1, err, fac11, facold, fac);
+                printf("ThreadId %d - H new: prevH: %.20f, newH: %.20f\n", threadId, hnew);
             #endif
 
             // STEP REJECTED
