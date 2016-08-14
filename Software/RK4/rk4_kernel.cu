@@ -1,3 +1,11 @@
+// PABLO: It's important that we comment the code much more, explaining the steps of the algorithm
+// in a comprehensive way because this is meant to be read and modified by poor guys in science that does not
+// have to full understand ARK4. This does not need to be a brief text-book but a lot more information regarding
+// each step (and more important: What is the porupose of each variable in the algorithm) truly helps to understand how
+// the algorithm works and how the implementation works. And this will make this very pleasent to read in the future.
+
+
+
 #include <stdio.h>
 
 #define SYSTEM_SIZE {{ SYSTEM_SIZE }}
@@ -84,17 +92,20 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
         Real err;
 
         // Initial values for the loop variables
+        // PABLO: Add comment explaining what is what and what is its pourpose.
         Real facold = 1.0E-4;
         Real expo1 = 0.2 - beta * 0.75;
         Real facc1 = 1.0 / fac1;
         Real facc2 = 1.0 / fac2;
 
+        // PABLO: Explain what Error tolerances are and why do you need each one, here or some place else.
         // Error tolerances
         Real* atoler = (Real*) globalAtoler;
         Real* rtoler = (Real*) globalRtoler;
         Real atoli = atoler[threadId];
         Real rtoli = rtoler[threadId];
 
+        // PABLO: EXPLAIN STUFF :)
         // More stuff
         bool last  = false;
         Real fac11, fac;
@@ -102,7 +113,9 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
 
         Real reject = false;
 
-
+        // PABLO: When starting a loop like this, preprend a comment (middle-long extension) explain
+        // what the loop is going to do and what is the WHILE condition that will follows. This improoves
+        // readability
         do{
             // TODO: Check that the step size is not too small
 
@@ -168,6 +181,8 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
             __syncthreads();
 
             // Compute solution and local error
+            // PABLO: More info about local error, which technique is being used, how? Link to the Butcher table...etc.
+            // We do not need a text book about the algorithm but further explanation for the novice is important here.
             solution[threadId] = y1[threadId];
             errors[threadId] = h*((71./57600.)*k1[threadId]
                                 - (71./16695.)*k3[threadId]
@@ -177,12 +192,19 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
                                 - (1./40.)*k7[threadId]);
 
             // Compute scale factor
+            // PABLO: Explain the scale factor
             Real sk = atoli + rtoli*fmax(abs(y0), abs(solution[threadId]));
 
             // Compute the summands of the total error
+            // PABLO: Explain "summands of the total error"
             sqr = (errors[threadId])/sk;
             errors[threadId] = sqr*sqr;
             __syncthreads();
+
+            //PABLO: Explain this technique in detail here. Notice that if someone (i.e. you or me)
+            // in the future need to change this and completely forgots (or do not know) how the parallel
+            // reduce works this will not be understanded. Also notice that this needs to be further explained
+            // because of the power of 2 restriction.
 
             // Add the local errors with the usual reduction technique, storing
             // it in errors[0]. Note that the number of threads has to be a
@@ -205,6 +227,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
                 printf("ThreadId %d - ERROR: %.20f\n", threadId, errors[threadId]);
             #endif
 
+            // Explain this steps in more detail. A brief comment paragraph about what is going to happend and why.
             /* computation of hnew */
             fac11 = pow (err, expo1);
             /* Lund-stabilization */
