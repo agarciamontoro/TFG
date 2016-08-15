@@ -153,8 +153,8 @@ class TestRK4_Airy(unittest.TestCase):
         # Test that both data are almost the same, up to 4 decimal places
         np.testing.assert_almost_equal(RK4_solver_y, [Ai, Aip], decimal=4)
 
-    # @given(floats(max_value=0.), floats(0.01, 9.0))
-    def testAiryAnalyticalNEGATIVE(self, x0=0.0, intervalSize=0.01):
+    @given(floats(max_value=0.), floats(0.01, 9.0))
+    def testAiryAnalyticalNegative(self, x0, intervalSize):
         "Tests Airy ODE y'' = xy against analytical solution with a negative step"
 
         # Assumptions: the initial condition time is not too big
