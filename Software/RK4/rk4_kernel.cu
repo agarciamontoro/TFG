@@ -162,6 +162,11 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
         Real* globalX0 = (Real*)devX0;
         Real x0 = *globalX0;
 
+        // Check the direction of the integration: to the future or to the past
+        // and get the absolute value of the maximum step size.
+        Real integrationDirection = xend - x0 > 0. ? +1. : -1.;
+        hmax = abs(hmax);
+
         // Retrieve the position where the initial conditions this block will
         // work with are.
         // Each block, absolutely identified in the grid by blockId, works with
@@ -233,7 +238,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
             // PHASE 0. Check if the current time x_0 plus the current step
             // (multiplied by a safety factor to prevent steps too small)
             // exceeds the end time x_{end}.
-            if ((x0 + 1.01*h - xend) > 0.0){
+            if ((x0 + 1.01*h - xend) * integrationDirection > 0.0){
               h = xend - x0;
               last = true;
             }
@@ -408,8 +413,10 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
                 // when the step is rejected.
                 hnew = h / fmin(fac1_inverse, fac11/safe);
 
-                // Set reject variable to true for the next step
+                // Set reject variable to true for the next step and make sure
+                // this one is not the last step!
                 reject = true;
+                last = false;
             }
             // ACCEPT STEP if err <= 1.
             else{
@@ -424,13 +431,13 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
 
                 // Assure the new step size does not exceeds the provided
                 // bounds.
-                if (hnew > hmax)
-                    hnew = hmax;
+                if (fabs(hnew) > hmax)
+                    hnew = integrationDirection * hmax;
 
                 // If the previous step was rejected, take the minimum of the
                 // old and new step sizes
                 if (reject)
-                    hnew = fmin(fabs(hnew), fabs(h));
+                    hnew = integrationDirection * fmin(fabs(hnew), fabs(h));
 
                 // Necessary update for next steps: the local y0 variable holds
                 // the current initial condition (now the computed solution)
