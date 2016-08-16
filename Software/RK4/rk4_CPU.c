@@ -22,7 +22,7 @@
 #include <time.h>
 
 #define SYSTEM_SIZE 2
-
+#define MAXBLOCKSIZE 250
 typedef double Real;
 
 /**
@@ -430,11 +430,9 @@ void computeComponent(Real x, Real* y, Real* f){
     } // Initial conditions for
 }
 
-int main(){
-    const int maxBlockSize = 500;
-    Real* initCond = (Real*) malloc(initCondsNumber *
-                                    SYSTEM_SIZE*sizeof(Real));
-
+int main(int argc, char* argv[]){
+	fprintf(stderr,"Holi");
+    Real initCond[MAXBLOCKSIZE * MAXBLOCKSIZE * SYSTEM_SIZE * sizeof(Real)];
     Real globalRtoler[SYSTEM_SIZE];
     Real globalAtoler[SYSTEM_SIZE];
 
@@ -456,7 +454,7 @@ int main(){
     Real xend = -5.;
     int initCondsNumber;
 
-    for(int blockSize = 1; blockSize <= maxBlockSize; blockSize++) {
+    for(int blockSize = 1; blockSize <= MAXBLOCKSIZE; blockSize++) {
         initCondsNumber = blockSize*blockSize;
 
         for(int i=0; i<initCondsNumber*SYSTEM_SIZE; i++){
@@ -464,11 +462,13 @@ int main(){
         }
 
         start = clock();
-
         RK4Solve(x0, xend, initCond, h, xend-x0, globalRtoler, globalAtoler,
                  safe, fac1, fac2, beta, uround, initCondsNumber);
-
         end = clock();
-        printf( "%f\n", (end-start)/(double)CLOCKS_PER_SEC );
+
+        Real timeEx = (end-start)/(double)CLOCKS_PER_SEC;
+
+        printf("%f\n", timeEx);
+        fprintf(stderr, "%d: %f\n", blockSize, timeEx);
     }
 }
