@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
+#include <time.h>
 
 #define SYSTEM_SIZE 2
 
@@ -129,7 +130,7 @@ void computeComponent(Real x, Real* y, Real* f){
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- void RK4Solve(Real* devX0, Real xend, Real* devInitCond, Real h,
+ void RK4Solve(Real originalX0, Real xend, Real* devInitCond, Real h,
                           Real hmax, Real* globalRtoler, Real* globalAtoler, Real safe, Real fac1, Real fac2, Real beta,
                           Real uround, int conditionsNumber){
     #ifdef DEBUG
@@ -144,12 +145,9 @@ void computeComponent(Real x, Real* y, Real* f){
     // TODO: Implement the hinit method
     Real hnew;
 
-    // Retrieve the initial time and store it in x0.
-    Real x0 = *devX0;
-
     // Check the direction of the integration: to the future or to the past
     // and get the absolute value of the maximum step size.
-    Real integrationDirection = xend - x0 > 0. ? +1. : -1.;
+    Real integrationDirection = xend - originalX0 > 0. ? +1. : -1.;
     hmax = abs(hmax);
 
     Real y0[SYSTEM_SIZE];
@@ -172,7 +170,9 @@ void computeComponent(Real x, Real* y, Real* f){
     Real* atoler = (Real*) globalAtoler;
     Real* rtoler = (Real*) globalRtoler;
 
+    Real x0;
     for(int condition = 0; condition < conditionsNumber; condition++){
+        x0 = originalX0;
         // Retrieve the position where the initial conditions this block will
         // work with are.
         // Each block, absolutely identified in the grid by blockId, works with
@@ -425,14 +425,13 @@ void computeComponent(Real x, Real* y, Real* f){
         // Aaaaand that's all, folks! Update system value (each thread its
         // result) and system time (do it just once) in the global memory :)
         for(int i=0; i<SYSTEM_SIZE; i++){
-            devInitCond[i] = solution[i];
+            initCond[i] = solution[i];
         }
-        *devX0 = x0;
     } // Initial conditions for
 }
 
 int main(){
-    int initCondsNumber = 1;
+    const int maxBlockSize = 500;
     Real* initCond = (Real*) malloc(initCondsNumber *
                                     SYSTEM_SIZE*sizeof(Real));
 
@@ -451,14 +450,25 @@ int main(){
     Real beta=0.04;
     Real uround=2.3e-16;
 
-    initCond[0] = 1.;
-    initCond[1] = 1.;
+    clock_t start, end;
 
     Real x0 = -10.;
     Real xend = -5.;
+    int initCondsNumber;
 
-    RK4Solve(&x0, xend, initCond, h, xend-x0, globalRtoler, globalAtoler,
-             safe, fac1, fac2, beta, uround, initCondsNumber);
+    for(int blockSize = 1; blockSize <= maxBlockSize; blockSize++) {
+        initCondsNumber = blockSize*blockSize;
 
-    printf("%.8f: [%.8f %.8f]\n", x0, initCond[0], initCond[1]);
+        for(int i=0; i<initCondsNumber*SYSTEM_SIZE; i++){
+            initCond[i] = 1.;
+        }
+
+        start = clock();
+
+        RK4Solve(x0, xend, initCond, h, xend-x0, globalRtoler, globalAtoler,
+                 safe, fac1, fac2, beta, uround, initCondsNumber);
+
+        end = clock();
+        printf( "%f\n", (end-start)/(double)CLOCKS_PER_SEC );
+    }
 }

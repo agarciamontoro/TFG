@@ -71,12 +71,8 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
  * function, using the initial conditions specified in devX0 and devInitCond,
  * and returning the solution found at xend.
  *
- * @param[in,out]  void* devX0        Device pointer to a Real specifying the
- *                       start of the integration interval [x_0, x{end}]. The
- *                       last x for which the system is computed (if there is
- *                       no problem, it should be x_{end}) replaces this value
- *                       at the end of the algorithm, in order to let the user
- *                       know the finish place of the integration process.
+ * @param[in,out]  Real  x0           Start of the integration interval
+ * 						 [x_0, {end}].
  * @param[in]      Real  xend         End of the integration interval
  *                       [x_0, x{end}].
  * @param[in,out]  void  *devInitCond Device pointer to a serialized matrix of
@@ -131,7 +127,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- __global__ void RK4Solve(void* devX0, Real xend, void *devInitCond, Real h,
+ __global__ void RK4Solve(Real x0, Real xend, void *devInitCond, Real h,
                           Real hmax, void* globalRtoler, void* globalAtoler, Real safe, Real fac1, Real fac2, Real beta,
                           Real uround){
 
@@ -157,10 +153,6 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
         // Loop variable to manage the automatic step size detection.
         // TODO: Implement the hinit method
         Real hnew;
-
-        // Retrieve the initial time and store it in x0.
-        Real* globalX0 = (Real*)devX0;
-        Real x0 = *globalX0;
 
         // Check the direction of the integration: to the future or to the past
         // and get the absolute value of the maximum step size.
@@ -464,11 +456,8 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
         }while(!last);
 
         // Aaaaand that's all, folks! Update system value (each thread its
-        // result) and system time (do it just once) in the global memory :)
+        // result) in the global memory :)
         globalInitCond[threadId] = solution[threadId];
-        if(threadId == 0){
-            *globalX0 = x0;
-        }
 
     } // If threadId < SYSTEM_SIZE
 }

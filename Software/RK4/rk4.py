@@ -245,7 +245,7 @@ class RK4Solver:
         # Call the kernel on the card
         self.RK4Solve(
             # Inputs
-            driver.InOut(self.x0),
+            self.x0,
             np.array(xEnd).astype(self.type),
             self.y0GPU,
             self.step,
@@ -273,6 +273,7 @@ class RK4Solver:
         self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
 
         # Update the new state of the system
+        self.x0 = xEnd
         self.y0 = self.y0GPU.get()
 
         return(self.y0)
