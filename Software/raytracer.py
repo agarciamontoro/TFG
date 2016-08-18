@@ -1,10 +1,12 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import newton
-
-
+from tqdm import tqdm
 from numpy import sin, cos, arccos, arctan2, sqrt
 from numpy import pi as Pi
+from multiprocessing import Pool
+import os
+os.system("taskset -p 0xff %d" % os.getpid())
 
 # Convention for pixel colors
 CELESTIAL_SPHERE = 1
@@ -364,17 +366,21 @@ if __name__ == '__main__':
     imageCols = camSensorShape[1]
     image = np.empty((imageRows, imageCols, 3))
 
-    # Raytracing!
-    for row in range(imageRows):
-        for col in range(imageCols):
-            # Create actual ray (the center pixel is the zero in the pixel
-            # coordinate system)
-            ray = camera.createRay(row - imageRows/2, col - imageCols/2,
+    def calculate_ray_parallel( pixel_pos ):
+        row,col = pixel_pos
+        ray = camera.createRay(row - imageRows/2, col - imageCols/2,
                                    kerr, blackHole)
+        # Compute pixel and store it in the image
+        pixel = ray.traceRay(camera, blackHole)
+        return pixel_pos,[pixel, pixel, pixel]
+    # Raytracing!
 
-            # Compute pixel and store it in the image
-            pixel = ray.traceRay(camera, blackHole)
-            image[row, col] = [pixel, pixel, pixel]
+    pool = Pool(8)
+    conditions = [(x,y) for x in range(imageRows) for y in range(imageCols)]
+    results = pool.map(calculate_ray_parallel,conditions)
+    for pixel_pos,result in results:
+        x,y = pixel_pos
+        image[x,y] = result
 
     # Show image
 
