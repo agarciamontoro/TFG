@@ -143,7 +143,7 @@ class Camera:
         # Let's compute the pixel's position in the camera's reference frame,
         # multiplying the pixel coordinate for the widht and height of a single
         # pixel and naming the axes as explained before
-        pixelY = - col * self.pixelWidth
+        pixelY = -col * self.pixelWidth
         pixelZ = row * self.pixelHeight
 
         # Retrieve the focal length to ease the notation
@@ -175,17 +175,17 @@ class Camera:
         # rayPhi = arctan2(x, d) + Pi
 
         # Let's try another thing
-        # P = (-1, pixelY, pixelZ)
-        # F = (0, 0, 0) # Focal point is behind the image (in the positive X axis)
+        # P = (0, pixelY, pixelZ)
+        # F = (-d, 0, 0) # Focal point is behind the image (in the positive X axis)
         #
-        # FP = (-1, pixelY, pixelZ)
-
+        # PF = (-d, -pixelY,- pixelZ)
+        # FP = (-d, )
         # rayPhi = arctan2(pixelY, -d)
         # rayTheta = arccos(-pixelX / sqrt(d**2 + pixelX**2 + pixelY**2))
 
         r = sqrt(d**2 + pixelY**2 + pixelZ**2)
-        rayTheta = arccos(pixelZ / r)
-        rayPhi = arctan2(pixelY, -1)
+        rayTheta = arccos(-pixelZ / r)
+        rayPhi = arctan2(-pixelY, -d)
 
         # rayTheta = arctan2(y, np.sqrt(D**2 - x**2))
         # rayPhi = arctan2(x, D)
@@ -348,8 +348,8 @@ if __name__ == '__main__':
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 0.1
-    camSensorShape = (500, 500)  # (Rows, Columns)
+    camFocalLength = 1
+    camSensorShape = (300, 300)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants above
@@ -366,21 +366,21 @@ if __name__ == '__main__':
     imageCols = camSensorShape[1]
     image = np.empty((imageRows, imageCols, 3))
 
-    def calculate_ray_parallel( pixel_pos ):
-        row,col = pixel_pos
+    def calculate_ray_parallel(pixel_pos):
+        row, col = pixel_pos
         ray = camera.createRay(row - imageRows/2, col - imageCols/2,
-                                   kerr, blackHole)
+                               kerr, blackHole)
         # Compute pixel and store it in the image
         pixel = ray.traceRay(camera, blackHole)
-        return pixel_pos,[pixel, pixel, pixel]
+        return pixel_pos, [pixel, pixel, pixel]
     # Raytracing!
 
     pool = Pool(8)
-    conditions = [(x,y) for x in range(imageRows) for y in range(imageCols)]
-    results = pool.map(calculate_ray_parallel,conditions)
-    for pixel_pos,result in results:
-        x,y = pixel_pos
-        image[x,y] = result
+    conditions = [(x, y) for x in range(imageRows) for y in range(imageCols)]
+    results = pool.map(calculate_ray_parallel, conditions)
+    for pixel_pos, result in results:
+        x, y = pixel_pos
+        image[x, y] = result
 
     # Show image
 
