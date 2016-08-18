@@ -105,16 +105,17 @@ class Camera:
 
         # Sensor height and width in physical units
         H, W = sensorSize[0], sensorSize[1]
+        self.imageRatio = W / H
 
         # Number of rows and columns of pixels in the sensor
         rows, cols = sensorShape[0], sensorShape[1]
 
         # Compute width and height of a pixel
-        self.pixelWidth = W / cols
-        self.pixelHeight = H / rows
+        self.pixelWidth = self.imageRatio * W / cols
+        self.pixelHeight = self.imageRatio * H / rows
 
-        self.minTheta = self.minPhi = np.inf
-        self.maxTheta = self.maxPhi = -np.inf
+        self.minTheta, self.minPhi = self._pixelToRay(-H/2, -W/2)
+        self.maxTheta, self.maxPhi = self._pixelToRay(H/2, W/2)
 
     def setSpeed(self, kerr, blackHole):
         # Retrieve blackhole's spin and some Kerr constants
@@ -127,7 +128,7 @@ class Camera:
         Omega = 1. / (a + self.r**(3./2.))
         self.beta = pomega * (Omega-omega) / alpha
 
-    def createRay(self, row, col, kerr, blackHole):
+    def _pixelToRay(self, row, col):
         # Compute position of the point in cartesian coordinates.
         # We are basically transforming from pixel coordinates (with zero in
         # the center of the image) to cartesian oordinates in the camera's
@@ -174,27 +175,28 @@ class Camera:
         # rayTheta = (arctan2(sqrt(pixelX**2. + pixelY**2.), d) + Pi)/2.
         # rayPhi = arctan2(x, d) + Pi
 
-        # Let's try another thing
-        # P = (0, pixelY, pixelZ)
-        # F = (-d, 0, 0) # Focal point is behind the image (in the positive X axis)
+        # Ok, this thing is way asier than the discussion before; see: take the
+        # camera's reference frame (Z down-up, Y tangential to the orbit, X
+        # perpendicular, going to the black hole), place the image sensor
+        # there, with its center in the (0,0,0) and now place a focal point F
+        # just behind it, in the point (-d, 0, 0), where d is the focal length.
+        # The direction of the incoming ray for a pixel P is the direction of
+        # the vector PF:
+        #   P = (0, pixelY, pixelZ)
+        #   F = (-d, 0, 0)
         #
-        # PF = (-d, -pixelY,- pixelZ)
-        # FP = (-d, )
-        # rayPhi = arctan2(pixelY, -d)
-        # rayTheta = arccos(-pixelX / sqrt(d**2 + pixelX**2 + pixelY**2))
-
+        #   PF = (-d, -pixelY,- pixelZ)
+        #
+        # Now, convert those cartesian coordinates to spherical coordinates in
+        # the usual manner; done!
         r = sqrt(d**2 + pixelY**2 + pixelZ**2)
         rayTheta = arccos(-pixelZ / r)
         rayPhi = arctan2(-pixelY, -d)
 
-        # rayTheta = arctan2(y, np.sqrt(D**2 - x**2))
-        # rayPhi = arctan2(x, D)
+        return rayTheta, rayPhi
 
-        self.maxTheta = rayTheta if rayTheta > self.maxTheta else self.maxTheta
-        self.maxPhi = rayPhi if rayPhi > self.maxPhi else self.maxPhi
-
-        self.minTheta = rayTheta if rayTheta < self.minTheta else self.minTheta
-        self.minPhi = rayPhi if rayPhi < self.minPhi else self.minPhi
+    def createRay(self, row, col, kerr, blackHole):
+        rayTheta, rayPhi = self._pixelToRay(row, col)
 
         # We can now create and return our ray :)
         return Ray(rayTheta, rayPhi, self, kerr, blackHole)
@@ -340,7 +342,7 @@ class Ray:
 
 if __name__ == '__main__':
     # Black hole spin
-    spin = 0.999
+    spin = 0.000001
 
     # Camera position
     camR = 20
@@ -349,8 +351,8 @@ if __name__ == '__main__':
 
     # Camera lens properties
     camFocalLength = 1
-    camSensorShape = (300, 300)  # (Rows, Columns)
-    camSensorSize = (2, 2)       # (Height, Width)
+    camSensorShape = (500, 750)  # (Rows, Columns)
+    camSensorSize = (2, 3)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants above
     blackHole = BlackHole(spin)
@@ -373,8 +375,8 @@ if __name__ == '__main__':
         # Compute pixel and store it in the image
         pixel = ray.traceRay(camera, blackHole)
         return pixel_pos, [pixel, pixel, pixel]
-    # Raytracing!
 
+    # Raytracing!
     pool = Pool(8)
     conditions = [(x, y) for x in range(imageRows) for y in range(imageCols)]
     results = pool.map(calculate_ray_parallel, conditions)
@@ -383,15 +385,14 @@ if __name__ == '__main__':
         image[x, y] = result
 
     # Show image
-
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
-    strT = r'$\theta \in$ [' + str(camera.minTheta) + ', ' + str(camera.maxTheta) + ']'
-    strP = r'$\phi \in$ [' + str(camera.minPhi) + ', ' + str(camera.maxPhi) + ']'
+    strT = r'$\theta \in [' + str(camera.minTheta) + ', ' + str(camera.maxTheta) + ']$'
+    strP = r'$\phi \in [' + str(camera.minPhi) + ', ' + str(camera.maxPhi) + ']$'
 
-    ax.annotate(strT, xy=(10, 25), backgroundcolor='white')
-    ax.annotate(strP, xy=(10, 50), backgroundcolor='white')
-    ax.annotate(r'$a = $'+str(spin), xy=(10, 75), backgroundcolor='white')
+    ax.annotate(strT, xy=(10, 30), backgroundcolor='white')
+    ax.annotate(strP, xy=(10, 60), backgroundcolor='white')
+    ax.annotate(r'$a = '+str(spin)+'$', xy=(10, 90), backgroundcolor='white')
     plt.imshow(image, interpolation='nearest')
     plt.show()
