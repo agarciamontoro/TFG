@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from scipy.optimize import newton
 
 
-from numpy import sin, cos, arccos, sqrt
+from numpy import sin, cos, arccos, arctan2, sqrt
 from numpy import pi as Pi
 
 # Convention for pixel colors
@@ -52,7 +52,7 @@ class BlackHole:
 
 
 class KerrMetric:
-    def __init__(self, blackHole, camera):
+    def __init__(self, camera, blackHole):
         # Retrieve blackhole's spin and its square
         a = blackHole.a
         a2 = blackHole.a2
@@ -83,7 +83,7 @@ class KerrMetric:
 
 # Dummy object for the camera (computation of the speed is done here)
 class Camera:
-    def __init__(self, r, theta, phi, focalLenght, lensAngle):
+    def __init__(self, r, theta, phi, focalLenght, sensorShape, sensorSize):
         # Define position
         self.r = r
         self.r2 = r**2
@@ -92,9 +92,29 @@ class Camera:
 
         # Define lens properties
         self.focalLenght = focalLenght
-        self.lensAngle = lensAngle
 
-    def setSpeed(self, blackHole, kerr):
+        # Define sensor properties
+        self.sensorSize = sensorSize
+        self.sensorShape = sensorShape
+
+        # Compute the width and height of a pixel, taking into account the
+        # physical measure of the sensor (sensorSize) and the number of pixels
+        # per row and per column on the sensor (sensorShape)
+
+        # Sensor height and width in physical units
+        H, W = sensorSize[0], sensorSize[1]
+
+        # Number of rows and columns of pixels in the sensor
+        rows, cols = sensorShape[0], sensorShape[1]
+
+        # Compute width and height of a pixel
+        self.pixelWidth = W / cols
+        self.pixelHeight = H / rows
+
+        self.minTheta = self.minPhi = np.inf
+        self.maxTheta = self.maxPhi = -np.inf
+
+    def setSpeed(self, kerr, blackHole):
         # Retrieve blackhole's spin and some Kerr constants
         a = blackHole.a
         pomega = kerr.pomega
@@ -105,44 +125,88 @@ class Camera:
         Omega = 1. / (a + self.r**(3./2.))
         self.beta = pomega * (Omega-omega) / alpha
 
+    def createRay(self, x, y, kerr, blackHole):
+        # Compute position of the point in cartesian coordinates.
+        # We are basically transforming from pixel coordinates (with zero in
+        # the center of the image) to cartesian oordinates in the camera's
+        # reference frame. The user provides the index of the pixel in the
+        # sensor matrix (x,y) and we compute its position in the camera's
+        # reference frame, multiplying the pixel coordinate for the widht and
+        # height of a single pixel.
+        pixelX = x * self.pixelWidth
+        pixelY = y * self.pixelHeight
+
+        # Retrieve the focal length to ease the notation
+        d = self.focalLenght
+
+        # Now we have to compute the ray's direction in spherical coordinates
+        # in the camera's reference frame following the pinhole camera model:
+        # from the pixel's position in the camera's reference frame, we trace a
+        # ray passing through the pinhole; then, we measure the angle between
+        # this ray and the center axis (the line passing through the center of
+        # the sensor and through the pinhole) and call it theta; finally, we
+        # project the ray to the plane that contains both the center axis and
+        # the horizontal axis (the equatorial plane), we measure the angle
+        # between this projection and the center axis and call it phi.
+        # The following conventions is now used: imagine that you place
+        # yourself at the very center of the sensor, looking at the black hole;
+        # then:
+        #    - The angle theta comes from over your head (where theta = 0) and
+        #    goes all the way down, in front of you (where theta = pi/2), until
+        #    it reaches your feet (where theta = Pi).
+        #    - The angle phi starts just at your back (where phi = 0), start
+        #    turning to your right arm, where you first see it (phi = pi/2),
+        #    goes right in front of you (where phi = pi), reaches your left arm
+        #    (where phi = 3pi/2) and disappear behind your back again, until it
+        #    reaches its original position.
+        # Following this method, the spherical coordinates are computed as
+        # follows:
+        # rayTheta = (arctan2(sqrt(pixelX**2. + pixelY**2.), d) + Pi)/2.
+        # rayPhi = arctan2(x, d) + Pi
+
+        # Let's try another thing
+        # P = (0, x, y)
+        # F = (-d, 0, 0)
+        #
+        # PF = (-d, -x, -y)
+
+        rayPhi = arctan2(-pixelX, -d)
+        rayTheta = arccos(-pixelY / sqrt(d**2 + pixelX**2 + pixelY**2))
+
+        # rayTheta = arctan2(y, np.sqrt(D**2 - x**2))
+        # rayPhi = arctan2(x, D)
+
+        self.maxTheta = rayTheta if rayTheta > self.maxTheta else self.maxTheta
+        self.maxPhi = rayPhi if rayPhi > self.maxPhi else self.maxPhi
+
+        self.minTheta = rayTheta if rayTheta < self.minTheta else self.minTheta
+        self.minPhi = rayPhi if rayPhi < self.minPhi else self.minPhi
+
+        # We can now create and return our ray :)
+        return Ray(rayTheta, rayPhi, self, kerr, blackHole)
+
 
 # Dummy object for a ray (pixel->spherical transformation is done here)
 class Ray:
-    def __init__(self, x, y, camera, kerr):
-        self.x = x
-        self.y = y
-
-        # Mío 1
-        # self.theta = np.arctan2(y, np.sqrt(D**2 - x**2))
-        # self.phi = np.arctan2(x, D)
-
-        # # Pablo
-        # self.theta = np.arctan2(np.sqrt(D**2.+x**2.), y)
-        # self.phi = np.arctan2(x, D)
-
-        # # Mío 2
-        # self.theta = np.arctan2(np.sqrt(x**2. + y**2.), D) + np.pi
-        # self.phi = np.arctan2(y, D) + np.pi/2
-
-        # Compute spherical coordinates (theta, phi), in the camera's local
-        # sky, for pixel (x, y)
-        self.theta = x
-        self.phi = y
+    def __init__(self, theta, phi, camera, kerr, blackHole):
+        # Set direction in the camera's reference frame
+        self.theta = theta
+        self.phi = phi
 
         # Compute all necessary information for the ray
-        self.setNormal()
-        self.setDirectionOfMotion(camera)
-        self.setCanonicalMomenta(kerr)
-        self.setConservedQuantities(camera, blackHole)
+        self._setNormal()
+        self._setDirectionOfMotion(camera)
+        self._setCanonicalMomenta(kerr)
+        self._setConservedQuantities(camera, blackHole)
 
-    def setNormal(self):
+    def _setNormal(self):
         # Cartesian components of the unit vector N pointing in the direction
         # of the incoming ray
         self.Nx = sin(self.theta) * cos(self.phi)
         self.Ny = sin(self.theta) * sin(self.phi)
         self.Nz = cos(self.theta)
 
-    def setDirectionOfMotion(self, camera):
+    def _setDirectionOfMotion(self, camera):
         # Compute denominator, common to all the cartesian components
         den = 1. - camera.beta * self.Ny
 
@@ -160,7 +224,7 @@ class Ray:
         self.nTheta = -self.nZ
         self.nPhi = self.nY
 
-    def setCanonicalMomenta(self, kerr):
+    def _setCanonicalMomenta(self, kerr):
         # Retrieve constants
         ro = kerr.ro
         delta = kerr.delta
@@ -179,12 +243,12 @@ class Ray:
         # Set conserved energy to unity. See (A.11)
         self.pt = -1
 
-        # Compute the canonical momenta See (A.11)
+        # Compute the canonical momenta. See (A.11)
         self.pR = E * ro * nR / sqrt(delta)
         self.pTheta = E * ro * nTheta
         self.pPhi = E * pomega * nPhi
 
-    def setConservedQuantities(self, camera, blackHole):
+    def _setConservedQuantities(self, camera, blackHole):
         # Simplify notation
         theta = camera.theta
         a2 = blackHole.a2
@@ -198,7 +262,7 @@ class Ray:
         self.b = b
         self.q = q
 
-    def traceRay(self, blackHole, camera, kerr):
+    def traceRay(self, camera, blackHole):
         # Simplify notation
         b = self.b
         q = self.q
@@ -206,8 +270,6 @@ class Ray:
         b2 = blackHole.b2
         a = blackHole.a
         a2 = blackHole.a2
-        # delta = kerr.delta
-
 
         # Compute r0 such that b0(r0) = b. The computation of this number
         # involves complex numbers (there is a square root of a negative
@@ -255,14 +317,6 @@ class Ray:
             realIndices = np.isreal(roots)
             rUp = np.amax(roots[realIndices]) if realIndices.any() else -np.inf
 
-            # def R(r):
-            #     return (r**2. + a2 - a*b)**2. - (r**2-2*r+a2)*((b-a)**2. + q)
-            #
-            # P = sqrt(delta*((b-a)*(b-a) + q))
-            # rUp1 = -a2 - P + a*b
-            # rUp2 = -a2 + P + a*b
-            # rUp = rUp1 if rUp1 > rUp2 else rUp2
-
             # Decide if the camera radius is lower than rUp
             if camera.r < rUp:
                 return HORIZON
@@ -272,53 +326,55 @@ class Ray:
 
 if __name__ == '__main__':
     # Black hole spin
-    spin = 0.0001
+    spin = 0.999
 
     # Camera position
-    camR = 8
+    camR = 20
     camTheta = Pi/2
     camPhi = 0
 
     # Camera lens properties
     camFocalLength = 1
-    camLensAngle = Pi/2
+    camSensorShape = (500, 500)  # (Rows, Columns)
+    camSensorSize = (2, 2)
 
     # Create the black hole, the camera and the metric with the constants above
     blackHole = BlackHole(spin)
-    camera = Camera(camR, camTheta, camPhi, camFocalLength, camLensAngle)
-    kerr = KerrMetric(blackHole, camera)
+    camera = Camera(camR, camTheta, camPhi, camFocalLength, camSensorShape,
+                    camSensorSize)
+    kerr = KerrMetric(camera, blackHole)
 
     # Set camera's speed (it needs the kerr metric constants)
-    camera.setSpeed(blackHole, kerr)
+    camera.setSpeed(kerr, blackHole)
 
     # Define image parameters
-    imageRows = 500
-    imageCols = 500
+    imageRows = camSensorShape[0]
+    imageCols = camSensorShape[1]
     image = np.empty((imageRows, imageCols, 3))
-
-    # Variables to sweep the image
-    arcLengthHoriz = camera.lensAngle
-    arcLengthVert = (imageRows/imageCols) * arcLengthHoriz
-
-    horizStep = arcLengthHoriz/imageCols
-    vertStep = arcLengthVert/imageRows
 
     # Raytracing!
     for row in range(imageRows):
-        # Define ray's theta
-        rayTheta = Pi/2 - arcLengthVert/2 + row*vertStep
-
         for col in range(imageCols):
-            # Define ray's phi
-            rayPhi = Pi + arcLengthHoriz/2 - col*horizStep
-
-            # Create actual ray
-            ray = Ray(rayTheta, rayPhi, camera, kerr)
+            # Create actual ray (the center pixel is the zero in the pixel
+            # coordinate system)
+            ray = camera.createRay(row - imageRows/2, col - imageCols/2,
+                                   kerr, blackHole)
 
             # Compute pixel and store it in the image
-            pixel = ray.traceRay(blackHole, camera, kerr)
+            pixel = ray.traceRay(camera, blackHole)
             image[row, col] = [pixel, pixel, pixel]
 
     # Show image
+    print()
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    strT = r'$\theta \in$ [' + str(camera.minTheta) + ', ' + str(camera.maxTheta) + ']'
+    strP = r'$\phi \in$ [' + str(camera.minPhi) + ', ' + str(camera.maxPhi) + ']'
+
+    ax.annotate(strT, xy=(1, 20))
+    ax.annotate(strP, xy=(1, 40))
+    ax.annotate(r'$a = 0.999$', xy=(1, 60))
     plt.imshow(image, interpolation='nearest')
     plt.show()
