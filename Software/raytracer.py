@@ -2,7 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from scipy.optimize import newton
 from tqdm import tqdm
-from numpy import sin, cos, arccos, arctan2, sqrt
+from numpy import sin, cos, arccos, arctan, arctan2, sqrt
 from numpy import pi as Pi
 from multiprocessing import Pool
 import os
@@ -12,21 +12,8 @@ os.system("taskset -p 0xff %d" % os.getpid())
 CELESTIAL_SPHERE = 1
 HORIZON = 0
 
-# # -------- Functions appearing in the equations for a null geodesic --------
-# # See (A.4)
-# def P(r, theta, b, q):
-#     return r**2. + A2 - A*b
-#
-#
-# def R(r, theta, b, q):
-#     return P(r, theta, b, q)**2. - delta(r, theta)*((b-A)**2. + q)
-#
-#
-# def Z(r, theta, b, q):
-#     return q - np.cos(theta)**2. * ((b**2./(np.sin(theta)**2.)) - A2)
 
-
-# See (A.5)
+# Necessary functions for the algorithm. See (A.5)
 def b0(r, a):
     a2 = a**2
     return - (r**3. - 3.*(r**2.) + a2*r + a2) / (a*(r-1.))
@@ -105,17 +92,30 @@ class Camera:
 
         # Sensor height and width in physical units
         H, W = sensorSize[0], sensorSize[1]
-        self.imageRatio = W / H
 
         # Number of rows and columns of pixels in the sensor
         rows, cols = sensorShape[0], sensorShape[1]
 
         # Compute width and height of a pixel
-        self.pixelWidth = self.imageRatio * W / cols
-        self.pixelHeight = self.imageRatio * H / rows
+        self.pixelWidth = W / cols
+        self.pixelHeight = H / rows
 
-        self.minTheta, self.minPhi = self._pixelToRay(-H/2, -W/2)
-        self.maxTheta, self.maxPhi = self._pixelToRay(H/2, W/2)
+        self.minTheta = self.minPhi = np.inf
+        self.maxTheta = self.maxPhi = -np.inf
+
+        for row in range(H):
+            for col in range(W):
+                theta, phi = self._pixelToRay(row, col)
+
+                self.minTheta = theta if theta < self.minTheta else self.minTheta
+                self.minPhi = phi if phi < self.minPhi else self.minPhi
+
+
+                self.maxTheta = theta if theta > self.maxTheta else self.maxTheta
+                self.maxPhi = phi if phi > self.maxPhi else self.maxPhi
+
+        # self.minTheta, self.minPhi = self._pixelToRay(H/2, W/2)
+        # self.maxTheta, self.maxPhi = self._pixelToRay(-H/2, -W/2)
 
     def setSpeed(self, kerr, blackHole):
         # Retrieve blackhole's spin and some Kerr constants
@@ -144,7 +144,7 @@ class Camera:
         # Let's compute the pixel's position in the camera's reference frame,
         # multiplying the pixel coordinate for the widht and height of a single
         # pixel and naming the axes as explained before
-        pixelY = -col * self.pixelWidth
+        pixelY = - col * self.pixelWidth
         pixelZ = row * self.pixelHeight
 
         # Retrieve the focal length to ease the notation
@@ -189,11 +189,94 @@ class Camera:
         #
         # Now, convert those cartesian coordinates to spherical coordinates in
         # the usual manner; done!
-        r = sqrt(d**2 + pixelY**2 + pixelZ**2)
-        rayTheta = arccos(-pixelZ / r)
-        rayPhi = arctan2(-pixelY, -d)
+        # r = sqrt(d**2 + pixelY**2 + pixelZ**2)
+        # rayTheta = arccos(-pixelZ / r)
+        # rayPhi = arctan2(-pixelY, -d)
+
+        # rayTheta = Pi/2 + arctan(sqrt(pixelZ**2.+pixelY**2.)/d)
+        # rayPhi = Pi + arctan(abs(pixelY)/d)
+
+        # Y = pixelY
+        # Z = pixelZ
+        #
+        # alpha_ = arctan(abs(Z) / sqrt(Y**2 + d**2))
+        # phi_ = arctan(sqrt(Z**2 + Y**2) / d)
+        #
+        # if Z > 0:
+        #     rayTheta = Pi/2 - alpha_
+        # else:
+        #     rayTheta = Pi/2 + alpha_
+        #
+        # if Y > 0:
+        #     rayPhi = Pi + phi_
+        # else:
+        #     rayPhi = Pi - phi_
+
+        # if Y < 0 and Z > 0:
+        #     rayTheta = Pi/2 - alpha_
+        #     rayPhi = Pi + phi_
+        # if Y > 0 and Z > 0:
+        #     rayTheta = Pi/2 - alpha_
+        #     rayPhi = Pi - phi_
+        # if Y < 0 and Z < 0:
+        #     rayTheta = Pi/2 - alpha_
+        #     rayPhi = Pi + phi_
+        # if Y > 0 and Z < 0:
+        #     rayTheta = Pi/2 - alpha_
+        #     rayPhi = Pi - phi_
+        #
+        # if Z == 0:
+        #     rayTheta = Pi/2
+        #     if Y < 0:
+        #         rayPhi = Pi + phi_
+        #     if Y > 0:
+        #         rayPhi = Pi - phi_
+        #
+        # if Y == 0:
+        #     rayPhi = 0
+        #     if Z < 0:
+        #         rayTheta = Pi/2 - alpha_
+        #     if Z > 0:
+        #         rayTheta = Pi/2 + alpha_
+
+        # Place a coordinate system centered in the focal point following
+        # this convention for the axes:
+        #   - The X axis is in the direction of the line that joins the black
+        #   hole and the focal point. The positive part of the axis starts at
+        #   the focal point and goes away from the black hole.
+        #   - The Y axis is tangential to the camera orbit. Its positive part
+        #   goes to the right (the same convention as with the pixels).
+        #   - The Z axis is perpendicular to both of them, pointing upwards.
+        # Now place a spherical coordinate system at the same place in the usual manner; i.e.:
+        #   - Theta starts at zero when aligned with the positive part of Z, goes down until it aligns with the line that joins the system center and the black hole (theta = pi/2) and continues its way until it aligns with the negative part of Z (theta = pi).
+        #   - Phi starts at zero when aligned with the positive part of X
+        #   (going away from the black hole), starts turning to its left (as
+        #   seen from above) until it aligns with the negative part of Y (phi =
+        #   pi/2), continues until it aligns with the line joining the focal
+        #   point and the black hole (again the X axis, but now pointing to the
+        #   black hole) (phi = pi), follows the rotation until it aligns with
+        #   the positive part of Y (phi = 3*pi/2) and finish its travel in the
+        #   original position (phi = 2*pi)
+        # Place the CCD sensor center at the point (-d, 0, 0) and facing the
+        # black hole: the pixels in each of its rows spread over the Y axis and
+        # the pixels of the columns spread over the Z axis.
+        # For every pixel -which has the form (-d, y, z), where y is the number
+        # of the pixel column and z the number of the pixel row-, trace a ray
+        # that starts at (-d, y, z) and passes through the focal points, whose
+        # coordinates are (0, 0, 0). The direction of this ray, as measured by
+        # the specified spherical system, are the following:
+
+        # First compute the position of the pixel in physical units (taking
+        # into accout the sensor size)
+        x0 = col * self.pixelWidth
+        y0 = row * self.pixelHeight
+
+        # Now compute phi and theta
+        rayPhi = Pi - arctan(x0 / d)
+        rayTheta = Pi/2 + arctan(y0 / sqrt(d**2 - x0**2))
 
         return rayTheta, rayPhi
+
 
     def createRay(self, row, col, kerr, blackHole):
         rayTheta, rayPhi = self._pixelToRay(row, col)
@@ -342,7 +425,7 @@ class Ray:
 
 if __name__ == '__main__':
     # Black hole spin
-    spin = 0.000001
+    spin = 0.99999
 
     # Camera position
     camR = 20
@@ -350,8 +433,8 @@ if __name__ == '__main__':
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 1
-    camSensorShape = (500, 750)  # (Rows, Columns)
+    camFocalLength = 10
+    camSensorShape = (500, 700)  # (Rows, Columns)
     camSensorSize = (2, 3)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants above
@@ -370,7 +453,7 @@ if __name__ == '__main__':
 
     def calculate_ray_parallel(pixel_pos):
         row, col = pixel_pos
-        ray = camera.createRay(row - imageRows/2, col - imageCols/2,
+        ray = camera.createRay(row - imageRows / 2, col - imageCols / 2,
                                kerr, blackHole)
         # Compute pixel and store it in the image
         pixel = ray.traceRay(camera, blackHole)
@@ -388,11 +471,13 @@ if __name__ == '__main__':
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
-    strT = r'$\theta \in [' + str(camera.minTheta) + ', ' + str(camera.maxTheta) + ']$'
-    strP = r'$\phi \in [' + str(camera.minPhi) + ', ' + str(camera.maxPhi) + ']$'
+    strT = r'$\theta \in [' + str(camera.minTheta) + ', ' + str(camera.maxTheta) + ']; Length = ' + str(camera.maxTheta - camera.minTheta) + '$'
+    strP = r'$\phi \in [' + str(camera.minPhi) + ', ' + str(camera.maxPhi) + ']; Length = ' + str(camera.maxPhi - camera.minPhi) + '$'
 
     ax.annotate(strT, xy=(10, 30), backgroundcolor='white')
     ax.annotate(strP, xy=(10, 60), backgroundcolor='white')
     ax.annotate(r'$a = '+str(spin)+'$', xy=(10, 90), backgroundcolor='white')
+    ax.annotate(r'$d = '+str(camFocalLength)+'$', xy=(10, 120),
+                backgroundcolor='white')
     plt.imshow(image, interpolation='nearest')
     plt.show()
