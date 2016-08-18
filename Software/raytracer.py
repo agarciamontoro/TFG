@@ -125,16 +125,24 @@ class Camera:
         Omega = 1. / (a + self.r**(3./2.))
         self.beta = pomega * (Omega-omega) / alpha
 
-    def createRay(self, x, y, kerr, blackHole):
+    def createRay(self, row, col, kerr, blackHole):
         # Compute position of the point in cartesian coordinates.
         # We are basically transforming from pixel coordinates (with zero in
         # the center of the image) to cartesian oordinates in the camera's
-        # reference frame. The user provides the index of the pixel in the
-        # sensor matrix (x,y) and we compute its position in the camera's
-        # reference frame, multiplying the pixel coordinate for the widht and
-        # height of a single pixel.
-        pixelX = x * self.pixelWidth
-        pixelY = y * self.pixelHeight
+        # reference frame (X axis is in the direction of imageCenter -
+        # blackHoleCenter and positive when going away from the black hole, Y
+        # axis is in the direction and sense of motion -horizontal axis in the
+        # image-, positive when going to the left of the image and Z axis is
+        # perpendicular to both of them -it follows the vertical axis in the
+        # image-, positive when going up).
+        # This method expects the (row,col) coordinates to be in a reference in
+        # which the center of the image is the zero, X is positive to the right
+        # and Y is positive going up.
+        # Let's compute the pixel's position in the camera's reference frame,
+        # multiplying the pixel coordinate for the widht and height of a single
+        # pixel and naming the axes as explained before
+        pixelY = - col * self.pixelWidth
+        pixelZ = row * self.pixelHeight
 
         # Retrieve the focal length to ease the notation
         d = self.focalLenght
@@ -165,13 +173,17 @@ class Camera:
         # rayPhi = arctan2(x, d) + Pi
 
         # Let's try another thing
-        # P = (0, x, y)
-        # F = (-d, 0, 0)
+        # P = (-1, pixelY, pixelZ)
+        # F = (0, 0, 0) # Focal point is behind the image (in the positive X axis)
         #
-        # PF = (-d, -x, -y)
+        # FP = (-1, pixelY, pixelZ)
 
-        rayPhi = arctan2(-pixelX, -d)
-        rayTheta = arccos(-pixelY / sqrt(d**2 + pixelX**2 + pixelY**2))
+        # rayPhi = arctan2(pixelY, -d)
+        # rayTheta = arccos(-pixelX / sqrt(d**2 + pixelX**2 + pixelY**2))
+
+        r = sqrt(d**2 + pixelY**2 + pixelZ**2)
+        rayTheta = arccos(pixelZ / r)
+        rayPhi = arctan2(pixelY, -1)
 
         # rayTheta = arctan2(y, np.sqrt(D**2 - x**2))
         # rayPhi = arctan2(x, D)
@@ -334,9 +346,9 @@ if __name__ == '__main__':
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 1
+    camFocalLength = 0.1
     camSensorShape = (500, 500)  # (Rows, Columns)
-    camSensorSize = (2, 2)
+    camSensorSize = (2, 2)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants above
     blackHole = BlackHole(spin)
@@ -365,7 +377,6 @@ if __name__ == '__main__':
             image[row, col] = [pixel, pixel, pixel]
 
     # Show image
-    print()
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -373,8 +384,8 @@ if __name__ == '__main__':
     strT = r'$\theta \in$ [' + str(camera.minTheta) + ', ' + str(camera.maxTheta) + ']'
     strP = r'$\phi \in$ [' + str(camera.minPhi) + ', ' + str(camera.maxPhi) + ']'
 
-    ax.annotate(strT, xy=(1, 20))
-    ax.annotate(strP, xy=(1, 40))
-    ax.annotate(r'$a = 0.999$', xy=(1, 60))
+    ax.annotate(strT, xy=(10, 25), backgroundcolor='white')
+    ax.annotate(strP, xy=(10, 50), backgroundcolor='white')
+    ax.annotate(r'$a = $'+str(spin), xy=(10, 75), backgroundcolor='white')
     plt.imshow(image, interpolation='nearest')
     plt.show()
