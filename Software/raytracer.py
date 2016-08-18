@@ -198,7 +198,7 @@ class Ray:
         self.b = b
         self.q = q
 
-    def traceRay(self, blackHole, camera):
+    def traceRay(self, blackHole, camera, kerr):
         # Simplify notation
         b = self.b
         q = self.q
@@ -206,33 +206,40 @@ class Ray:
         b2 = blackHole.b2
         a = blackHole.a
         a2 = blackHole.a2
+        # delta = kerr.delta
 
-        # Compute r0 such that b0(r0) = b
-        # fac = a2 + a*b - 3
-        # cubicRoot = (sqrt(108*(fac**3) + (54-54*a2)**2) - 54*a2 + 54)**(1/3)
-        # r0 = -(2**(1/3)*fac)/(cubicRoot) + cubicRoot/(3*(2**(1/3))) + 1
 
+        # Compute r0 such that b0(r0) = b. The computation of this number
+        # involves complex numbers (there is a square root of a negative
+        # number). Nevertheless, the imaginary parts cancel each other when
+        # substracting the final terms. In order not to get np.sqrt errors
+        # because of the negative argument, a conversion to complex is
+        # forced summing a null imaginary part in the argument of sqrt (see
+        # the + 0j below, in the innerSqrt assignation). After the final
+        # computation is done, the real part is retrieved (the imaginary
+        # part can be considered null).
+
+        # Simplify notation by computing this factor before
+        fac = -9 + 3*a2 + 3*a*b
+        # Compute the square root of a complex number. Note the +0j
+        innerSqrt = sqrt((54 - 54*a2)**2 + 4*(fac**3) + 0j)
+        # Simplify notation by computing this cubic root
+        cubicRoot = (54 - 54*a2 + innerSqrt)**(1/3)
+
+        # Finish the computation with the above computed numbers
+        r0 = 1 - ((2**(1/3))*fac)/(3*cubicRoot) + cubicRoot/(3*(2**(1/3)))
+
+        # Retrieve the real part:
+        r0 = np.real(r0)
 
         # No radial turning points (see A.13 and A.14)
-        if b1 < b < b2:
-            fac = -9 + 3*a2 + 3*a*b
-            innerSqrt = sqrt((54 - 54*a2)**2 + 4*(fac**3))
-            cubicRoot = (54 - 54*a2 + innerSqrt)**(1/3)
-            r0 = 1 - ((2**(1/3))*fac)/(3*cubicRoot) + cubicRoot/(3*(2**(1/3)))
-            print(b, r0)
-
-            if q < q0(r0, a):
-                if(self.pR > 0.):
-                    return HORIZON
-                else:
-                    return CELESTIAL_SPHERE
-        # There are two radial turning points
+        if b1 < b < b2 and q < q0(r0, a):
+            if(self.pR > 0.):
+                return HORIZON
+            else:
+                return CELESTIAL_SPHERE
+        # There are two radial turning points. See (v), (c)
         else:
-            # # Get the maximum root of R(r) = 0. See (v), (c)
-            # rUp1 = -a2 - P + a*b
-            # rUp2 = -a2 + P + a*b
-            # rUp = rUp1 if rUp1 > rUp2 else rUp2
-
             # Coefficientes of r^4, r^3, r^2, r^1 and r^0 from R(r)
             coefs = [1.,
                      0.,
@@ -248,21 +255,29 @@ class Ray:
             realIndices = np.isreal(roots)
             rUp = np.amax(roots[realIndices]) if realIndices.any() else -np.inf
 
+            # def R(r):
+            #     return (r**2. + a2 - a*b)**2. - (r**2-2*r+a2)*((b-a)**2. + q)
+            #
+            # P = sqrt(delta*((b-a)*(b-a) + q))
+            # rUp1 = -a2 - P + a*b
+            # rUp2 = -a2 + P + a*b
+            # rUp = rUp1 if rUp1 > rUp2 else rUp2
+
             # Decide if the camera radius is lower than rUp
             if camera.r < rUp:
-                return CELESTIAL_SPHERE
-            else:
                 return HORIZON
+            else:
+                return CELESTIAL_SPHERE
 
 
 if __name__ == '__main__':
     # Black hole spin
-    spin = 0.5
+    spin = 0.0001
 
     # Camera position
-    camR = 20
+    camR = 8
     camTheta = Pi/2
-    camPhi = Pi/3
+    camPhi = 0
 
     # Camera lens properties
     camFocalLength = 1
@@ -279,7 +294,7 @@ if __name__ == '__main__':
     # Define image parameters
     imageRows = 500
     imageCols = 500
-    image = np.empty((imageRows, imageCols))
+    image = np.empty((imageRows, imageCols, 3))
 
     # Variables to sweep the image
     arcLengthHoriz = camera.lensAngle
@@ -301,9 +316,9 @@ if __name__ == '__main__':
             ray = Ray(rayTheta, rayPhi, camera, kerr)
 
             # Compute pixel and store it in the image
-            pixel = ray.traceRay(blackHole, camera)
-            image[row, col] = pixel
+            pixel = ray.traceRay(blackHole, camera, kerr)
+            image[row, col] = [pixel, pixel, pixel]
 
     # Show image
-    plt.imshow(image, cmap='Greys', interpolation='nearest')
+    plt.imshow(image, interpolation='nearest')
     plt.show()
