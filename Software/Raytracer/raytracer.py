@@ -185,20 +185,18 @@ class Camera:
 
 
     def createRay(self, row, col, kerr, blackHole):
-        imprimir = True if row == 184 and col == 170 else False
-
         row -= self.sensorShape[0] / 2.
         col -= self.sensorShape[1] / 2
 
         rayTheta, rayPhi = self._pixelToRay(row, col)
 
         # We can now create and return our ray :)
-        return Ray(rayTheta, rayPhi, self, kerr, blackHole, imprimir)
+        return Ray(rayTheta, rayPhi, self, kerr, blackHole)
 
 
 # Dummy object for a ray (pixel->spherical transformation is done here)
 class Ray:
-    def __init__(self, theta, phi, camera, kerr, blackHole, imprimir):
+    def __init__(self, theta, phi, camera, kerr, blackHole):
         # Set direction in the camera's reference frame
         self.theta = theta
         self.phi = phi
@@ -208,10 +206,6 @@ class Ray:
         self._setDirectionOfMotion(camera)
         self._setCanonicalMomenta(kerr)
         self._setConservedQuantities(camera, blackHole)
-
-        self.imprimir = imprimir
-        if self.imprimir:
-            print("b = ", self.b, " q = ", self.q)
 
     def _setNormal(self):
         # Cartesian components of the unit vector N pointing in the direction
@@ -310,9 +304,6 @@ class Ray:
         # Retrieve the real part:
         r0 = np.real(r0)
 
-        if self.imprimir:
-            print("r_0 = ", r0);
-
         # No radial turning points (see A.13 and A.14)
         if b1 < b < b2 and q < q0(r0, a):
             if(self.pR > 0.):
@@ -385,6 +376,7 @@ class RayTracer:
 
         # Specify any input variables to the template as a dictionary.
         templateVars = {
+            "SYSTEM_SIZE": 5,
             "Real": codeType,
             "DEBUG": "#define DEBUG" if self.debug else ""
         }
@@ -477,12 +469,12 @@ if __name__ == '__main__':
     spin = 0.00001
 
     # Camera position
-    camR = 20
+    camR = 15
     camTheta = Pi/2
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 1.6
+    camFocalLength = 1
     camSensorShape = (1000, 1000)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
