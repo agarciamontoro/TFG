@@ -4,9 +4,19 @@ from scipy.optimize import newton
 from tqdm import tqdm
 from numpy import sin, cos, arccos, arctan, arctan2, sqrt
 from numpy import pi as Pi
+
+from pycuda import driver, compiler, gpuarray, tools
+import jinja2
+
+# When importing this module we are initializing the device.
+# Now, we can call the device and send information using
+# the apropiate tools in the pycuda module.
+import pycuda.autoinit
+
+
 from multiprocessing import Pool
 import os
-os.system("taskset -p 0xff %d" % os.getpid())
+# os.system("taskset -p 0xff %d" % os.getpid())
 
 # Convention for pixel colors
 CELESTIAL_SPHERE = 1
@@ -72,7 +82,7 @@ class KerrMetric:
 
 # Dummy object for the camera (computation of the speed is done here)
 class Camera:
-    def __init__(self, r, theta, phi, focalLenght, sensorShape, sensorSize):
+    def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize):
         # Define position
         self.r = r
         self.r2 = r**2
@@ -80,7 +90,7 @@ class Camera:
         self.phi = phi
 
         # Define lens properties
-        self.focalLenght = focalLenght
+        self.focalLength = focalLength
 
         # Define sensor properties
         self.sensorSize = sensorSize
@@ -113,9 +123,6 @@ class Camera:
 
                 self.maxTheta = theta if theta > self.maxTheta else self.maxTheta
                 self.maxPhi = phi if phi > self.maxPhi else self.maxPhi
-
-        # self.minTheta, self.minPhi = self._pixelToRay(H/2, W/2)
-        # self.maxTheta, self.maxPhi = self._pixelToRay(-H/2, -W/2)
 
     def setSpeed(self, kerr, blackHole):
         # Retrieve blackhole's spin and some Kerr constants
@@ -161,7 +168,7 @@ class Camera:
         # the specified spherical system, are the following:
 
         # Retrieve the focal length
-        d = self.focalLenght
+        d = self.focalLength
 
         # First compute the position of the pixel in physical units (taking
         # into accout the sensor size) measured in the cartesian coordinate
@@ -178,15 +185,20 @@ class Camera:
 
 
     def createRay(self, row, col, kerr, blackHole):
+        imprimir = True if row == 184 and col == 170 else False
+
+        row -= self.sensorShape[0] / 2.
+        col -= self.sensorShape[1] / 2
+
         rayTheta, rayPhi = self._pixelToRay(row, col)
 
         # We can now create and return our ray :)
-        return Ray(rayTheta, rayPhi, self, kerr, blackHole)
+        return Ray(rayTheta, rayPhi, self, kerr, blackHole, imprimir)
 
 
 # Dummy object for a ray (pixel->spherical transformation is done here)
 class Ray:
-    def __init__(self, theta, phi, camera, kerr, blackHole):
+    def __init__(self, theta, phi, camera, kerr, blackHole, imprimir):
         # Set direction in the camera's reference frame
         self.theta = theta
         self.phi = phi
@@ -196,6 +208,10 @@ class Ray:
         self._setDirectionOfMotion(camera)
         self._setCanonicalMomenta(kerr)
         self._setConservedQuantities(camera, blackHole)
+
+        self.imprimir = imprimir
+        if self.imprimir:
+            print("b = ", self.b, " q = ", self.q)
 
     def _setNormal(self):
         # Cartesian components of the unit vector N pointing in the direction
@@ -281,8 +297,10 @@ class Ray:
 
         # Simplify notation by computing this factor before
         fac = -9 + 3*a2 + 3*a*b
+
         # Compute the square root of a complex number. Note the +0j
         innerSqrt = sqrt((54 - 54*a2)**2 + 4*(fac**3) + 0j)
+
         # Simplify notation by computing this cubic root
         cubicRoot = (54 - 54*a2 + innerSqrt)**(1/3)
 
@@ -292,6 +310,9 @@ class Ray:
         # Retrieve the real part:
         r0 = np.real(r0)
 
+        if self.imprimir:
+            print("r_0 = ", r0);
+
         # No radial turning points (see A.13 and A.14)
         if b1 < b < b2 and q < q0(r0, a):
             if(self.pR > 0.):
@@ -300,7 +321,7 @@ class Ray:
                 return CELESTIAL_SPHERE
         # There are two radial turning points. See (v), (c)
         else:
-            # Coefficientes of r^4, r^3, r^2, r^1 and r^0 from R(r)
+            # Coefficients of r^4, r^3, r^2, r^1 and r^0 from R(r)
             coefs = [1.,
                      0.,
                      -q - b**2. + a2,
@@ -322,9 +343,130 @@ class Ray:
                 return CELESTIAL_SPHERE
 
 
+
+class RayTracer:
+    def __init__(self, camera, kerr, blackHole, debug=False):
+        self.debug = debug
+
+        # Set up the necessary objects
+        self.camera = camera
+        self.kerr = kerr
+        self.blackHole = blackHole
+
+        # Render the kernel
+        self._kernelRendering()
+
+        # Create image array in both the CPU and GPU
+        self._createAndTransferImage()
+
+        # Create two timers to measure the time
+        self.start = driver.Event()
+        self.end = driver.Event()
+
+        # Initialise a variatble to store the total time of computation between
+        # all calls
+        self.totalTime = 0.
+
+    def _kernelRendering(self):
+        # We must construct a FileSystemLoader object to load templates off
+        # the filesystem
+        currentDirectory = os.path.dirname(os.path.abspath(__file__))
+        templateLoader = jinja2.FileSystemLoader(searchpath=currentDirectory)
+
+        # An environment provides the data necessary to read and
+        # parse our templates.  We pass in the loader object here.
+        templateEnv = jinja2.Environment(loader=templateLoader)
+
+        # Read the template file using the environment object.
+        # This also constructs our Template object.
+        template = templateEnv.get_template("raytracer_kernel.cu")
+
+        codeType = "double"
+
+        # Specify any input variables to the template as a dictionary.
+        templateVars = {
+            # "SYSTEM_SIZE": self.SYSTEM_SIZE,
+            "Real": codeType,
+            "DEBUG": "#define DEBUG" if self.debug else ""
+        }
+
+        # Finally, process the template to produce our final text.
+        kernel = template.render(templateVars)
+
+        if(self.debug):
+            kernelTmpFile = open("lastKernelRendered.cu", "w")
+            kernelTmpFile.write(kernel)
+            kernelTmpFile.close()
+
+        # ======================= KERNEL COMPILATION ======================= #
+
+        # Compile the kernel code using pycuda.compiler
+        mod = compiler.SourceModule(kernel)
+
+        # Get the kernel function from the compiled module
+        self.rayTrace = mod.get_function("rayTrace")
+
+    def _createAndTransferImage(self):
+        # Define a numpy array of 3-coloured pixels with the shape of the
+        # camera sensor
+        self.imageRows = self.camera.sensorShape[0]
+        self.imageCols = self.camera.sensorShape[1]
+        self.image = np.empty((self.imageRows, self.imageCols, 3))
+        self.image[:, :, 0] = 1
+        self.image[:, :, 0] = 0
+        self.image[:, :, 0] = 0
+
+        # Transfer host (CPU) memory to device (GPU) memory
+        # FIXME: Does this free the previous memory or no?
+        self.imageGPU = gpuarray.to_gpu(self.image)
+
+    def getImage(self):
+        # Call the kernel raytracer
+        self.rayTrace(
+            # Image properties
+            self.imageGPU,
+            np.float64(self.imageRows),
+            np.float64(self.imageCols),
+            np.float64(self.camera.pixelWidth),
+            np.float64(self.camera.pixelHeight),
+            np.float64(self.camera.focalLength),
+
+            # Camera constants
+            np.float64(self.camera.r),
+            np.float64(self.camera.theta),
+            np.float64(self.camera.phi),
+            np.float64(self.camera.beta),
+
+            # Black hole constants
+            np.float64(self.blackHole.a),
+            np.float64(self.blackHole.b1),
+            np.float64(self.blackHole.b2),
+
+            # Kerr metric constants
+            np.float64(self.kerr.ro),
+            np.float64(self.kerr.delta),
+            np.float64(self.kerr.pomega),
+            np.float64(self.kerr.alpha),
+            np.float64(self.kerr.omega),
+
+            # Grid definition -> number of blocks x number of blocks.
+            # Each block computes the direction of one pixel
+            grid=(self.imageCols, self.imageRows, 1),
+
+            # Block definition -> number of threads x number of threads
+            # Each thread in the block computes one RK4 step for one equation
+            block=(1, 1, 1)
+        )
+
+        self.image = self.imageGPU.get()
+
+        return(self.image)
+
+
+
 if __name__ == '__main__':
     # Black hole spin
-    spin = 0.000001
+    spin = 0.00001
 
     # Camera position
     camR = 20
@@ -333,8 +475,8 @@ if __name__ == '__main__':
 
     # Camera lens properties
     camFocalLength = 1.6
-    camSensorShape = (500, 700)  # (Rows, Columns)
-    camSensorSize = (2, 3)       # (Height, Width)
+    camSensorShape = (1000, 1000)  # (Rows, Columns)
+    camSensorSize = (2, 2)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants above
     blackHole = BlackHole(spin)
@@ -345,38 +487,43 @@ if __name__ == '__main__':
     # Set camera's speed (it needs the kerr metric constants)
     camera.setSpeed(kerr, blackHole)
 
-    # Define image parameters
-    imageRows = camSensorShape[0]
-    imageCols = camSensorShape[1]
-    image = np.empty((imageRows, imageCols, 3))
-
-    def calculate_ray_parallel(pixel_pos):
-        row, col = pixel_pos
-        ray = camera.createRay(row - imageRows / 2, col - imageCols / 2,
-                               kerr, blackHole)
-        # Compute pixel and store it in the image
-        pixel = ray.traceRay(camera, blackHole)
-        return pixel_pos, [pixel, pixel, pixel]
-
-    # Raytracing!
-    pool = Pool(8)
-    conditions = [(x, y) for x in range(imageRows) for y in range(imageCols)]
-    results = pool.map(calculate_ray_parallel, conditions)
-    for pixel_pos, result in results:
-        x, y = pixel_pos
-        image[x, y] = result
-
-    # Show image
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
-
-    strT = r'$\theta \in [' + str(camera.minTheta) + ', ' + str(camera.maxTheta) + ']; Length = ' + str(camera.maxTheta - camera.minTheta) + '$'
-    strP = r'$\phi \in [' + str(camera.minPhi) + ', ' + str(camera.maxPhi) + ']; Length = ' + str(camera.maxPhi - camera.minPhi) + '$'
-
-    ax.annotate(strT, xy=(10, 30), backgroundcolor='white')
-    ax.annotate(strP, xy=(10, 60), backgroundcolor='white')
-    ax.annotate(r'$a = '+str(spin)+'$', xy=(10, 90), backgroundcolor='white')
-    ax.annotate(r'$d = '+str(camFocalLength)+'$', xy=(10, 120),
-                backgroundcolor='white')
-    plt.imshow(image, interpolation='nearest')
+    # Create the raytracer!
+    rayTracer = RayTracer(camera, kerr, blackHole)
+    test = rayTracer.getImage()
+    plt.imshow(test, interpolation='nearest')
     plt.show()
+
+    # # Define image parameters
+    # imageRows = camSensorShape[0]
+    # imageCols = camSensorShape[1]
+    # image = np.empty((imageRows, imageCols, 3))
+    #
+    # def calculate_ray_parallel(pixel_pos):
+    #     row, col = pixel_pos
+    #     ray = camera.createRay(row, col, kerr, blackHole)
+    #     # Compute pixel and store it in the image
+    #     pixel = ray.traceRay(camera, blackHole)
+    #     return pixel_pos, [pixel, pixel, pixel]
+    #
+    # # Raytracing!
+    # pool = Pool(8)
+    # conditions = [(x, y) for x in range(imageRows) for y in range(imageCols)]
+    # results = pool.map(calculate_ray_parallel, conditions)
+    # for pixel_pos, result in results:
+    #     x, y = pixel_pos
+    #     image[x, y] = result
+    #
+    # # Show image
+    # fig = plt.figure()
+    # ax = fig.add_subplot(111)
+    #
+    # strT = r'$\theta \in [' + str(camera.minTheta) + ', ' + str(camera.maxTheta) + ']; Length = ' + str(camera.maxTheta - camera.minTheta) + '$'
+    # strP = r'$\phi \in [' + str(camera.minPhi) + ', ' + str(camera.maxPhi) + ']; Length = ' + str(camera.maxPhi - camera.minPhi) + '$'
+    #
+    # ax.annotate(strT, xy=(10, 30), backgroundcolor='white')
+    # ax.annotate(strP, xy=(10, 60), backgroundcolor='white')
+    # ax.annotate(r'$a = '+str(spin)+'$', xy=(10, 90), backgroundcolor='white')
+    # ax.annotate(r'$d = '+str(camFocalLength)+'$', xy=(10, 120),
+    #             backgroundcolor='white')
+    # plt.imshow(image, interpolation='nearest')
+    # plt.show()
