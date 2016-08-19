@@ -30,9 +30,6 @@ __device__ Real __pomega;
 __device__ Real __alpha;
 __device__ Real __omega;
 
-__device__ Real __b;
-__device__ Real __q;
-
 __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
                                     Real* pTheta, Real* pPhi){
     // **************************** SET NORMAL **************************** //
@@ -82,24 +79,44 @@ __device__ void getConservedQuantities(Real pTheta, Real pPhi, Real* b,
     *q = pTheta*pTheta + cos(__camTheta)*((*b)*(*b) / sinTheta*sinTheta - __a2);
 }
 
+// __device__ OriginType getOriginType(){
+//     // Compute r0 such that b0(r0) = b
+//     Real r0 = secant(-30., 30., b0b, a, b, 0);
+//
+//     int color = 0.5;
+//
+//     if(b1 < b && b < b2 && q < q0(r0, a)){
+//         if(pR > 0)
+//             color = HORIZON;
+//         else
+//             color = CELESTIAL_SPHERE;
+//     }
+//     else{
+//         Real rUp1 = secant(-30., 30., R, a, b, q);
+//
+//         if(camR < rUp1)
+//             color = HORIZON;
+//         else
+//             color = CELESTIAL_SPHERE;
+//     }
+//
+// }
+
 // NOTE: This is b_0(r) - b, not just b0(r)
-__device__ Real b0b(Real r, Real a, Real b, Real useless){
-    Real a2 = a*a;
-    return(-((r*r*r - 3.*(r*r) + a2*r + a2) / (a*(r-1.))) - b);
+__device__ Real b0b(Real r, Real b, Real q){
+    return -((r*r*r - 3.*(r*r) + __a2*r + __a2) / (__a*(r-1.))) - b;
 }
 
-__device__ Real q0(Real r, Real a){
+__device__ Real q0(Real r){
     Real r3 = r*r*r;
-    Real a2 = a*a;
-    return -(r3*(r3 - 6.*(r*r) + 9.*r - 4.*a2)) / (a2*((r-1.)*(r-1.)));
+    return -(r3*(r3 - 6.*(r*r) + 9.*r - 4.*__a2)) / (__a2*((r-1.)*(r-1.)));
 }
 
-__device__ Real R(Real r, Real a, Real b, Real q){
+__device__ Real R(Real r, Real b, Real q){
     Real r2 = r*r;
     Real r4 = r2*r2;
-    Real a2 = a*a;
     Real b2 = b*b;
-    return(r4 -q*r2 - b2*r2 + a2*r2 + 2*q*r + 2*b2*r - 4*a*b*r + 2*a2*r - a2*q);
+    return(r4 -q*r2 - b2*r2 + __a2*r2 + 2*q*r + 2*b2*r - 4*__a*b*r + 2*__a2*r - __a2*q);
 }
 
 __global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pixelWidth, Real pixelHeight, Real d, Real camR, Real camTheta, Real camPhi, Real camBeta, Real a, Real b1,Real b2, Real ro, Real delta, Real pomega, Real alpha, Real omega){
@@ -125,77 +142,32 @@ __global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pi
     __alpha = alpha;
     __omega = omega;
 
-        // // Compute the squares once and for all
-        // Real a2 = a*a;
-        //
-        // // Compute pixel position in the physical space
-        // Real y = - (blockIdx.x - imageCols/2.) * pixelWidth;
-        // Real z =   (blockIdx.y - imageRows/2.) * pixelHeight;
-        //
-        // // Compute direction of the incoming ray in the camera's reference frame
-        // Real rayPhi = Pi + atan(y / d);
-        // Real rayTheta = Pi/2 + atan(z / sqrt(d*d + y*y));
-        //
-        // // **************************** SET NORMAL **************************** //
-        // // Cartesian components of the unit vector N pointing in the direction of
-        // // the incoming ray
-        // Real Nx = sin(rayTheta) * cos(rayPhi);
-        // Real Ny = sin(rayTheta) * sin(rayPhi);
-        // Real Nz = cos(rayTheta);
-        //
-        // // ********************** SET DIRECTION OF MOTION ********************** //
-        // // Compute denominator, common to all the cartesian components
-        // Real den = 1. - camBeta * Ny;
-        //
-        // // Compute factor common to nx and nz
-        // Real fac = -sqrt(1. - camBeta*camBeta);
-        //
-        // // Compute cartesian coordinates of the direction of motion. See(A.9)
-        // Real nY = (-Ny + camBeta) / den;
-        // Real nX = fac * Nx / den;
-        // Real nZ = fac * Nz / den;
-        //
-        // // Convert the direction of motion to the FIDO's spherical orthonormal
-        // // basis. See (A.10)
-        // Real nR = nX;
-        // Real nTheta = -nZ;
-        // Real nPhi = nY;
-        //
-        // // *********************** SET CANONICAL MOMENTA *********************** //
-        // // Compute energy as measured by the FIDO. See (A.11)
-        // Real E = 1. / (alpha + omega * pomega * nPhi);
-        //
-        // // Set conserved energy to unity. See (A.11)
-        // Real pt = -1;
-        //
-        // // Compute the canonical momenta. See (A.11)
-        // Real pR = E * ro * nR / sqrt(delta);
-        // Real pTheta = E * ro * nTheta;
-        // Real pPhi = E * pomega * nPhi;
-        //
-        // // ********************* SET CONSERVED QUANTITIES ********************* //
-        // // Set conserved quantities. See (A.12)
-        // Real b = pPhi;
-        // Real sinTheta = sin(camTheta);
-        // Real q = pTheta*pTheta + cos(camTheta)*(b*b / sinTheta*sinTheta - a2);
+    // Compute pixel position in the physical space
+    Real y = - (blockIdx.x - imageCols/2.) * pixelWidth;
+    Real z =   (blockIdx.y - imageRows/2.) * pixelHeight;
 
+    // Compute direction of the incoming ray in the camera's reference frame
+    Real rayPhi = Pi + atan(y / d);
+    Real rayTheta = Pi/2 + atan(z / sqrt(d*d + y*y));
+
+    // Compute canonical momenta of the ray and the conserved quantites b and q
     Real pR, pTheta, pPhi, b, q;
     getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
     getConservedQuantities(pTheta, pPhi, &b, &q);
 
     // Compute r0 such that b0(r0) = b
-    Real r0 = secant(-30., 30., b0b, a, b, 0);
+    Real r0 = secant(-30., 30., b0b, b, q);
 
     int color = 0.5;
 
-    if(b1 < b && b < b2 && q < q0(r0, a)){
+    if(b1 < b && b < b2 && q < q0(r0)){
         if(pR > 0)
             color = HORIZON;
         else
             color = CELESTIAL_SPHERE;
     }
     else{
-        Real rUp1 = secant(-30., 30., R, a, b, q);
+        Real rUp1 = secant(-30., 30., R, b, q);
 
         if(camR < rUp1)
             color = HORIZON;
