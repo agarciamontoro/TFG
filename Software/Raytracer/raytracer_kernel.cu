@@ -9,15 +9,29 @@
 #define J I
 #define Pi M_PI
 
-#define CAM_R {{ CAM_R }}
-#define CAM_THETA {{ CAM_THETA }}
-#define CAM_PHI {{ CAM_PHI }}
-#define CAM_BETA {{ CAM_BETA }}
-
 #define CELESTIAL_SPHERE 1
 #define HORIZON 0
 
 typedef {{ Real }} Real;
+
+
+__device__ Real __d;
+__device__ Real __camR;
+__device__ Real __camTheta;
+__device__ Real __camPhi;
+__device__ Real __camBeta;
+__device__ Real __a;
+__device__ Real __a2;
+__device__ Real __b1;
+__device__ Real __b2;
+__device__ Real __ro;
+__device__ Real __delta;
+__device__ Real __pomega;
+__device__ Real __alpha;
+__device__ Real __omega;
+
+__device__ Real __b;
+__device__ Real __q;
 
 __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
                                     Real* pTheta, Real* pPhi){
@@ -30,13 +44,13 @@ __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
 
     // ********************** SET DIRECTION OF MOTION ********************** //
     // Compute denominator, common to all the cartesian components
-    Real den = 1. - CAM_BETA * Ny;
+    Real den = 1. - __camBeta * Ny;
 
     // Compute factor common to nx and nz
-    Real fac = -sqrt(1. - CAM_BETA*CAM_BETA);
+    Real fac = -sqrt(1. - __camBeta*__camBeta);
 
     // Compute cartesian coordinates of the direction of motion. See(A.9)
-    Real nY = (-Ny + CAM_BETA) / den;
+    Real nY = (-Ny + __camBeta) / den;
     Real nX = fac * Nx / den;
     Real nZ = fac * Nz / den;
 
@@ -48,25 +62,24 @@ __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
 
     // *********************** SET CANONICAL MOMENTA *********************** //
     // Compute energy as measured by the FIDO. See (A.11)
-    Real E = 1. / (alpha + omega * pomega * nPhi);
+    Real E = 1. / (__alpha + __omega * __pomega * nPhi);
 
     // Set conserved energy to unity. See (A.11)
     Real pt = -1;
 
     // Compute the canonical momenta. See (A.11)
-    *pR = E * ro * nR / sqrt(delta);
-    *pTheta = E * ro * nTheta;
-    *pPhi = E * pomega * nPhi;
+    *pR = E * __ro * nR / sqrt(__delta);
+    *pTheta = E * __ro * nTheta;
+    *pPhi = E * __pomega * nPhi;
 }
 
 __device__ void getConservedQuantities(Real pTheta, Real pPhi, Real* b,
                                        Real* q){
     // ********************* GET CONSERVED QUANTITIES ********************* //
     // Get conserved quantities. See (A.12)
-    b = *pPhi;
-    Real sinTheta = sin(camTheta);
-    q = (*pTheta)*(*pTheta) + cos(camTheta)*(b*b / sinTheta*sinTheta - a2);
-
+    *b = pPhi;
+    Real sinTheta = sin(__camTheta);
+    *q = pTheta*pTheta + cos(__camTheta)*((*b)*(*b) / sinTheta*sinTheta - __a2);
 }
 
 // NOTE: This is b_0(r) - b, not just b0(r)
@@ -89,12 +102,28 @@ __device__ Real R(Real r, Real a, Real b, Real q){
     return(r4 -q*r2 - b2*r2 + a2*r2 + 2*q*r + 2*b2*r - 4*a*b*r + 2*a2*r - a2*q);
 }
 
-__global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pixelWidth, Real pixelHeight, Real d, Real camR, Real camTheta, Real camPhi, Real CAM_BETA, Real a, Real b1,Real b2, Real ro, Real delta, Real pomega, Real alpha, Real omega){
+__global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pixelWidth, Real pixelHeight, Real d, Real camR, Real camTheta, Real camPhi, Real camBeta, Real a, Real b1,Real b2, Real ro, Real delta, Real pomega, Real alpha, Real omega){
     // Retrieve the ids of the thread in the block and of the block in the grid
     int threadId = threadIdx.x + threadIdx.y * blockDim.x;
     int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
 
     Real* globalImage = (Real*) devImage;
+
+    // Set global variables
+    __d = d;
+    __camR = camR;
+    __camTheta = camTheta;
+    __camPhi = camPhi;
+    __camBeta = camBeta;
+    __a = a;
+    __a2 = a*a;
+    __b1 = b1;
+    __b2 = b2;
+    __ro = ro;
+    __delta = delta;
+    __pomega = pomega;
+    __alpha = alpha;
+    __omega = omega;
 
     // Compute the squares once and for all
     Real a2 = a*a;
@@ -107,52 +136,52 @@ __global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pi
     Real rayPhi = Pi + atan(y / d);
     Real rayTheta = Pi/2 + atan(z / sqrt(d*d + y*y));
 
-    // // **************************** SET NORMAL **************************** //
-    // // Cartesian components of the unit vector N pointing in the direction of
-    // // the incoming ray
-    // Real Nx = sin(rayTheta) * cos(rayPhi);
-    // Real Ny = sin(rayTheta) * sin(rayPhi);
-    // Real Nz = cos(rayTheta);
-    //
-    // // ********************** SET DIRECTION OF MOTION ********************** //
-    // // Compute denominator, common to all the cartesian components
-    // Real den = 1. - CAM_BETA * Ny;
-    //
-    // // Compute factor common to nx and nz
-    // Real fac = -sqrt(1. - CAM_BETA*CAM_BETA);
-    //
-    // // Compute cartesian coordinates of the direction of motion. See(A.9)
-    // Real nY = (-Ny + CAM_BETA) / den;
-    // Real nX = fac * Nx / den;
-    // Real nZ = fac * Nz / den;
-    //
-    // // Convert the direction of motion to the FIDO's spherical orthonormal
-    // // basis. See (A.10)
-    // Real nR = nX;
-    // Real nTheta = -nZ;
-    // Real nPhi = nY;
-    //
-    // // *********************** SET CANONICAL MOMENTA *********************** //
-    // // Compute energy as measured by the FIDO. See (A.11)
-    // Real E = 1. / (alpha + omega * pomega * nPhi);
-    //
-    // // Set conserved energy to unity. See (A.11)
-    // Real pt = -1;
-    //
-    // // Compute the canonical momenta. See (A.11)
-    // Real pR = E * ro * nR / sqrt(delta);
-    // Real pTheta = E * ro * nTheta;
-    // Real pPhi = E * pomega * nPhi;
-    //
-    // // ********************* SET CONSERVED QUANTITIES ********************* //
-    // // Set conserved quantities. See (A.12)
-    // Real b = pPhi;
-    // Real sinTheta = sin(camTheta);
-    // Real q = pTheta*pTheta + cos(camTheta)*(b*b / sinTheta*sinTheta - a2);
+    // **************************** SET NORMAL **************************** //
+    // Cartesian components of the unit vector N pointing in the direction of
+    // the incoming ray
+    Real Nx = sin(rayTheta) * cos(rayPhi);
+    Real Ny = sin(rayTheta) * sin(rayPhi);
+    Real Nz = cos(rayTheta);
 
-    Real pR, pTheta, pPhi, b, q;
-    getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
-    getConservedQuantities(rayTheta, rayPhi, &b, &q);
+    // ********************** SET DIRECTION OF MOTION ********************** //
+    // Compute denominator, common to all the cartesian components
+    Real den = 1. - camBeta * Ny;
+
+    // Compute factor common to nx and nz
+    Real fac = -sqrt(1. - camBeta*camBeta);
+
+    // Compute cartesian coordinates of the direction of motion. See(A.9)
+    Real nY = (-Ny + camBeta) / den;
+    Real nX = fac * Nx / den;
+    Real nZ = fac * Nz / den;
+
+    // Convert the direction of motion to the FIDO's spherical orthonormal
+    // basis. See (A.10)
+    Real nR = nX;
+    Real nTheta = -nZ;
+    Real nPhi = nY;
+
+    // *********************** SET CANONICAL MOMENTA *********************** //
+    // Compute energy as measured by the FIDO. See (A.11)
+    Real E = 1. / (alpha + omega * pomega * nPhi);
+
+    // Set conserved energy to unity. See (A.11)
+    Real pt = -1;
+
+    // Compute the canonical momenta. See (A.11)
+    Real pR = E * ro * nR / sqrt(delta);
+    Real pTheta = E * ro * nTheta;
+    Real pPhi = E * pomega * nPhi;
+
+    // ********************* SET CONSERVED QUANTITIES ********************* //
+    // Set conserved quantities. See (A.12)
+    Real b = pPhi;
+    Real sinTheta = sin(camTheta);
+    Real q = pTheta*pTheta + cos(camTheta)*(b*b / sinTheta*sinTheta - a2);
+
+    // Real pR, pTheta, pPhi, b, q;
+    // getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
+    // getConservedQuantities(rayTheta, rayPhi, &b, &q);
 
     // Compute r0 such that b0(r0) = b
     Real r0 = secant(-30., 30., b0b, a, b, 0);

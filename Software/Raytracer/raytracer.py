@@ -385,10 +385,6 @@ class RayTracer:
 
         # Specify any input variables to the template as a dictionary.
         templateVars = {
-            "CAM_R": self.camera.r,
-            "CAM_THETA": self.camera.theta,
-            "CAM_PHI": self.camera.phi,
-            "CAM_BETA": self.camera.beta,
             "Real": codeType,
             "DEBUG": "#define DEBUG" if self.debug else ""
         }
