@@ -385,7 +385,10 @@ class RayTracer:
 
         # Specify any input variables to the template as a dictionary.
         templateVars = {
-            # "SYSTEM_SIZE": self.SYSTEM_SIZE,
+            "CAM_R": self.camera.r,
+            "CAM_THETA": self.camera.theta,
+            "CAM_PHI": self.camera.phi,
+            "CAM_BETA": self.camera.beta,
             "Real": codeType,
             "DEBUG": "#define DEBUG" if self.debug else ""
         }
@@ -401,7 +404,8 @@ class RayTracer:
         # ======================= KERNEL COMPILATION ======================= #
 
         # Compile the kernel code using pycuda.compiler
-        mod = compiler.SourceModule(kernel)
+        ownDir = os.path.dirname(os.path.realpath(__file__))
+        mod = compiler.SourceModule(kernel, include_dirs=[ownDir])
 
         # Get the kernel function from the compiled module
         self.rayTrace = mod.get_function("rayTrace")
@@ -421,6 +425,8 @@ class RayTracer:
         self.imageGPU = gpuarray.to_gpu(self.image)
 
     def getImage(self):
+        self.start.record()  # start timing
+
         # Call the kernel raytracer
         self.rayTrace(
             # Image properties
@@ -458,6 +464,12 @@ class RayTracer:
             block=(1, 1, 1)
         )
 
+        self.end.record()   # end timing
+        self.end.synchronize()
+
+        # Calculate the run length
+        self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
+
         self.image = self.imageGPU.get()
 
         return(self.image)
@@ -490,6 +502,8 @@ if __name__ == '__main__':
     # Create the raytracer!
     rayTracer = RayTracer(camera, kerr, blackHole)
     test = rayTracer.getImage()
+    print(rayTracer.totalTime)
+
     plt.imshow(test, interpolation='nearest')
     plt.show()
 
