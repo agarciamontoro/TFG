@@ -129,116 +129,6 @@ class Camera:
         self.beta = pomega * (Omega-omega) / alpha
 
     def _pixelToRay(self, row, col):
-        # Compute position of the point in cartesian coordinates.
-        # We are basically transforming from pixel coordinates (with zero in
-        # the center of the image) to cartesian oordinates in the camera's
-        # reference frame (X axis is in the direction of imageCenter -
-        # blackHoleCenter and positive when going away from the black hole, Y
-        # axis is in the direction and sense of motion -horizontal axis in the
-        # image-, positive when going to the left of the image and Z axis is
-        # perpendicular to both of them -it follows the vertical axis in the
-        # image-, positive when going up).
-        # This method expects the (row,col) coordinates to be in a reference in
-        # which the center of the image is the zero, X is positive to the right
-        # and Y is positive going up.
-        # Let's compute the pixel's position in the camera's reference frame,
-        # multiplying the pixel coordinate for the widht and height of a single
-        # pixel and naming the axes as explained before
-        pixelY = - col * self.pixelWidth
-        pixelZ = row * self.pixelHeight
-
-        # Retrieve the focal length to ease the notation
-        d = self.focalLenght
-
-        # Now we have to compute the ray's direction in spherical coordinates
-        # in the camera's reference frame following the pinhole camera model:
-        # from the pixel's position in the camera's reference frame, we trace a
-        # ray passing through the pinhole; then, we measure the angle between
-        # this ray and the center axis (the line passing through the center of
-        # the sensor and through the pinhole) and call it theta; finally, we
-        # project the ray to the plane that contains both the center axis and
-        # the horizontal axis (the equatorial plane), we measure the angle
-        # between this projection and the center axis and call it phi.
-        # The following conventions is now used: imagine that you place
-        # yourself at the very center of the sensor, looking at the black hole;
-        # then:
-        #    - The angle theta comes from over your head (where theta = 0) and
-        #    goes all the way down, in front of you (where theta = pi/2), until
-        #    it reaches your feet (where theta = Pi).
-        #    - The angle phi starts just at your back (where phi = 0), start
-        #    turning to your right arm, where you first see it (phi = pi/2),
-        #    goes right in front of you (where phi = pi), reaches your left arm
-        #    (where phi = 3pi/2) and disappear behind your back again, until it
-        #    reaches its original position.
-        # Following this method, the spherical coordinates are computed as
-        # follows:
-        # rayTheta = (arctan2(sqrt(pixelX**2. + pixelY**2.), d) + Pi)/2.
-        # rayPhi = arctan2(x, d) + Pi
-
-        # Ok, this thing is way asier than the discussion before; see: take the
-        # camera's reference frame (Z down-up, Y tangential to the orbit, X
-        # perpendicular, going to the black hole), place the image sensor
-        # there, with its center in the (0,0,0) and now place a focal point F
-        # just behind it, in the point (-d, 0, 0), where d is the focal length.
-        # The direction of the incoming ray for a pixel P is the direction of
-        # the vector PF:
-        #   P = (0, pixelY, pixelZ)
-        #   F = (-d, 0, 0)
-        #
-        #   PF = (-d, -pixelY,- pixelZ)
-        #
-        # Now, convert those cartesian coordinates to spherical coordinates in
-        # the usual manner; done!
-        # r = sqrt(d**2 + pixelY**2 + pixelZ**2)
-        # rayTheta = arccos(-pixelZ / r)
-        # rayPhi = arctan2(-pixelY, -d)
-
-        # rayTheta = Pi/2 + arctan(sqrt(pixelZ**2.+pixelY**2.)/d)
-        # rayPhi = Pi + arctan(abs(pixelY)/d)
-
-        # Y = pixelY
-        # Z = pixelZ
-        #
-        # alpha_ = arctan(abs(Z) / sqrt(Y**2 + d**2))
-        # phi_ = arctan(sqrt(Z**2 + Y**2) / d)
-        #
-        # if Z > 0:
-        #     rayTheta = Pi/2 - alpha_
-        # else:
-        #     rayTheta = Pi/2 + alpha_
-        #
-        # if Y > 0:
-        #     rayPhi = Pi + phi_
-        # else:
-        #     rayPhi = Pi - phi_
-
-        # if Y < 0 and Z > 0:
-        #     rayTheta = Pi/2 - alpha_
-        #     rayPhi = Pi + phi_
-        # if Y > 0 and Z > 0:
-        #     rayTheta = Pi/2 - alpha_
-        #     rayPhi = Pi - phi_
-        # if Y < 0 and Z < 0:
-        #     rayTheta = Pi/2 - alpha_
-        #     rayPhi = Pi + phi_
-        # if Y > 0 and Z < 0:
-        #     rayTheta = Pi/2 - alpha_
-        #     rayPhi = Pi - phi_
-        #
-        # if Z == 0:
-        #     rayTheta = Pi/2
-        #     if Y < 0:
-        #         rayPhi = Pi + phi_
-        #     if Y > 0:
-        #         rayPhi = Pi - phi_
-        #
-        # if Y == 0:
-        #     rayPhi = 0
-        #     if Z < 0:
-        #         rayTheta = Pi/2 - alpha_
-        #     if Z > 0:
-        #         rayTheta = Pi/2 + alpha_
-
         # Place a coordinate system centered in the focal point following
         # this convention for the axes:
         #   - The X axis is in the direction of the line that joins the black
@@ -247,8 +137,12 @@ class Camera:
         #   - The Y axis is tangential to the camera orbit. Its positive part
         #   goes to the right (the same convention as with the pixels).
         #   - The Z axis is perpendicular to both of them, pointing upwards.
-        # Now place a spherical coordinate system at the same place in the usual manner; i.e.:
-        #   - Theta starts at zero when aligned with the positive part of Z, goes down until it aligns with the line that joins the system center and the black hole (theta = pi/2) and continues its way until it aligns with the negative part of Z (theta = pi).
+        # Now place a spherical coordinate system at the same place in the
+        # usual manner; i.e.:
+        #   - Theta starts at zero when aligned with the positive part of Z,
+        #   goes down until it aligns with the line that joins the system
+        #   center and the black hole (theta = pi/2) and continues its way
+        #   until it aligns with the negative part of Z (theta = pi).
         #   - Phi starts at zero when aligned with the positive part of X
         #   (going away from the black hole), starts turning to its left (as
         #   seen from above) until it aligns with the negative part of Y (phi =
@@ -266,14 +160,19 @@ class Camera:
         # coordinates are (0, 0, 0). The direction of this ray, as measured by
         # the specified spherical system, are the following:
 
-        # First compute the position of the pixel in physical units (taking
-        # into accout the sensor size)
-        x0 = col * self.pixelWidth
-        y0 = row * self.pixelHeight
+        # Retrieve the focal length
+        d = self.focalLenght
 
-        # Now compute phi and theta
-        rayPhi = Pi - arctan(x0 / d)
-        rayTheta = Pi/2 + arctan(y0 / sqrt(d**2 - x0**2))
+        # First compute the position of the pixel in physical units (taking
+        # into accout the sensor size) measured in the cartesian coordinate
+        # system described above
+        y0 = - col * self.pixelWidth
+        z0 = row * self.pixelHeight
+
+        # Compute phi and theta using the above information.
+        # TODO: Add a drawing here in some way, it will ease everything.
+        rayPhi = Pi + arctan(y0 / d)
+        rayTheta = Pi/2 + arctan(z0 / sqrt(d**2 + y0**2))
 
         return rayTheta, rayPhi
 
@@ -425,7 +324,7 @@ class Ray:
 
 if __name__ == '__main__':
     # Black hole spin
-    spin = 0.99999
+    spin = 0.000001
 
     # Camera position
     camR = 20
@@ -433,7 +332,7 @@ if __name__ == '__main__':
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 10
+    camFocalLength = 1.6
     camSensorShape = (500, 700)  # (Rows, Columns)
     camSensorSize = (2, 3)       # (Height, Width)
 
