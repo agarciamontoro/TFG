@@ -31,9 +31,7 @@ __device__ Real __alpha;
 __device__ Real __omega;
 
 
-__device__ Real P(Real r, Parameters param){
-    Real b = param.b;
-
+__device__ Real P(Real r, Real b){
     return r*r + __a2 - __a*b;
 }
 
@@ -49,11 +47,7 @@ __device__ Real R(Real r, Parameters param){
 
 }
 
-__device__ Real Theta(Real r, Parameters param){
-    Real theta = param.theta;
-    Real b = param.b;
-    Real q = param.q;
-
+__device__ Real Theta(Real r, Real theta, Real b, Real q){
     Real sinTheta = sin(theta);
     Real sin2 = sinTheta*sinTheta;
 
@@ -63,48 +57,44 @@ __device__ Real Theta(Real r, Parameters param){
     return q - cos2*(b*b/sin2 - __a2);
 }
 
-__device__ Real Delta(Real r, Parameters param){
+__device__ Real Delta(Real r){
     return r*r - 2*r + __a2;
 }
 
-__device__ Real rho(Real r, Parameters param){
-    Real theta = param.theta;
-
+__device__ Real rho(Real r, Real theta){
     Real cosTheta = cos(theta);
     return sqrt(r*2 + __a2*cosTheta*cosTheta);
 }
 
-__device__ Real eqMomenta(Real r, Parameters param){
+__device__ Real eqMomenta(Parameters param){
+    Real r = param.r;
     Real pR = param.pR;
     Real pTheta = param.pTheta;
 
-    Real delta = Delta(r, param);
-    Real _rho = rho(r, param);
+    Real delta = Delta(param.r);
+    Real _rho = rho(param.r, param.theta);
     Real tworho2 = 2*_rho*_rho;
     Real _R = R(r, param);
-    Real _Theta = Theta(r, param);
+    Real _Theta = Theta(r, param.theta, param.b, param.q);
 
     return -delta*pR*pR/tworho2 - pTheta*pTheta/tworho2 + (_R+delta*_Theta)/(delta*tworho2);
 }
 
 __device__ Real eqMomentaTheta(Real theta, Parameters param){
-    Real r = param.r;
     param.theta = theta;
-    return eqMomenta(r, param);
+    return eqMomenta(param);
 }
 
 __device__ Real eqMomentaR(Real r, Parameters param){
     param.r = r;
-    return eqMomenta(r, param);
+    return eqMomenta(param);
 }
 
 __device__ Real eqPhi(Real b, Parameters param){
-    Real r = param.r;
-
-    Real _R = R(r, param);
-    Real _Delta = Delta(r, param);
-    Real _Theta = Theta(r, param);
-    Real _rho = rho(r, param);
+    Real _R = R(param.r, param);
+    Real _Delta = Delta(param.r);
+    Real _Theta = Theta(param.r, param.theta, param.b, param.q);
+    Real _rho = rho(param.r, param.theta);
 
     return (_R+_Delta*_Theta)/(2*_Delta*_rho*_rho);
 }
@@ -244,14 +234,16 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f, Real b,
             case 0:
                 Real _Delta = Delta(param.r, param);
                 Real _rho = rho(param.r, param);
-                f[threadId] = {{ function }};
+                f[threadId] = _Delta * param.pR * _rho*_rho;
                 break;
 
             case 1:
-                f[threadId] = {{ function }};
+                Real _rho = rho(param.r, param);
+                f[threadId] = param.pTheta / _rho;
                 break;
 
             case 2:
+                Real sol = dfridr(Real (*func)(Real Parameters), Real x, Parameters param, Real h, Real *err)
                 f[threadId] = {{ function }};
                 break;
 
