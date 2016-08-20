@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
-#include "numericalMethods.cu"
-#include "definitions.c"
+#include "Raytracer/numericalMethods.cu"
+#include "Raytracer/definitions.c"
+#include "RK4/rk4_kernel_adapted.cu"
 
 #define SYSTEM_SIZE {{ SYSTEM_SIZE }}
 {{ DEBUG }}
@@ -30,7 +31,6 @@ __device__ Real __pomega;
 __device__ Real __alpha;
 __device__ Real __omega;
 
-
 __device__ Real P(Real r, Real b){
     return r*r + __a2 - __a*b;
 }
@@ -47,6 +47,14 @@ __device__ Real R(Real r, Parameters param){
 
 }
 
+__device__ Real dbR(Real r, Real b){
+    return -2*b*r*r + 4*b*r - 4*__a*r;
+}
+
+__device__ Real drR(Real r, Real b, Real q){
+    return 4*r*(r*r - __a*b + __a2) - (q + (b-__a)*(b-__a))*(2*r - 2);
+}
+
 __device__ Real Theta(Real r, Real theta, Real b, Real q){
     Real sinTheta = sin(theta);
     Real sin2 = sinTheta*sinTheta;
@@ -57,8 +65,33 @@ __device__ Real Theta(Real r, Real theta, Real b, Real q){
     return q - cos2*(b*b/sin2 - __a2);
 }
 
+__device__ Real dbTheta(Real theta, Real b){
+    Real cosTheta = cos(theta);
+    Real sinTheta = sin(theta);
+
+    return -(2*b*cosTheta*cosTheta)/(sinTheta*sinTheta);
+}
+
+__device__ Real dzTheta(Real theta, Real b){
+    Real cosT = cos(theta);
+    Real cosT2 = cosT*cosT;
+
+    Real sinT = sin(theta);
+    Real sinT2 = sinT*sinT;
+    Real sinT3 = sinT2*sinT;
+    Real sinT4 = sinT2*sinT2;
+
+    Real b2 = b*b;
+
+    return -2*cosT*(__a2*sinT4 - b2*sinT2 - b2*cosT2)/sinT3;
+}
+
 __device__ Real Delta(Real r){
     return r*r - 2*r + __a2;
+}
+
+__device__ Real drDelta(Real r){
+    return 2*r-2;
 }
 
 __device__ Real rho(Real r, Real theta){
@@ -66,18 +99,35 @@ __device__ Real rho(Real r, Real theta){
     return sqrt(r*2 + __a2*cosTheta*cosTheta);
 }
 
+__device__ Real drRho(Real r, Real theta){
+    Real cosT = cos(theta);
+
+    return r/sqrt(__a2*cosT*cosT + r*r);
+}
+
+__device__ Real dzRho(Real r, Real theta){
+    Real cosT = cos(theta);
+    Real sinT = sin(theta);
+
+    return -(__a2*cosT*sinT)/sqrt(__a2*cosT*cosT + r*r);
+}
+
 __device__ Real eqMomenta(Parameters param){
     Real r = param.r;
     Real pR = param.pR;
     Real pTheta = param.pTheta;
 
-    Real delta = Delta(param.r);
+    Real _Delta = Delta(param.r);
     Real _rho = rho(param.r, param.theta);
     Real tworho2 = 2*_rho*_rho;
     Real _R = R(r, param);
     Real _Theta = Theta(r, param.theta, param.b, param.q);
 
-    return -delta*pR*pR/tworho2 - pTheta*pTheta/tworho2 + (_R+delta*_Theta)/(delta*tworho2);
+    Real sol = -(_Delta*pR*pR/tworho2) - (pTheta*pTheta/tworho2) + ((_R+_Delta*_Theta)/(_Delta*tworho2));
+
+    printf("%.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f\n", param.r, param.pR, param.pTheta, param.theta, param.phi, param.b, param.q);
+
+    return sol;
 }
 
 __device__ Real eqMomentaTheta(Real theta, Parameters param){
@@ -131,7 +181,7 @@ __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
     Real E = 1. / (__alpha + __omega * __pomega * nPhi);
 
     // Set conserved energy to unity. See (A.11)
-    Real pt = -1;
+    // Real pt = -1;
 
     // Compute the canonical momenta. See (A.11)
     *pR = E * __ro * nR / sqrt(__delta);
@@ -204,10 +254,13 @@ __device__ OriginType getOriginType(Real pR, Real b, Real q){
 __device__ void computeComponent(int threadId, Real x, Real* y, Real* f, Real b, Real q){
     Parameters param;
 
+    Real _R, D, Z, rho1, rho2, rho3, rho4;
+
     switch(threadId) {
             case 0:
                 param.r = y[0];
                 param.b = b;
+                Z = Theta(param.r, param.theta, param.b, param.q);
                 break;
 
             case 1:
@@ -217,44 +270,66 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f, Real b,
 
             case 2:
                 param.phi = y[2];
+                D = Delta(param.r);
                 break;
 
             case 3:
                 param.pR = y[3];
+                rho1 = rho(param.r, param.theta);
+                rho2 = rho1*rho1;
+                rho3 = rho1*rho2;
+                rho4 = rho2*rho2;
                 break;
 
             case 4:
                 param.pTheta = y[4];
+                _R = R(param.r, param);
                 break;
     }
     __syncthreads();
 
-
-
-    Real _Delta, _rho, err;
+    Real dR, dZ, dRho, dD, sum1, sum2, sum3, num, den;
 
     switch(threadId) {
             case 0:
-                _Delta = Delta(param.r);
-                _rho = rho(param.r, param.theta);
-                f[threadId] = _Delta * param.pR * _rho*_rho;
+                f[threadId] = D * param.pR / rho2;
                 break;
 
             case 1:
-                _rho = rho(param.r, param.theta);
-                f[threadId] = param.pTheta / _rho;
+                f[threadId] = param.pTheta / rho2;
                 break;
 
             case 2:
-                f[threadId] =  dfridr(eqPhi, param.b, param, 0.1, &err);
+                dR = dbR(param.r, param.b);
+                dZ = dbTheta(param.theta, param.b);
+
+                f[threadId] = - (dR + D*dZ)/(2*D*rho2);
                 break;
 
             case 3:
-                f[threadId] = dfridr(eqMomentaR, param.r, param, 0.1, &err);
+                dRho = drRho(param.r, param.theta);
+                dD = drDelta(param.r);
+                dR = drR(param.r, param.b, param.q);
+
+                sum1 = (dRho*2*D - dD*rho1)/(2*rho3);
+                sum2 = (dRho*param.pTheta*param.pTheta)/(rho3);
+
+                num = (dR + Z*dD)*D*rho2 - (_R + D*Z)*(dD*D*rho2 + 2*D*rho1*dRho);
+                den = 2*D*D*rho4;
+                sum3 = num/den;
+
+                f[threadId] = sum1 + sum2 + sum3;
                 break;
 
             case 4:
-                f[threadId] = dfridr(eqMomentaTheta, param.theta, param, 0.1, &err);
+                dRho = dzRho(param.r, param.theta);
+                dZ = dzTheta(param.theta, param.b);
+
+                sum1 = (dRho*D*param.pR*param.pR)/(rho3);
+                sum2 = (dRho*param.pTheta*param.pTheta)/(rho3);
+                sum3 = (D*(dZ*rho1 - 2*Z*dRho) - 2*_R*dRho)/(2*D*rho3);
+
+                f[threadId] = sum1 + sum2 + sum3;
                 break;
     }
 }
@@ -266,74 +341,92 @@ __global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pi
 
     // Retrieve the ids of the thread in the block and of the block in the grid
     int threadId = threadIdx.x + threadIdx.y * blockDim.x;
-    int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
+    // int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
 
-    Real* globalImage = (Real*) devImage;
+    if(threadId < SYSTEM_SIZE){
+        Real* globalImage = (Real*) devImage;
 
-    // Set global variables, common to all threads and constants
-    // Camera constants
-    __d = d;
-    __camR = camR;
-    __camTheta = camTheta;
-    __camPhi = camPhi;
-    __camBeta = camBeta;
+        // Set global variables, common to all threads and constants
+        // Camera constants
+        __d = d;
+        __camR = camR;
+        __camTheta = camTheta;
+        __camPhi = camPhi;
+        __camBeta = camBeta;
 
-    // Black hole constants
-    __a = a;
-    __a2 = a*a;
-    __b1 = b1;
-    __b2 = b2;
+        // Black hole constants
+        __a = a;
+        __a2 = a*a;
+        __b1 = b1;
+        __b2 = b2;
 
-    // Kerr constants
-    __ro = ro;
-    __delta = delta;
-    __pomega = pomega;
-    __alpha = alpha;
-    __omega = omega;
+        // Kerr constants
+        __ro = ro;
+        __delta = delta;
+        __pomega = pomega;
+        __alpha = alpha;
+        __omega = omega;
 
-    // Compute pixel position in the physical space
-    Real y = - (blockIdx.x - imageCols/2.) * pixelWidth;
-    Real z =   (blockIdx.y - imageRows/2.) * pixelHeight;
+        // Compute pixel position in the physical space
+        Real y = - (blockIdx.x - imageCols/2.) * pixelWidth;
+        Real z =   (blockIdx.y - imageRows/2.) * pixelHeight;
 
-    // Compute direction of the incoming ray in the camera's reference frame
-    Real rayPhi = Pi + atan(y / d);
-    Real rayTheta = Pi/2 + atan(z / sqrt(d*d + y*y));
+        // Compute direction of the incoming ray in the camera's reference frame
+        Real rayPhi = Pi + atan(y / d);
+        Real rayTheta = Pi/2 + atan(z / sqrt(d*d + y*y));
 
-    // Compute canonical momenta of the ray and the conserved quantites b and q
-    Real pR, pTheta, pPhi, b, q;
-    getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
-    getConservedQuantities(pTheta, pPhi, &b, &q);
+        // Compute canonical momenta of the ray and the conserved quantites b and q
+        Real pR, pTheta, pPhi, b, q;
+        getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
+        getConservedQuantities(pTheta, pPhi, &b, &q);
 
-    // Check whether the ray comes from the horizon or from the celetial sphere
-    int color = getOriginType(pR, b, q);
+        // Check whether the ray comes from the horizon or from the celetial sphere
+        int color = getOriginType(pR, b, q);
 
-    // Populate the initial conditions. Is this parallelization even necessary?
-    switch(threadId){
-        case 0:
-            initCond[0] = __camR;
-            break;
 
-        case 1:
-            initCond[1] = rayTheta;
-            break;
+        __shared__ Real absoluteTol[SYSTEM_SIZE];
+        __shared__ Real relativeTol[SYSTEM_SIZE];
+        // Populate the initial conditions. Is this parallelization even necessary?
+        switch(threadId){
+            case 0:
+                initCond[0] = __camR;
+                relativeTol[0] = 1e-6;
+                absoluteTol[0] = 1e-12;
+                break;
 
-        case 2:
-            initCond[2] = rayPhi;
-            break;
+            case 1:
+                initCond[1] = rayTheta;
+                relativeTol[1] = 1e-6;
+                absoluteTol[1] = 1e-12;
+                break;
 
-        case 3:
-            initCond[3] = pR;
-            break;
+            case 2:
+                initCond[2] = rayPhi;
+                relativeTol[2] = 1e-6;
+                absoluteTol[2] = 1e-12;
+                break;
 
-        case 4:
-            initCond[4] = pTheta;
-            break;
+            case 3:
+                initCond[3] = pR;
+                relativeTol[3] = 1e-6;
+                absoluteTol[3] = 1e-12;
+                break;
+
+            case 4:
+                initCond[4] = pTheta;
+                relativeTol[4] = 1e-6;
+                absoluteTol[4] = 1e-12;
+                break;
+        }
+        __syncthreads();
+
+        RK4Solve(computeComponent, b, q,
+                 0., -0.1, initCond, -0.01, -0.1,
+                 relativeTol, absoluteTol, 0.9, 0.2, 10.0, 0.04, 2.3e-16);
+
+
+        globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 0] = color;
+        globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 1] = color;
+        globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 2] = color;
     }
-    __syncthreads();
-
-
-
-    globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 0] = color;
-    globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 1] = color;
-    globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 2] = color;
 }

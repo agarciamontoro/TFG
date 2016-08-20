@@ -393,7 +393,8 @@ class RayTracer:
 
         # Compile the kernel code using pycuda.compiler
         ownDir = os.path.dirname(os.path.realpath(__file__))
-        mod = compiler.SourceModule(kernel, include_dirs=[ownDir])
+        softwareDir = os.path.abspath(os.path.join(ownDir, os.pardir))
+        mod = compiler.SourceModule(kernel, include_dirs=[ownDir, softwareDir])
 
         # Get the kernel function from the compiled module
         self.rayTrace = mod.get_function("rayTrace")
@@ -449,7 +450,7 @@ class RayTracer:
 
             # Block definition -> number of threads x number of threads
             # Each thread in the block computes one RK4 step for one equation
-            block=(1, 1, 1)
+            block=(8, 1, 1)
         )
 
         self.end.record()   # end timing
@@ -475,7 +476,7 @@ if __name__ == '__main__':
 
     # Camera lens properties
     camFocalLength = 1
-    camSensorShape = (1000, 1000)  # (Rows, Columns)
+    camSensorShape = (200, 200)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants above
