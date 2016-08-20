@@ -230,29 +230,31 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f, Real b,
     __syncthreads();
 
 
+
+    Real _Delta, _rho, err;
+
     switch(threadId) {
             case 0:
-                Real _Delta = Delta(param.r, param);
-                Real _rho = rho(param.r, param);
+                _Delta = Delta(param.r);
+                _rho = rho(param.r, param.theta);
                 f[threadId] = _Delta * param.pR * _rho*_rho;
                 break;
 
             case 1:
-                Real _rho = rho(param.r, param);
+                _rho = rho(param.r, param.theta);
                 f[threadId] = param.pTheta / _rho;
                 break;
 
             case 2:
-                Real sol = dfridr(Real (*func)(Real Parameters), Real x, Parameters param, Real h, Real *err)
-                f[threadId] = {{ function }};
+                f[threadId] =  dfridr(eqPhi, param.b, param, 0.1, &err);
                 break;
 
             case 3:
-                f[threadId] = {{ function }};
+                f[threadId] = dfridr(eqMomentaR, param.r, param, 0.1, &err);
                 break;
 
             case 4:
-                f[threadId] = {{ function }};
+                f[threadId] = dfridr(eqMomentaTheta, param.theta, param, 0.1, &err);
                 break;
     }
 }
