@@ -185,27 +185,31 @@ class Camera:
 
 
     def createRay(self, row, col, kerr, blackHole):
+        # debug = True if row == 178 and col == 36 else False
+
         row -= self.sensorShape[0] / 2.
         col -= self.sensorShape[1] / 2
 
         rayTheta, rayPhi = self._pixelToRay(row, col)
 
         # We can now create and return our ray :)
-        return Ray(rayTheta, rayPhi, self, kerr, blackHole)
+        return Ray(rayTheta, rayPhi, self, kerr, blackHole, debug)
 
 
 # Dummy object for a ray (pixel->spherical transformation is done here)
 class Ray:
-    def __init__(self, theta, phi, camera, kerr, blackHole):
+    def __init__(self, theta, phi, camera, kerr, blackHole, debug):
         # Set direction in the camera's reference frame
         self.theta = theta
         self.phi = phi
+        self.debug = debug
 
         # Compute all necessary information for the ray
         self._setNormal()
         self._setDirectionOfMotion(camera)
         self._setCanonicalMomenta(kerr)
         self._setConservedQuantities(camera, blackHole)
+
 
     def _setNormal(self):
         # Cartesian components of the unit vector N pointing in the direction
@@ -251,10 +255,14 @@ class Ray:
         # Set conserved energy to unity. See (A.11)
         self.pt = -1
 
+
         # Compute the canonical momenta. See (A.11)
         self.pR = E * ro * nR / sqrt(delta)
         self.pTheta = E * ro * nTheta
         self.pPhi = E * pomega * nPhi
+
+        if self.debug:
+            print("rayTheta = ", self.theta, " rayPhi = ", self.phi, "pR = ", self.pR, " pTheta = ", self.pTheta)
 
     def _setConservedQuantities(self, camera, blackHole):
         # Simplify notation
@@ -413,6 +421,9 @@ class RayTracer:
         # FIXME: Does this free the previous memory or no?
         self.imageGPU = gpuarray.to_gpu(self.image)
 
+        self.points = np.empty((self.imageRows, self.imageCols, 3))
+        self.pointsGPU = gpuarray.to_gpu(self.points)
+
     def getImage(self):
         self.start.record()  # start timing
 
@@ -444,6 +455,9 @@ class RayTracer:
             np.float64(self.kerr.alpha),
             np.float64(self.kerr.omega),
 
+            # Points for testing
+            self.pointsGPU,
+
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes the direction of one pixel
             grid=(self.imageCols, self.imageRows, 1),
@@ -461,22 +475,24 @@ class RayTracer:
 
         self.image = self.imageGPU.get()
 
+        self.points = self.points.get()
+
         return(self.image)
 
 
 
 if __name__ == '__main__':
     # Black hole spin
-    spin = 0.00001
+    spin = 0.5
 
     # Camera position
-    camR = 15
+    camR = 100
     camTheta = Pi/2
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 1
-    camSensorShape = (200, 200)  # (Rows, Columns)
+    camFocalLength = 10
+    camSensorShape = (100, 100)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants above

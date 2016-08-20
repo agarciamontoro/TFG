@@ -183,10 +183,14 @@
         do{
             // TODO: Check that the step size is not too small
             if (0.1 * abs(h) <= abs(x0) * uround){
-                printf("Exit of dopri5 at x = %.16e, step size too small h = %.16e\r\n", x0, h);
+                // if(threadId == 0)
+                //     printf("Exit of dopri5 at x = %.16e, step size too small h = %.16e\r\n", x0, h);
+                // h = hOrig;
                 return;
             }
 
+            if(blockIdx.x == 0 && blockIdx.y == 0)
+	        printf("Thread %d: Time = %.10f\tValue = %.20f\n", threadId, x0, y0);
 
 
             // PHASE 0. Check if the current time x_0 plus the current step
@@ -396,6 +400,9 @@
                 // Necessary update for next steps: the local y0 variable holds
                 // the current initial condition (now the computed solution)
                 y0 = solution[threadId];
+
+                if(blockIdx.x == 50 && blockIdx.y == 50)
+                    printf("Thread %d: [%.10f] -> %.10f\n", threadId, x0, y0);
 
                 // This step was accepted, so it was not rejected, so reject is
                 // false. SCIENCE.

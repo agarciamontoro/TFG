@@ -55,7 +55,7 @@ __device__ Real drR(Real r, Real b, Real q){
     return 4*r*(r*r - __a*b + __a2) - (q + (b-__a)*(b-__a))*(2*r - 2);
 }
 
-__device__ Real Theta(Real r, Real theta, Real b, Real q){
+__device__ Real Theta(Real theta, Real b, Real q){
     Real sinTheta = sin(theta);
     Real sin2 = sinTheta*sinTheta;
 
@@ -121,7 +121,7 @@ __device__ Real eqMomenta(Parameters param){
     Real _rho = rho(param.r, param.theta);
     Real tworho2 = 2*_rho*_rho;
     Real _R = R(r, param);
-    Real _Theta = Theta(r, param.theta, param.b, param.q);
+    Real _Theta = Theta(param.theta, param.b, param.q);
 
     Real sol = -(_Delta*pR*pR/tworho2) - (pTheta*pTheta/tworho2) + ((_R+_Delta*_Theta)/(_Delta*tworho2));
 
@@ -143,7 +143,7 @@ __device__ Real eqMomentaR(Real r, Parameters param){
 __device__ Real eqPhi(Real b, Parameters param){
     Real _R = R(param.r, param);
     Real _Delta = Delta(param.r);
-    Real _Theta = Theta(param.r, param.theta, param.b, param.q);
+    Real _Theta = Theta(param.theta, param.b, param.q);
     Real _rho = rho(param.r, param.theta);
 
     return (_R+_Delta*_Theta)/(2*_Delta*_rho*_rho);
@@ -254,49 +254,38 @@ __device__ OriginType getOriginType(Real pR, Real b, Real q){
 __device__ void computeComponent(int threadId, Real x, Real* y, Real* f, Real b, Real q){
     Parameters param;
 
-    Real _R, D, Z, rho1, rho2, rho3, rho4;
+    param.r = y[0];
+    param.theta = y[1];
+    param.phi = y[2];
+    param.pR = y[3];
+    param.pTheta = y[4];
+    param.b = b;
+    param.q = q;
 
-    switch(threadId) {
-            case 0:
-                param.r = y[0];
-                param.b = b;
-                Z = Theta(param.r, param.theta, param.b, param.q);
-                break;
+    // if(blockIdx.x == 5 && blockIdx.y == 5 && threadId == 0)
+	// printf("CC[%.10f]: r = %.10f, theta = %.10f, phi = %.10f, pR = %.10f, pTheta = %.10f, b = %.10f, q = %.10f\n", x, param.r, param.theta, param.phi, param.pR, param.pTheta, param.b, param.q);
 
-            case 1:
-                param.theta = y[1];
-                param.q = q;
-                break;
+    Real _R, D, Z, rho1, rho2, rho3;
 
-            case 2:
-                param.phi = y[2];
-                D = Delta(param.r);
-                break;
+    _R = R(param.r, param);
+    D = Delta(param.r);
+    Z = Theta(param.theta, param.b, param.q);
 
-            case 3:
-                param.pR = y[3];
-                rho1 = rho(param.r, param.theta);
-                rho2 = rho1*rho1;
-                rho3 = rho1*rho2;
-                rho4 = rho2*rho2;
-                break;
+    rho1 = rho(param.r, param.theta);
+    rho2 = rho1*rho1;
+    rho3 = rho1*rho2;
 
-            case 4:
-                param.pTheta = y[4];
-                _R = R(param.r, param);
-                break;
-    }
-    __syncthreads();
-
-    Real dR, dZ, dRho, dD, sum1, sum2, sum3, num, den;
+    Real dR, dZ, dRho, dD, sum1, sum2, sum3, sum4, sum5, sum6;
 
     switch(threadId) {
             case 0:
                 f[threadId] = D * param.pR / rho2;
+                // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);
                 break;
 
             case 1:
                 f[threadId] = param.pTheta / rho2;
+                // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);
                 break;
 
             case 2:
@@ -304,6 +293,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f, Real b,
                 dZ = dbTheta(param.theta, param.b);
 
                 f[threadId] = - (dR + D*dZ)/(2*D*rho2);
+                // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);
                 break;
 
             case 3:
@@ -311,39 +301,45 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f, Real b,
                 dD = drDelta(param.r);
                 dR = drR(param.r, param.b, param.q);
 
-                sum1 = (dRho*2*D - dD*rho1)/(2*rho3);
-                sum2 = (dRho*param.pTheta*param.pTheta)/(rho3);
+                sum1 = + dRho*param.pTheta*param.pTheta / rho3;
+                sum2 = + D*param.pR*param.pR*dRho / rho3;
+                sum3 = - (D*Z + _R)*dRho / (D*rho3);
+                sum4 = - dD*param.pR*param.pR / (2*rho2);
+                sum5 = + (dD*Z + dR) / (2*D*rho2);
+                sum6 = - dD*(D*Z + _R) / (2*D*D*rho2);
 
-                num = (dR + Z*dD)*D*rho2 - (_R + D*Z)*(dD*D*rho2 + 2*D*rho1*dRho);
-                den = 2*D*D*rho4;
-                sum3 = num/den;
-
-                f[threadId] = sum1 + sum2 + sum3;
+                f[threadId] = sum1 + sum2 + sum3 + sum4 + sum5 + sum6;
+                // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);
                 break;
 
             case 4:
                 dRho = dzRho(param.r, param.theta);
                 dZ = dzTheta(param.theta, param.b);
 
-                sum1 = (dRho*D*param.pR*param.pR)/(rho3);
-                sum2 = (dRho*param.pTheta*param.pTheta)/(rho3);
-                sum3 = (D*(dZ*rho1 - 2*Z*dRho) - 2*_R*dRho)/(2*D*rho3);
+                sum1 = + dRho*param.pTheta*param.pTheta / rho3;
+                sum2 = + D*param.pR*param.pR*dRho / rho3;
+                sum3 = - (D*Z + _R)*dRho / (D*rho3);
+                sum4 = + dZ / (2*rho2);
 
-                f[threadId] = sum1 + sum2 + sum3;
+                f[threadId] = sum1 + sum2 + sum3 + sum4;
+                // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);
                 break;
     }
 }
 
 
-__global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pixelWidth, Real pixelHeight, Real d, Real camR, Real camTheta, Real camPhi, Real camBeta, Real a, Real b1,Real b2, Real ro, Real delta, Real pomega, Real alpha, Real omega){
+__global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pixelWidth, Real pixelHeight, Real d, Real camR, Real camTheta, Real camPhi, Real camBeta, Real a, Real b1,Real b2, Real ro, Real delta, Real pomega, Real alpha, Real omega, void* devState){
     // Shared memory for the initial conditions of this thread
-    __shared__ Real initCond[SYSTEM_SIZE];
+    __shared__ Real* initCond;
 
     // Retrieve the ids of the thread in the block and of the block in the grid
     int threadId = threadIdx.x + threadIdx.y * blockDim.x;
-    // int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
+    int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
 
     if(threadId < SYSTEM_SIZE){
+        Real* globalState = (Real*) devState;
+        initCond = globalState + blockId*3;
+
         Real* globalImage = (Real*) devImage;
 
         // Set global variables, common to all threads and constants
@@ -381,7 +377,7 @@ __global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pi
         getConservedQuantities(pTheta, pPhi, &b, &q);
 
         // Check whether the ray comes from the horizon or from the celetial sphere
-        int color = getOriginType(pR, b, q);
+        OriginType origin = getOriginType(pR, b, q);
 
 
         __shared__ Real absoluteTol[SYSTEM_SIZE];
@@ -395,13 +391,13 @@ __global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pi
                 break;
 
             case 1:
-                initCond[1] = rayTheta;
+                initCond[1] = __camTheta;
                 relativeTol[1] = 1e-6;
                 absoluteTol[1] = 1e-12;
                 break;
 
             case 2:
-                initCond[2] = rayPhi;
+                initCond[2] = __camPhi;
                 relativeTol[2] = 1e-6;
                 absoluteTol[2] = 1e-12;
                 break;
@@ -420,13 +416,47 @@ __global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pi
         }
         __syncthreads();
 
-        RK4Solve(computeComponent, b, q,
-                 0., -0.1, initCond, -0.01, -0.1,
-                 relativeTol, absoluteTol, 0.9, 0.2, 10.0, 0.04, 2.3e-16);
+        if(blockIdx.x == 36 && blockIdx.y == 178)
+            printf("rayTheta = %.10f, rayPhi = %.10f, pR = %.10f, pTheta = %.10f\n", rayTheta, rayPhi, pR, pTheta);
+
+        Real x0 = 0;
+
+        Real rCurr, thetaCurr;
+
+        Real rPrev = __camR;
+        Real thetaPrev = __camTheta;
+
+        float3 color = {0.0f, 0.0f, 0.0f};
+
+        if(origin == CELESTIAL_SPHERE)
+            color.x = color.y = color.z = 1.;
+
+        while(x0 > -10){
+            RK4Solve(computeComponent, b, q,
+                x0, x0-0.1, initCond, -0.0001, -0.1,
+                relativeTol, absoluteTol, 0.9, 0.2, 10.0, 0.04, 2.3e-16);
+
+            x0 -= 0.1;
+
+            rCurr = initCond[0];
+            thetaCurr = initCond[1];
+
+            if(rCurr < 20 &&  thetaPrev*thetaCurr < 0){
+                color.x = 1.0;
+                color.y = 0.0;
+                color.z = 0.0;
+
+                break;
+            }
+        }
+
+        // RK4Solve(computeComponent, b, q,
+        //     0., -10.0, initCond, -0.0001, -10,
+        //     relativeTol, absoluteTol, 0.9, 0.2, 10.0, 0.04, 2.3e-16);
 
 
-        globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 0] = color;
-        globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 1] = color;
-        globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 2] = color;
+        globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 0] = color.x;
+        globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 1] = color.y;
+        globalImage[3*(blockIdx.x + blockIdx.y*gridDim.x) + 2] = color.z;
     }
 }

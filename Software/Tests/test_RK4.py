@@ -108,7 +108,7 @@ class TestRK4_Airy(unittest.TestCase):
         np.testing.assert_almost_equal(RK4_solver_y, SCI_solver.y, decimal=5)
 
 
-    @given(floats(max_value=0.), floats(0.01, 9.0))
+    @given(floats(max_value=0.), floats(0.01, 900.0))
     def testAiryAnalytical(self, x0, intervalSize):
         "Tests Airy ODE y'' = xy against analytical solution"
 
