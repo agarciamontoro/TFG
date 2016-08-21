@@ -67,9 +67,17 @@ __device__ void getConservedQuantities(Real pTheta, Real pPhi, Real* b,
     // ********************* GET CONSERVED QUANTITIES ********************* //
     // Get conserved quantities. See (A.12)
     *b = pPhi;
-    Real sinTheta = sin(__camTheta);
 
-    *q = pTheta*pTheta + cos(__camTheta)*((*b)*(*b) / sinTheta*sinTheta - __a2);
+    Real sinT = sin(__camTheta);
+    Real sinT2 = sinT*sinT;
+
+    Real cosT = cos(__camTheta);
+    Real cosT2 = cosT*cosT;
+
+    Real pTheta2 = pTheta*pTheta;
+    Real b2 = pPhi*pPhi;
+
+    *q = pTheta2 + cosT2*((b2/sinT2) - __a2);
 }
 
 __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real imageCols, Real pixelWidth, Real pixelHeight, Real d, Real camR, Real camTheta, Real camPhi, Real camBeta, Real a, Real b1, Real b2, Real ro, Real delta, Real pomega, Real alpha, Real omega){
@@ -100,8 +108,8 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     __omega = omega;
 
     // Compute pixel position in the physical space
-    Real y = - (blockIdx.x - imageCols/2.) * pixelWidth;
-    Real z =   (blockIdx.y - imageRows/2.) * pixelHeight;
+    Real y = (blockIdx.x + 0.5 - 50) * pixelWidth;
+    Real z = (blockIdx.y + 0.5 - 50) * pixelHeight;
 
     // Compute direction of the incoming ray in the camera's reference
     // frame

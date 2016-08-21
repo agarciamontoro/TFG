@@ -354,14 +354,14 @@ if __name__ == '__main__':
     rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
 
     tInit = 0.
-    tEnd = -1.
-    numSteps = 25
+    tEnd = -12.
+    numSteps = 50
     stepSize = (tEnd - tInit) / numSteps
     t = tInit
 
     rays = rayTracer.systemState[:, :, :3]
-    print(rays.shape)
-    plotData = np.empty(rays.shape + (numSteps+1, ))
+    print(rays[:, :, 2])
+    plotData = np.zeros(rays.shape + (numSteps+1, ))
 
     plotData[:, :, :, 0] = rays
 
@@ -388,9 +388,9 @@ if __name__ == '__main__':
     drawBlackHole(ax)
     drawCamera(ax)
 
-    for x in range(0, 100, 10):
-        for y in range(0, 100, 10):
-            ray = np.transpose(plotData[x, y, :, :])
+    for row in range(0, 100, 10):
+        for col in range(0, 100, 10):
+            ray = np.transpose(plotData[row, col, :, :])
             drawRay(ax, ray)
 
     plt.show()
