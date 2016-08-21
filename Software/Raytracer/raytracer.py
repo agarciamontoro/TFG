@@ -296,5 +296,4 @@ if __name__ == '__main__':
     rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
     rayTracer.rayTrace(-1)
 
-    print(rayTracer.systemState)
-    print(rayTracer.constants)
+    print(rayTracer.systemState.shape)

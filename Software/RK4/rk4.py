@@ -37,9 +37,10 @@ class RK4Solver:
     """
 
     # TODO: Make tolerances a SYSTEM_SIZE-length array
-    def __init__(self, x0, y0, dx, functionFile, relativeTol=1e-6, absoluteTol=1e-12,
-                 safe=0.9, fac1=0.2, fac2=10.0, beta=0.04, uround=2.3e-16,
-                 additionalDataGPU=None, dataSize=None, debug=False):
+    def __init__(self, x0, y0, dx, functionFile, relativeTol=1e-6,
+                 absoluteTol=1e-12, safe=0.9, fac1=0.2, fac2=10.0, beta=0.04,
+                 uround=2.3e-16, additionalDataGPU=None, dataSize=None,
+                 debug=False):
         """Builds the RungeKutta4 solver.
 
         Args:
