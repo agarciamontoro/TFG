@@ -20,7 +20,7 @@ __device__ Real R(Real r, Parameters param){
 }
 
 __device__ Real dbR(Real r, Real b){
-    return -2*b*r*r + 4*b*r - 4*__a*r;
+    return (4*b - 4*__a)*r - 2*b*r*r;
 }
 
 __device__ Real drR(Real r, Real b, Real q){
@@ -38,24 +38,23 @@ __device__ Real Theta(Real theta, Real b, Real q){
 }
 
 __device__ Real dbTheta(Real theta, Real b){
-    Real cosTheta = cos(theta);
-    Real sinTheta = sin(theta);
+    Real cosT = cos(theta);
+    Real sinT = sin(theta);
 
-    return -(2*b*cosTheta*cosTheta)/(sinTheta*sinTheta);
+    return -(2*b*cosT*cosT)/(sinT*sinT);
 }
 
 __device__ Real dzTheta(Real theta, Real b){
     Real cosT = cos(theta);
-    Real cosT2 = cosT*cosT;
+    Real cosT3 = cosT*cosT*cosT;
 
     Real sinT = sin(theta);
     Real sinT2 = sinT*sinT;
     Real sinT3 = sinT2*sinT;
-    Real sinT4 = sinT2*sinT2;
 
     Real b2 = b*b;
 
-    return -2*cosT*(__a2*sinT4 - b2*sinT2 - b2*cosT2)/sinT3;
+    return 2*cosT*((b2/sinT2) - __a2)*sinT + (2*b2*cosT3)/(sinT3);
 }
 
 __device__ Real Delta(Real r){
@@ -63,12 +62,12 @@ __device__ Real Delta(Real r){
 }
 
 __device__ Real drDelta(Real r){
-    return 2*r-2;
+    return 2*r - 2;
 }
 
 __device__ Real rho(Real r, Real theta){
-    Real cosTheta = cos(theta);
-    return sqrt(r*2 + __a2*cosTheta*cosTheta);
+    Real cosT = cos(theta);
+    return sqrt(r*2 + __a2*cosT*cosT);
 }
 
 __device__ Real drRho(Real r, Real theta){
@@ -199,10 +198,10 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
 
                 sum1 = + dRho*param.pTheta*param.pTheta / rho3;
                 sum2 = + D*param.pR*param.pR*dRho / rho3;
-                sum3 = - (D*Z + _R)*dRho / (D*rho3);
-                sum4 = - dD*param.pR*param.pR / (2*rho2);
+                sum3 = - ((D*Z + _R)*dRho / (D*rho3));
+                sum4 = - (dD*param.pR*param.pR / (2*rho2));
                 sum5 = + (dD*Z + dR) / (2*D*rho2);
-                sum6 = - dD*(D*Z + _R) / (2*D*D*rho2);
+                sum6 = - (dD*(D*Z + _R) / (2*D*D*rho2));
 
                 f[threadId] = sum1 + sum2 + sum3 + sum4 + sum5 + sum6;
                 // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);

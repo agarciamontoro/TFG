@@ -1,3 +1,8 @@
+from matplotlib import cm
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+
 import os
 import sys
 import numpy as np
@@ -23,12 +28,17 @@ from rk4 import RK4Solver
 CELESTIAL_SPHERE = 1
 HORIZON = 0
 
-from matplotlib import cm
-from mpl_toolkits.mplot3d.art3d import Poly3DCollection
-import matplotlib as mpl
-from mpl_toolkits.mplot3d import Axes3D
+
 
 def drawRay(ax, ray):
+    rayColor = 'black'
+
+    # Clean the data
+    rowsZero = np.where(~ray.any(axis=1))[0]
+    if(rowsZero.size != 0):
+        ray = ray[:rowsZero[0], :]
+        rayColor = 'red'
+
     # Retrieve the actual data
     r = ray[:, 0]
     theta = ray[:, 1]
@@ -43,25 +53,23 @@ def drawRay(ax, ray):
     y = r * sinT * sinP
     z = r * cosT
 
-    ax.plot(x, y, z, label='Ray0')
+    ax.plot(x, y, z, label='', color=rayColor)
 
 
-def drawCamera(ax):
-    camR = 100
-    camTheta = np.pi/2
-    camPhi = 0
+def drawCamera(ax, cam):
+    d = cam.r + cam.focalLength
+    H = cam.sensorSize[0] / 2
+    W = cam.sensorSize[1] / 2
 
-    camX = camR * np.sin(camTheta) * np.cos(camPhi)
-    camY = camR * np.sin(camTheta) * np.sin(camPhi)
-    camZ = camR * np.cos(camTheta)
+    points = np.array([
+        [d, W, H],
+        [d, -W, H],
+        [d, -W, -H],
+        [d, W, -H],
+        [d, W, H]
+    ])
 
-    ax.scatter(camX, camY, camZ, s=100, c='red')
-
-    # x = [1, 1, -1, -1]
-    # y = [1, -1, -1, 1]
-    # z = [-1, -1, -1, -1]
-    # verts = [(x[i], y[i], z[i]) for i in range(4)]
-    # # ax.add_collection3d(Poly3DCollection(verts))
+    ax.plot(points[:, 0], points[:, 1], points[:, 2])
 
 
 def drawAxes(ax, d=150):
@@ -70,7 +78,10 @@ def drawAxes(ax, d=150):
     ax.plot((0, 0), (0, 0), (-d, d), 'gray')
 
 
-def drawBlackHole(ax, r=5):
+def drawBlackHole(ax, blackHole):
+    r = (2 + np.sqrt(2 - 4*blackHole.a2)) / 2
+    print(r)
+
     # Draw black hole
     u = np.linspace(0, 2 * np.pi, 100)
     v = np.linspace(0, np.pi, 100)
@@ -79,7 +90,8 @@ def drawBlackHole(ax, r=5):
     y = r * np.outer(np.sin(u), np.sin(v))
     z = r * np.outer(np.ones(np.size(u)), np.cos(v))
 
-    ax.plot_surface(x, y, z, rstride=4, cstride=4, color='black')
+    ax.plot_surface(x, y, z, rstride=4, cstride=4, color='black',
+                    edgecolors='white')
 
 
 # Necessary functions for the algorithm. See (A.5)
@@ -305,23 +317,19 @@ class RayTracer:
         # Build and fill the array for the system state with the initial
         # conditions
         self.systemState = self.initCond[:, :, :5]
-        print("SHAPE system   : ", self.systemState.shape)
 
         # Retrieve the constants
         self.constants = self.initCond[:, :, 5:]
-        print("SHAPE constants: ", self.constants.shape)
 
         # Send everything to the GPU
         self.systemStateGPU = gpuarray.to_gpu(self.systemState)
         self.constantsGPU = gpuarray.to_gpu(self.constants)
 
     def _setUpSolver(self):
-        functionAbsPath = os.path.abspath("functions.cu")
-        self.solver = RK4Solver(0, self.systemStateGPU, -0.001,
-                                functionAbsPath,
+        functionPath = os.path.abspath("functions.cu")
+        self.solver = RK4Solver(0, self.systemStateGPU, -0.001, functionPath,
                                 additionalDataGPU=self.constantsGPU,
                                 dataSize=2, debug=self.debug)
-
 
     def rayTrace(self, xEnd):
         self.systemState = self.solver.solve(xEnd)
@@ -332,12 +340,12 @@ if __name__ == '__main__':
     spin = 0.0001
 
     # Camera position
-    camR = 100
+    camR = 20
     camTheta = Pi/2
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 2
+    camFocalLength = 10
     camSensorShape = (100, 100)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
@@ -355,12 +363,11 @@ if __name__ == '__main__':
 
     tInit = 0.
     tEnd = -12.
-    numSteps = 50
+    numSteps = 100
     stepSize = (tEnd - tInit) / numSteps
     t = tInit
 
     rays = rayTracer.systemState[:, :, :3]
-    print(rays[:, :, 2])
     plotData = np.zeros(rays.shape + (numSteps+1, ))
 
     plotData[:, :, :, 0] = rays
@@ -385,8 +392,10 @@ if __name__ == '__main__':
     ax.set_zlim3d(-25, 25)
 
     drawAxes(ax)
-    drawBlackHole(ax)
-    drawCamera(ax)
+    drawBlackHole(ax, blackHole)
+    drawCamera(ax, camera)
+
+    ax.legend()
 
     for row in range(0, 100, 10):
         for col in range(0, 100, 10):

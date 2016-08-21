@@ -188,7 +188,8 @@
         do{
             // TODO: Check that the step size is not too small
             if (0.1 * abs(h) <= abs(x0) * uround){
-              return;
+                globalInitCond[threadId] = 0.0;
+                return;
             }
 
             // PHASE 0. Check if the current time x_0 plus the current step

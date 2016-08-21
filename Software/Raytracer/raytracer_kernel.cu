@@ -108,13 +108,13 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     __omega = omega;
 
     // Compute pixel position in the physical space
-    Real y = (blockIdx.x + 0.5 - 50) * pixelWidth;
-    Real z = (blockIdx.y + 0.5 - 50) * pixelHeight;
+    Real x = - (blockIdx.x + 0.5 - imageCols/2) * pixelWidth;
+    Real y = (blockIdx.y + 0.5 - imageRows/2) * pixelHeight;
 
     // Compute direction of the incoming ray in the camera's reference
     // frame
-    Real rayPhi = Pi + atan(y / d);
-    Real rayTheta = Pi/2 + atan(z / sqrt(d*d + y*y));
+    Real rayPhi = Pi + atan(x / d);
+    Real rayTheta = Pi/2 + atan(y / sqrt(d*d + x*x));
 
     // Compute canonical momenta of the ray and the conserved quantites b
     // and q
