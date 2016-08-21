@@ -201,17 +201,14 @@ class RayTracer:
         self._setInitialConditions = mod.get_function("setInitialConditions")
 
     def _setUpInitCond(self):
-        # Array to store the initial conditions
+        # Array to compute the initial conditions
         self.initCond = np.empty((self.imageRows, self.imageCols,
                                   self.systemSize + 2))
 
-        # Vector to store b and q constants
-        self.additionalData = np.empty((self.imageRows, self.imageCols, 2))
-
-        # Send them to the GPU
+        # Send it to the GPU
         self.initCondGPU = gpuarray.to_gpu(self.initCond)
-        self.additionalDataGPU = gpuarray.to_gpu(self.additionalData)
 
+        # Compute the initial conditions
         self._setInitialConditions(
             self.initCondGPU,
 
@@ -245,19 +242,28 @@ class RayTracer:
         )
 
         # Retrieve the computed initial conditions
-        self.systemState = self.initCond = self.initCondGPU.get()
-        computedData = self.initCondGPU.get()
+        self.initCond = self.initCondGPU.get()
 
-        self.systemState = self.initCond = computedData[:, :, :5]
-        self.constants = computedData[:, :, 5:]
+        # Build and fill the array for the system state with the initial
+        # conditions
+        self.systemState = self.initCond[:, :, :5]
+        print("SHAPE system   : ", self.systemState.shape)
 
+        # Retrieve the constants
+        self.constants = self.initCond[:, :, 5:]
+        print("SHAPE constants: ", self.constants.shape)
+
+        # Send everything to the GPU
+        self.systemStateGPU = gpuarray.to_gpu(self.systemState)
         self.constantsGPU = gpuarray.to_gpu(self.constants)
 
     def _setUpSolver(self):
         functionAbsPath = os.path.abspath("functions.cu")
-        self.solver = RK4Solver(0, self.initCondGPU, -0.001, functionAbsPath,
+        self.solver = RK4Solver(0, self.systemStateGPU, -0.001,
+                                functionAbsPath,
                                 additionalDataGPU=self.constantsGPU,
                                 dataSize=2, debug=self.debug)
+
 
     def rayTrace(self, xEnd):
         self.systemState = self.solver.solve(xEnd)
@@ -287,7 +293,8 @@ if __name__ == '__main__':
     camera.setSpeed(kerr, blackHole)
 
     # Create the raytracer!
-    rayTracer = RayTracer(camera, kerr, blackHole, debug=True)
+    rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
     rayTracer.rayTrace(-1)
 
     print(rayTracer.systemState)
+    print(rayTracer.constants)

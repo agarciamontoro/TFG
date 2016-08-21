@@ -1,7 +1,7 @@
 #ifndef __DEFINITIONS__
 #define __DEFINITIONS__
 
-#define DEBUG
+
 
 #define SYSTEM_SIZE 5
 #define DATA_SIZE 

@@ -93,7 +93,7 @@
     int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
 
     #ifdef DEBUG
-        printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, *((Real*)devX0), xend, ((Real*)devInitCond)[0], ((Real*)devInitCond)[1]);
+        printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)devInitCond)[0], ((Real*)devInitCond)[1]);
     #endif
 
     // Each equation to solve has a thread that compute its solution. Although
@@ -187,6 +187,9 @@
         //          3.2.2 In any other case, iterate again.
         do{
             // TODO: Check that the step size is not too small
+            if (0.1 * abs(h) <= abs(x0) * uround){
+              return;
+            }
 
             // PHASE 0. Check if the current time x_0 plus the current step
             // (multiplied by a safety factor to prevent steps too small)

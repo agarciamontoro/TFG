@@ -93,7 +93,7 @@
     int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
 
     #ifdef DEBUG
-        printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, *((Real*)devX0), xend, ((Real*)devInitCond)[0], ((Real*)devInitCond)[1]);
+        printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)devInitCond)[0], ((Real*)devInitCond)[1]);
     #endif
 
     // Each equation to solve has a thread that compute its solution. Although

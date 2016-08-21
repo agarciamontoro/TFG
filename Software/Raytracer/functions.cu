@@ -157,8 +157,9 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
     param.b = data[0];
     param.q = data[1];
 
-    // if(blockIdx.x == 5 && blockIdx.y == 5 && threadId == 0)
-	// printf("CC[%.10f]: r = %.10f, theta = %.10f, phi = %.10f, pR = %.10f, pTheta = %.10f, b = %.10f, q = %.10f\n", x, param.r, param.theta, param.phi, param.pR, param.pTheta, param.b, param.q);
+    // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0){
+    //     printf("CC[%.10f]: %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f\n", x, __a, __a2, param.r, param.theta, param.phi, param.pR, param.pTheta, param.b, param.q);
+    // }
 
     Real _R, D, Z, rho1, rho2, rho3;
 
