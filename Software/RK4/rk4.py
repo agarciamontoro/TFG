@@ -243,6 +243,9 @@ class RK4Solver:
 
         self.start.record()  # start timing
 
+        # Convert x0 to the same type of y0
+        self.x0 = np.array(self.x0).astype(self.type)
+
         # Call the kernel on the card
         self.RK4Solve(
             # Inputs

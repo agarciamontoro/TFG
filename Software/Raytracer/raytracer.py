@@ -23,6 +23,64 @@ from rk4 import RK4Solver
 CELESTIAL_SPHERE = 1
 HORIZON = 0
 
+from matplotlib import cm
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+import matplotlib as mpl
+from mpl_toolkits.mplot3d import Axes3D
+
+def drawRay(ax, ray):
+    # Retrieve the actual data
+    r = ray[:, 0]
+    theta = ray[:, 1]
+    phi = ray[:, 2]
+
+    cosT = np.cos(theta)
+    sinT = np.sin(theta)
+    cosP = np.cos(phi)
+    sinP = np.sin(phi)
+
+    x = r * sinT * cosP
+    y = r * sinT * sinP
+    z = r * cosT
+
+    ax.plot(x, y, z, label='Ray0')
+
+
+def drawCamera(ax):
+    camR = 100
+    camTheta = np.pi/2
+    camPhi = 0
+
+    camX = camR * np.sin(camTheta) * np.cos(camPhi)
+    camY = camR * np.sin(camTheta) * np.sin(camPhi)
+    camZ = camR * np.cos(camTheta)
+
+    ax.scatter(camX, camY, camZ, s=100, c='red')
+
+    # x = [1, 1, -1, -1]
+    # y = [1, -1, -1, 1]
+    # z = [-1, -1, -1, -1]
+    # verts = [(x[i], y[i], z[i]) for i in range(4)]
+    # # ax.add_collection3d(Poly3DCollection(verts))
+
+
+def drawAxes(ax, d=150):
+    ax.plot((-d, d), (0, 0), (0, 0), 'grey')
+    ax.plot((0, 0), (-d, d), (0, 0), 'grey')
+    ax.plot((0, 0), (0, 0), (-d, d), 'gray')
+
+
+def drawBlackHole(ax, r=5):
+    # Draw black hole
+    u = np.linspace(0, 2 * np.pi, 100)
+    v = np.linspace(0, np.pi, 100)
+
+    x = r * np.outer(np.cos(u), np.sin(v))
+    y = r * np.outer(np.sin(u), np.sin(v))
+    z = r * np.outer(np.ones(np.size(u)), np.cos(v))
+
+    ax.plot_surface(x, y, z, rstride=4, cstride=4, color='black')
+
 
 # Necessary functions for the algorithm. See (A.5)
 def b0(r, a):
@@ -294,6 +352,45 @@ if __name__ == '__main__':
 
     # Create the raytracer!
     rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
-    rayTracer.rayTrace(-1)
 
-    print(rayTracer.systemState.shape)
+    tInit = 0.
+    tEnd = -1.
+    numSteps = 25
+    stepSize = (tEnd - tInit) / numSteps
+    t = tInit
+
+    rays = rayTracer.systemState[:, :, :3]
+    print(rays.shape)
+    plotData = np.empty(rays.shape + (numSteps+1, ))
+
+    plotData[:, :, :, 0] = rays
+
+    for step in range(numSteps):
+        t += stepSize
+        print(t)
+
+        # Solve the system
+        rayTracer.rayTrace(t)
+
+        # Get the data and store it for future plot
+        plotData[:, :, :, step + 1] = rayTracer.systemState[:, :, :3]
+
+    fig = plt.figure()
+
+    ax = fig.gca(projection='3d')
+    ax.set_axis_off()
+
+    ax.set_xlim3d(-25, 25)
+    ax.set_ylim3d(-25, 25)
+    ax.set_zlim3d(-25, 25)
+
+    drawAxes(ax)
+    drawBlackHole(ax)
+    drawCamera(ax)
+
+    for x in range(0, 100, 10):
+        for y in range(0, 100, 10):
+            ray = np.transpose(plotData[x, y, :, :])
+            drawRay(ax, ray)
+
+    plt.show()
