@@ -185,7 +185,7 @@ class Camera:
 
 
     def createRay(self, row, col, kerr, blackHole):
-        # debug = True if row == 178 and col == 36 else False
+        debug = True if row == 0 and col == 0 else False
 
         row -= self.sensorShape[0] / 2.
         col -= self.sensorShape[1] / 2
@@ -209,6 +209,9 @@ class Ray:
         self._setDirectionOfMotion(camera)
         self._setCanonicalMomenta(kerr)
         self._setConservedQuantities(camera, blackHole)
+
+        if(self.debug):
+            print("ThetaCS:", self.theta, "PhiCS:", self.phi, "pR:", self.pR, "pTheta:", self.pTheta, "pPhi:", self.pPhi, "b:", self.b, "q:", self.q)
 
 
     def _setNormal(self):
@@ -255,14 +258,10 @@ class Ray:
         # Set conserved energy to unity. See (A.11)
         self.pt = -1
 
-
         # Compute the canonical momenta. See (A.11)
         self.pR = E * ro * nR / sqrt(delta)
         self.pTheta = E * ro * nTheta
         self.pPhi = E * pomega * nPhi
-
-        if self.debug:
-            print("rayTheta = ", self.theta, " rayPhi = ", self.phi, "pR = ", self.pR, " pTheta = ", self.pTheta)
 
     def _setConservedQuantities(self, camera, blackHole):
         # Simplify notation
@@ -496,45 +495,45 @@ if __name__ == '__main__':
     # Set camera's speed (it needs the kerr metric constants)
     camera.setSpeed(kerr, blackHole)
 
-    # Create the raytracer!
-    rayTracer = RayTracer(camera, kerr, blackHole)
-    test = rayTracer.getImage()
-    # print(rayTracer.totalTime)
-
-    plt.imshow(test, interpolation='nearest')
-    plt.show()
-
-    # # Define image parameters
-    # imageRows = camSensorShape[0]
-    # imageCols = camSensorShape[1]
-    # image = np.empty((imageRows, imageCols, 3))
+    # # Create the raytracer!
+    # rayTracer = RayTracer(camera, kerr, blackHole)
+    # test = rayTracer.getImage()
+    # # print(rayTracer.totalTime)
     #
-    # def calculate_ray_parallel(pixel_pos):
-    #     row, col = pixel_pos
-    #     ray = camera.createRay(row, col, kerr, blackHole)
-    #     # Compute pixel and store it in the image
-    #     pixel = ray.traceRay(camera, blackHole)
-    #     return pixel_pos, [pixel, pixel, pixel]
-    #
-    # # Raytracing!
-    # pool = Pool(8)
-    # conditions = [(x, y) for x in range(imageRows) for y in range(imageCols)]
-    # results = pool.map(calculate_ray_parallel, conditions)
-    # for pixel_pos, result in results:
-    #     x, y = pixel_pos
-    #     image[x, y] = result
-    #
-    # # Show image
-    # fig = plt.figure()
-    # ax = fig.add_subplot(111)
-    #
-    # strT = r'$\theta \in [' + str(camera.minTheta) + ', ' + str(camera.maxTheta) + ']; Length = ' + str(camera.maxTheta - camera.minTheta) + '$'
-    # strP = r'$\phi \in [' + str(camera.minPhi) + ', ' + str(camera.maxPhi) + ']; Length = ' + str(camera.maxPhi - camera.minPhi) + '$'
-    #
-    # ax.annotate(strT, xy=(10, 30), backgroundcolor='white')
-    # ax.annotate(strP, xy=(10, 60), backgroundcolor='white')
-    # ax.annotate(r'$a = '+str(spin)+'$', xy=(10, 90), backgroundcolor='white')
-    # ax.annotate(r'$d = '+str(camFocalLength)+'$', xy=(10, 120),
-    #             backgroundcolor='white')
-    # plt.imshow(image, interpolation='nearest')
+    # plt.imshow(test, interpolation='nearest')
     # plt.show()
+
+    # Define image parameters
+    imageRows = camSensorShape[0]
+    imageCols = camSensorShape[1]
+    image = np.empty((imageRows, imageCols, 3))
+
+    def calculate_ray_parallel(pixel_pos):
+        row, col = pixel_pos
+        ray = camera.createRay(row, col, kerr, blackHole)
+        # Compute pixel and store it in the image
+        pixel = ray.traceRay(camera, blackHole)
+        return pixel_pos, [pixel, pixel, pixel]
+
+    # Raytracing!
+    pool = Pool(8)
+    conditions = [(x, y) for x in range(imageRows) for y in range(imageCols)]
+    results = pool.map(calculate_ray_parallel, conditions)
+    for pixel_pos, result in results:
+        x, y = pixel_pos
+        image[x, y] = result
+
+    # Show image
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+    strT = r'$\theta \in [' + str(camera.minTheta) + ', ' + str(camera.maxTheta) + ']; Length = ' + str(camera.maxTheta - camera.minTheta) + '$'
+    strP = r'$\phi \in [' + str(camera.minPhi) + ', ' + str(camera.maxPhi) + ']; Length = ' + str(camera.maxPhi - camera.minPhi) + '$'
+
+    ax.annotate(strT, xy=(10, 30), backgroundcolor='white')
+    ax.annotate(strP, xy=(10, 60), backgroundcolor='white')
+    ax.annotate(r'$a = '+str(spin)+'$', xy=(10, 90), backgroundcolor='white')
+    ax.annotate(r'$d = '+str(camFocalLength)+'$', xy=(10, 120),
+                backgroundcolor='white')
+    plt.imshow(image, interpolation='nearest')
+    plt.show()
