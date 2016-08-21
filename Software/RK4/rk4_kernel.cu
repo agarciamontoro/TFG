@@ -16,55 +16,13 @@
  */
 
 #include <stdio.h>
+{{ INCLUDES }}
+
 
 #define SYSTEM_SIZE {{ SYSTEM_SIZE }}
 {{ DEBUG }}
 
-typedef {{ Real }} Real;
-
-/**
- * Computes the value of the threadId-th component of the function
- * F(t) = (f1(t), ..., fn(t)) and stores it in the memory pointed by f
- * @param Real  x  Value of the time in which the system is solved
- * @param Real* y  Initial conditions for the system: a pointer to a vector
- *                 whose lenght shall be the same as the number of equations in
- *                 the system.
- * @param Real* f  Computed value of the function: a pointer to a vector whose
- *                 lenght shall be the same as the number of equations in the
- *                 system.
- */
-__device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
-    // Jinja template that renders to a switch in which every thread computes
-    // a different equation and stores it in the corresponding position in f.
-    // If you want to hard-code the system function manually, fill the switch
-    // cases with the right hand side of the n equations: the i-th equation has
-    // to be defined in the `case i-1:` and stored in the i-1 position of the
-    // output vector f.
-    // Please, note that this is a parallelized code, so it is mandatory to
-    // follow the explained structure in order to successfully manage the local
-    // and global work of the threads.
-    //
-    // Example: If you want to solve an harmonic oscillator system as the
-    // following:
-    //      y_0' = y_1
-    //      y_1' = -5*y_0
-    // then the code in the body of this function will read as follows:
-    //      switch(threadId){
-    //          case 0:
-    //              f[0] = y[1];
-    //              break;
-    //          case 1:
-    //              f[1] = -5 * y[0];
-    //              break;
-    //      }
-    switch(threadId) {
-        {% for i, function in SYSTEM_FUNCTIONS %}
-            case {{ i }}:
-                f[threadId] = {{ function }};
-                break;
-        {% endfor %}
-    }
-}
+// typedef {{ Real }} Real;
 
 /**
  * Applies the DOPRI5 algorithm over the system defined in the computeComponent

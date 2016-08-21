@@ -37,9 +37,9 @@ class RK4Solver:
     """
 
     # TODO: Make tolerances a SYSTEM_SIZE-length array
-    def __init__(self, x0, y0, dx, systemFunctions, relativeTol=1e-6,
-                 absoluteTol=1e-12, safe=0.9, fac1=0.2, fac2=10.0, beta=0.04,
-                 uround=2.3e-16, debug=False):
+    def __init__(self, x0, y0, dx, functionFile, relativeTol=1e-6, absoluteTol=1e-12,
+                 safe=0.9, fac1=0.2, fac2=10.0, beta=0.04, uround=2.3e-16,
+                 debug=False):
         """Builds the RungeKutta4 solver.
 
         Args:
@@ -136,9 +136,6 @@ class RK4Solver:
         # Convert dx to the same type of y0
         self.step = np.array(dx).astype(self.type)
 
-        # System function
-        self.F = [(str(i), f) for i, f in enumerate(systemFunctions)]
-
         # Convert tolerances to arrays and copy them to GPU
         self.relativeTol = np.repeat(relativeTol,
                                      self.SYSTEM_SIZE).astype(self.type)
@@ -155,8 +152,11 @@ class RK4Solver:
         self.beta = np.array(beta).astype(self.type)
         self.uround = np.array(uround).astype(self.type)
 
+        self.functionFile = functionFile
+
         # Debug switch
         self.debug = debug
+
 
         # ==================== KERNEL TEMPLATE RENDERING ==================== #
 
@@ -178,8 +178,8 @@ class RK4Solver:
         # Specify any input variables to the template as a dictionary.
         templateVars = {
             "SYSTEM_SIZE": self.SYSTEM_SIZE,
-            "SYSTEM_FUNCTIONS": self.F,
-            "Real": codeType,
+            "INCLUDES": '#include "%s"' % self.functionFile,
+            # "Real": "typedef %s Real;" % codeType,
             "DEBUG": "#define DEBUG" if self.debug else ""
         }
 
@@ -209,16 +209,15 @@ class RK4Solver:
 
     def setInitialConditions(self, x0, y0):
         # Get precision: single or double
-        self.type = y0.dtype
+        self.type = np.float64
         assert(self.type == np.float32 or self.type == np.float64)
 
         # Convert x0 to the same type of y0
         self.x0 = np.array(x0).astype(self.type)
-        self.y0 = y0
 
         # Transfer host (CPU) memory to device (GPU) memory
         # FIXME: Does this free the previous memory or no?
-        self.y0GPU = gpuarray.to_gpu(self.y0)
+        self.y0GPU = y0
 
     def solve(self, xEnd):
         """Evolve the system between x0 and xEnd.

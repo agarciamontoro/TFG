@@ -1,6 +1,9 @@
+#ifndef __NUMERICAL_METHODS__
+#define __NUMERICAL_METHODS__
+
 #include <math.h>
 #include <stdio.h>
-#include "definitions.c"
+#include "definitions.cu"
 
 #define CON 1.4
 #define CON2 (CON*CON)
@@ -79,3 +82,5 @@ __device__ Real dfridr(Real (*func)(Real, Parameters), Real x, Parameters param,
 
 	return ans;
 }
+
+#endif // __NUMERICAL_METHODS__
