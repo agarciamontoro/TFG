@@ -421,9 +421,6 @@ class RayTracer:
         # FIXME: Does this free the previous memory or no?
         self.imageGPU = gpuarray.to_gpu(self.image)
 
-        self.points = np.empty((self.imageRows, self.imageCols, 3))
-        self.pointsGPU = gpuarray.to_gpu(self.points)
-
     def getImage(self):
         self.start.record()  # start timing
 
@@ -455,9 +452,6 @@ class RayTracer:
             np.float64(self.kerr.alpha),
             np.float64(self.kerr.omega),
 
-            # Points for testing
-            self.pointsGPU,
-
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes the direction of one pixel
             grid=(self.imageCols, self.imageRows, 1),
@@ -475,15 +469,13 @@ class RayTracer:
 
         self.image = self.imageGPU.get()
 
-        self.points = self.points.get()
-
         return(self.image)
 
 
 
 if __name__ == '__main__':
     # Black hole spin
-    spin = 0.5
+    spin = 0.0001
 
     # Camera position
     camR = 100
@@ -491,7 +483,7 @@ if __name__ == '__main__':
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 10
+    camFocalLength = 2
     camSensorShape = (100, 100)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
@@ -507,7 +499,7 @@ if __name__ == '__main__':
     # Create the raytracer!
     rayTracer = RayTracer(camera, kerr, blackHole)
     test = rayTracer.getImage()
-    print(rayTracer.totalTime)
+    # print(rayTracer.totalTime)
 
     plt.imshow(test, interpolation='nearest')
     plt.show()

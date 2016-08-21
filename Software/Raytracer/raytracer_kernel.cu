@@ -125,7 +125,7 @@ __device__ Real eqMomenta(Parameters param){
 
     Real sol = -(_Delta*pR*pR/tworho2) - (pTheta*pTheta/tworho2) + ((_R+_Delta*_Theta)/(_Delta*tworho2));
 
-    printf("%.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f\n", param.r, param.pR, param.pTheta, param.theta, param.phi, param.b, param.q);
+    // printf("%.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f\n", param.r, param.pR, param.pTheta, param.theta, param.phi, param.b, param.q);
 
     return sol;
 }
@@ -328,18 +328,15 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f, Real b,
 }
 
 
-__global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pixelWidth, Real pixelHeight, Real d, Real camR, Real camTheta, Real camPhi, Real camBeta, Real a, Real b1,Real b2, Real ro, Real delta, Real pomega, Real alpha, Real omega, void* devState){
+__global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pixelWidth, Real pixelHeight, Real d, Real camR, Real camTheta, Real camPhi, Real camBeta, Real a, Real b1,Real b2, Real ro, Real delta, Real pomega, Real alpha, Real omega){
     // Shared memory for the initial conditions of this thread
-    __shared__ Real* initCond;
+    __shared__ Real initCond[SYSTEM_SIZE];
 
     // Retrieve the ids of the thread in the block and of the block in the grid
     int threadId = threadIdx.x + threadIdx.y * blockDim.x;
     int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
 
     if(threadId < SYSTEM_SIZE){
-        Real* globalState = (Real*) devState;
-        initCond = globalState + blockId*3;
-
         Real* globalImage = (Real*) devImage;
 
         // Set global variables, common to all threads and constants
@@ -375,6 +372,10 @@ __global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pi
         Real pR, pTheta, pPhi, b, q;
         getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
         getConservedQuantities(pTheta, pPhi, &b, &q);
+
+        if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0){
+            printf("INICIALES: theta = %.20f, phi = %.20f, pR = %.20f, pTheta = %.20f, pPhi = %.20f, b = %.20f, q = %.20f", rayTheta, rayPhi, pR, pTheta, pPhi, b, q);
+        }
 
         // Check whether the ray comes from the horizon or from the celetial sphere
         OriginType origin = getOriginType(pR, b, q);
@@ -416,8 +417,8 @@ __global__ void rayTrace(void* devImage, Real imageRows, Real imageCols, Real pi
         }
         __syncthreads();
 
-        if(blockIdx.x == 36 && blockIdx.y == 178)
-            printf("rayTheta = %.10f, rayPhi = %.10f, pR = %.10f, pTheta = %.10f\n", rayTheta, rayPhi, pR, pTheta);
+        // if(blockIdx.x == 36 && blockIdx.y == 178)
+        //     printf("rayTheta = %.10f, rayPhi = %.10f, pR = %.10f, pTheta = %.10f\n", rayTheta, rayPhi, pR, pTheta);
 
         Real x0 = 0;
 

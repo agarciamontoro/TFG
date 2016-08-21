@@ -127,6 +127,10 @@
         // associated to its own equation:
         Real y0 = globalInitCond[threadId];
 
+        // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0){
+        //     printf("%.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f\n", solution[0], solution[1], solution[2], solution[3], solution[4], b, q);
+        // }
+
         // Auxiliar arrays to store the intermediate K1, ..., K7 computations
         __shared__ Real k1[SYSTEM_SIZE],
                         k2[SYSTEM_SIZE],
@@ -188,10 +192,6 @@
                 // h = hOrig;
                 return;
             }
-
-            if(blockIdx.x == 0 && blockIdx.y == 0)
-	        printf("Thread %d: Time = %.10f\tValue = %.20f\n", threadId, x0, y0);
-
 
             // PHASE 0. Check if the current time x_0 plus the current step
             // (multiplied by a safety factor to prevent steps too small)
@@ -378,6 +378,10 @@
             }
             // ACCEPT STEP if err <= 1.
             else{
+                if(blockIdx.x == 99 && blockIdx.y == 0 && threadId == 0){
+                    printf("%d, %d, %.20f, %.20f, %.20f, %.20f\n", blockIdx.x, blockIdx.y, x0, solution[0], solution[1], solution[2]);
+                }
+
                 // TODO: Stiffness detection
 
                 // Update old factor to new current error (upper bounded to
@@ -401,8 +405,7 @@
                 // the current initial condition (now the computed solution)
                 y0 = solution[threadId];
 
-                if(blockIdx.x == 50 && blockIdx.y == 50)
-                    printf("Thread %d: [%.10f] -> %.10f\n", threadId, x0, y0);
+                if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
 
                 // This step was accepted, so it was not rejected, so reject is
                 // false. SCIENCE.
