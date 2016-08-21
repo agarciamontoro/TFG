@@ -5,16 +5,13 @@
 
 #define Pi M_PI
 #define SYSTEM_SIZE 5
-{{ DEBUG }}
 
-// Declaration of constants shared by several files
+// Declaration of constants
 __device__ Real __d;
 __device__ Real __camR;
 __device__ Real __camTheta;
 __device__ Real __camPhi;
 __device__ Real __camBeta;
-__device__ Real __a;
-__device__ Real __a2;
 __device__ Real __b1;
 __device__ Real __b2;
 __device__ Real __ro;
@@ -71,16 +68,17 @@ __device__ void getConservedQuantities(Real pTheta, Real pPhi, Real* b,
     // Get conserved quantities. See (A.12)
     *b = pPhi;
     Real sinTheta = sin(__camTheta);
+
     *q = pTheta*pTheta + cos(__camTheta)*((*b)*(*b) / sinTheta*sinTheta - __a2);
 }
 
 __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real imageCols, Real pixelWidth, Real pixelHeight, Real d, Real camR, Real camTheta, Real camPhi, Real camBeta, Real a, Real b1, Real b2, Real ro, Real delta, Real pomega, Real alpha, Real omega){
-    // Retrieve the ids of the thread in the block and of the block in the grid
+    // Retrieve the id of the block in the grid
     int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
 
     // Pointer for the initial conditions of this block
     Real* globalInitCond = (Real*) devInitCond;
-    Real* initCond = globalInitCond + blockId*(SYSTEM_SIZE+2);
+    Real* initCond = globalInitCond + blockId*(SYSTEM_SIZE + 2);
 
     // Set global variables, common to all threads, and constants
     // Camera constants
@@ -91,8 +89,6 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     __camBeta = camBeta;
 
     // Black hole constants
-    __a = a;
-    __a2 = a*a;
     __b1 = b1;
     __b2 = b2;
 
@@ -119,7 +115,8 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     getConservedQuantities(pTheta, pPhi, &b, &q);
 
     #ifdef DEBUG
-        if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0){
+        if(blockIdx.x == 0 && blockIdx.y == 0){
+            printf("%.20f, %.20f\n", y, z);
             printf("INICIALES: theta = %.20f, phi = %.20f, pR = %.20f, pTheta = %.20f, pPhi = %.20f, b = %.20f, q = %.20f", rayTheta, rayPhi, pR, pTheta, pPhi, b, q);
         }
     #endif

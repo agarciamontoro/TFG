@@ -39,7 +39,7 @@ class RK4Solver:
     # TODO: Make tolerances a SYSTEM_SIZE-length array
     def __init__(self, x0, y0, dx, functionFile, relativeTol=1e-6, absoluteTol=1e-12,
                  safe=0.9, fac1=0.2, fac2=10.0, beta=0.04, uround=2.3e-16,
-                 debug=False):
+                 additionalDataGPU=None, dataSize=None, debug=False):
         """Builds the RungeKutta4 solver.
 
         Args:
@@ -119,6 +119,8 @@ class RK4Solver:
         # ======================= INITIAL CONDITIONS ======================= #
 
         self.setInitialConditions(x0, y0)
+        self.additionalDataGPU = additionalDataGPU
+        self.dataSize = np.int32(dataSize)
 
         # ============================ CONSTANTS ============================ #
 
@@ -157,7 +159,6 @@ class RK4Solver:
         # Debug switch
         self.debug = debug
 
-
         # ==================== KERNEL TEMPLATE RENDERING ==================== #
 
         # We must construct a FileSystemLoader object to load templates off
@@ -177,10 +178,7 @@ class RK4Solver:
 
         # Specify any input variables to the template as a dictionary.
         templateVars = {
-            "SYSTEM_SIZE": self.SYSTEM_SIZE,
             "INCLUDES": '#include "%s"' % self.functionFile,
-            # "Real": "typedef %s Real;" % codeType,
-            "DEBUG": "#define DEBUG" if self.debug else ""
         }
 
         # Finally, process the template to produce our final text.
@@ -193,8 +191,11 @@ class RK4Solver:
 
         # ======================= KERNEL COMPILATION ======================= #
 
+        ownDir = os.path.dirname(os.path.realpath(__file__))
+        softwareDir = os.path.abspath(os.path.join(ownDir, os.pardir))
+
         # Compile the kernel code using pycuda.compiler
-        mod = compiler.SourceModule(kernel)
+        mod = compiler.SourceModule(kernel, include_dirs=[ownDir, softwareDir])
 
         # Get the kernel function from the compiled module
         self.RK4Solve = mod.get_function("RK4Solve")
@@ -256,6 +257,10 @@ class RK4Solver:
             self.fac2,
             self.beta,
             self.uround,
+
+            # Additional constant data for each block
+            self.additionalDataGPU,
+            self.dataSize,
 
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes one RK4 step for a single initial condition

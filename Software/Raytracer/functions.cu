@@ -1,8 +1,8 @@
 #ifndef __FUNCTIONS__
 #define __FUNCTIONS__
 
-#include "definitions.cu"
-#include "numericalMethods.cu"
+#include "Raytracer/definitions.cu"
+#include "Raytracer/numericalMethods.cu"
 
 __device__ Real P(Real r, Real b){
     return r*r + __a2 - __a*b;
@@ -104,34 +104,34 @@ __device__ Real q0(Real r){
     return -(r3*(r3 - 6.*(r*r) + 9.*r - 4.*__a2)) / (__a2*((r-1.)*(r-1.)));
 }
 
-__device__ OriginType getOriginType(Real pR, Real b, Real q){
-    Parameters param;
-
-    param.b = b;
-    param.q = q;
-
-    // Compute r0 such that b0(r0) = b
-    Real r0 = secant(-30., 30., b0b, param);
-
-    OriginType origin;
-
-    if(__b1 < b && b < __b2 && q < q0(r0)){
-        if(pR > 0)
-            origin = HORIZON;
-        else
-            origin = CELESTIAL_SPHERE;
-    }
-    else{
-        Real rUp1 = secant(-30., 30., R, param);
-
-        if(__camR < rUp1)
-            origin = HORIZON;
-        else
-            origin = CELESTIAL_SPHERE;
-    }
-
-    return origin;
-}
+// __device__ OriginType getOriginType(Real pR, Real b, Real q){
+//     Parameters param;
+//
+//     param.b = b;
+//     param.q = q;
+//
+//     // Compute r0 such that b0(r0) = b
+//     Real r0 = secant(-30., 30., b0b, param);
+//
+//     OriginType origin;
+//
+//     if(__b1 < b && b < __b2 && q < q0(r0)){
+//         if(pR > 0)
+//             origin = HORIZON;
+//         else
+//             origin = CELESTIAL_SPHERE;
+//     }
+//     else{
+//         Real rUp1 = secant(-30., 30., R, param);
+//
+//         if(__camR < rUp1)
+//             origin = HORIZON;
+//         else
+//             origin = CELESTIAL_SPHERE;
+//     }
+//
+//     return origin;
+// }
 
 
 /**
@@ -145,7 +145,8 @@ __device__ OriginType getOriginType(Real pR, Real b, Real q){
  *                 lenght shall be the same as the number of equations in the
  *                 system.
  */
-__device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
+__device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
+                                 Real* data){
     Parameters param;
 
     param.r = y[0];
@@ -153,8 +154,8 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f){
     param.phi = y[2];
     param.pR = y[3];
     param.pTheta = y[4];
-    param.b = y[5];
-    param.q = y[6];
+    param.b = data[0];
+    param.q = data[1];
 
     // if(blockIdx.x == 5 && blockIdx.y == 5 && threadId == 0)
 	// printf("CC[%.10f]: r = %.10f, theta = %.10f, phi = %.10f, pR = %.10f, pTheta = %.10f, b = %.10f, q = %.10f\n", x, param.r, param.theta, param.phi, param.pR, param.pTheta, param.b, param.q);

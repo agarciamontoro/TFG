@@ -16,12 +16,12 @@
  */
 
 #include <stdio.h>
-{{ INCLUDES }}
+#include "/mnt/Datos/Documentos/Proyectos/TFG/Software/Raytracer/functions.cu"
 
 
-// #define SYSTEM_SIZE {{ SYSTEM_SIZE }}
-// {{ DEBUG }}
-// typedef {{ Real }} Real;
+// #define SYSTEM_SIZE 
+// 
+// typedef  Real;
 
 /**
  * Applies the DOPRI5 algorithm over the system defined in the computeComponent

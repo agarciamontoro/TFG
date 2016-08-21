@@ -156,11 +156,61 @@ class RayTracer:
         # all calls
         self.totalTime = 0.
 
+    def _kernelRendering(self):
+        # We must construct a FileSystemLoader object to load templates off
+        # the filesystem
+        currentDirectory = os.path.dirname(os.path.abspath(__file__))
+        templateLoader = jinja2.FileSystemLoader(searchpath=currentDirectory)
+
+        # An environment provides the data necessary to read and
+        # parse our templates.  We pass in the loader object here.
+        templateEnv = jinja2.Environment(loader=templateLoader)
+
+        # Read the template file using the environment object.
+        # This also constructs our Template object.
+        template = templateEnv.get_template("definitions.jj2")
+
+        codeType = "double"
+
+        # Specify any input variables to the template as a dictionary.
+        templateVars = {
+            "SPIN": self.blackHole.a,
+            "REAL": codeType,
+            "SYSTEM_SIZE": 5,
+            "DEBUG": "#define DEBUG" if self.debug else ""
+        }
+
+        # Finally, process the template to produce our final text.
+        kernel = template.render(templateVars)
+
+        # Store it in the file that will be included by all the other compiled
+        # files
+        with open('definitions.cu', 'w') as outputFile:
+            outputFile.write(kernel)
+
+        # ======================= KERNEL COMPILATION ======================= #
+
+        # Compile the kernel code using pycuda.compiler
+        ownDir = os.path.dirname(os.path.realpath(__file__))
+        softwareDir = os.path.abspath(os.path.join(ownDir, os.pardir))
+
+        mod = compiler.SourceModule(open("raytracer_kernel.cu", "r").read(),
+                                    include_dirs=[ownDir, softwareDir])
+
+        # Get the kernel function from the compiled module
+        self._setInitialConditions = mod.get_function("setInitialConditions")
 
     def _setUpInitCond(self):
+        # Array to store the initial conditions
         self.initCond = np.empty((self.imageRows, self.imageCols,
                                   self.systemSize + 2))
+
+        # Vector to store b and q constants
+        self.additionalData = np.empty((self.imageRows, self.imageCols, 2))
+
+        # Send them to the GPU
         self.initCondGPU = gpuarray.to_gpu(self.initCond)
+        self.additionalDataGPU = gpuarray.to_gpu(self.additionalData)
 
         self._setInitialConditions(
             self.initCondGPU,
@@ -196,50 +246,18 @@ class RayTracer:
 
         # Retrieve the computed initial conditions
         self.systemState = self.initCond = self.initCondGPU.get()
+        computedData = self.initCondGPU.get()
+
+        self.systemState = self.initCond = computedData[:, :, :5]
+        self.constants = computedData[:, :, 5:]
+
+        self.constantsGPU = gpuarray.to_gpu(self.constants)
 
     def _setUpSolver(self):
         functionAbsPath = os.path.abspath("functions.cu")
-        self.solver = RK4Solver(0, self.initCondGPU, -0.001, functionAbsPath)
-
-    def _kernelRendering(self):
-        # We must construct a FileSystemLoader object to load templates off
-        # the filesystem
-        currentDirectory = os.path.dirname(os.path.abspath(__file__))
-        templateLoader = jinja2.FileSystemLoader(searchpath=currentDirectory)
-
-        # An environment provides the data necessary to read and
-        # parse our templates.  We pass in the loader object here.
-        templateEnv = jinja2.Environment(loader=templateLoader)
-
-        # Read the template file using the environment object.
-        # This also constructs our Template object.
-        template = templateEnv.get_template("raytracer_kernel.cu")
-
-        codeType = "double"
-
-        # Specify any input variables to the template as a dictionary.
-        templateVars = {
-            "Real": codeType,
-            "DEBUG": "#define DEBUG" if self.debug else ""
-        }
-
-        # Finally, process the template to produce our final text.
-        kernel = template.render(templateVars)
-
-        if(self.debug):
-            kernelTmpFile = open("lastKernelRendered.cu", "w")
-            kernelTmpFile.write(kernel)
-            kernelTmpFile.close()
-
-        # ======================= KERNEL COMPILATION ======================= #
-
-        # Compile the kernel code using pycuda.compiler
-        ownDir = os.path.dirname(os.path.realpath(__file__))
-        softwareDir = os.path.abspath(os.path.join(ownDir, os.pardir))
-        mod = compiler.SourceModule(kernel, include_dirs=[ownDir, softwareDir])
-
-        # Get the kernel function from the compiled module
-        self._setInitialConditions = mod.get_function("setInitialConditions")
+        self.solver = RK4Solver(0, self.initCondGPU, -0.001, functionAbsPath,
+                                additionalDataGPU=self.constantsGPU,
+                                dataSize=2, debug=self.debug)
 
     def rayTrace(self, xEnd):
         self.systemState = self.solver.solve(xEnd)
@@ -269,7 +287,7 @@ if __name__ == '__main__':
     camera.setSpeed(kerr, blackHole)
 
     # Create the raytracer!
-    rayTracer = RayTracer(camera, kerr, blackHole)
-    # rayTracer.rayTrace(-1)
+    rayTracer = RayTracer(camera, kerr, blackHole, debug=True)
+    rayTracer.rayTrace(-1)
 
-    print(rayTracer.systemState[:, :, 2])
+    print(rayTracer.systemState)

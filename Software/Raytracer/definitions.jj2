@@ -1,0 +1,29 @@
+#ifndef __DEFINITIONS__
+#define __DEFINITIONS__
+
+{{ DEBUG }}
+
+#define SYSTEM_SIZE {{ SYSTEM_SIZE }}
+#define DATA_SIZE {{ DATA_SIZE }}
+
+#define __a  {{ SPIN }}
+#define __a2 __a * __a
+
+typedef {{ REAL }} Real;
+
+typedef struct foo_param {
+   Real r;
+   Real theta;
+   Real phi;
+   Real b;
+   Real q;
+   Real pR;
+   Real pTheta;
+} Parameters;
+
+typedef enum origin{
+    HORIZON,
+    CELESTIAL_SPHERE
+} OriginType;
+
+#endif // __DEFINITIONS__
