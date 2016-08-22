@@ -1,16 +1,20 @@
 #ifndef __DEFINITIONS__
 #define __DEFINITIONS__
 
+// Debug switch
 
 
+// Declaration of the system size; i.e., the number of equations
 #define SYSTEM_SIZE 5
-#define DATA_SIZE 
 
-#define __a  0.9
+// Definition of the black hole's spin and its square
+#define __a  1e-06
 #define __a2 __a * __a
 
+// Definition of the data type
 typedef double Real;
 
+// Struct to store the system parameters
 typedef struct foo_param {
    Real r;
    Real theta;
@@ -21,6 +25,7 @@ typedef struct foo_param {
    Real q;
 } Parameters;
 
+// Enum to differentiate between points of origin
 typedef enum origin{
     HORIZON,
     CELESTIAL_SPHERE

@@ -80,15 +80,6 @@ __device__ Real dzRho(Real r, Real theta){
     return -(__a2*cosT*sinT)/sqrt(__a2*cosT*cosT + r*r);
 }
 
-// __device__ Real eqPhi(Real b, Parameters param){
-//     Real _R = R(param.r, param);
-//     Real _Delta = Delta(param.r);
-//     Real _Theta = Theta(param.theta, param.b, param.q);
-//     Real _rho = rho(param.r, param.theta);
-//
-//     return (_R+_Delta*_Theta)/(2*_Delta*_rho*_rho);
-// }
-//
 // // NOTE: This is b_0(r) - b, not just b0(r)
 // __device__ Real b0b(Real r, Parameters param){
 //     Real b = param.b;
@@ -129,17 +120,19 @@ __device__ Real dzRho(Real r, Real theta){
 //     return origin;
 // }
 
-
 /**
- * Computes the value of the threadId-th component of the function
- * F(t) = (f1(t), ..., fn(t)) and stores it in the memory pointed by f
- * @param Real  x  Value of the time in which the system is solved
- * @param Real* y  Initial conditions for the system: a pointer to a vector
- *                 whose lenght shall be the same as the number of equations in
- *                 the system.
- * @param Real* f  Computed value of the function: a pointer to a vector whose
- *                 lenght shall be the same as the number of equations in the
- *                 system.
+* Computes the value of the threadId-th component of the function
+* F(t) = (f1(t), ..., fn(t)) and stores it in the memory pointed by f
+ * @param  int   threadId      Identifier of the calling thread.
+ * @param  Real  x             Value of the time in which the system is solved
+ * @param  Real* y             Initial conditions for the system: a pointer to
+ *                             a vector whose lenght shall be the same as the
+ *                             number of equations in the system.
+ * @param  Real* f             Computed value of the function: a pointer to a
+ *                             vector whose lenght shall be the same as the
+ *                             number of equations in the system.
+ * @param  Real* data          Additional data needed by the function, managed
+ *                             by the caller.
  */
 __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                                  Real* data){
@@ -147,19 +140,11 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
 
     const Real r = y[0];
     const Real theta = y[1];
-    // Real const phi = y[2];
+    // const Real phi = y[2];
     const Real pR = y[3];
     const Real pTheta = y[4];
     const Real b = data[0];
     const Real q = data[1];
-
-    // if(blockIdx.y == 2 && blockIdx.x > 80){
-    //     printf("b: %.10f; q: %.10f\n", data[0], data[1]);
-    // }
-
-    // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0){
-    //     printf("CC[%.10f]: %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f\n", x, __a, __a2, param.r, param.theta, param.phi, param.pR, param.pTheta, param.b, param.q);
-    // }
 
     Real _R, D, Z, rho1, rho2, rho3;
 

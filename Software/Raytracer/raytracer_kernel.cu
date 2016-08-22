@@ -24,14 +24,6 @@ __device__ Real __omega;
 
 __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
                                     Real* pTheta, Real* pPhi){
-
-    if((blockIdx.x == 0 || blockIdx.x == (gridDim.x - 1)) &&
-    (blockIdx.y == (gridDim.y / 2)))
-    {
-        printf("Phi (%d, %d):  %.20f\n", blockIdx.x, blockIdx.y,
-                                             abs(Pi - rayPhi));
-        printf("Cam beta: %.20f\n", __camBeta);
-    }
     // **************************** SET NORMAL **************************** //
     // Cartesian components of the unit vector N pointing in the direction of
     // the incoming ray
