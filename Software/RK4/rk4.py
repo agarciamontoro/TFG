@@ -223,8 +223,6 @@ class RK4Solver:
         self.additionalData = additionalData.astype(self.type)
         self.dataSize = np.int32(self.additionalData.shape[2])
 
-        print(self.dataSize)
-
         # Send the additional data to the GPU
         self.additionalDataGPU = gpuarray.to_gpu(self.additionalData)
 

@@ -29,20 +29,11 @@ CELESTIAL_SPHERE = 1
 HORIZON = 0
 
 
-
-def drawRay(ax, ray):
-    rayColor = 'black'
-
-    # Clean the data
-    rowsZero = np.where(~ray.any(axis=1))[0]
-    if(rowsZero.size != 0):
-        ray = ray[:rowsZero[0], :]
-        rayColor = 'red'
-
+def spher2cart(points):
     # Retrieve the actual data
-    r = ray[:, 0]
-    theta = ray[:, 1]
-    phi = ray[:, 2]
+    r = points[:, 0]
+    theta = points[:, 1]
+    phi = points[:, 2]
 
     cosT = np.cos(theta)
     sinT = np.sin(theta)
@@ -53,8 +44,53 @@ def drawRay(ax, ray):
     y = r * sinT * sinP
     z = r * cosT
 
+    return x, y, z
+
+
+def drawErgoSphere(ax, blackHole):
+    a2 = blackHole.a2
+
+    # Draw black hole
+    u = np.linspace(0, 2 * np.pi, 50)
+    v = np.linspace(0, np.pi, 50)
+    r = (2 + np.sqrt(4 - 4*a2*np.square(np.cos(v)))) / 2
+    print(r, r.shape, v.shape)
+
+    x = r * np.outer(np.cos(u), np.sin(v))
+    y = r * np.outer(np.sin(u), np.sin(v))
+    z = r * np.outer(np.ones(np.size(u)), np.cos(v))
+
+    ax.plot_wireframe(x, y, z)
+
+    # a2 = blackHole.a2
+    #
+    # u, v = np.mgrid[0:2*np.pi:20j, 0:np.pi:10j]
+    # r = (2 + np.sqrt(4 - 4*a2*np.cos(v)**2)) / 2
+    #
+    # print(r)
+    #
+    # x = r * np.cos(u)*np.sin(v)
+    # y = r * np.sin(u)*np.sin(v)
+    # z = r * np.cos(v)
+    #
+    # ax.plot_wireframe(x, y, z, color="b")
+
+
+def drawRay(ax, ray):
+    rayColor = 'black'
+
+    # Clean the data
+    rowsZero = np.where(~ray.any(axis=1))[0]
+    if(rowsZero.size != 0):
+        ray = ray[:rowsZero[0], :]
+        rayColor = 'red'
+
+    x, y, z = spher2cart(ray)
+
     ax.plot(x, y, z, label='', color=rayColor)
 
+def drawSphere(ax, x, y, z):
+    pass
 
 def drawCamera(ax, cam):
     d = cam.r + cam.focalLength
@@ -79,7 +115,7 @@ def drawAxes(ax, d=150):
 
 
 def drawBlackHole(ax, blackHole):
-    r = (2 + np.sqrt(2 - 4*blackHole.a2)) / 2
+    r = (2 + np.sqrt(4 - 4*blackHole.a2)) / 2
 
     # Draw black hole
     u = np.linspace(0, 2 * np.pi, 100)
@@ -177,8 +213,8 @@ class Camera:
         rows, cols = sensorShape[0], sensorShape[1]
 
         # Compute width and height of a pixel
-        self.pixelWidth = W / cols
-        self.pixelHeight = H / rows
+        self.pixelWidth = np.float(W) / np.float(cols)
+        self.pixelHeight = np.float(H) / np.float(rows)
 
         self.minTheta = self.minPhi = np.inf
         self.maxTheta = self.maxPhi = -np.inf
@@ -336,9 +372,9 @@ class RayTracer:
 
 if __name__ == '__main__':
     cosas = []
-    for _ in range(5):
+    for _ in range(1):
         # Black hole spin
-        spin = 0.0001
+        spin = 0.5
 
         # Camera position
         camR = 20
@@ -346,11 +382,14 @@ if __name__ == '__main__':
         camPhi = 0
 
         # Camera lens properties
-        camFocalLength = 1
-        camSensorShape = (100, 100)  # (Rows, Columns)
+        camFocalLength = 5
+        camSensorShape = (101, 101)  # (Rows, Columns)
         camSensorSize = (2, 2)       # (Height, Width)
 
-        # Create the black hole, the camera and the metric with the constants above
+        middle = 50
+
+        # Create the black hole, the camera and the metric with the constants
+        # above
         blackHole = BlackHole(spin)
         camera = Camera(camR, camTheta, camPhi, camFocalLength, camSensorShape,
                         camSensorSize)
@@ -363,51 +402,68 @@ if __name__ == '__main__':
         rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
 
         tInit = 0.
-        tEnd = -1.
-        numSteps = 1
+        tEnd = -12.
+        numSteps = 200
         stepSize = (tEnd - tInit) / numSteps
         t = tInit
 
-        # rays = rayTracer.systemState[:, :, :3]
-        # plotData = np.zeros(rays.shape + (numSteps+1, ))
-        #
-        # plotData[:, :, :, 0] = rays
+        rays = rayTracer.systemState[:, :, :3]
+        plotData = np.zeros(rays.shape + (numSteps+1, ))
+
+        P0 = np.vstack((rays[middle, 0, :], rays[middle, -1, :]))
+
+        plotData[:, :, :, 0] = rays
 
         for step in range(numSteps):
             t += stepSize
-            # print(t)
+            print(t)
 
             # Solve the system
             rayTracer.rayTrace(t)
-            cosas.append(np.copy(rayTracer.systemState))
+            # cosas.append(np.copy(rayTracer.systemState))
+
+            rays = rayTracer.systemState[:, :, :3]
+
+            P1 = np.vstack((rays[middle, 0, :], rays[middle, -1, :]))
 
             # Get the data and store it for future plot
-            # plotData[:, :, :, step + 1] = rayTracer.systemState[:, :, :3]
+            plotData[:, :, :, step + 1] = rays
 
-        # fig = plt.figure()
-        #
-        # ax = fig.gca(projection='3d')
-        # ax.set_axis_off()
-        #
-        # ax.set_xlim3d(-25, 25)
-        # ax.set_ylim3d(-25, 25)
-        # ax.set_zlim3d(-25, 25)
-        #
-        # drawAxes(ax)
-        # drawBlackHole(ax, blackHole)
-        # drawCamera(ax, camera)
-        #
-        # ax.legend()
-        #
-        # # cosas.append(plotData)
-        #
-        # for row in range(10, 100, 10):
-        #     for col in range(10, 100, 10):
-        #         ray = np.transpose(plotData[row, col, :, :])
-        #         drawRay(ax, ray)
-        #
-        # plt.show()
+        points = np.vstack((P0, P1))
 
-    print(np.allclose(cosas[0], cosas[4]))
-    print(np.max(np.abs(cosas[0]-cosas[4])))
-    print(np.where(np.abs(cosas[0]-cosas[4])>1e-5))
+        x, y, z = spher2cart(points)
+
+        print(x)
+        print(y)
+        print(z)
+
+        fig = plt.figure()
+
+        ax = fig.gca(projection='3d')
+        ax.set_axis_off()
+
+        ax.set_xlim3d(-25, 25)
+        ax.set_ylim3d(-25, 25)
+        ax.set_zlim3d(-25, 25)
+
+        drawAxes(ax)
+        drawBlackHole(ax, blackHole)
+        drawErgoSphere(ax, blackHole)
+        drawCamera(ax, camera)
+
+        ax.legend()
+
+        # cosas.append(plotData)
+
+        for row in range(10, 100, 10):
+            for col in range(10, 100, 10):
+                ray = np.transpose(plotData[row, col, :, :])
+                drawRay(ax, ray)
+
+        plt.show()
+
+
+
+    # print(np.allclose(cosas[0], cosas[4]))
+    # print(np.max(np.abs(cosas[0]-cosas[4])))
+    # print(np.where(np.abs(cosas[0]-cosas[4])>1e-5))

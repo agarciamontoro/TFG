@@ -207,6 +207,7 @@
             __syncthreads();
             if(!keepRunning)
                 return;
+
             // // TODO: Check that the step size is not too small
             // if (0.1 * abs(h) <= abs(x0) * uround){
             //     globalInitCond[threadId] = 0.0;

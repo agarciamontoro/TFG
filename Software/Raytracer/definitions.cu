@@ -6,7 +6,7 @@
 #define SYSTEM_SIZE 5
 #define DATA_SIZE 
 
-#define __a  0.0001
+#define __a  0.5
 #define __a2 __a * __a
 
 typedef double Real;
