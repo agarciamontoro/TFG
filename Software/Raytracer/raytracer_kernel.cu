@@ -116,11 +116,15 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     Real rayPhi = Pi + atan(x / d);
     Real rayTheta = Pi/2 + atan(y / sqrt(d*d + x*x));
 
+
     // Compute canonical momenta of the ray and the conserved quantites b
     // and q
     Real pR, pTheta, pPhi, b, q;
     getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
     getConservedQuantities(pTheta, pPhi, &b, &q);
+
+    // if(blockIdx.y == 0)
+    //     printf("%.20f\n", rayPhi);
 
     #ifdef DEBUG
         if(blockIdx.x == 0 && blockIdx.y == 0){

@@ -80,7 +80,6 @@ def drawAxes(ax, d=150):
 
 def drawBlackHole(ax, blackHole):
     r = (2 + np.sqrt(2 - 4*blackHole.a2)) / 2
-    print(r)
 
     # Draw black hole
     u = np.linspace(0, 2 * np.pi, 100)
@@ -345,7 +344,7 @@ if __name__ == '__main__':
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 10
+    camFocalLength = 1
     camSensorShape = (100, 100)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
@@ -362,8 +361,8 @@ if __name__ == '__main__':
     rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
 
     tInit = 0.
-    tEnd = -12.
-    numSteps = 100
+    tEnd = -1.
+    numSteps = 1
     stepSize = (tEnd - tInit) / numSteps
     t = tInit
 
@@ -374,7 +373,7 @@ if __name__ == '__main__':
 
     for step in range(numSteps):
         t += stepSize
-        print(t)
+        # print(t)
 
         # Solve the system
         rayTracer.rayTrace(t)
@@ -397,8 +396,8 @@ if __name__ == '__main__':
 
     ax.legend()
 
-    for row in range(0, 100, 10):
-        for col in range(0, 100, 10):
+    for row in range(10, 100, 10):
+        for col in range(10, 100, 10):
             ray = np.transpose(plotData[row, col, :, :])
             drawRay(ax, ray)
 
