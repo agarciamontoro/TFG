@@ -15,10 +15,10 @@ typedef struct foo_param {
    Real r;
    Real theta;
    Real phi;
-   Real b;
-   Real q;
    Real pR;
    Real pTheta;
+   Real b;
+   Real q;
 } Parameters;
 
 typedef enum origin{

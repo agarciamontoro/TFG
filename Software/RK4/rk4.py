@@ -39,8 +39,7 @@ class RK4Solver:
     # TODO: Make tolerances a SYSTEM_SIZE-length array
     def __init__(self, x0, y0, dx, functionFile, relativeTol=1e-6,
                  absoluteTol=1e-12, safe=0.9, fac1=0.2, fac2=10.0, beta=0.04,
-                 uround=2.3e-16, additionalDataGPU=None, dataSize=None,
-                 debug=False):
+                 uround=2.3e-16, additionalData=None, debug=False):
         """Builds the RungeKutta4 solver.
 
         Args:
@@ -119,9 +118,7 @@ class RK4Solver:
 
         # ======================= INITIAL CONDITIONS ======================= #
 
-        self.setInitialConditions(x0, y0)
-        self.additionalDataGPU = additionalDataGPU
-        self.dataSize = np.int32(dataSize)
+        self.setInitialConditions(x0, y0, additionalData)
 
         # ============================ CONSTANTS ============================ #
 
@@ -209,17 +206,28 @@ class RK4Solver:
 
         self.totalTime = 0.
 
-    def setInitialConditions(self, x0, y0):
+    def setInitialConditions(self, x0, y0, additionalData):
         # Get precision: single or double
-        self.type = np.float64
+        self.type = y0.dtype
         assert(self.type == np.float32 or self.type == np.float64)
 
         # Convert x0 to the same type of y0
         self.x0 = np.array(x0).astype(self.type)
+        self.y0 = y0
 
         # Transfer host (CPU) memory to device (GPU) memory
         # FIXME: Does this free the previous memory or no?
-        self.y0GPU = y0
+        self.y0GPU = gpuarray.to_gpu(self.y0)
+
+        # Convert additional data to the type of y0
+        self.additionalData = additionalData.astype(self.type)
+        self.dataSize = np.int32(self.additionalData.shape[2])
+
+        print(self.dataSize)
+
+        # Send the additional data to the GPU
+        self.additionalDataGPU = gpuarray.to_gpu(self.additionalData)
+
 
     def solve(self, xEnd):
         """Evolve the system between x0 and xEnd.
@@ -281,6 +289,7 @@ class RK4Solver:
         self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
 
         # Update the new state of the system
+        # FIXME: Handle premature terminations and correct update of x0
         self.x0 = xEnd
         self.y0 = self.y0GPU.get()
 

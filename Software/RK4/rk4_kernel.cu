@@ -103,6 +103,14 @@
     // (see reduction technique in the only loop you will find in this function
     // code to know why): then, we can give some rest to the threads that exceeds the number of equations :)
     if(threadId < SYSTEM_SIZE){
+        // Flag shared between all threads in block to stop execution when one
+        // of them cannot continue
+        __shared__ bool keepRunning;
+
+        if(threadId == 0)
+            keepRunning = true;
+        __syncthreads();
+
         // Shared array between the block threads to store intermediate
         // solutions.
         __shared__ Real solution[SYSTEM_SIZE];
@@ -131,6 +139,11 @@
         // Each thread of each block has to know only the initial condition
         // associated to its own equation:
         Real y0 = globalInitCond[threadId];
+
+        // if(blockIdx.y == 2 && blockIdx.x == 80){
+        //     printf("y0: %.10f\n", y0);
+        // }
+
 
         // Auxiliar arrays to store the intermediate K1, ..., K7 computations
         __shared__ Real k1[SYSTEM_SIZE],
@@ -186,11 +199,20 @@
         //          3.2.1 If this is the last step, finish.
         //          3.2.2 In any other case, iterate again.
         do{
-            // TODO: Check that the step size is not too small
+            // TODO: Check that this flag is really necessary
             if (0.1 * abs(h) <= abs(x0) * uround){
                 globalInitCond[threadId] = 0.0;
-                return;
+                keepRunning = false;
             }
+            __syncthreads();
+            if(!keepRunning)
+                return;
+            // // TODO: Check that the step size is not too small
+            // if (0.1 * abs(h) <= abs(x0) * uround){
+            //     globalInitCond[threadId] = 0.0;
+            //     return;
+            // }
+
 
             // PHASE 0. Check if the current time x_0 plus the current step
             // (multiplied by a safety factor to prevent steps too small)
@@ -325,7 +347,7 @@
             // each step (the variable s in the loop), is initially set to the
             // half of the block total threads, and successively divided by 2.
             for(int s=(blockDim.x*blockDim.y)/2; s>0; s>>=1){
-                if (threadId < s) {
+                if (threadId < s && threadId + s < SYSTEM_SIZE) {
                     errors[threadId] = errors[threadId] + errors[threadId + s];
                 }
 

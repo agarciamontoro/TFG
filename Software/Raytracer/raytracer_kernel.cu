@@ -116,7 +116,6 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     Real rayPhi = Pi + atan(x / d);
     Real rayTheta = Pi/2 + atan(y / sqrt(d*d + x*x));
 
-
     // Compute canonical momenta of the ray and the conserved quantites b
     // and q
     Real pR, pTheta, pPhi, b, q;

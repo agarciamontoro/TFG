@@ -315,90 +315,99 @@ class RayTracer:
 
         # Build and fill the array for the system state with the initial
         # conditions
-        self.systemState = self.initCond[:, :, :5]
+        self.systemState = np.copy(self.initCond[:, :, :5])
 
         # Retrieve the constants
-        self.constants = self.initCond[:, :, 5:]
+        self.constants = np.copy(self.initCond[:, :, 5:])
 
-        # Send everything to the GPU
-        self.systemStateGPU = gpuarray.to_gpu(self.systemState)
-        self.constantsGPU = gpuarray.to_gpu(self.constants)
+        # # Send everything to the GPU
+        # self.systemStateGPU = gpuarray.to_gpu(self.systemState)
+        # self.constantsGPU = gpuarray.to_gpu(self.constants)
 
     def _setUpSolver(self):
         functionPath = os.path.abspath("functions.cu")
-        self.solver = RK4Solver(0, self.systemStateGPU, -0.001, functionPath,
-                                additionalDataGPU=self.constantsGPU,
-                                dataSize=2, debug=self.debug)
+        self.solver = RK4Solver(0, self.systemState, -0.001, functionPath,
+                                additionalData=self.constants,
+                                debug=self.debug)
 
     def rayTrace(self, xEnd):
         self.systemState = self.solver.solve(xEnd)
 
 
 if __name__ == '__main__':
-    # Black hole spin
-    spin = 0.0001
+    cosas = []
+    for _ in range(5):
+        # Black hole spin
+        spin = 0.0001
 
-    # Camera position
-    camR = 20
-    camTheta = Pi/2
-    camPhi = 0
+        # Camera position
+        camR = 20
+        camTheta = Pi/2
+        camPhi = 0
 
-    # Camera lens properties
-    camFocalLength = 1
-    camSensorShape = (100, 100)  # (Rows, Columns)
-    camSensorSize = (2, 2)       # (Height, Width)
+        # Camera lens properties
+        camFocalLength = 1
+        camSensorShape = (100, 100)  # (Rows, Columns)
+        camSensorSize = (2, 2)       # (Height, Width)
 
-    # Create the black hole, the camera and the metric with the constants above
-    blackHole = BlackHole(spin)
-    camera = Camera(camR, camTheta, camPhi, camFocalLength, camSensorShape,
-                    camSensorSize)
-    kerr = KerrMetric(camera, blackHole)
+        # Create the black hole, the camera and the metric with the constants above
+        blackHole = BlackHole(spin)
+        camera = Camera(camR, camTheta, camPhi, camFocalLength, camSensorShape,
+                        camSensorSize)
+        kerr = KerrMetric(camera, blackHole)
 
-    # Set camera's speed (it needs the kerr metric constants)
-    camera.setSpeed(kerr, blackHole)
+        # Set camera's speed (it needs the kerr metric constants)
+        camera.setSpeed(kerr, blackHole)
 
-    # Create the raytracer!
-    rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
+        # Create the raytracer!
+        rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
 
-    tInit = 0.
-    tEnd = -1.
-    numSteps = 1
-    stepSize = (tEnd - tInit) / numSteps
-    t = tInit
+        tInit = 0.
+        tEnd = -1.
+        numSteps = 1
+        stepSize = (tEnd - tInit) / numSteps
+        t = tInit
 
-    rays = rayTracer.systemState[:, :, :3]
-    plotData = np.zeros(rays.shape + (numSteps+1, ))
+        # rays = rayTracer.systemState[:, :, :3]
+        # plotData = np.zeros(rays.shape + (numSteps+1, ))
+        #
+        # plotData[:, :, :, 0] = rays
 
-    plotData[:, :, :, 0] = rays
+        for step in range(numSteps):
+            t += stepSize
+            # print(t)
 
-    for step in range(numSteps):
-        t += stepSize
-        # print(t)
+            # Solve the system
+            rayTracer.rayTrace(t)
+            cosas.append(np.copy(rayTracer.systemState))
 
-        # Solve the system
-        rayTracer.rayTrace(t)
+            # Get the data and store it for future plot
+            # plotData[:, :, :, step + 1] = rayTracer.systemState[:, :, :3]
 
-        # Get the data and store it for future plot
-        plotData[:, :, :, step + 1] = rayTracer.systemState[:, :, :3]
+        # fig = plt.figure()
+        #
+        # ax = fig.gca(projection='3d')
+        # ax.set_axis_off()
+        #
+        # ax.set_xlim3d(-25, 25)
+        # ax.set_ylim3d(-25, 25)
+        # ax.set_zlim3d(-25, 25)
+        #
+        # drawAxes(ax)
+        # drawBlackHole(ax, blackHole)
+        # drawCamera(ax, camera)
+        #
+        # ax.legend()
+        #
+        # # cosas.append(plotData)
+        #
+        # for row in range(10, 100, 10):
+        #     for col in range(10, 100, 10):
+        #         ray = np.transpose(plotData[row, col, :, :])
+        #         drawRay(ax, ray)
+        #
+        # plt.show()
 
-    fig = plt.figure()
-
-    ax = fig.gca(projection='3d')
-    ax.set_axis_off()
-
-    ax.set_xlim3d(-25, 25)
-    ax.set_ylim3d(-25, 25)
-    ax.set_zlim3d(-25, 25)
-
-    drawAxes(ax)
-    drawBlackHole(ax, blackHole)
-    drawCamera(ax, camera)
-
-    ax.legend()
-
-    for row in range(10, 100, 10):
-        for col in range(10, 100, 10):
-            ray = np.transpose(plotData[row, col, :, :])
-            drawRay(ax, ray)
-
-    plt.show()
+    print(np.allclose(cosas[0], cosas[4]))
+    print(np.max(np.abs(cosas[0]-cosas[4])))
+    print(np.where(np.abs(cosas[0]-cosas[4])>1e-5))

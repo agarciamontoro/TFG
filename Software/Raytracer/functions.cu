@@ -8,10 +8,7 @@ __device__ Real P(Real r, Real b){
     return r*r + __a2 - __a*b;
 }
 
-__device__ Real R(Real r, Parameters param){
-    Real b = param.b;
-    Real q = param.q;
-
+__device__ Real R(Real r, Real b, Real q){
     Real r2 = r*r;
     Real r4 = r2*r2;
     Real b2 = b*b;
@@ -83,26 +80,26 @@ __device__ Real dzRho(Real r, Real theta){
     return -(__a2*cosT*sinT)/sqrt(__a2*cosT*cosT + r*r);
 }
 
-__device__ Real eqPhi(Real b, Parameters param){
-    Real _R = R(param.r, param);
-    Real _Delta = Delta(param.r);
-    Real _Theta = Theta(param.theta, param.b, param.q);
-    Real _rho = rho(param.r, param.theta);
-
-    return (_R+_Delta*_Theta)/(2*_Delta*_rho*_rho);
-}
-
-// NOTE: This is b_0(r) - b, not just b0(r)
-__device__ Real b0b(Real r, Parameters param){
-    Real b = param.b;
-    return -((r*r*r - 3.*(r*r) + __a2*r + __a2) / (__a*(r-1.))) - b;
-}
-
-__device__ Real q0(Real r){
-    Real r3 = r*r*r;
-    return -(r3*(r3 - 6.*(r*r) + 9.*r - 4.*__a2)) / (__a2*((r-1.)*(r-1.)));
-}
-
+// __device__ Real eqPhi(Real b, Parameters param){
+//     Real _R = R(param.r, param);
+//     Real _Delta = Delta(param.r);
+//     Real _Theta = Theta(param.theta, param.b, param.q);
+//     Real _rho = rho(param.r, param.theta);
+//
+//     return (_R+_Delta*_Theta)/(2*_Delta*_rho*_rho);
+// }
+//
+// // NOTE: This is b_0(r) - b, not just b0(r)
+// __device__ Real b0b(Real r, Parameters param){
+//     Real b = param.b;
+//     return -((r*r*r - 3.*(r*r) + __a2*r + __a2) / (__a*(r-1.))) - b;
+// }
+//
+// __device__ Real q0(Real r){
+//     Real r3 = r*r*r;
+//     return -(r3*(r3 - 6.*(r*r) + 9.*r - 4.*__a2)) / (__a2*((r-1.)*(r-1.)));
+// }
+//
 // __device__ OriginType getOriginType(Real pR, Real b, Real q){
 //     Parameters param;
 //
@@ -146,15 +143,19 @@ __device__ Real q0(Real r){
  */
 __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                                  Real* data){
-    Parameters param;
+    // Parameters param;
 
-    param.r = y[0];
-    param.theta = y[1];
-    param.phi = y[2];
-    param.pR = y[3];
-    param.pTheta = y[4];
-    param.b = data[0];
-    param.q = data[1];
+    const Real r = y[0];
+    const Real theta = y[1];
+    // Real const phi = y[2];
+    const Real pR = y[3];
+    const Real pTheta = y[4];
+    const Real b = data[0];
+    const Real q = data[1];
+
+    // if(blockIdx.y == 2 && blockIdx.x > 80){
+    //     printf("b: %.10f; q: %.10f\n", data[0], data[1]);
+    // }
 
     // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0){
     //     printf("CC[%.10f]: %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f\n", x, __a, __a2, param.r, param.theta, param.phi, param.pR, param.pTheta, param.b, param.q);
@@ -162,11 +163,11 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
 
     Real _R, D, Z, rho1, rho2, rho3;
 
-    _R = R(param.r, param);
-    D = Delta(param.r);
-    Z = Theta(param.theta, param.b, param.q);
+    _R = R(r, b, q);
+    D = Delta(r);
+    Z = Theta(theta, b, q);
 
-    rho1 = rho(param.r, param.theta);
+    rho1 = rho(r, theta);
     rho2 = rho1*rho1;
     rho3 = rho1*rho2;
 
@@ -174,32 +175,32 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
 
     switch(threadId) {
             case 0:
-                f[threadId] = D * param.pR / rho2;
+                f[threadId] = D * pR / rho2;
                 // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);
                 break;
 
             case 1:
-                f[threadId] = param.pTheta / rho2;
+                f[threadId] = pTheta / rho2;
                 // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);
                 break;
 
             case 2:
-                dR = dbR(param.r, param.b);
-                dZ = dbTheta(param.theta, param.b);
+                dR = dbR(r, b);
+                dZ = dbTheta(theta, b);
 
                 f[threadId] = - (dR + D*dZ)/(2*D*rho2);
                 // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);
                 break;
 
             case 3:
-                dRho = drRho(param.r, param.theta);
-                dD = drDelta(param.r);
-                dR = drR(param.r, param.b, param.q);
+                dRho = drRho(r, theta);
+                dD = drDelta(r);
+                dR = drR(r, b, q);
 
-                sum1 = + dRho*param.pTheta*param.pTheta / rho3;
-                sum2 = + D*param.pR*param.pR*dRho / rho3;
+                sum1 = + dRho*pTheta*pTheta / rho3;
+                sum2 = + D*pR*pR*dRho / rho3;
                 sum3 = - ((D*Z + _R)*dRho / (D*rho3));
-                sum4 = - (dD*param.pR*param.pR / (2*rho2));
+                sum4 = - (dD*pR*pR / (2*rho2));
                 sum5 = + (dD*Z + dR) / (2*D*rho2);
                 sum6 = - (dD*(D*Z + _R) / (2*D*D*rho2));
 
@@ -208,11 +209,11 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                 break;
 
             case 4:
-                dRho = dzRho(param.r, param.theta);
-                dZ = dzTheta(param.theta, param.b);
+                dRho = dzRho(r, theta);
+                dZ = dzTheta(theta, b);
 
-                sum1 = + dRho*param.pTheta*param.pTheta / rho3;
-                sum2 = + D*param.pR*param.pR*dRho / rho3;
+                sum1 = + dRho*pTheta*pTheta / rho3;
+                sum2 = + D*pR*pR*dRho / rho3;
                 sum3 = - (D*Z + _R)*dRho / (D*rho3);
                 sum4 = + dZ / (2*rho2);
 
@@ -220,6 +221,11 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                 // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);
                 break;
     }
+    // f[0] = 0;
+    // f[1] = 0;
+    // f[2] = 0;
+    // f[3] = 0;
+    // f[4] = 0;
 }
 
 #endif // __FUNCTIONS__
