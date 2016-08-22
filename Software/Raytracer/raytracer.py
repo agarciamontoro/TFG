@@ -54,7 +54,6 @@ def drawErgoSphere(ax, blackHole):
     u = np.linspace(0, 2 * np.pi, 50)
     v = np.linspace(0, np.pi, 50)
     r = (2 + np.sqrt(4 - 4*a2*np.square(np.cos(v)))) / 2
-    print(r, r.shape, v.shape)
 
     x = r * np.outer(np.cos(u), np.sin(v))
     y = r * np.outer(np.sin(u), np.sin(v))
@@ -222,13 +221,18 @@ class Camera:
     def setSpeed(self, kerr, blackHole):
         # Retrieve blackhole's spin and some Kerr constants
         a = blackHole.a
+        r = self.r
         pomega = kerr.pomega
         omega = kerr.omega
         alpha = kerr.alpha
 
         # Define speed with equation (A.7)
-        Omega = 1. / (a + self.r**(3./2.))
+        Omega = 1. / (a + r**(3./2.))
         self.beta = pomega * (Omega-omega) / alpha
+
+        # FIXME: This is being forced to zero only for testing purposes.
+        # Remove this line if you want some real fancy images.
+        self.beta = 0
 
 
 class RayTracer:
@@ -374,7 +378,7 @@ if __name__ == '__main__':
     cosas = []
     for _ in range(1):
         # Black hole spin
-        spin = 0.5
+        spin = 0.00001
 
         # Camera position
         camR = 20
@@ -382,7 +386,7 @@ if __name__ == '__main__':
         camPhi = 0
 
         # Camera lens properties
-        camFocalLength = 5
+        camFocalLength = 2
         camSensorShape = (101, 101)  # (Rows, Columns)
         camSensorSize = (2, 2)       # (Height, Width)
 
@@ -402,7 +406,7 @@ if __name__ == '__main__':
         rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
 
         tInit = 0.
-        tEnd = -12.
+        tEnd = -10.
         numSteps = 200
         stepSize = (tEnd - tInit) / numSteps
         t = tInit
@@ -410,13 +414,14 @@ if __name__ == '__main__':
         rays = rayTracer.systemState[:, :, :3]
         plotData = np.zeros(rays.shape + (numSteps+1, ))
 
-        P0 = np.vstack((rays[middle, 0, :], rays[middle, -1, :]))
+        P0_l = rays[middle, 0, :]
+        P0_r = rays[middle, -1, :]
 
         plotData[:, :, :, 0] = rays
 
         for step in range(numSteps):
             t += stepSize
-            print(t)
+            # print(t)
 
             # Solve the system
             rayTracer.rayTrace(t)
@@ -424,18 +429,20 @@ if __name__ == '__main__':
 
             rays = rayTracer.systemState[:, :, :3]
 
-            P1 = np.vstack((rays[middle, 0, :], rays[middle, -1, :]))
+            P1_l = rays[middle, 0, :]
+            P1_r = rays[middle, -1, :]
 
             # Get the data and store it for future plot
             plotData[:, :, :, step + 1] = rays
 
-        points = np.vstack((P0, P1))
+        x, y, z = spher2cart(np.vstack((P0_l, P1_l, P0_r, P1_r)))
+        P0_l, P1_l, P0_r, P1_r = np.transpose([x, y, z])
 
-        x, y, z = spher2cart(points)
+        V_l = P1_l - P0_l
+        V_r = P1_r - P0_r
 
-        print(x)
-        print(y)
-        print(z)
+        print("Left : ", V_l)
+        print("Right: ", V_r)
 
         fig = plt.figure()
 

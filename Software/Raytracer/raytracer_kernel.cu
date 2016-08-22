@@ -24,6 +24,14 @@ __device__ Real __omega;
 
 __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
                                     Real* pTheta, Real* pPhi){
+
+    if((blockIdx.x == 0 || blockIdx.x == (gridDim.x - 1)) &&
+    (blockIdx.y == (gridDim.y / 2)))
+    {
+        printf("Phi (%d, %d):  %.20f\n", blockIdx.x, blockIdx.y,
+                                             abs(Pi - rayPhi));
+        printf("Cam beta: %.20f\n", __camBeta);
+    }
     // **************************** SET NORMAL **************************** //
     // Cartesian components of the unit vector N pointing in the direction of
     // the incoming ray
@@ -115,11 +123,12 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     // frame
     Real rayPhi = Pi + atan(x / d);
     Real rayTheta = Pi/2 + atan(y / sqrt(d*d + x*x));
-    if((blockIdx.x == 0 || blockIdx.x == (gridDim.x - 1)) &&
-       (blockIdx.y == (gridDim.y / 2)))
-    {
-        printf("Phi (%.5f, %.5f):  %.20f\n", x, y, abs(Pi - rayPhi));
-    }
+
+    // if((blockIdx.x == 0 || blockIdx.x == (gridDim.x - 1)) &&
+    // (blockIdx.y == (gridDim.y / 2)))
+    // {
+    //     printf("Phi (%.5f, %.5f):  %.20f\n", x, y, abs(Pi - rayPhi));
+    // }
 
     // Compute canonical momenta of the ray and the conserved quantites b
     // and q
