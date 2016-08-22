@@ -258,3 +258,4 @@ class RayTracer:
 
     def rayTrace(self, xEnd):
         self.systemState = self.solver.solve(xEnd)
+        self.status = self.solver.status

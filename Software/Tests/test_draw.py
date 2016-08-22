@@ -15,7 +15,7 @@ sys.path.append('../Raytracer')
 from raytracer import RayTracer, BlackHole, Camera, KerrMetric
 
 
-def plotScene(plotData, camera, blackHole):
+def plotScene(plotData, status, camera, blackHole):
     # Start figure
     fig = plt.figure()
 
@@ -34,11 +34,14 @@ def plotScene(plotData, camera, blackHole):
     drawErgoSphere(ax, blackHole)
     drawCamera(ax, camera)
 
-    # Draw the rays
-    for row in range(10, 100, 10):
-        for col in range(10, 100, 10):
-            ray = np.transpose(plotData[row, col, :, :])
-            drawRay(ax, ray)
+    # # Draw the rays
+    # for row in range(10, 100, 10):
+    #     for col in range(10, 100, 10):
+    #         ray = np.transpose(plotData[row, col, :, :])
+    #         drawRay(ax, ray, status[row, col, :])
+
+    ray = np.transpose(plotData[90, 70, :, :])
+    drawRay(ax, ray, status[90, 70, :])
 
     # Add a legend
     # ax.legend()
@@ -80,13 +83,13 @@ def drawErgoSphere(ax, blackHole):
     ax.plot_wireframe(x, y, z)
 
 
-def drawRay(ax, ray):
+def drawRay(ax, ray, status):
     rayColor = 'black'
 
-    # Clean the data
-    rowsZero = np.where(~ray.any(axis=1))[0]
-    if(rowsZero.size != 0):
-        ray = ray[:rowsZero[0], :]
+    badRows = np.where(status == 0)[0]
+    if badRows.size > 0:
+        firstBadRow = badRows[0]
+        ray = ray[:firstBadRow, :]
         rayColor = 'red'
 
     x, y, z = spher2cart(ray)
@@ -135,9 +138,9 @@ if __name__ == '__main__':
     # Debug array
     cosas = []
 
-    for _ in range(3):
+    for _ in range(1):
         # Black hole spin
-        spin = 0.000001
+        spin = 0.00001
 
         # Camera position
         camR = 20
@@ -145,9 +148,9 @@ if __name__ == '__main__':
         camPhi = 0
 
         # Camera lens properties
-        camFocalLength = 0.1
+        camFocalLength = 2
         camSensorShape = (101, 101)  # (Rows, Columns)
-        camSensorSize = (0.2, 0.2)       # (Height, Width)
+        camSensorSize = (2, 2)       # (Height, Width)
 
         # Create the black hole, the camera and the metric with the constants
         # above
@@ -165,14 +168,16 @@ if __name__ == '__main__':
         # Set initial and final times, the number of the steps for the
         # simulation and compute the step size
         tInit = 0.
-        tEnd = -5.
-        numSteps = 50
+        tEnd = -12.
+        numSteps = 100
         stepSize = (tEnd - tInit) / numSteps
 
         # Retrieve the initial state of the system for plotting purposes
         rays = rayTracer.systemState[:, :, :3]
         plotData = np.zeros(rays.shape + (numSteps+1, ))
         plotData[:, :, :, 0] = rays
+        status = np.empty(camSensorShape + (numSteps+1, ))
+        status[:, :, 0] = 1
 
         # Simulate!
         t = tInit
@@ -184,17 +189,18 @@ if __name__ == '__main__':
             rayTracer.rayTrace(t)
 
             # Get the data and store it for future plot
+            status[:, :, step + 1] = rayTracer.status
             plotData[:, :, :, step + 1] = rayTracer.systemState[:, :, :3]
 
         # Debug
         cosas.append(plotData)
 
         # Plot the scene
-        plotScene(plotData, camera, blackHole)
+        plotScene(plotData, status, camera, blackHole)
 
     # Debug
-    if not np.allclose(cosas[0], cosas[2]):
-        print("Maximum difference:", np.max(np.abs(cosas[0]-cosas[2])))
-        print("Different items   :", np.where(np.abs(cosas[0]-cosas[2])>1e-5))
+    if not np.allclose(cosas[0], cosas[-1]):
+        print("Maximum difference:", np.max(np.abs(cosas[0]-cosas[-1])))
+        print("Different items   :", np.where(np.abs(cosas[0]-cosas[-1])>1e-5))
     else:
         print("Everything's fine, relax.")

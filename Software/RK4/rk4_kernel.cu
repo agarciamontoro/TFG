@@ -86,7 +86,8 @@
  */
  __global__ void RK4Solve(Real x0, Real xend, void* devInitCond, Real h,
                           Real hmax, void* globalRtoler, void* globalAtoler, Real safe, Real fac1, Real fac2, Real beta,
-                          Real uround, void* devData, int dataSize){
+                          Real uround, void* devData, int dataSize,
+                          void* devStatus){
 
     // Retrieve the ids of the thread in the block and of the block in the grid
     int threadId = threadIdx.x + threadIdx.y * blockDim.x;
@@ -106,6 +107,12 @@
         // Flag shared between all threads in block to stop execution when one
         // of them cannot continue
         __shared__ bool keepRunning;
+
+        // Array of status flags: at the output, the (x,y)-th element will be 0
+        // if any error ocurred (namely, the step size was made too small) and
+        // 1 if the computation succeded
+        int* globalStatus = (int*) devStatus;
+        globalStatus += blockId;
 
         if(threadId == 0)
             keepRunning = true;
@@ -201,18 +208,20 @@
         do{
             // TODO: Check that this flag is really necessary
             if (0.1 * abs(h) <= abs(x0) * uround){
-                globalInitCond[threadId] = 0.0;
                 keepRunning = false;
             }
             __syncthreads();
-            if(!keepRunning)
-                return;
+            if(!keepRunning){
+                // Custom flag to know the computation finished here!
+                globalInitCond[threadId] = 0;
 
-            // // TODO: Check that the step size is not too small
-            // if (0.1 * abs(h) <= abs(x0) * uround){
-            //     globalInitCond[threadId] = 0.0;
-            //     return;
-            // }
+                // Let the user know the computation stopped before xEnd
+                if(threadId == 0)
+                    *globalStatus = 0;
+
+                // Finish all execution in this block
+                return;
+            }
 
 
             // PHASE 0. Check if the current time x_0 plus the current step
@@ -401,6 +410,10 @@
             // ACCEPT STEP if err <= 1.
             else{
                 // TODO: Stiffness detection
+                //
+                if(blockIdx.x == 70 && blockIdx.y == 90 && threadId == 0){
+                    printf("x: %.5f ; r: %.10f ; theta: %.10f ; phi: %.10f ; pR: %.10f ; pTheta: %.10f ; b: %.10f ; q: %.10f\n", x0+h, solution[0], solution[1], solution[2], solution[3], solution[4], data[0], data[1]);
+                }
 
                 // Update old factor to new current error (upper bounded to
                 // 1e-4)
@@ -446,6 +459,10 @@
         // Aaaaand that's all, folks! Update system value (each thread its
         // result) in the global memory :)
         globalInitCond[threadId] = solution[threadId];
+
+        // Finally, let the user know everything's gonna be alright
+        if(threadId == 0)
+            *globalStatus = 1;
 
     } // If threadId < SYSTEM_SIZE
 }

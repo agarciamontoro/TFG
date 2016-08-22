@@ -8,7 +8,7 @@
 #define SYSTEM_SIZE 5
 
 // Definition of the black hole's spin and its square
-#define __a  1e-06
+#define __a  1e-05
 #define __a2 __a * __a
 
 // Definition of the data type

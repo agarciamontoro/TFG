@@ -157,6 +157,10 @@ class RK4Solver:
         # Debug switch
         self.debug = debug
 
+        # Status
+        self.status = np.empty((self.INIT_H, self.INIT_W), dtype=np.int32)
+        self.statusGPU = gpuarray.to_gpu(self.status)
+
         # ==================== KERNEL TEMPLATE RENDERING ==================== #
 
         # We must construct a FileSystemLoader object to load templates off
@@ -272,6 +276,9 @@ class RK4Solver:
             self.additionalDataGPU,
             self.dataSize,
 
+            # Status array
+            self.statusGPU,
+
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes one RK4 step for a single initial condition
             grid=(self.INIT_W, self.INIT_H, 1),
@@ -290,5 +297,6 @@ class RK4Solver:
         # FIXME: Handle premature terminations and correct update of x0
         self.x0 = xEnd
         self.y0 = self.y0GPU.get()
+        self.status = self.statusGPU.get()
 
         return(self.y0)
