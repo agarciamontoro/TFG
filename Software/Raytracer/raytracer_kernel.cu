@@ -128,6 +128,10 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
     getConservedQuantities(pTheta, pPhi, &b, &q);
 
+    if(blockIdx.x == 70 && blockIdx.y == 90){
+        printf("pR = %.20f\npTheta = %.20f\npPhi = %.20f\nb = %.20f\nq = %.20f, rayTheta = %.20f\nrayPhi = %.20f\n", pR, pTheta, pPhi, b, q, rayTheta, rayPhi);
+    }
+
     // if(blockIdx.y == 0)
     //     printf("%.20f\n", rayPhi);
 
