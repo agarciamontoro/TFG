@@ -28,6 +28,37 @@ from rk4 import RK4Solver
 CELESTIAL_SPHERE = 1
 HORIZON = 0
 
+def plotScene(plotData, camera, blackHole):
+    # Start figure
+    fig = plt.figure()
+
+    # Start 3D plot
+    ax = fig.gca(projection='3d')
+    ax.set_axis_off()
+
+    # Set axes limits
+    ax.set_xlim3d(-25, 25)
+    ax.set_ylim3d(-25, 25)
+    ax.set_zlim3d(-25, 25)
+
+    # Draw the scene
+    drawAxes(ax)
+    drawBlackHole(ax, blackHole)
+    drawErgoSphere(ax, blackHole)
+    drawCamera(ax, camera)
+
+    # Draw the rays
+    for row in range(10, 100, 10):
+        for col in range(10, 100, 10):
+            ray = np.transpose(plotData[row, col, :, :])
+            drawRay(ax, ray)
+
+    # Add a legend
+    ax.legend()
+
+    # Show the plot
+    plt.show()
+
 
 def spher2cart(points):
     # Retrieve the actual data
@@ -375,22 +406,22 @@ class RayTracer:
 
 
 if __name__ == '__main__':
+    # Debug array
     cosas = []
+
     for _ in range(1):
         # Black hole spin
-        spin = 0.00001
+        spin = 0.000001
 
         # Camera position
-        camR = 20
+        camR = 10
         camTheta = Pi/2
         camPhi = 0
 
         # Camera lens properties
-        camFocalLength = 2
+        camFocalLength = 0.001
         camSensorShape = (101, 101)  # (Rows, Columns)
-        camSensorSize = (2, 2)       # (Height, Width)
-
-        middle = 50
+        camSensorSize = (0.01, 0.01)       # (Height, Width)
 
         # Create the black hole, the camera and the metric with the constants
         # above
@@ -405,72 +436,37 @@ if __name__ == '__main__':
         # Create the raytracer!
         rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
 
+        # Set initial and final times, the number of the steps for the
+        # simulation and compute the step size
         tInit = 0.
-        tEnd = -10.
-        numSteps = 200
+        tEnd = -9.
+        numSteps = 50
         stepSize = (tEnd - tInit) / numSteps
-        t = tInit
 
+        # Retrieve the initial state of the system for plotting purposes
         rays = rayTracer.systemState[:, :, :3]
         plotData = np.zeros(rays.shape + (numSteps+1, ))
-
-        P0_l = rays[middle, 0, :]
-        P0_r = rays[middle, -1, :]
-
         plotData[:, :, :, 0] = rays
 
+        # Simulate!
+        t = tInit
         for step in range(numSteps):
+            # Advance the step
             t += stepSize
-            # print(t)
 
             # Solve the system
             rayTracer.rayTrace(t)
-            # cosas.append(np.copy(rayTracer.systemState))
-
-            rays = rayTracer.systemState[:, :, :3]
-
-            P1_l = rays[middle, 0, :]
-            P1_r = rays[middle, -1, :]
 
             # Get the data and store it for future plot
-            plotData[:, :, :, step + 1] = rays
+            plotData[:, :, :, step + 1] = rayTracer.systemState[:, :, :3]
 
-        x, y, z = spher2cart(np.vstack((P0_l, P1_l, P0_r, P1_r)))
-        P0_l, P1_l, P0_r, P1_r = np.transpose([x, y, z])
+        # Debug
+        cosas.append(plotData)
 
-        V_l = P1_l - P0_l
-        V_r = P1_r - P0_r
+        # Plot the scene
+        plotScene(plotData, camera, blackHole)
 
-        print("Left : ", V_l)
-        print("Right: ", V_r)
-
-        fig = plt.figure()
-
-        ax = fig.gca(projection='3d')
-        ax.set_axis_off()
-
-        ax.set_xlim3d(-25, 25)
-        ax.set_ylim3d(-25, 25)
-        ax.set_zlim3d(-25, 25)
-
-        drawAxes(ax)
-        drawBlackHole(ax, blackHole)
-        drawErgoSphere(ax, blackHole)
-        drawCamera(ax, camera)
-
-        ax.legend()
-
-        # cosas.append(plotData)
-
-        for row in range(10, 100, 10):
-            for col in range(10, 100, 10):
-                ray = np.transpose(plotData[row, col, :, :])
-                drawRay(ax, ray)
-
-        plt.show()
-
-
-
-    # print(np.allclose(cosas[0], cosas[4]))
-    # print(np.max(np.abs(cosas[0]-cosas[4])))
-    # print(np.where(np.abs(cosas[0]-cosas[4])>1e-5))
+    # Debug
+    print(np.allclose(cosas[0], cosas[2]))
+    print(np.max(np.abs(cosas[0]-cosas[2])))
+    print(np.where(np.abs(cosas[0]-cosas[2])>1e-5))
