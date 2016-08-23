@@ -116,12 +116,6 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     Real rayPhi = Pi + atan(x / d);
     Real rayTheta = Pi/2 + atan(y / sqrt(d*d + x*x));
 
-    // if((blockIdx.x == 0 || blockIdx.x == (gridDim.x - 1)) &&
-    // (blockIdx.y == (gridDim.y / 2)))
-    // {
-    //     printf("Phi (%.5f, %.5f):  %.20f\n", x, y, abs(Pi - rayPhi));
-    // }
-
     // Compute canonical momenta of the ray and the conserved quantites b
     // and q
     Real pR, pTheta, pPhi, b, q;
@@ -131,9 +125,6 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     if(blockIdx.x == 70 && blockIdx.y == 90){
         printf("pR = %.20f\npTheta = %.20f\npPhi = %.20f\nb = %.20f\nq = %.20f, rayTheta = %.20f\nrayPhi = %.20f\n", pR, pTheta, pPhi, b, q, rayTheta, rayPhi);
     }
-
-    // if(blockIdx.y == 0)
-    //     printf("%.20f\n", rayPhi);
 
     #ifdef DEBUG
         if(blockIdx.x == 0 && blockIdx.y == 0){
