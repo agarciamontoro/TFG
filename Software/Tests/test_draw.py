@@ -19,6 +19,21 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
+def plotImage(plotData, status):
+    # Start figure
+    fig = plt.figure()
+
+    image = np.empty((1001, 1001, 3))
+
+    for row in range(0, 1001):
+        for col in range(0, 1001):
+            ray = np.transpose(plotData[row, col, :, :])
+            image[row, col, :] = drawRayImg(ray, status[row, col, :])
+
+    plt.imshow(image)
+    plt.show()
+
+
 def plotScene(plotData, status, camera, blackHole):
     # Start figure
     fig = plt.figure()
@@ -38,11 +53,10 @@ def plotScene(plotData, status, camera, blackHole):
     drawErgoSphere(ax, blackHole)
     drawCamera(ax, camera)
 
-    # # Draw the rays
-    # for row in range(10, 100, 10):
-    #     for col in range(10, 100, 10):
-    #         ray = np.transpose(plotData[row, col, :, :])
-    #         drawRay(ax, ray, status[row, col, :])
+    for row in range(0, 1001, 20):
+        for col in range(0, 1001, 20):
+            ray = np.transpose(plotData[row, col, :, :])
+            drawRay(ax, ray, status[row, col, :])
 
     ray = np.transpose(plotData[90, 70, :, :])
     drawRay(ax, ray, status[90, 70, :])
@@ -52,6 +66,17 @@ def plotScene(plotData, status, camera, blackHole):
 
     # Show the plot
     plt.show()
+
+
+def drawRayImg(ray, status):
+    if 2 in status:
+        return [1, 0, 0]
+
+    if 0 in status:
+        return [0, 0, 0]
+
+    return [1, 1, 1]
+
 
 
 def spher2cart(points):
@@ -144,16 +169,16 @@ if __name__ == '__main__':
 
     for _ in range(1):
         # Black hole spin
-        spin = 0.00001
+        spin = 0.999
 
         # Camera position
-        camR = 20
-        camTheta = Pi/2
+        camR = 74
+        camTheta =  1.511
         camPhi = 0
 
         # Camera lens properties
-        camFocalLength = 2
-        camSensorShape = (101, 101)  # (Rows, Columns)
+        camFocalLength = 3
+        camSensorShape = (1001, 1001)  # (Rows, Columns)
         camSensorSize = (2, 2)       # (Height, Width)
 
         # Create the black hole, the camera and the metric with the constants
@@ -172,8 +197,8 @@ if __name__ == '__main__':
         # Set initial and final times, the number of the steps for the
         # simulation and compute the step size
         tInit = 0.
-        tEnd = -100.
-        numSteps = 100
+        tEnd = -90.
+        numSteps = 200
         stepSize = (tEnd - tInit) / numSteps
 
         # Retrieve the initial state of the system for plotting purposes
@@ -189,7 +214,7 @@ if __name__ == '__main__':
             # Advance the step
             t += stepSize
             eprint(t)
-            
+
             # Solve the system
             rayTracer.rayTrace(t)
 
@@ -202,6 +227,9 @@ if __name__ == '__main__':
 
         # Plot the scene
         plotScene(plotData, status, camera, blackHole)
+
+        # Plot the image
+        plotImage(plotData, status)
 
     # Debug
     if not np.allclose(cosas[0], cosas[-1]):

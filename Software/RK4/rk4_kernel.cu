@@ -16,6 +16,7 @@
  */
 
 #include <stdio.h>
+#include <math.h>
 {{ INCLUDES }}
 
 
@@ -411,10 +412,10 @@
             else{
                 // TODO: Stiffness detection
                 //
-                if(blockIdx.x == 70 && blockIdx.y == 90 && threadId == 0){
-                    // x, r, theta, phi, pR, pTheta, b, q
-                    printf("%.5f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f\n", x0+h, solution[0], solution[1], solution[2], solution[3], solution[4], data[0], data[1]);
-                }
+                // if(blockIdx.x == 70 && blockIdx.y == 90 && threadId == 0){
+                //     // x, r, theta, phi, pR, pTheta, b, q
+                //     printf("%.5f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f\n", x0+h, solution[0], solution[1], solution[2], solution[3], solution[4], data[0], data[1]);
+                // }
 
                 // Update old factor to new current error (upper bounded to
                 // 1e-4)
@@ -457,13 +458,22 @@
             #endif
         }while(!last);
 
+        // Finally, let the user know everything's gonna be alright
+        if(threadId == 0){
+            Real prevTheta = globalInitCond[1];
+            Real currTheta = solution[1];
+            Real r = solution[0];
+
+            if(cos(prevTheta)*cos(currTheta) < 0 && r > 9 &&r < 20)
+                *globalStatus = 2;
+            else
+                *globalStatus = 1;
+        }
+
         // Aaaaand that's all, folks! Update system value (each thread its
         // result) in the global memory :)
         globalInitCond[threadId] = solution[threadId];
 
-        // Finally, let the user know everything's gonna be alright
-        if(threadId == 0)
-            *globalStatus = 1;
 
     } // If threadId < SYSTEM_SIZE
 }
