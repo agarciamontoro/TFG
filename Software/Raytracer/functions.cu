@@ -4,16 +4,24 @@
 #include "Raytracer/definitions.cu"
 #include "Raytracer/numericalMethods.cu"
 
+__device__ Real Delta(Real r){
+    return r*r - 2*r + __a2;
+}
+
 __device__ Real P(Real r, Real b){
     return r*r + __a2 - __a*b;
 }
 
 __device__ Real R(Real r, Real b, Real q){
-    Real r2 = r*r;
-    Real r4 = r2*r2;
-    Real b2 = b*b;
+    // Real r2 = r*r;
+    // Real r4 = r2*r2;
+    // Real b2 = b*b;
 
-    return r4 - q*r2 - b2*r2 + __a2*r2 + 2*q*r + 2*b2*r - 4*__a*b*r + 2*__a2*r - __a2*q;
+    Real _P = P(r, b);
+    Real D = Delta(r);
+
+    // return r4 - q*r2 - b2*r2 + __a2*r2 + 2*q*r + 2*b2*r - 4*__a*b*r + 2*__a2*r - __a2*q;
+    return _P*_P - D*((b - __a)*(b - __a) + q);
 }
 
 __device__ Real dbR(Real r, Real b){
@@ -54,23 +62,19 @@ __device__ Real dzTheta(Real theta, Real b){
     return 2*cosT*((b2/sinT2) - __a2)*sinT + (2*b2*cosT3)/(sinT3);
 }
 
-__device__ Real Delta(Real r){
-    return r*r - 2*r + __a2;
-}
-
 __device__ Real drDelta(Real r){
     return 2*r - 2;
 }
 
 __device__ Real rho(Real r, Real theta){
     Real cosT = cos(theta);
-    return sqrt(r*2 + __a2*cosT*cosT);
+    return sqrt(r*r + __a2*cosT*cosT);
 }
 
 __device__ Real drRho(Real r, Real theta){
     Real cosT = cos(theta);
 
-    return r/sqrt(__a2*cosT*cosT + r*r);
+    return r / sqrt(__a2*cosT*cosT + r*r);
 }
 
 __device__ Real dzRho(Real r, Real theta){
@@ -182,6 +186,32 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                 dD = drDelta(r);
                 dR = drR(r, b, q);
 
+                // if(blockIdx.x == 70 && blockIdx.y == 90)
+                // {
+                //     printf("%.5f, %.15f, %.15f, %.15f, %.15f, %.15f, %.15f, %.15f, %.15f, %.15f\n",
+                //            x, _R, D, Z, rho1, rho2, rho3, dRho, dD, dR);
+                //     // printf("          %.15f, %.15f, %.15f, %.15f, %.15f, %.15f, %.15f\n",
+                //     //        r, theta, phi, pR, pTheta, b, q);
+                // }
+                //
+                // if((blockIdx.x == 70 && blockIdx.y == 90) &&
+                //         (isinf(_R) || isnan(_R) ||
+                //         isinf(D) || isnan(D) ||
+                //         isinf(Z) || isnan(Z) ||
+                //         isinf(rho1) || isnan(rho1) ||
+                //         isinf(rho2) || isnan(rho2) ||
+                //         isinf(rho3) || isnan(rho3) ||
+                //         isinf(dRho) || isnan(dRho) ||
+                //         isinf(dD) || isnan(dD) ||
+                //         isinf(dR) || isnan(dR))
+                //     )
+                // {
+                //     printf("%.5f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f\n",
+                //            x, _R, D, Z, rho1, rho2, rho3, dRho, dD, dR);
+                //     printf("        , %.20f, %.20f, %.20f, %.20f, %.20f, %.20f, %.20f\n",
+                //            r, theta, phi, pR, pTheta, b, q);
+                // }
+
                 sum1 = + dRho*pTheta*pTheta / rho3;
                 sum2 = + D*pR*pR*dRho / rho3;
                 sum3 = - ((D*Z + _R)*dRho / (D*rho3));
@@ -189,7 +219,12 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                 sum5 = + (dD*Z + dR) / (2*D*rho2);
                 sum6 = - (dD*(D*Z + _R) / (2*D*D*rho2));
 
-                f[threadId] = sum1 + sum2 + sum3 + sum4 + sum5 + sum6;
+                // if(blockIdx.x == 70 && blockIdx.y == 90){
+                //     printf("%.20f, %.20f, %.20f\n",
+                //            r, theta, - D/(2*rho2));
+                // }
+
+                f[threadId] = (sum2+sum4) + (sum1) + (sum3+sum5+sum6);
                 // printf("Solution[%d] = %.20f\n", threadId, f[threadId]);
                 break;
 

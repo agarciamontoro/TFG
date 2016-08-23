@@ -15,6 +15,10 @@ sys.path.append('../Raytracer')
 from raytracer import RayTracer, BlackHole, Camera, KerrMetric
 
 
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
 def plotScene(plotData, status, camera, blackHole):
     # Start figure
     fig = plt.figure()
@@ -168,7 +172,7 @@ if __name__ == '__main__':
         # Set initial and final times, the number of the steps for the
         # simulation and compute the step size
         tInit = 0.
-        tEnd = -12.
+        tEnd = -100.
         numSteps = 100
         stepSize = (tEnd - tInit) / numSteps
 
@@ -184,7 +188,8 @@ if __name__ == '__main__':
         for step in range(numSteps):
             # Advance the step
             t += stepSize
-
+            eprint(t)
+            
             # Solve the system
             rayTracer.rayTrace(t)
 

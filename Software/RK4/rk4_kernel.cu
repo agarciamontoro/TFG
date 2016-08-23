@@ -412,7 +412,8 @@
                 // TODO: Stiffness detection
                 //
                 if(blockIdx.x == 70 && blockIdx.y == 90 && threadId == 0){
-                    printf("x: %.5f ; r: %.10f ; theta: %.10f ; phi: %.10f ; pR: %.10f ; pTheta: %.10f ; b: %.10f ; q: %.10f\n", x0+h, solution[0], solution[1], solution[2], solution[3], solution[4], data[0], data[1]);
+                    // x, r, theta, phi, pR, pTheta, b, q
+                    printf("%.5f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f\n", x0+h, solution[0], solution[1], solution[2], solution[3], solution[4], data[0], data[1]);
                 }
 
                 // Update old factor to new current error (upper bounded to
