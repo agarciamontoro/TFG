@@ -12,23 +12,23 @@ from matplotlib import pyplot as plt
 
 # Import the raytracer
 sys.path.append('../Raytracer')
-from raytracer import RayTracer, BlackHole, Camera, KerrMetric
+from raytracer import RayTracer, Camera
+from kerr import BlackHole, KerrMetric
 
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
-def plotImage(plotData, status):
+def plotImage(status):
     # Start figure
     fig = plt.figure()
 
-    image = np.empty((101, 101, 3))
+    image = np.empty((301, 301, 3))
 
-    for row in range(0, 101):
-        for col in range(0, 101):
-            ray = np.transpose(plotData[row, col, :, :])
-            image[row, col, :] = drawRayImg(ray, status[row, col, :])
+    for row in range(0, 301):
+        for col in range(0, 301):
+            image[row, col, :] = drawRayImg(status[row, col])
 
     plt.imshow(image)
     plt.show()
@@ -53,8 +53,8 @@ def plotScene(plotData, status, camera, blackHole):
     drawErgoSphere(ax, blackHole)
     drawCamera(ax, camera)
 
-    for row in range(0, 101, 20):
-        for col in range(0, 101, 20):
+    for row in range(0, 301, 20):
+        for col in range(0, 301, 20):
             ray = np.transpose(plotData[row, col, :, :])
             drawRay(ax, ray, status[row, col, :])
 
@@ -67,15 +67,20 @@ def plotScene(plotData, status, camera, blackHole):
     # Show the plot
     plt.show()
 
+SPHERE = 0
+DISK = 1
+HORIZON = 2
 
-def drawRayImg(ray, status):
-    if 2 in status:
+
+def drawRayImg(status):
+    if status == DISK:
         return [1, 0, 0]
 
-    if 0 in status:
+    if status == HORIZON:
         return [0, 0, 0]
 
-    return [1, 1, 1]
+    if status == SPHERE:
+        return [1, 1, 1]
 
 
 
@@ -164,76 +169,40 @@ def drawBlackHole(ax, blackHole):
 
 
 if __name__ == '__main__':
-    # Debug array
-    cosas = []
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
 
-    for _ in range(1):
-        # Black hole spin
-        spin = 0.999
+    # Black hole constants
+    spin = 0.999
+    innerDiskRadius = 9
+    outerDiskRadius = 20
 
-        # Camera position
-        camR = 74
-        camTheta = 1.511
-        camPhi = 0
+    # Camera position
+    camR = 74
+    camTheta = 1.511
+    camPhi = 0
 
-        # Camera lens properties
-        camFocalLength = 3
-        camSensorShape = (101, 101)  # (Rows, Columns)
-        camSensorSize = (2, 2)       # (Height, Width)
+    # Camera lens properties
+    camFocalLength = 3
+    camSensorShape = (301, 301)  # (Rows, Columns)
+    camSensorSize = (2, 2)       # (Height, Width)
 
-        # Create the black hole, the camera and the metric with the constants
-        # above
-        blackHole = BlackHole(spin)
-        camera = Camera(camR, camTheta, camPhi, camFocalLength, camSensorShape,
-                        camSensorSize)
-        kerr = KerrMetric(camera, blackHole)
+    # Create the black hole, the camera and the metric with the constants
+    # above
+    blackHole = BlackHole(spin, innerDiskRadius, outerDiskRadius)
+    camera = Camera(camR, camTheta, camPhi, camFocalLength, camSensorShape,
+                    camSensorSize)
+    kerr = KerrMetric(camera, blackHole)
 
-        # Set camera's speed (it needs the kerr metric constants)
-        camera.setSpeed(kerr, blackHole)
+    # Set camera's speed (it needs the kerr metric constants)
+    camera.setSpeed(kerr, blackHole)
 
-        # Create the raytracer!
-        rayTracer = RayTracer(camera, kerr, blackHole, debug=False)
+    # Create the raytracer!
+    rayTracer = RayTracer(camera, kerr, blackHole)
+    rayTracer.rayTrace(-90, stepsPerKernel=1)
+    print(rayTracer.totalTime)
 
-        # Set initial and final times, the number of the steps for the
-        # simulation and compute the step size
-        tInit = 0.
-        tEnd = -90.
-        numSteps = 200
-        stepSize = (tEnd - tInit) / numSteps
+    status = rayTracer.getStatus()
+    plotImage(status)
 
-        # Retrieve the initial state of the system for plotting purposes
-        rays = rayTracer.systemState[:, :, :3]
-        plotData = np.zeros(rays.shape + (numSteps+1, ))
-        plotData[:, :, :, 0] = rays
-        status = np.empty(camSensorShape + (numSteps+1, ))
-        status[:, :, 0] = 1
-
-        # Simulate!
-        t = tInit
-        for step in range(numSteps):
-            # Advance the step
-            t += stepSize
-            eprint(t)
-
-            # Solve the system
-            rayTracer.rayTrace(t)
-
-            # Get the data and store it for future plot
-            status[:, :, step + 1] = rayTracer.status
-            plotData[:, :, :, step + 1] = rayTracer.systemState[:, :, :3]
-
-        # Debug
-        cosas.append(plotData)
-
-        # Plot the scene
-        plotScene(plotData, status, camera, blackHole)
-
-        # Plot the image
-        plotImage(plotData, status)
-
-    # Debug
-    if not np.allclose(cosas[0], cosas[-1]):
-        print("Maximum difference:", np.max(np.abs(cosas[0]-cosas[-1])))
-        print("Different items   :", np.where(np.abs(cosas[0]-cosas[-1])>1e-5))
-    else:
-        print("Everything's fine, relax.")
+    print("End")

@@ -17,12 +17,9 @@
 
 #include <stdio.h>
 #include <math.h>
-{{ INCLUDES }}
 
-
-// #define SYSTEM_SIZE {{ SYSTEM_SIZE }}
-// {{ DEBUG }}
-// typedef {{ Real }} Real;
+#include "Raytracer/Kernel/definitions.cu"
+#include "Raytracer/Kernel/functions.cu"
 
 /**
  * Applies the DOPRI5 algorithm over the system defined in the computeComponent
@@ -85,9 +82,8 @@
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- __global__ void RK4Solve(Real x0, Real xend, void* devInitCond, Real h,
-                          Real hmax, void* globalRtoler, void* globalAtoler, Real safe, Real fac1, Real fac2, Real beta,
-                          Real uround, void* devData, int dataSize,
+ __device__ void RK4Solve(Real x0, Real xend, void* devInitCond, Real h,
+                          Real hmax, void* devData, int dataSize,
                           void* devStatus){
 
     // Retrieve the ids of the thread in the block and of the block in the grid
@@ -98,22 +94,22 @@
         printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)devInitCond)[0], ((Real*)devInitCond)[1]);
     #endif
 
+    // Array of status flags: at the output, the (x,y)-th element will be 0
+    // if any error ocurred (namely, the step size was made too small) and
+    // 1 if the computation succeded
+    int* globalStatus = (int*) devStatus;
+    globalStatus += blockId;
+
     // Each equation to solve has a thread that compute its solution. Although
     // in an ideal situation the number of threads is exactly the same as the
     // number of equations, it is usual that the former is greater than the
     // latter. The reason is that the number of threads has to be a power of 2
     // (see reduction technique in the only loop you will find in this function
     // code to know why): then, we can give some rest to the threads that exceeds the number of equations :)
-    if(threadId < SYSTEM_SIZE){
+    if(*globalStatus == 1 && threadId < SYSTEM_SIZE){
         // Flag shared between all threads in block to stop execution when one
         // of them cannot continue
         __shared__ bool keepRunning;
-
-        // Array of status flags: at the output, the (x,y)-th element will be 0
-        // if any error ocurred (namely, the step size was made too small) and
-        // 1 if the computation succeded
-        int* globalStatus = (int*) devStatus;
-        globalStatus += blockId;
 
         if(threadId == 0)
             keepRunning = true;
@@ -180,14 +176,6 @@
         Real fac1_inverse = 1.0 / fac1;
         Real fac2_inverse = 1.0 / fac2;
         Real fac11, fac;
-
-        // Retrieve the absolute and relative error tolerances (see the
-        // function header's comment to know their purpose) provided to predict
-        // the step size and get the ones associated to this only thread.
-        Real* atoler = (Real*) globalAtoler;
-        Real* rtoler = (Real*) globalRtoler;
-        Real atoli = atoler[threadId];
-        Real rtoli = rtoler[threadId];
 
         // Loop variables initialisation. The main loop finishes when `last` is
         // set to true, event that happens when the current x0 plus the current

@@ -37,9 +37,9 @@ class RK4Solver:
     """
 
     # TODO: Make tolerances a SYSTEM_SIZE-length array
-    def __init__(self, x0, y0, dx, systemFunctions, relativeTol=1e-6,
+    def __init__(self, x0, y0, dx, functionFile, relativeTol=1e-6,
                  absoluteTol=1e-12, safe=0.9, fac1=0.2, fac2=10.0, beta=0.04,
-                 uround=2.3e-16, debug=False):
+                 uround=2.3e-16, additionalData=None, debug=False):
         """Builds the RungeKutta4 solver.
 
         Args:
@@ -118,7 +118,7 @@ class RK4Solver:
 
         # ======================= INITIAL CONDITIONS ======================= #
 
-        self.setInitialConditions(x0, y0)
+        self.setInitialConditions(x0, y0, additionalData)
 
         # ============================ CONSTANTS ============================ #
 
@@ -136,9 +136,6 @@ class RK4Solver:
         # Convert dx to the same type of y0
         self.step = np.array(dx).astype(self.type)
 
-        # System function
-        self.F = [(str(i), f) for i, f in enumerate(systemFunctions)]
-
         # Convert tolerances to arrays and copy them to GPU
         self.relativeTol = np.repeat(relativeTol,
                                      self.SYSTEM_SIZE).astype(self.type)
@@ -155,8 +152,14 @@ class RK4Solver:
         self.beta = np.array(beta).astype(self.type)
         self.uround = np.array(uround).astype(self.type)
 
+        self.functionFile = functionFile
+
         # Debug switch
         self.debug = debug
+
+        # Status
+        self.status = np.empty((self.INIT_H, self.INIT_W), dtype=np.int32)
+        self.statusGPU = gpuarray.to_gpu(self.status)
 
         # ==================== KERNEL TEMPLATE RENDERING ==================== #
 
@@ -177,10 +180,7 @@ class RK4Solver:
 
         # Specify any input variables to the template as a dictionary.
         templateVars = {
-            "SYSTEM_SIZE": self.SYSTEM_SIZE,
-            "SYSTEM_FUNCTIONS": self.F,
-            "Real": codeType,
-            "DEBUG": "#define DEBUG" if self.debug else ""
+            "INCLUDES": '#include "%s"' % self.functionFile,
         }
 
         # Finally, process the template to produce our final text.
@@ -193,8 +193,11 @@ class RK4Solver:
 
         # ======================= KERNEL COMPILATION ======================= #
 
+        ownDir = os.path.dirname(os.path.realpath(__file__))
+        softwareDir = os.path.abspath(os.path.join(ownDir, os.pardir))
+
         # Compile the kernel code using pycuda.compiler
-        mod = compiler.SourceModule(kernel)
+        mod = compiler.SourceModule(kernel, include_dirs=[ownDir, softwareDir])
 
         # Get the kernel function from the compiled module
         self.RK4Solve = mod.get_function("RK4Solve")
@@ -207,7 +210,7 @@ class RK4Solver:
 
         self.totalTime = 0.
 
-    def setInitialConditions(self, x0, y0):
+    def setInitialConditions(self, x0, y0, additionalData):
         # Get precision: single or double
         self.type = y0.dtype
         assert(self.type == np.float32 or self.type == np.float64)
@@ -219,6 +222,14 @@ class RK4Solver:
         # Transfer host (CPU) memory to device (GPU) memory
         # FIXME: Does this free the previous memory or no?
         self.y0GPU = gpuarray.to_gpu(self.y0)
+
+        # Convert additional data to the type of y0
+        self.additionalData = additionalData.astype(self.type)
+        self.dataSize = np.int32(self.additionalData.shape[2])
+
+        # Send the additional data to the GPU
+        self.additionalDataGPU = gpuarray.to_gpu(self.additionalData)
+
 
     def solve(self, xEnd):
         """Evolve the system between x0 and xEnd.
@@ -242,6 +253,9 @@ class RK4Solver:
 
         self.start.record()  # start timing
 
+        # Convert x0 to the same type of y0
+        self.x0 = np.array(self.x0).astype(self.type)
+
         # Call the kernel on the card
         self.RK4Solve(
             # Inputs
@@ -258,6 +272,13 @@ class RK4Solver:
             self.beta,
             self.uround,
 
+            # Additional constant data for each block
+            self.additionalDataGPU,
+            self.dataSize,
+
+            # Status array
+            self.statusGPU,
+
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes one RK4 step for a single initial condition
             grid=(self.INIT_W, self.INIT_H, 1),
@@ -273,7 +294,9 @@ class RK4Solver:
         self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
 
         # Update the new state of the system
+        # FIXME: Handle premature terminations and correct update of x0
         self.x0 = xEnd
         self.y0 = self.y0GPU.get()
+        self.status = self.statusGPU.get()
 
         return(self.y0)

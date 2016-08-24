@@ -1,0 +1,53 @@
+#ifndef __DEFINITIONS__
+#define __DEFINITIONS__
+
+// Debug switch
+{{ DEBUG }}
+
+// Declaration of the system size; i.e., the number of equations
+#define SYSTEM_SIZE {{ SYSTEM_SIZE }}
+
+// Black hole's spin and its square
+#define __a  {{ SPIN }}
+#define __a2 __a * __a
+
+// Camera constants
+#define __d {{ D }}
+#define __camR {{ CAM_R }}
+#define __camTheta {{ CAM_THETA }}
+#define __camPhi {{ CAM_PHI }}
+#define __camBeta {{ CAM_BETA }}
+
+// Black hole constants
+#define __b1 {{ B1 }}
+#define __b2 {{ B2 }}
+
+// Kerr constants
+#define __ro {{ RO }}
+#define __delta {{ DELTA }}
+#define __pomega {{ POMEGA }}
+#define __alpha {{ ALPHA }}
+#define __omega {{ OMEGA }}
+
+// RK45 parameters
+#define rtoli {{ R_TOL_I }}
+#define atoli {{ A_TOL_I }}
+#define safe {{ SAFE }}
+#define fac1 {{ FAC_1 }}
+#define fac2 {{ FAC_2 }}
+#define beta {{ BETA }}
+#define uround {{ UROUND }}
+
+// Convention for ray's status
+#define HORIZON {{ HORIZON }}
+#define DISK {{ DISK }}
+#define SPHERE {{ SPHERE }}
+
+#define horizonRadius {{ HORIZON_RADIUS }}
+#define innerDiskRadius {{ INNER_DISK_RADIUS }}
+#define outerDiskRadius {{ OUTER_DISK_RADIUS }}
+
+// Definition of the data type
+typedef {{ REAL }} Real;
+
+#endif // __DEFINITIONS__
