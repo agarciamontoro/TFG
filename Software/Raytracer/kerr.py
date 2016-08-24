@@ -7,7 +7,7 @@ softwareDir = os.path.abspath(os.path.join(selfDir, os.pardir))
 
 
 class BlackHole:
-    def __init__(self, spin):
+    def __init__(self, spin, innerDiskRadius=9, outerDiskRadius=20):
         # Define spin and its square
         self.a = spin
         self.a2 = spin**2
@@ -19,6 +19,13 @@ class BlackHole:
         # Necessary constants for the origin algorithm. See (A.13)
         self.b1 = self._b0(self.r2)
         self.b2 = self._b0(self.r1)
+
+        # Horizon radius
+        self.horizonRadius = (2 + sqrt(4 - 4*self.a2)) / 2
+
+        # Disk inner and outer radius
+        self.innerDiskRadius = innerDiskRadius
+        self.outerDiskRadius = outerDiskRadius
 
     def _b0(self, r):
         a = self.a

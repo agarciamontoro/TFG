@@ -1,12 +1,10 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
-#include "Raytracer/Kernel/definitions.cu"
-#include "Raytracer/Kernel/solver.cu"
+#include "Raytracer/Kernel/common.cu"
 
 #define Pi M_PI
 #define SYSTEM_SIZE 5
-
 
 __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
                                     Real* pTheta, Real* pPhi){
@@ -66,34 +64,19 @@ __device__ void getConservedQuantities(Real pTheta, Real pPhi, Real* b,
     *q = pTheta2 + cosT2*((b2/sinT2) - __a2);
 }
 
-__global__ void setInitialConditions(void* devInitCond,
+__global__ void setInitialConditions(void* devInitCond,void* devConstants,
                                      Real imageRows, Real imageCols,
                                      Real pixelWidth, Real pixelHeight){
     // Retrieve the id of the block in the grid
     int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
 
-    // Pointer for the initial conditions of this block
+    // Pointer for the initial conditions of this ray (block)
     Real* globalInitCond = (Real*) devInitCond;
-    Real* initCond = globalInitCond + blockId*(SYSTEM_SIZE + 2);
+    Real* initCond = globalInitCond + blockId*SYSTEM_SIZE;
 
-    // Set global variables, common to all threads, and constants
-    // Camera constants
-    __d = d;
-    __camR = camR;
-    __camTheta = camTheta;
-    __camPhi = camPhi;
-    __camBeta = camBeta;
-
-    // Black hole constants
-    __b1 = b1;
-    __b2 = b2;
-
-    // Kerr constants
-    __ro = ro;
-    __delta = delta;
-    __pomega = pomega;
-    __alpha = alpha;
-    __omega = omega;
+    // Pointer for the constants of this ray (block)
+    Real* globalConstants = (Real*) devConstants;
+    Real* constants = globalConstants + blockId*2;
 
     // Compute pixel position in the physical space
     Real x = - (blockIdx.x + 0.5 - imageCols/2) * pixelWidth;
@@ -101,8 +84,8 @@ __global__ void setInitialConditions(void* devInitCond,
 
     // Compute direction of the incoming ray in the camera's reference
     // frame
-    Real rayPhi = Pi + atan(x / d);
-    Real rayTheta = Pi/2 + atan(y / sqrt(d*d + x*x));
+    Real rayPhi = Pi + atan(x / __d);
+    Real rayTheta = Pi/2 + atan(y / sqrt(__d*__d + x*x));
 
     // Compute canonical momenta of the ray and the conserved quantites b
     // and q
@@ -110,9 +93,9 @@ __global__ void setInitialConditions(void* devInitCond,
     getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
     getConservedQuantities(pTheta, pPhi, &b, &q);
 
-    if(blockIdx.x == 70 && blockIdx.y == 90){
-        printf("pR = %.20f\npTheta = %.20f\npPhi = %.20f\nb = %.20f\nq = %.20f, rayTheta = %.20f\nrayPhi = %.20f\n", pR, pTheta, pPhi, b, q, rayTheta, rayPhi);
-    }
+    // if(blockIdx.x == 70 && blockIdx.y == 90){
+    //     printf("pR = %.20f\npTheta = %.20f\npPhi = %.20f\nb = %.20f\nq = %.20f, rayTheta = %.20f\nrayPhi = %.20f\n", pR, pTheta, pPhi, b, q, rayTheta, rayPhi);
+    // }
 
     #ifdef DEBUG
         if(blockIdx.x == 0 && blockIdx.y == 0){
@@ -121,23 +104,31 @@ __global__ void setInitialConditions(void* devInitCond,
         }
     #endif
 
+    // Save ray's initial conditions
     initCond[0] = __camR;
     initCond[1] = __camTheta;
     initCond[2] = __camPhi;
     initCond[3] = pR;
     initCond[4] = pTheta;
-    initCond[5] = b;
-    initCond[6] = q;
+
+    // Save ray's constants
+    constants[0] = b;
+    constants[1] = q;
 }
 
-__global__ void rayTrace(Real xEnd, Real step, void* devRays){
-    Real x = 0;
-
-    while(x > xEnd){
-        // Solve the system for
-        RK4Solve(x, x+step, devRays, step/10., xEnd, devData, dataSize,
-                 devStatus);
-
-        detectCollisions(devRays, devStatus);
+__device__ int detectCollisions(Real prevTheta, Real currentTheta,
+                                Real currentR){
+    if (currentR <= horizonRadius){
+        return HORIZON;
     }
+
+    if(cos(prevTheta)*cos(currentTheta) < 0 &&
+       currentR > innerDiskRadius &&
+       currentR < outerDiskRadius){
+        return DISK;
+    }
+
+    return SPHERE;
 }
+
+#include "Raytracer/Kernel/solver.cu"

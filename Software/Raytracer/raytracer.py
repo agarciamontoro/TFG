@@ -20,6 +20,12 @@ from rk4 import RK4Solver
 selfDir = os.path.dirname(os.path.abspath(__file__))
 softwareDir = os.path.abspath(os.path.join(selfDir, os.pardir))
 
+
+# Kindly borrowed from http://stackoverflow.com/a/14267825
+def nextPowerOf2(x):
+    return 1 << (x-1).bit_length()
+
+
 # Dummy object for the camera (computation of the speed is done here)
 class Camera:
     def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize):
@@ -75,6 +81,8 @@ class RayTracer:
         self.debug = debug
         self.systemSize = 5
 
+        self.numThreads = nextPowerOf2(self.systemSize)
+
         # Set up the necessary objects
         self.camera = camera
         self.kerr = kerr
@@ -89,8 +97,8 @@ class RayTracer:
         # Compute the initial conditions
         self._setUpInitCond()
 
-        # Build the solver object
-        self._setUpSolver()
+        # # Build the solver object
+        # self._setUpSolver()
 
         # Create two timers to measure the time
         self.start = driver.Event()
@@ -111,30 +119,34 @@ class RayTracer:
 
         # Read the template file using the environment object.
         # This also constructs our Template object.
-        template = templateEnv.get_template("common.jj2")
+        templatePath = os.path.join('Kernel', 'common.jj')
+        template = templateEnv.get_template(templatePath)
 
         codeType = "double"
 
         # Specify any input variables to the template as a dictionary.
         templateVars = {
             # Camera constants
-            "D": self.camera.d,
-            "CAM_R": self.camera.camR,
-            "CAM_THETA": self.camera.camTheta,
-            "CAM_PHI": self.camera.camPhi,
-            "CAM_BETA": self.camera.camBeta,
+            "D": self.camera.focalLength,
+            "CAM_R": self.camera.r,
+            "CAM_THETA": self.camera.theta,
+            "CAM_PHI": self.camera.phi,
+            "CAM_BETA": self.camera.beta,
 
             # Black hole constants
             "SPIN": self.blackHole.a,
-            "B1": self.camera.b1,
-            "B2": self.camera.b2,
+            "B1": self.blackHole.b1,
+            "B2": self.blackHole.b2,
+            "HORIZON_RADIUS": self.blackHole.horizonRadius,
+            "INNER_DISK_RADIUS": self.blackHole.innerDiskRadius,
+            "OUTER_DISK_RADIUS": self.blackHole.outerDiskRadius,
 
             # Kerr metric constants
-            "RO": self.camera.ro,
-            "DELTA": self.camera.delta,
-            "POMEGA": self.camera.pomega,
-            "ALPHA": self.camera.alpha,
-            "OMEGA": self.camera.omega,
+            "RO": self.kerr.ro,
+            "DELTA": self.kerr.delta,
+            "POMEGA": self.kerr.pomega,
+            "ALPHA": self.kerr.alpha,
+            "OMEGA": self.kerr.omega,
 
             # RK45 solver constants
             "R_TOL_I": 1e-6,
@@ -145,11 +157,16 @@ class RayTracer:
             "BETA": 0.04,
             "UROUND": 2.3e-16,
 
+            # Convention for ray status
+            "SPHERE": 0,  # A ray that has not yet collide with anything.
+            "DISK": 1,  # A ray that has collided with the disk.
+            "HORIZON": 2,  # A ray that has collided with the black hole.
+
             # Data type
             "REAL": codeType,
 
             # Number of equations
-            "SYSTEM_SIZE": 5,
+            "SYSTEM_SIZE": self.systemSize,
 
             # Debug switch
             "DEBUG": "#define DEBUG" if self.debug else ""
@@ -167,25 +184,44 @@ class RayTracer:
         # ======================= KERNEL COMPILATION ======================= #
 
         # Compile the kernel code using pycuda.compiler
-        kernelFile = os.path.join(selfDir, "raytracer_kernel.cu")
+        kernelFile = os.path.join(selfDir, "Kernel", "raytracer.cu")
 
         mod = compiler.SourceModule(open(kernelFile, "r").read(),
                                     include_dirs=[selfDir, softwareDir])
 
-        # Get the kernel function from the compiled module
+        # Get the initial kernel function from the compiled module
         self._setInitialConditions = mod.get_function("setInitialConditions")
 
-    def _setUpInitCond(self):
-        # Array to compute the initial conditions
-        self.initCond = np.empty((self.imageRows, self.imageCols,
-                                  self.systemSize + 2))
+        # Get the solver function from the compiled module
+        self._solve = mod.get_function("RK4Solve")
 
-        # Send it to the GPU
-        self.initCondGPU = gpuarray.to_gpu(self.initCond)
+        # # Get the collision detection function from the compiled module
+        # self._detectCollisions = mod.get_function("detectCollisions")
+
+    def _setUpInitCond(self):
+        # Array to compute the ray's initial conditions
+        self.systemState = np.empty((self.imageRows, self.imageCols,
+                                     self.systemSize))
+
+        # Array to compute the ray's constants
+        self.constants = np.empty((self.imageRows, self.imageCols, 2))
+
+        # Array to store the rays status:
+        #   0: A ray that has not yet collide with anything.
+        #   1: A ray that has collided with the horizon.
+        #   2: A ray that has collided with the black hole.
+        self.rayStatus = np.zeros((self.imageRows, self.imageCols),
+                                  dtype=np.int32)
+
+        # Send them to the GPU
+        self.systemStateGPU = gpuarray.to_gpu(self.systemState)
+        self.constantsGPU = gpuarray.to_gpu(self.constants)
+        self.rayStatusGPU = gpuarray.to_gpu(self.rayStatus)
 
         # Compute the initial conditions
         self._setInitialConditions(
-            self.initCondGPU,
+            self.systemStateGPU,
+            self.constantsGPU,
 
             np.float64(self.imageRows),
             np.float64(self.imageCols),
@@ -202,22 +238,56 @@ class RayTracer:
             block=(1, 1, 1)
         )
 
+        # TODO: Remove this copy, inefficient!
         # Retrieve the computed initial conditions
-        self.initCond = self.initCondGPU.get()
-
-        # Build and fill the array for the system state with the initial
-        # conditions
-        self.systemState = np.copy(self.initCond[:, :, :5])
-
-        # Retrieve the constants
-        self.constants = np.copy(self.initCond[:, :, 5:])
-
-    def _setUpSolver(self):
-        filePath = os.path.abspath(os.path.join(selfDir, "functions.cu"))
-        self.solver = RK4Solver(0, self.systemState, -0.001, filePath,
-                                additionalData=self.constants,
-                                debug=self.debug)
+        self.systemState = self.systemStateGPU.get()
+        self.constants = self.constantsGPU.get()
 
     def rayTrace(self, xEnd):
-        self.systemState = self.solver.solve(xEnd)
-        self.status = self.solver.status
+        # Initial time
+        x = np.float64(0)
+
+        # Number of calls
+        steps = 1000
+
+        # Computed iteration interval
+        interval = xEnd / steps
+
+        self.start.record()  # start timing
+
+        # Send the rays to the outer space!
+        for step in range(steps):
+            # Solve the system in order to update the state of each ray
+            self._solve(
+                x,
+                np.float64(x + interval),
+                self.systemStateGPU,
+                np.float64(0.001),
+                np.float64(interval),
+                self.constantsGPU,
+                np.int32(2),
+                self.rayStatusGPU,
+
+                # Grid definition -> number of blocks x number of blocks.
+                # Each block computes the direction of one pixel
+                grid=(self.imageCols, self.imageRows, 1),
+
+                # Block definition -> number of threads x number of threads
+                # Each thread in the block computes one RK4 step for one
+                # equation
+                block=(self.numThreads, 1, 1)
+            )
+
+            x += interval
+            print(x)
+
+        self.end.record()   # end timing
+        self.end.synchronize()
+
+        # Calculate the run length
+        self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
+        print(self.totalTime)
+
+    def getStatus(self):
+        self.status = self.rayStatusGPU.get()
+        return self.status

@@ -1,7 +1,7 @@
 #ifndef __FUNCTIONS__
 #define __FUNCTIONS__
 
-#include "Raytracer/Kernel/definitions.cu"
+#include "Raytracer/Kernel/common.cu"
 
 __device__ Real Delta(Real r){
     return r*r - 2*r + __a2;

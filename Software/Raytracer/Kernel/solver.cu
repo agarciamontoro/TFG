@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "Raytracer/Kernel/definitions.cu"
+#include "Raytracer/Kernel/common.cu"
 #include "Raytracer/Kernel/functions.cu"
 
 /**
@@ -82,7 +82,7 @@
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- __device__ void RK4Solve(Real x0, Real xend, void* devInitCond, Real h,
+ __global__ void RK4Solve(Real x0, Real xend, void* devInitCond, Real h,
                           Real hmax, void* devData, int dataSize,
                           void* devStatus){
 
@@ -106,7 +106,7 @@
     // latter. The reason is that the number of threads has to be a power of 2
     // (see reduction technique in the only loop you will find in this function
     // code to know why): then, we can give some rest to the threads that exceeds the number of equations :)
-    if(*globalStatus == 1 && threadId < SYSTEM_SIZE){
+    if(*globalStatus == SPHERE && threadId < SYSTEM_SIZE){
         // Flag shared between all threads in block to stop execution when one
         // of them cannot continue
         __shared__ bool keepRunning;
@@ -206,7 +206,7 @@
 
                 // Let the user know the computation stopped before xEnd
                 if(threadId == 0)
-                    *globalStatus = 0;
+                    *globalStatus = HORIZON;
 
                 // Finish all execution in this block
                 return;
@@ -449,13 +449,11 @@
         // Finally, let the user know everything's gonna be alright
         if(threadId == 0){
             Real prevTheta = globalInitCond[1];
-            Real currTheta = solution[1];
-            Real r = solution[0];
 
-            if(cos(prevTheta)*cos(currTheta) < 0 && r > 9 &&r < 20)
-                *globalStatus = 2;
-            else
-                *globalStatus = 1;
+            Real currentR = solution[0];
+            Real currentTheta = solution[1];
+
+            *globalStatus = detectCollisions(prevTheta, currentTheta, currentR);
         }
 
         // Aaaaand that's all, folks! Update system value (each thread its

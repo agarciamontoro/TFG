@@ -38,6 +38,15 @@
 #define beta {{ BETA }}
 #define uround {{ UROUND }}
 
+// Convention for ray's status
+#define HORIZON {{ HORIZON }}
+#define DISK {{ DISK }}
+#define SPHERE {{ SPHERE }}
+
+#define horizonRadius {{ HORIZON_RADIUS }}
+#define innerDiskRadius {{ INNER_DISK_RADIUS }}
+#define outerDiskRadius {{ OUTER_DISK_RADIUS }}
+
 // Definition of the data type
 typedef {{ REAL }} Real;
 
