@@ -1,26 +1,12 @@
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
-#include "Raytracer/definitions.cu"
+#include "Raytracer/Kernel/definitions.cu"
+#include "Raytracer/Kernel/solver.cu"
 
 #define Pi M_PI
 #define SYSTEM_SIZE 5
 
-// Declaration of constants
-__device__ Real __d;
-__device__ Real __camR;
-__device__ Real __camTheta;
-__device__ Real __camPhi;
-__device__ Real __camBeta;
-__device__ Real __b1;
-__device__ Real __b2;
-__device__ Real __ro;
-__device__ Real __delta;
-__device__ Real __pomega;
-__device__ Real __alpha;
-__device__ Real __omega;
-
-#include "Raytracer/functions.cu"
 
 __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
                                     Real* pTheta, Real* pPhi){
@@ -80,7 +66,9 @@ __device__ void getConservedQuantities(Real pTheta, Real pPhi, Real* b,
     *q = pTheta2 + cosT2*((b2/sinT2) - __a2);
 }
 
-__global__ void setInitialConditions(void* devInitCond, Real imageRows, Real imageCols, Real pixelWidth, Real pixelHeight, Real d, Real camR, Real camTheta, Real camPhi, Real camBeta, Real a, Real b1, Real b2, Real ro, Real delta, Real pomega, Real alpha, Real omega){
+__global__ void setInitialConditions(void* devInitCond,
+                                     Real imageRows, Real imageCols,
+                                     Real pixelWidth, Real pixelHeight){
     // Retrieve the id of the block in the grid
     int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
 
@@ -140,4 +128,16 @@ __global__ void setInitialConditions(void* devInitCond, Real imageRows, Real ima
     initCond[4] = pTheta;
     initCond[5] = b;
     initCond[6] = q;
+}
+
+__global__ void rayTrace(Real xEnd, Real step, void* devRays){
+    Real x = 0;
+
+    while(x > xEnd){
+        // Solve the system for
+        RK4Solve(x, x+step, devRays, step/10., xEnd, devData, dataSize,
+                 devStatus);
+
+        detectCollisions(devRays, devStatus);
+    }
 }

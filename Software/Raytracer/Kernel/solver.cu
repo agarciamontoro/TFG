@@ -16,12 +16,10 @@
  */
 
 #include <stdio.h>
-#include "/mnt/Datos/Documentos/Proyectos/TFG/Software/Raytracer/functions.cu"
+#include <math.h>
 
-
-// #define SYSTEM_SIZE 
-// 
-// typedef  Real;
+#include "Raytracer/Kernel/definitions.cu"
+#include "Raytracer/Kernel/functions.cu"
 
 /**
  * Applies the DOPRI5 algorithm over the system defined in the computeComponent
@@ -84,9 +82,9 @@
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- __global__ void RK4Solve(Real x0, Real xend, void* devInitCond, Real h,
-                          Real hmax, void* globalRtoler, void* globalAtoler, Real safe, Real fac1, Real fac2, Real beta,
-                          Real uround, void* devData, int dataSize){
+ __device__ void RK4Solve(Real x0, Real xend, void* devInitCond, Real h,
+                          Real hmax, void* devData, int dataSize,
+                          void* devStatus){
 
     // Retrieve the ids of the thread in the block and of the block in the grid
     int threadId = threadIdx.x + threadIdx.y * blockDim.x;
@@ -96,13 +94,27 @@
         printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)devInitCond)[0], ((Real*)devInitCond)[1]);
     #endif
 
+    // Array of status flags: at the output, the (x,y)-th element will be 0
+    // if any error ocurred (namely, the step size was made too small) and
+    // 1 if the computation succeded
+    int* globalStatus = (int*) devStatus;
+    globalStatus += blockId;
+
     // Each equation to solve has a thread that compute its solution. Although
     // in an ideal situation the number of threads is exactly the same as the
     // number of equations, it is usual that the former is greater than the
     // latter. The reason is that the number of threads has to be a power of 2
     // (see reduction technique in the only loop you will find in this function
     // code to know why): then, we can give some rest to the threads that exceeds the number of equations :)
-    if(threadId < SYSTEM_SIZE){
+    if(*globalStatus == 1 && threadId < SYSTEM_SIZE){
+        // Flag shared between all threads in block to stop execution when one
+        // of them cannot continue
+        __shared__ bool keepRunning;
+
+        if(threadId == 0)
+            keepRunning = true;
+        __syncthreads();
+
         // Shared array between the block threads to store intermediate
         // solutions.
         __shared__ Real solution[SYSTEM_SIZE];
@@ -132,6 +144,11 @@
         // associated to its own equation:
         Real y0 = globalInitCond[threadId];
 
+        // if(blockIdx.y == 2 && blockIdx.x == 80){
+        //     printf("y0: %.10f\n", y0);
+        // }
+
+
         // Auxiliar arrays to store the intermediate K1, ..., K7 computations
         __shared__ Real k1[SYSTEM_SIZE],
                         k2[SYSTEM_SIZE],
@@ -160,14 +177,6 @@
         Real fac2_inverse = 1.0 / fac2;
         Real fac11, fac;
 
-        // Retrieve the absolute and relative error tolerances (see the
-        // function header's comment to know their purpose) provided to predict
-        // the step size and get the ones associated to this only thread.
-        Real* atoler = (Real*) globalAtoler;
-        Real* rtoler = (Real*) globalRtoler;
-        Real atoli = atoler[threadId];
-        Real rtoli = rtoler[threadId];
-
         // Loop variables initialisation. The main loop finishes when `last` is
         // set to true, event that happens when the current x0 plus the current
         // step exceeds x_{end}. Furthermore, the current step is repeated when
@@ -186,7 +195,23 @@
         //          3.2.1 If this is the last step, finish.
         //          3.2.2 In any other case, iterate again.
         do{
-            // TODO: Check that the step size is not too small
+            // TODO: Check that this flag is really necessary
+            if (0.1 * abs(h) <= abs(x0) * uround){
+                keepRunning = false;
+            }
+            __syncthreads();
+            if(!keepRunning){
+                // Custom flag to know the computation finished here!
+                globalInitCond[threadId] = 0;
+
+                // Let the user know the computation stopped before xEnd
+                if(threadId == 0)
+                    *globalStatus = 0;
+
+                // Finish all execution in this block
+                return;
+            }
+
 
             // PHASE 0. Check if the current time x_0 plus the current step
             // (multiplied by a safety factor to prevent steps too small)
@@ -321,7 +346,7 @@
             // each step (the variable s in the loop), is initially set to the
             // half of the block total threads, and successively divided by 2.
             for(int s=(blockDim.x*blockDim.y)/2; s>0; s>>=1){
-                if (threadId < s) {
+                if (threadId < s && threadId + s < SYSTEM_SIZE) {
                     errors[threadId] = errors[threadId] + errors[threadId + s];
                 }
 
@@ -374,6 +399,11 @@
             // ACCEPT STEP if err <= 1.
             else{
                 // TODO: Stiffness detection
+                //
+                // if(blockIdx.x == 70 && blockIdx.y == 90 && threadId == 0){
+                //     // x, r, theta, phi, pR, pTheta, b, q
+                //     printf("%.5f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f, %.10f\n", x0+h, solution[0], solution[1], solution[2], solution[3], solution[4], data[0], data[1]);
+                // }
 
                 // Update old factor to new current error (upper bounded to
                 // 1e-4)
@@ -416,9 +446,22 @@
             #endif
         }while(!last);
 
+        // Finally, let the user know everything's gonna be alright
+        if(threadId == 0){
+            Real prevTheta = globalInitCond[1];
+            Real currTheta = solution[1];
+            Real r = solution[0];
+
+            if(cos(prevTheta)*cos(currTheta) < 0 && r > 9 &&r < 20)
+                *globalStatus = 2;
+            else
+                *globalStatus = 1;
+        }
+
         // Aaaaand that's all, folks! Update system value (each thread its
         // result) in the global memory :)
         globalInitCond[threadId] = solution[threadId];
+
 
     } // If threadId < SYSTEM_SIZE
 }

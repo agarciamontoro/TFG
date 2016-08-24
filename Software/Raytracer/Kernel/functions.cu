@@ -1,8 +1,7 @@
 #ifndef __FUNCTIONS__
 #define __FUNCTIONS__
 
-#include "Raytracer/definitions.cu"
-#include "Raytracer/numericalMethods.cu"
+#include "Raytracer/Kernel/definitions.cu"
 
 __device__ Real Delta(Real r){
     return r*r - 2*r + __a2;
@@ -78,46 +77,6 @@ __device__ Real dzRho(Real r, Real theta){
 
     return -(__a2*cosT*sinT)/sqrt(__a2*cosT*cosT + r*r);
 }
-
-// // NOTE: This is b_0(r) - b, not just b0(r)
-// __device__ Real b0b(Real r, Parameters param){
-//     Real b = param.b;
-//     return -((r*r*r - 3.*(r*r) + __a2*r + __a2) / (__a*(r-1.))) - b;
-// }
-//
-// __device__ Real q0(Real r){
-//     Real r3 = r*r*r;
-//     return -(r3*(r3 - 6.*(r*r) + 9.*r - 4.*__a2)) / (__a2*((r-1.)*(r-1.)));
-// }
-//
-// __device__ OriginType getOriginType(Real pR, Real b, Real q){
-//     Parameters param;
-//
-//     param.b = b;
-//     param.q = q;
-//
-//     // Compute r0 such that b0(r0) = b
-//     Real r0 = secant(-30., 30., b0b, param);
-//
-//     OriginType origin;
-//
-//     if(__b1 < b && b < __b2 && q < q0(r0)){
-//         if(pR > 0)
-//             origin = HORIZON;
-//         else
-//             origin = CELESTIAL_SPHERE;
-//     }
-//     else{
-//         Real rUp1 = secant(-30., 30., R, param);
-//
-//         if(__camR < rUp1)
-//             origin = HORIZON;
-//         else
-//             origin = CELESTIAL_SPHERE;
-//     }
-//
-//     return origin;
-// }
 
 /**
 * Computes the value of the threadId-th component of the function

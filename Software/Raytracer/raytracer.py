@@ -16,65 +16,9 @@ import pycuda.autoinit
 sys.path.append('../RK4')
 from rk4 import RK4Solver
 
-# Convention for pixel colors
-CELESTIAL_SPHERE = 1
-HORIZON = 0
-
 # Set directories for correct handling of paths
 selfDir = os.path.dirname(os.path.abspath(__file__))
 softwareDir = os.path.abspath(os.path.join(selfDir, os.pardir))
-
-
-class BlackHole:
-    def __init__(self, spin):
-        # Define spin and its square
-        self.a = spin
-        self.a2 = spin**2
-
-        # Interval over the radius of trapped photons' orbits run. See (A.6)
-        self.r1 = 2.*(1. + cos((2./3.)*arccos(-self.a)))
-        self.r2 = 2.*(1. + cos((2./3.)*arccos(+self.a)))
-
-        # Necessary constants for the origin algorithm. See (A.13)
-        self.b1 = self._b0(self.r2)
-        self.b2 = self._b0(self.r1)
-
-    def _b0(self, r):
-        a = self.a
-        a2 = self.a2
-
-        return - (r**3. - 3.*(r**2.) + a2*r + a2) / (a*(r-1.))
-
-
-class KerrMetric:
-    def __init__(self, camera, blackHole):
-        # Retrieve blackhole's spin and its square
-        a = blackHole.a
-        a2 = blackHole.a2
-
-        # Retrieve camera radius, its square and camera theta
-        r = camera.r
-        r2 = camera.r2
-        theta = camera.theta
-
-        # Compute the constants described between (A.1) and (A.2)
-        ro = sqrt(r2 + a2 * cos(theta)**2)
-        delta = r2 - 2*r + a2
-        sigma = sqrt((r2 + a2)**2 - a2 * delta * sin(theta)**2)
-        alpha = ro * sqrt(delta) / sigma
-        omega = 2 * a * r / (sigma**2)
-
-        # Wut? pomega? See https://en.wikipedia.org/wiki/Pi_(letter)#Variant_pi
-        pomega = sigma * sin(theta) / ro
-
-        # Assign the values to the class
-        self.ro = ro
-        self.delta = delta
-        self.sigma = sigma
-        self.alpha = alpha
-        self.omega = omega
-        self.pomega = pomega
-
 
 # Dummy object for the camera (computation of the speed is done here)
 class Camera:
@@ -167,15 +111,47 @@ class RayTracer:
 
         # Read the template file using the environment object.
         # This also constructs our Template object.
-        template = templateEnv.get_template("definitions.jj2")
+        template = templateEnv.get_template("common.jj2")
 
         codeType = "double"
 
         # Specify any input variables to the template as a dictionary.
         templateVars = {
+            # Camera constants
+            "D": self.camera.d,
+            "CAM_R": self.camera.camR,
+            "CAM_THETA": self.camera.camTheta,
+            "CAM_PHI": self.camera.camPhi,
+            "CAM_BETA": self.camera.camBeta,
+
+            # Black hole constants
             "SPIN": self.blackHole.a,
+            "B1": self.camera.b1,
+            "B2": self.camera.b2,
+
+            # Kerr metric constants
+            "RO": self.camera.ro,
+            "DELTA": self.camera.delta,
+            "POMEGA": self.camera.pomega,
+            "ALPHA": self.camera.alpha,
+            "OMEGA": self.camera.omega,
+
+            # RK45 solver constants
+            "R_TOL_I": 1e-6,
+            "A_TOL_I": 1e-12,
+            "SAFE": 0.9,
+            "FAC_1": 0.2,
+            "FAC_2": 10.0,
+            "BETA": 0.04,
+            "UROUND": 2.3e-16,
+
+            # Data type
             "REAL": codeType,
+
+            # Number of equations
             "SYSTEM_SIZE": 5,
+
+            # Debug switch
             "DEBUG": "#define DEBUG" if self.debug else ""
         }
 
@@ -184,7 +160,7 @@ class RayTracer:
 
         # Store it in the file that will be included by all the other compiled
         # files
-        filePath = os.path.join(selfDir, 'definitions.cu')
+        filePath = os.path.join(selfDir, 'Kernel', 'common.cu')
         with open(filePath, 'w') as outputFile:
             outputFile.write(kernel)
 
@@ -216,20 +192,6 @@ class RayTracer:
             np.float64(self.camera.pixelWidth),
             np.float64(self.camera.pixelHeight),
             np.float64(self.camera.focalLength),
-            np.float64(self.camera.r),
-            np.float64(self.camera.theta),
-            np.float64(self.camera.phi),
-            np.float64(self.camera.beta),
-
-            np.float64(self.blackHole.a),
-            np.float64(self.blackHole.b1),
-            np.float64(self.blackHole.b2),
-
-            np.float64(self.kerr.ro),
-            np.float64(self.kerr.delta),
-            np.float64(self.kerr.pomega),
-            np.float64(self.kerr.alpha),
-            np.float64(self.kerr.omega),
 
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes the direction of one pixel
