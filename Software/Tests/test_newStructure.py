@@ -24,10 +24,10 @@ def plotImage(status):
     # Start figure
     fig = plt.figure()
 
-    image = np.empty((301, 301, 3))
+    image = np.empty((101, 101, 3))
 
-    for row in range(0, 301):
-        for col in range(0, 301):
+    for row in range(0, 101):
+        for col in range(0, 101):
             image[row, col, :] = drawRayImg(status[row, col])
 
     plt.imshow(image)
@@ -173,18 +173,18 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
     # Black hole constants
-    spin = 0.999
+    spin = 0.00000001
     innerDiskRadius = 9
     outerDiskRadius = 20
 
     # Camera position
-    camR = 74
+    camR = 30
     camTheta = 1.511
     camPhi = 0
 
     # Camera lens properties
     camFocalLength = 3
-    camSensorShape = (301, 301)  # (Rows, Columns)
+    camSensorShape = (101, 101)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants
@@ -199,10 +199,14 @@ if __name__ == '__main__':
 
     # Create the raytracer!
     rayTracer = RayTracer(camera, kerr, blackHole)
-    rayTracer.rayTrace(-90, stepsPerKernel=1)
+    rayTracer.rayTrace(-70, stepsPerKernel=100)
     print(rayTracer.totalTime)
 
-    status = rayTracer.getStatus()
-    plotImage(status)
+    # rayTracer.generate3Dscene(-1, 10)
+    # rayTracer.plotScene()
+
+    rayTracer.synchronise()
+    # plotImage(rayTracer.rayStatus)
+    rayTracer.plotImage()
 
     print("End")
