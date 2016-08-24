@@ -243,12 +243,9 @@ class RayTracer:
         self.systemState = self.systemStateGPU.get()
         self.constants = self.constantsGPU.get()
 
-    def rayTrace(self, xEnd):
+    def rayTrace(self, xEnd, steps=100):
         # Initial time
         x = np.float64(0)
-
-        # Number of calls
-        steps = 100
 
         # Computed iteration interval
         interval = xEnd / steps

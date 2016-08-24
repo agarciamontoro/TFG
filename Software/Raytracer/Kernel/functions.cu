@@ -3,79 +3,59 @@
 
 #include "Raytracer/Kernel/common.cu"
 
-__device__ Real Delta(Real r){
-    return r*r - 2*r + __a2;
+__device__ inline Real Delta(Real r, Real r2){
+    return r2 - 2*r + __a2;
 }
 
-__device__ Real P(Real r, Real b){
-    return r*r + __a2 - __a*b;
+__device__ inline Real P(Real r, Real r2, Real b){
+    return r2 + __a2 - __a*b;
 }
 
-__device__ Real R(Real r, Real b, Real q){
-    Real _P = P(r, b);
-    Real D = Delta(r);
+__device__ inline Real R(Real r, Real r2, Real b, Real q){
+    Real _P = P(r, r2, b);
+    Real D = Delta(r, r2);
 
     return _P*_P - D*((b - __a)*(b - __a) + q);
 }
 
-__device__ Real dbR(Real r, Real b){
-    return (4*b - 4*__a)*r - 2*b*r*r;
+__device__ inline Real dbR(Real r, Real r2, Real b){
+    return (4*b - 4*__a)*r - 2*b*r2;
 }
 
-__device__ Real drR(Real r, Real b, Real q){
-    return 4*r*(r*r - __a*b + __a2) - (q + (b-__a)*(b-__a))*(2*r - 2);
+__device__ inline Real drR(Real r, Real r2, Real b, Real q){
+    Real bMinusA = b-__a;
+    return 4*r*(r2 - __a*b + __a2) - (q + bMinusA*bMinusA)*(2*r - 2);
 }
 
-__device__ Real Theta(Real theta, Real b, Real q){
-    Real sinTheta = sin(theta);
-    Real sin2 = sinTheta*sinTheta;
-
-    Real cosTheta = cos(theta);
-    Real cos2 = cosTheta*cosTheta;
-
-    return q - cos2*(b*b/sin2 - __a2);
+__device__ inline Real Theta(Real sinT2, Real cosT2, Real b2, Real q){
+    return q - cosT2*(b2/sinT2 - __a2);
 }
 
-__device__ Real dbTheta(Real theta, Real b){
-    Real cosT = cos(theta);
-    Real sinT = sin(theta);
-
-    return -(2*b*cosT*cosT)/(sinT*sinT);
+__device__ inline Real dbTheta(Real sinT2, Real cosT2, Real b){
+    return -(2*b*cosT2)/(sinT2);
 }
 
-__device__ Real dzTheta(Real theta, Real b){
-    Real cosT = cos(theta);
-    Real cosT3 = cosT*cosT*cosT;
-
-    Real sinT = sin(theta);
-    Real sinT2 = sinT*sinT;
+__device__ inline Real dzTheta(Real sinT, Real sinT2, Real cosT, Real cosT2, Real b2){
+    Real cosT3 = cosT2*cosT;
     Real sinT3 = sinT2*sinT;
-
-    Real b2 = b*b;
 
     return 2*cosT*((b2/sinT2) - __a2)*sinT + (2*b2*cosT3)/(sinT3);
 }
 
-__device__ Real drDelta(Real r){
+__device__ inline Real drDelta(Real r){
     return 2*r - 2;
 }
 
-__device__ Real rho(Real r, Real theta){
-    Real cosT = cos(theta);
-    return sqrt(r*r + __a2*cosT*cosT);
+__device__ inline Real rho(Real r2, Real cosT2){
+    return sqrt(r2 + __a2*cosT2);
 }
 
-__device__ Real drRho(Real r, Real theta){
-    Real cosT = cos(theta);
-
-    return r / sqrt(__a2*cosT*cosT + r*r);
+__device__ inline Real drRho(Real r, Real r2, Real cosT2, Real rho){
+    return r / rho;
 }
 
-__device__ Real dzRho(Real r, Real theta){
-    Real cosT = cos(theta);
-    Real sinT = sin(theta);
-
-    return -(__a2*cosT*sinT)/sqrt(__a2*cosT*cosT + r*r);
+__device__ inline Real dzRho(Real r2, Real sinT, Real cosT, Real cosT2, Real rho){
+    return -(__a2*cosT*sinT) / rho;
 }
 
 /**
@@ -94,28 +74,94 @@ __device__ Real dzRho(Real r, Real theta){
  */
 __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                                  Real* data){
-    // Parameters param;
+    __shared__ Real r, r2, theta, pR, pR2, pTheta, pTheta2, b, b2, q;
+    __shared__ Real sinT, cosT, sinT2, cosT2;
+    __shared__ Real _R, D, Z, DZplusR, rho1, rho2, rho3;
 
-    const Real r = y[0];
-    const Real theta = y[1];
-    // const Real phi = y[2];
-    const Real pR = y[3];
-    const Real pTheta = y[4];
-    const Real b = data[0];
-    const Real q = data[1];
+    // Parallelization of the retrieval of the input data (position of the ray,
+    // momenta and constants), storing it as shared variables. Furthermore,
+    // some really useful numbers are computed; namely: the sine and cosine of
+    // theta (and their squares) and the square of the constant b.
+    // Each thread retrieves its data and make the corresponding computations,
+    // except for the thread 2: the corresponging value of this thread should
+    // be ray's phi, but this value is not used in the system; as this thread
+    // is free to do another calculation, it retrieves the constants b,q (not
+    // directly associated with any thread) and compute b**2
+    switch(threadId){
+        case 0:
+            r = y[0];
+            r2 = r*r;
+            break;
 
-    Real _R, D, Z, rho1, rho2, rho3;
+        case 1:
+            theta = y[1];
+            sinT = sin(theta);
+            cosT = cos(theta);
+            sinT2 = sinT*sinT;
+            cosT2 = cosT*cosT;
+            break;
 
-    _R = R(r, b, q);
-    D = Delta(r);
-    Z = Theta(theta, b, q);
+        case 2:
+            b = data[0];
+            q = data[1];
+            b2 = b*b;
+            break;
 
-    rho1 = rho(r, theta);
-    rho2 = rho1*rho1;
-    rho3 = rho1*rho2;
+        case 3:
+            pR = y[3];
+            break;
 
+        case 4:
+            pTheta = y[4];
+            break;
+    }
+    __syncthreads();
+
+    // Parallelization of the computation of somec commonly used numbers, also
+    // stored as shared variables; namely: R, D, Theta (that is called Z) and
+    // rho (and its square and cube). These four numbers let one thread free:
+    // it is used in the computation of the squares of the momenta: pR and
+    // pTheta.
+    switch(threadId){
+        case 0:
+            _R = R(r, r2, b, q);
+            break;
+
+        case 1:
+            D = Delta(r, r2);
+            break;
+
+        case 2:
+            Z = Theta(sinT2, cosT2, b2, q);
+            break;
+
+        case 3:
+            rho1 = rho(r2, cosT2);
+            rho2 = rho1*rho1;
+            rho3 = rho1*rho2;
+            break;
+
+        case 4:
+            pR2 = pR*pR;
+            pTheta2 = pTheta*pTheta;
+            break;
+    }
+    __syncthreads();
+
+    // Declaration of variables used in the actual computation: dR, dZ, dRho
+    // and dD will store the derivatives of the corresponding functions (with
+    // respect to the corresponding variable in each thread). The sumX values
+    // are used as intermediate steps in the final computations, in order to
+    // ease notation.
     Real dR, dZ, dRho, dD, sum1, sum2, sum3, sum4, sum5, sum6;
 
+    // Actual computation: each thread computes its corresponding value in the
+    // system; namely:
+    //      Thread 0 -> r
+    //      Thread 1 -> theta
+    //      Thread 2 -> phi
+    //      Thread 3 -> pR
+    //      Thread 4 -> pTheta
     switch(threadId) {
             case 0:
                 f[threadId] = D * pR / rho2;
@@ -126,37 +172,43 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                 break;
 
             case 2:
-                dR = dbR(r, b);
-                dZ = dbTheta(theta, b);
+                // Derivatives with respect to b
+                dR = dbR(r, r2, b);
+                dZ = dbTheta(sinT2, cosT2, b);
 
                 f[threadId] = - (dR + D*dZ)/(2*D*rho2);
                 break;
 
             case 3:
-                dRho = drRho(r, theta);
+                // Derivatives with respect to r
+                dRho = drRho(r, r2, cosT2, rho1);
                 dD = drDelta(r);
-                dR = drR(r, b, q);
+                dR = drR(r, r2, b, q);
 
-                sum1 = + dRho*pTheta*pTheta / rho3;
-                sum2 = + D*pR*pR*dRho / rho3;
-                sum3 = - ((D*Z + _R)*dRho / (D*rho3));
-                sum4 = - (dD*pR*pR / (2*rho2));
-                sum5 = + (dD*Z + dR) / (2*D*rho2);
-                sum6 = - (dD*(D*Z + _R) / (2*D*D*rho2));
+                DZplusR = D*Z + _R;
 
-                f[threadId] = (sum2+sum4) + (sum1) + (sum3+sum5+sum6);
+                sum1 = + dRho*pTheta2;
+                sum2 = + D*pR2*dRho;
+                sum3 = - (DZplusR*dRho / D);
+                sum4 = - (dD*pR2);
+                sum5 = + (dD*Z + dR) / D;
+                sum6 = - (dD*DZplusR / (D*D));
+
+                f[threadId] = (sum1 + sum2 + sum3)/rho3 +
+                              (sum4 + sum5 + sum6)/(2*rho2);
                 break;
 
             case 4:
-                dRho = dzRho(r, theta);
-                dZ = dzTheta(theta, b);
+                // Derivatives with respect to theta (called z here)
+                dRho = dzRho(r2, sinT, cosT, cosT2, rho1);
+                dZ = dzTheta(sinT, sinT2, cosT, cosT2, b2);
 
-                sum1 = + dRho*pTheta*pTheta / rho3;
-                sum2 = + D*pR*pR*dRho / rho3;
-                sum3 = - (D*Z + _R)*dRho / (D*rho3);
+                sum1 = + dRho*pTheta2;
+                sum2 = + D*pR2*dRho;
+                sum3 = - (D*Z + _R)*dRho / D;
                 sum4 = + dZ / (2*rho2);
 
-                f[threadId] = sum1 + sum2 + sum3 + sum4;
+                f[threadId] = (sum1 + sum2 + sum3)/rho3 + sum4;
                 break;
     }
 }

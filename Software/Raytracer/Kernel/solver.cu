@@ -444,7 +444,8 @@
                     }
                 }
             #endif
-        }while(!last);
+        }while(!last && *globalStatus == SPHERE);
+        __syncthreads();
 
         // Finally, let the user know everything's gonna be alright
         if(threadId == 0){
