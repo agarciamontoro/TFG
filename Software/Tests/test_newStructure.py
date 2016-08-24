@@ -169,6 +169,9 @@ def drawBlackHole(ax, blackHole):
 
 
 if __name__ == '__main__':
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+
     # Black hole constants
     spin = 0.999
     innerDiskRadius = 9

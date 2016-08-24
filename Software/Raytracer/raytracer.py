@@ -7,6 +7,8 @@ from numpy import pi as Pi
 from pycuda import driver, compiler, gpuarray, tools
 import jinja2
 
+from logging_utils import LoggingClass
+
 # When importing this module we are initializing the device.
 # Now, we can call the device and send information using
 # the apropiate tools in the pycuda module.
@@ -27,7 +29,7 @@ def nextPowerOf2(x):
 
 
 # Dummy object for the camera (computation of the speed is done here)
-class Camera:
+class Camera(metaclass = LoggingClass):
     def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize):
         # Define position
         self.r = r
@@ -76,7 +78,7 @@ class Camera:
         self.beta = 0
 
 
-class RayTracer:
+class RayTracer(metaclass = LoggingClass):
     def __init__(self, camera, kerr, blackHole, debug=False):
         self.debug = debug
         self.systemSize = 5
