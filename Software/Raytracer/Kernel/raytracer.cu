@@ -116,15 +116,15 @@ __global__ void setInitialConditions(void* devInitCond,void* devConstants,
     constants[1] = q;
 }
 
-__device__ int detectCollisions(Real prevTheta, Real currentTheta,
-                                Real currentR){
+__device__ int detectCollisions(Real prevCos, Real currentCos,
+                                Real prevR, Real currentR){
     if (currentR <= horizonRadius){
         return HORIZON;
     }
 
-    if(cos(prevTheta)*cos(currentTheta) < 0 &&
-       currentR > innerDiskRadius &&
-       currentR < outerDiskRadius){
+    if(prevCos*currentCos < 0 &&
+       prevR > innerDiskRadius && currentR > innerDiskRadius &&
+       prevR < outerDiskRadius && currentR < outerDiskRadius){
         return DISK;
     }
 
@@ -132,3 +132,71 @@ __device__ int detectCollisions(Real prevTheta, Real currentTheta,
 }
 
 #include "Raytracer/Kernel/solver.cu"
+
+__global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
+                       Real hmax, void* devData, int dataSize,
+                       void* devStatus, Real resolution){
+
+    // Retrieve the ids of the thread in the block and of the block in the grid
+    int threadId = threadIdx.x + threadIdx.y * blockDim.x;
+    int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
+
+    // Array of status flags: at the output, the (x,y)-th element will be 0
+    // if any error ocurred (namely, the step size was made too small) and
+    // 1 if the computation succeded
+    int* globalStatus = (int*) devStatus;
+    globalStatus += blockId;
+
+    // Retrieve the position where the initial conditions this block will
+    // work with are.
+    // Each block, absolutely identified in the grid by blockId, works with
+    // only one initial condition (that has N elements, as N equations are
+    // in the system). Then, the position of where these initial conditions
+    // are stored in the serialized vector can be computed as blockId * N.
+    Real* globalInitCond = (Real*)devInitCond + blockId*SYSTEM_SIZE;
+
+    // Pointer to the additional data array used by computeComponent
+    Real* globalData = (Real*) devData;
+    Real* data = globalData + blockId * dataSize;
+
+    // Initialize previous theta and r to the initial conditions
+    Real prevCos, prevR, currentCos, currentR;
+    if(threadId == 0){
+        prevR = globalInitCond[0];
+        prevCos = cos(globalInitCond[1]);
+    }
+
+    // Local variable to know the status of the
+    bool success;
+
+    Real x = x0;
+
+    if(threadId < SYSTEM_SIZE){
+
+        while(*globalStatus == SPHERE && x > xend){
+            RK4Solve(x, x + resolution, globalInitCond, h, hmax, data, &success, threadId, blockId);
+            __syncthreads();
+
+            if(threadId == 0){
+                if(success){
+                    currentR = globalInitCond[0];
+                    currentCos = cos(globalInitCond[1]);
+
+                    *globalStatus = detectCollisions(prevCos, currentCos, prevR, currentR);
+                }
+                else{
+                    *globalStatus = HORIZON;
+                }
+
+                prevR = currentR;
+                prevCos = currentCos;
+            }
+
+
+            x += resolution;
+            __syncthreads();
+
+        } // While globalStatus == SPHERE and x > xend
+
+    } // If threadId < SYSTEM_SIZE
+}

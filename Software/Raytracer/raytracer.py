@@ -195,7 +195,7 @@ class RayTracer(metaclass = LoggingClass):
         self._setInitialConditions = mod.get_function("setInitialConditions")
 
         # Get the solver function from the compiled module
-        self._solve = mod.get_function("RK4Solve")
+        self._solve = mod.get_function("kernel")
 
         # # Get the collision detection function from the compiled module
         # self._detectCollisions = mod.get_function("detectCollisions")
@@ -245,17 +245,27 @@ class RayTracer(metaclass = LoggingClass):
         self.systemState = self.systemStateGPU.get()
         self.constants = self.constantsGPU.get()
 
-    def rayTrace(self, xEnd, steps=100):
-        # Initial time
+    def rayTrace(self, xEnd, stepsPerKernel=100, resolution=-1):
+        # Initialize current time
         x = np.float64(0)
 
+        # Computation of the total number of iterations
+        totalIterations = abs(xEnd) / abs(resolution)
+
+        # Compute number of kernel calls
+        kernelCalls = int(np.ceil(totalIterations / stepsPerKernel))
+
         # Computed iteration interval
-        interval = xEnd / steps
+        interval = xEnd / kernelCalls
+
+        print(totalIterations)
+        print(kernelCalls)
+        print(interval)
 
         # Send the rays to the outer space!
-        for step in range(steps):
-
+        for _ in range(kernelCalls):
             self.start.record()  # start timing
+
             # Solve the system in order to update the state of each ray
             self._solve(
                 x,
@@ -266,6 +276,7 @@ class RayTracer(metaclass = LoggingClass):
                 self.constantsGPU,
                 np.int32(2),
                 self.rayStatusGPU,
+                np.float64(resolution),
 
                 # Grid definition -> number of blocks x number of blocks.
                 # Each block computes the direction of one pixel
@@ -278,6 +289,7 @@ class RayTracer(metaclass = LoggingClass):
             )
 
             x += interval
+
             self.end.record()   # end timing
             self.end.synchronize()
             print(x)

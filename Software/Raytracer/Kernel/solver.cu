@@ -82,23 +82,22 @@
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- __global__ void RK4Solve(Real x0, Real xend, void* devInitCond, Real h,
-                          Real hmax, void* devData, int dataSize,
-                          void* devStatus){
+ __device__ void RK4Solve(Real x0, Real xend, Real* globalInitCond, Real h,
+                          Real hmax, Real* data, bool* success, int threadId, int blockId){
 
-    // Retrieve the ids of the thread in the block and of the block in the grid
-    int threadId = threadIdx.x + threadIdx.y * blockDim.x;
-    int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
+    // // Retrieve the ids of the thread in the block and of the block in the grid
+    // int threadId = threadIdx.x + threadIdx.y * blockDim.x;
+    // int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
 
     #ifdef DEBUG
         printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)devInitCond)[0], ((Real*)devInitCond)[1]);
     #endif
 
-    // Array of status flags: at the output, the (x,y)-th element will be 0
-    // if any error ocurred (namely, the step size was made too small) and
-    // 1 if the computation succeded
-    int* globalStatus = (int*) devStatus;
-    globalStatus += blockId;
+    // // Array of status flags: at the output, the (x,y)-th element will be 0
+    // // if any error ocurred (namely, the step size was made too small) and
+    // // 1 if the computation succeded
+    // int* globalStatus = (int*) devStatus;
+    // globalStatus += blockId;
 
     // Each equation to solve has a thread that compute its solution. Although
     // in an ideal situation the number of threads is exactly the same as the
@@ -106,7 +105,7 @@
     // latter. The reason is that the number of threads has to be a power of 2
     // (see reduction technique in the only loop you will find in this function
     // code to know why): then, we can give some rest to the threads that exceeds the number of equations :)
-    if(*globalStatus == SPHERE && threadId < SYSTEM_SIZE){
+    // if(*globalStatus == SPHERE && threadId < SYSTEM_SIZE){
         // Flag shared between all threads in block to stop execution when one
         // of them cannot continue
         __shared__ bool keepRunning;
@@ -119,9 +118,9 @@
         // solutions.
         __shared__ Real solution[SYSTEM_SIZE];
 
-        // Pointer to the additional data array used by computeComponent
-        Real* globalData = (Real*) devData;
-        Real* data = globalData + blockId * dataSize;
+        // // Pointer to the additional data array used by computeComponent
+        // Real* globalData = (Real*) devData;
+        // Real* data = globalData + blockId * dataSize;
 
         // Loop variable to manage the automatic step size detection.
         // TODO: Implement the hinit method
@@ -138,7 +137,7 @@
         // only one initial condition (that has N elements, as N equations are
         // in the system). Then, the position of where these initial conditions
         // are stored in the serialized vector can be computed as blockId * N.
-        Real* globalInitCond = (Real*)devInitCond + blockId*SYSTEM_SIZE;
+        // Real* globalInitCond = (Real*)devInitCond + blockId*SYSTEM_SIZE;
 
         // Each thread of each block has to know only the initial condition
         // associated to its own equation:
@@ -201,12 +200,12 @@
             }
             __syncthreads();
             if(!keepRunning){
-                // Custom flag to know the computation finished here!
-                globalInitCond[threadId] = 0;
-
-                // Let the user know the computation stopped before xEnd
+                // // Custom flag to know the computation finished here!
+                // globalInitCond[threadId] = 0;
+                //
+                // // Let the user know the computation stopped before xEnd
                 if(threadId == 0)
-                    *globalStatus = HORIZON;
+                    *success = false;
 
                 // Finish all execution in this block
                 return;
@@ -444,23 +443,27 @@
                     }
                 }
             #endif
-        }while(!last && *globalStatus == SPHERE);
+        }while(!last /*&& *globalStatus == SPHERE*/);
         __syncthreads();
 
         // Finally, let the user know everything's gonna be alright
         if(threadId == 0){
-            Real prevTheta = globalInitCond[1];
+            // Real prevTheta = globalInitCond[1];
+            //
+            // Real currentR = solution[0];
+            // Real currentTheta = solution[1];
 
-            Real currentR = solution[0];
-            Real currentTheta = solution[1];
+            *success = true;
 
-            *globalStatus = detectCollisions(prevTheta, currentTheta, currentR);
+            // *globalStatus = detectCollisions(prevTheta, currentTheta, currentR);
         }
 
         // Aaaaand that's all, folks! Update system value (each thread its
         // result) in the global memory :)
         globalInitCond[threadId] = solution[threadId];
 
+        return;
 
-    } // If threadId < SYSTEM_SIZE
+
+    // } // If threadId < SYSTEM_SIZE
 }
