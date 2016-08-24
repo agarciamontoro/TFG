@@ -24,10 +24,10 @@ def plotImage(status):
     # Start figure
     fig = plt.figure()
 
-    image = np.empty((51, 51, 3))
+    image = np.empty((301, 301, 3))
 
-    for row in range(0, 51):
-        for col in range(0, 51):
+    for row in range(0, 301):
+        for col in range(0, 301):
             image[row, col, :] = drawRayImg(status[row, col])
 
     plt.imshow(image)
@@ -53,8 +53,8 @@ def plotScene(plotData, status, camera, blackHole):
     drawErgoSphere(ax, blackHole)
     drawCamera(ax, camera)
 
-    for row in range(0, 51, 20):
-        for col in range(0, 51, 20):
+    for row in range(0, 301, 20):
+        for col in range(0, 301, 20):
             ray = np.transpose(plotData[row, col, :, :])
             drawRay(ax, ray, status[row, col, :])
 
@@ -176,12 +176,12 @@ if __name__ == '__main__':
 
     # Camera position
     camR = 74
-    camTheta = 1.511
+    camTheta = 1.3011
     camPhi = 0
 
     # Camera lens properties
     camFocalLength = 3
-    camSensorShape = (51, 51)  # (Rows, Columns)
+    camSensorShape = (301, 301)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants

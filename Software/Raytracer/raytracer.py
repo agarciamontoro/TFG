@@ -248,15 +248,15 @@ class RayTracer:
         x = np.float64(0)
 
         # Number of calls
-        steps = 1000
+        steps = 100
 
         # Computed iteration interval
         interval = xEnd / steps
 
-        self.start.record()  # start timing
-
         # Send the rays to the outer space!
         for step in range(steps):
+
+            self.start.record()  # start timing
             # Solve the system in order to update the state of each ray
             self._solve(
                 x,
@@ -279,13 +279,12 @@ class RayTracer:
             )
 
             x += interval
+            self.end.record()   # end timing
+            self.end.synchronize()
             print(x)
 
-        self.end.record()   # end timing
-        self.end.synchronize()
-
-        # Calculate the run length
-        self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
+            # Calculate the run length
+            self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
         print(self.totalTime)
 
     def getStatus(self):

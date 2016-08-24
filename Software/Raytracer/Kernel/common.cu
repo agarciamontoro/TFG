@@ -14,7 +14,7 @@
 // Camera constants
 #define __d 3
 #define __camR 74
-#define __camTheta 1.511
+#define __camTheta 1.3011
 #define __camPhi 0
 #define __camBeta 0
 
@@ -23,11 +23,11 @@
 #define __b2 2.07812987106
 
 // Kerr constants
-#define __ro 74.0000240824
+#define __ro 74.0004786991
 #define __delta 5328.998001
-#define __pomega 73.8746543387
-#define __alpha 0.986393999977
-#define __omega 4.92968044321e-06
+#define __pomega 71.3316993552
+#define __alpha 0.986394163755
+#define __omega 4.92962151011e-06
 
 // RK45 parameters
 #define rtoli 1e-06
