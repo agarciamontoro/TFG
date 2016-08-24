@@ -200,6 +200,7 @@ if __name__ == '__main__':
     # Create the raytracer!
     rayTracer = RayTracer(camera, kerr, blackHole)
     rayTracer.rayTrace(-90, stepsPerKernel=1)
+    print(rayTracer.totalTime)
 
     status = rayTracer.getStatus()
     plotImage(status)

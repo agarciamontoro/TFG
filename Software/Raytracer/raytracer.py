@@ -246,6 +246,19 @@ class RayTracer(metaclass = LoggingClass):
         self.constants = self.constantsGPU.get()
 
     def rayTrace(self, xEnd, stepsPerKernel=100, resolution=-1):
+        """
+        Args:
+            xEnd (float): Time in which the system will be integrated. After
+                this method finishes, the value of the rays at t=xEnd will be
+                known
+            stepsPerKernel (integer): The number of steps each kernel call will
+                compute; i.e., the host will call the kernel
+                xEnd / (resolution*stepsPerKernel) times.
+
+            resolution (float): The size of the interval that will be used to
+                compute one solver step between successive calls to the
+                collision detection method.
+        """
         # Initialize current time
         x = np.float64(0)
 
@@ -255,12 +268,8 @@ class RayTracer(metaclass = LoggingClass):
         # Compute number of kernel calls
         kernelCalls = int(np.ceil(totalIterations / stepsPerKernel))
 
-        # Computed iteration interval
+        # Compute iteration interval
         interval = xEnd / kernelCalls
-
-        print(totalIterations)
-        print(kernelCalls)
-        print(interval)
 
         # Send the rays to the outer space!
         for _ in range(kernelCalls):
@@ -288,15 +297,14 @@ class RayTracer(metaclass = LoggingClass):
                 block=(self.numThreads, 1, 1)
             )
 
+            # Update time
             x += interval
 
             self.end.record()   # end timing
             self.end.synchronize()
-            print(x)
 
             # Calculate the run length
-            self.totalTime = self.totalTime + self.start.time_till(self.end)*1e-3
-        print(self.totalTime)
+            self.totalTime += self.start.time_till(self.end)*1e-3
 
     def getStatus(self):
         self.status = self.rayStatusGPU.get()
