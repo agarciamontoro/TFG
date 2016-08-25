@@ -6,46 +6,46 @@
 // __device__ Real Delta(Real r, Real r2){
 //     return r2 - 2*r + __a2;
 // }
-
+//
 // __device__ Real R(Real r, Real r2, Real b, Real q, Real D){
 //     Real _P = r2 + __a2 - __a*b;
 //     Real bMinusA = b - __a;
 //
 //     return _P*_P - D*(bMinusA*bMinusA + q);
 // }
-
+//
 // __device__ Real dbR(Real r, Real r2, Real b){
 //     return (4*b - 4*__a)*r - 2*b*r2;
 // }
-
+//
 // __device__ Real drR(Real r, Real r2, Real b, Real q){
 //     Real bMinusA = b - __a;
 //     return 4*r*(r2 - __a*b + __a2) - (q + bMinusA*bMinusA)*(2*r - 2);
 // }
-
+//
 // __device__ Real Theta(Real sinT2Inv, Real cosT2, Real b2, Real q){
 //     return q - cosT2*(b2*sinT2Inv - __a2);
 // }
-
+//
 // __device__ Real dbTheta(Real sinT2Inv, Real cosT2, Real b){
 //     return - 2 * b * cosT2 * sinT2Inv;
 // }
-
+//
 // __device__ Real dzTheta(Real sinT, Real sinT2, Real sinT2Inv, Real cosT, Real cosT2, Real b2){
 //     Real cosT3 = cosT2*cosT;
 //     Real sinT3 = sinT2*sinT;
 //
 //     return 2*cosT*((b2*sinT2Inv) - __a2)*sinT + (2*b2*cosT3)/(sinT3);
 // }
-
+//
 // __device__ Real drDelta(Real r){
 //     return 2*r - 2;
 // }
-
+//
 // __device__ Real rhoSquaredInv(Real r2, Real cosT2){
 //     return 1/(r2 + __a2*cosT2);
 // }
-
+//
 // __device__ Real dzRhoTimesRho(Real r2, Real sinT, Real cosT,
 //                                      Real cosT2){
 //     return - __a2*cosT*sinT;
@@ -67,8 +67,18 @@
  */
 __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                                  Real* data){
-    Real r, r2, theta, pR, pR2, pTheta, pTheta2, b, b2, q;
+    // Variables to hold the position of the ray, its momenta and related
+    // operations between them and the constant a, which is the spin of the
+    // black hole.
+    Real r, r2, twor, theta, pR, pR2, pTheta, pTheta2, b, twob, b2, q, bMinusA;
+
+    // Variables to hold the sine and cosine of theta, along with some
+    // operations with them
     Real sinT, cosT, sinT2, sinT2Inv, cosT2;
+
+    // Variables to hold the value of the functions P, R, Delta (which is
+    // called D), Theta (which is called Z) and rho, along with some operations
+    // involving these values.
     Real P, R, D, Dinv, Z, DZplusR, rho2Inv, twoRho2Inv, rho4Inv;
 
     // Retrieval of the input data (position of the ray, momenta and
@@ -94,7 +104,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
     q = data[1];
 
     b2 = b*b;
-    Real bMinusA = b - __a;
+    bMinusA = b - __a;
 
     // Commonly used variables: R, D, Theta (that is called Z) and
     // rho (and its square and cube).
@@ -114,8 +124,9 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
     pR2 = pR*pR;
     pTheta2 = pTheta*pTheta;
 
-    Real twob = 2*b;
-    Real twor = 2*r;
+    // Double b and double r, that's it! :)
+    twob = 2*b;
+    twor = 2*r;
 
     // Declaration of variables used in the actual computation: dR, dZ, dRho
     // and dD will store the derivatives of the corresponding functions (with
