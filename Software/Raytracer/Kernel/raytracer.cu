@@ -99,7 +99,7 @@ __global__ void setInitialConditions(void* devInitCond,void* devConstants,
 
     #ifdef DEBUG
         if(blockIdx.x == 0 && blockIdx.y == 0){
-            printf("%.20f, %.20f\n", y, z);
+            printf("%.20f, %.20f\n", x, y);
             printf("INICIALES: theta = %.20f, phi = %.20f, pR = %.20f, pTheta = %.20f, pPhi = %.20f, b = %.20f, q = %.20f", rayTheta, rayPhi, pR, pTheta, pPhi, b, q);
         }
     #endif
@@ -159,17 +159,28 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         // only one initial condition (that has N elements, as N equations are
         // in the system). Then, the position of where these initial conditions
         // are stored in the serialized vector can be computed as blockId * N.
-        Real* globalInitCond = (Real*)devInitCond + blockId*SYSTEM_SIZE;
+        Real* globalInitCond = (Real*) devInitCond;
+        globalInitCond += blockId * SYSTEM_SIZE;
 
         // Pointer to the additional data array used by computeComponent
         Real* globalData = (Real*) devData;
-        Real* data = globalData + blockId * dataSize;
+        globalData += blockId * dataSize;
+
+        // Shared arrays to store the initial conditions and the additional
+        // data
+        __shared__ Real initCond[SYSTEM_SIZE],
+                        data[SYSTEM_SIZE];
+
+        initCond[threadId] = globalInitCond[threadId];
+        data[threadId] = globalData[threadId];
+
+        __syncthreads();
 
         // Initialize previous theta and r to the initial conditions
         Real prevThetaCentered, prevR, currentThetaCentered, currentR;
 
-        prevR = globalInitCond[0];
-        prevThetaCentered = globalInitCond[1] - HALF_PI;
+        prevR = initCond[0];
+        prevThetaCentered = initCond[1] - HALF_PI;
 
         // Local variable to know the status of the
         bool success;
@@ -177,19 +188,23 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         Real x = x0;
 
         while(status == SPHERE && x > xend){
-            RK4Solve(x, x + resolution, globalInitCond, &h, hmax, data, &success, threadId, blockId);
+            if(blockIdx.x == 15 && blockIdx.y == 15 && threadId == 0)
+                printf("[%.10f, %.10f]\n", x, x+resolution);
+            RK4Solve(x, x + resolution, initCond, &h, resolution, data, &success, threadId, blockId);
             __syncthreads();
+            // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
+            //     printf("%.10f\n", h);
 
             if(success){
-                currentR = globalInitCond[0];
-                currentThetaCentered = globalInitCond[1] - HALF_PI;
+                currentR = initCond[0];
+                currentThetaCentered = initCond[1] - HALF_PI;
 
                 status = detectCollisions(prevThetaCentered,
                                           currentThetaCentered,
                                           prevR, currentR);
 
                 if(status == DISK){
-                    bisect(threadId, globalInitCond, data, h);
+                    // bisect(threadId, initCond, data, h);
                 }
             }
             else{
@@ -200,12 +215,14 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
             prevThetaCentered = currentThetaCentered;
 
             x += resolution;
-            __syncthreads();
+            // __syncthreads();
 
         } // While globalStatus == SPHERE and x > xend
 
         if(threadId == 0)
             *globalStatus = status;
+
+        globalInitCond[threadId] = initCond[threadId];
 
     } // If threadId < SYSTEM_SIZE
 }

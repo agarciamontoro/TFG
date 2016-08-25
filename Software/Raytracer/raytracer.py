@@ -274,7 +274,7 @@ class RayTracer(metaclass = LoggingClass):
             np.float64(x),
             np.float64(xEnd),
             self.systemStateGPU,
-            np.float64(0.001),
+            np.float64(-0.001),
             np.float64(xEnd - x),
             self.constantsGPU,
             np.int32(2),
@@ -321,6 +321,7 @@ class RayTracer(metaclass = LoggingClass):
 
         # Send the rays to the outer space!
         for _ in range(kernelCalls):
+            print(x, x+interval, resolution)
             # Start timing
             self.start.record()
 
@@ -350,9 +351,8 @@ class RayTracer(metaclass = LoggingClass):
 
             x = 0
             for step in range(numSteps):
-                print(x, x+stepSize)
                 # Solve the system
-                self.callKernel(x, x + stepSize, resolution=-3)
+                self.callKernel(x, x + stepSize, resolution=-1)
 
                 # Advance the step and synchronise
                 x += stepSize

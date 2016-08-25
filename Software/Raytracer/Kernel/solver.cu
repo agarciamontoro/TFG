@@ -82,12 +82,11 @@
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- __device__ void RK4Solve(Real x0, Real xend, Real* globalInitCond,
+ __device__ void RK4Solve(Real x0, Real xend, Real* initCond,
                           Real* hOrig, Real hmax, Real* data, bool* success,
                           int threadId, int blockId){
-
     #ifdef DEBUG
-        printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)devInitCond)[0], ((Real*)devInitCond)[1]);
+        printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)initCond)[0], ((Real*)initCond)[1]);
     #endif
 
     // Each equation to solve has a thread that compute its solution. Although
@@ -119,8 +118,10 @@
 
     // Each thread of each block has to know only the initial condition
     // associated to its own equation:
-    Real y0 = globalInitCond[threadId];
+    Real y0 = initCond[threadId];
 
+    // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
+    //     printf("RK4 INIT: %.10f, %.10f, %.10f, %.10f, %.10f\n", initCond[0], initCond[1], initCond[2], initCond[3], initCond[4]);
 
     // Auxiliar arrays to store the intermediate K1, ..., K7 computations
     __shared__ Real k1[SYSTEM_SIZE],
@@ -178,10 +179,8 @@
         __syncthreads();
         if(!keepRunning){
             // Let the user know the computation stopped before xEnd
-            if(threadId == 0){
-                *success = false;
-                *hOrig = h;
-            }
+            *success = false;
+            *hOrig = h;
 
             // Finish all execution in this block
             return;
@@ -402,7 +401,8 @@
         }
 
         // Final step size update!
-        h = hnew;
+        if(!last)
+            h = hnew;
 
         #ifdef DEBUG
             if(threadId == 0){
@@ -421,11 +421,16 @@
     if(threadId == 0){
         *success = true;
         *hOrig = h;
+        // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
+        //     printf("SUCCESS: %.10f\n", x0);
     }
 
     // Aaaaand that's all, folks! Update system value (each thread its
     // result) in the global memory :)
-    globalInitCond[threadId] = solution[threadId];
+    initCond[threadId] = solution[threadId];
+    // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
+    //     printf("RK4 END : %.10f, %.10f, %.10f, %.10f, %.10f\n", solution[0], solution[1], solution[2], solution[3], solution[4]);
+
 }
 
 
