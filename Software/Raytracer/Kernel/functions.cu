@@ -234,7 +234,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                                  Real* data){
     Real r, r2, theta, pR, pR2, pTheta, pTheta2, b, b2, q;
     Real sinT, cosT, sinT2, cosT2;
-    Real _R, D, Z, DZplusR, rho2, twoRho2, rho4;
+    Real _R, D, Dinv, Z, DZplusR, rho2, twoRho2, rho4;
 
     // Retrieval of the input data (position of the ray, momenta and
     // constants).
@@ -262,6 +262,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
     // rho (and its square and cube).
     _R = R(r, r2, b, q);
     D = Delta(r, r2);
+    Dinv = 1/D;
     Z = Theta(sinT2, cosT2, b2, q);
 
     rho2 = rhoSquared(r2, cosT2);
@@ -290,7 +291,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
     dR = dbR(r, r2, b);
     dZ = dbTheta(sinT2, cosT2, b);
 
-    f[2] = - (dR + D*dZ)/(D*twoRho2);
+    f[2] = - (dR + D*dZ)*Dinv/twoRho2;
 
     // *********************** EQUATION 4 *********************** //
     // Derivatives with respect to r
@@ -302,10 +303,10 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
 
     sum1 = + pTheta2;
     sum2 = + D*pR2;
-    sum3 = - (DZplusR / D);
+    sum3 = - (DZplusR * Dinv);
     sum4 = - (dD*pR2);
-    sum5 = + (dD*Z + dR) / D;
-    sum6 = - (dD*DZplusR / (D*D));
+    sum5 = + (dD*Z + dR) * Dinv;
+    sum6 = - (dD*DZplusR * Dinv * Dinv);
 
     f[3] = dRhoTimesRho*(sum1 + sum2 + sum3)/rho4 + (sum4 + sum5 + sum6)/twoRho2;
 
@@ -316,7 +317,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
 
     sum1 = + pTheta2;
     sum2 = + D*pR2;
-    sum3 = - DZplusR / D;
+    sum3 = - DZplusR * Dinv;
     sum4 = + dZ / twoRho2;
 
     f[4] = dRhoTimesRho*(sum1 + sum2 + sum3)/rho4 + sum4;
