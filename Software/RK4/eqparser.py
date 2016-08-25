@@ -1,5 +1,4 @@
 import re
-import ast
 
 class EquationSystem():
     def __init__(self,equations):
@@ -38,7 +37,14 @@ class EquationSystem():
                 self.derivarives.append(form2.group(1))
                 independent_variable = form2.group(2)
             else:
-                raise RuntimeError("Invalid left hand side {}".format(left_side))
+                raise RuntimeError("""
+                Invalid left hand side: {}.
+
+                The left hand side must be one of the two following forms:
+
+                    - __var__'
+                    - __var__'( __independent_var__ )
+                """.format(left_side))
 
             if self.independent_variable is None:
                 self.independent_variable = independent_variable
