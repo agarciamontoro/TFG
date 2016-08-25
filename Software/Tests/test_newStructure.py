@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     # Camera lens properties
     camFocalLength = 3
-    camSensorShape = (100, 100)  # (Rows, Columns)
+    camSensorShape = (1000, 1000)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants
@@ -61,8 +61,6 @@ if __name__ == '__main__':
     # rayTracer.plotScene()
 
     rayTracer.synchronise()
-    print(rayTracer.systemState)
-    np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
     rayTracer.plotImage()
 
     print("End")
