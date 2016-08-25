@@ -200,53 +200,53 @@
         // __syncthreads();
 
         // K2 computation
-        y1[threadId] = y0 + h*(1./5.)*k1[threadId];
+        y1[threadId] = y0 + h * A21 * k1[threadId];
         __syncthreads();
-        computeComponent(threadId, x0 + (1./5.)*h, y1, k2, data);
+        computeComponent(threadId, x0 + C2*h, y1, k2, data);
         // __syncthreads();
 
         // K3 computation
-        y1[threadId] = y0 + h*((3./40.)*k1[threadId] +
-                                (9./40.)*k2[threadId]);
+        y1[threadId] = y0 + h*(A31 * k1[threadId] +
+                               A32 * k2[threadId]);
         __syncthreads();
-        computeComponent(threadId, x0 + (3./10.)*h, y1, k3, data);
+        computeComponent(threadId, x0 + C3*h, y1, k3, data);
         // __syncthreads();
 
         // K4 computation
-        y1[threadId] = y0 + h*(  (44./45.)*k1[threadId]
-                                - (56./15.)*k2[threadId]
-                                + (32./9.)*k3[threadId]);
+        y1[threadId] = y0 + h*(A41 * k1[threadId] +
+                               A42 * k2[threadId] +
+                               A43 * k3[threadId]);
         __syncthreads();
-        computeComponent(threadId, x0 + (4./5.)*h, y1, k4, data);
+        computeComponent(threadId, x0 + C4*h, y1, k4, data);
         // __syncthreads();
 
         // K5 computation
-        y1[threadId] = y0 + h*( (19372./6561.)*k1[threadId]
-                                - (25360./2187.)*k2[threadId]
-                                + (64448./6561.)*k3[threadId]
-                                - (212./729.)*k4[threadId]);
+        y1[threadId] = y0 + h*( A51 * k1[threadId] +
+                                A52 * k2[threadId] +
+                                A53 * k3[threadId] +
+                                A54 * k4[threadId]);
         __syncthreads();
-        computeComponent(threadId, x0 + (8./9.)*h, y1, k5, data);
+        computeComponent(threadId, x0 + C5*h, y1, k5, data);
         // __syncthreads();
 
         // K6 computation
-        y1[threadId] = y0 + h*((9017./3168.)*k1[threadId]
-                                - (355./33.)*k2[threadId]
-                                + (46732./5247.)*k3[threadId]
-                                + (49./176.)*k4[threadId]
-                                - (5103./18656.)*k5[threadId]);
+        y1[threadId] = y0 + h*(A61 * k1[threadId] +
+                               A62 * k2[threadId] +
+                               A63 * k3[threadId] +
+                               A64 * k4[threadId] +
+                               A65 * k5[threadId]);
         __syncthreads();
-        computeComponent(threadId, x0 + h, y1, k6, data);
+        computeComponent(threadId, x0 + C6*h, y1, k6, data);
         // __syncthreads();
 
         // K7 computation.
-        y1[threadId] = y0 + h*((35./384.)*k1[threadId]
-                                + (500./1113.)*k3[threadId]
-                                + (125./192.)*k4[threadId]
-                                - (2187./6784.)*k5[threadId]
-                                + (11./84.)*k6[threadId]);
+        y1[threadId] = y0 + h*(A71 * k1[threadId] +
+                               A73 * k3[threadId] +
+                               A74 * k4[threadId] +
+                               A75 * k5[threadId] +
+                               A76 * k6[threadId]);
         __syncthreads();
-        computeComponent(threadId, x0 + h, y1, k7, data);
+        computeComponent(threadId, x0 + C7*h, y1, k7, data);
         // __syncthreads();
 
         // The Butcher's table (Table 5.2, [1]), shows that the estimated
@@ -261,12 +261,12 @@
         // from y, the differences between the coefficientes of each
         // solution have been computed and the error is directly obtained
         // using them:
-        errors[threadId] = h*((71./57600.)*k1[threadId]
-                            - (71./16695.)*k3[threadId]
-                            + (71./1920.)*k4[threadId]
-                            - (17253./339200.)*k5[threadId]
-                            + (22./525.)*k6[threadId]
-                            - (1./40.)*k7[threadId]);
+        errors[threadId] = h*(E1 * k1[threadId] +
+                              E3 * k3[threadId] +
+                              E4 * k4[threadId] +
+                              E5 * k5[threadId] +
+                              E6 * k6[threadId] +
+                              E7 * k7[threadId]);
 
         #ifdef DEBUG
             printf("ThreadId %d - K 1-7: K1:%.20f, K2:%.20f, K3:%.20f, K4:%.20f, K5:%.20f, K6:%.20f, K7:%.20f\n", threadId, k1[threadId], k2[threadId], k3[threadId], k4[threadId], k5[threadId], k6[threadId], k7[threadId]);
