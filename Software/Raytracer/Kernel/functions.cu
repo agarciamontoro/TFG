@@ -234,7 +234,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                                  Real* data){
     Real r, r2, theta, pR, pR2, pTheta, pTheta2, b, b2, q;
     Real sinT, cosT, sinT2, cosT2;
-    Real _R, D, Z, DZplusR, rho1, rho2, rho3;
+    Real _R, D, Z, DZplusR, rho2, rho4;
 
     // Retrieval of the input data (position of the ray, momenta and
     // constants).
@@ -276,7 +276,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
     // respect to the corresponding variable in each thread). The sumX values
     // are used as intermediate steps in the final computations, in order to
     // ease notation.
-    Real dR, dZ, dRho, dD, sum1, sum2, sum3, sum4, sum5, sum6;
+    Real dR, dZ, dRhoTimesRho, dD, sum1, sum2, sum3, sum4, sum5, sum6;
 
     // *********************** EQUATION 1 *********************** //
     f[0] = D * pR / rho2;
