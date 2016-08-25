@@ -7,6 +7,7 @@
 // Declaration of the system size; i.e., the number of equations
 #define SYSTEM_SIZE 5
 
+s
 // Butcher's tableau coefficients
 #define A21 (1./5.)
 
