@@ -21,48 +21,174 @@
 #include <stdbool.h>
 #include <time.h>
 
-#define SYSTEM_SIZE 2
-#define MAXBLOCKSIZE 250
-typedef double Real;
+// #define SYSTEM_SIZE 2
+#define MAXBLOCKSIZE 50
+// typedef double Real;
+
+#include "../Raytracer/Kernel/common.cu"
+
+Real Delta(Real r, Real r2){
+    return r2 - 2*r + __a2;
+}
+
+Real P(Real r, Real r2, Real b){
+    return r2 + __a2 - __a*b;
+}
+
+Real R(Real r, Real r2, Real b, Real q){
+    Real _P = P(r, r2, b);
+    Real D = Delta(r, r2);
+
+    return _P*_P - D*((b - __a)*(b - __a) + q);
+}
+
+Real dbR(Real r, Real r2, Real b){
+    return (4*b - 4*__a)*r - 2*b*r2;
+}
+
+Real drR(Real r, Real r2, Real b, Real q){
+    Real bMinusA = b-__a;
+    return 4*r*(r2 - __a*b + __a2) - (q + bMinusA*bMinusA)*(2*r - 2);
+}
+
+Real Theta(Real sinT2, Real cosT2, Real b2, Real q){
+    return q - cosT2*(b2/sinT2 - __a2);
+}
+
+Real dbTheta(Real sinT2, Real cosT2, Real b){
+    return -(2*b*cosT2)/(sinT2);
+}
+
+Real dzTheta(Real sinT, Real sinT2, Real cosT, Real cosT2, Real b2){
+    Real cosT3 = cosT2*cosT;
+    Real sinT3 = sinT2*sinT;
+
+    return 2*cosT*((b2/sinT2) - __a2)*sinT + (2*b2*cosT3)/(sinT3);
+}
+
+Real drDelta(Real r){
+    return 2*r - 2;
+}
+
+Real rho(Real r2, Real cosT2){
+    return sqrt(r2 + __a2*cosT2);
+}
+
+Real drRho(Real r, Real r2, Real cosT2, Real rho){
+    return r / rho;
+}
+
+Real dzRho(Real r2, Real sinT, Real cosT, Real cosT2, Real rho){
+    return -(__a2*cosT*sinT) / rho;
+}
 
 /**
- * Computes the value of the threadId-th component of the function
- * F(t) = (f1(t), ..., fn(t)) and stores it in the memory pointed by f
- * @param Real  x  Value of the time in which the system is solved
- * @param Real* y  Initial conditions for the system: a pointer to a vector
- *                 whose lenght shall be the same as the number of equations in
- *                 the system.
- * @param Real* f  Computed value of the function: a pointer to a vector whose
- *                 lenght shall be the same as the number of equations in the
- *                 system.
+* Computes the value of the threadId-th component of the function
+* F(t) = (f1(t), ..., fn(t)) and stores it in the memory pointed by f
+ * @param  int   threadId      Identifier of the calling thread.
+ * @param  Real  x             Value of the time in which the system is solved
+ * @param  Real* y             Initial conditions for the system: a pointer to
+ *                             a vector whose lenght shall be the same as the
+ *                             number of equations in the system.
+ * @param  Real* f             Computed value of the function: a pointer to a
+ *                             vector whose lenght shall be the same as the
+ *                             number of equations in the system.
+ * @param  Real* data          Additional data needed by the function, managed
+ *                             by the caller.
  */
-void computeComponent(Real x, Real* y, Real* f){
-    // Jinja template that renders to a switch in which every thread computes
-    // a different equation and stores it in the corresponding position in f.
-    // If you want to hard-code the system function manually, fill the switch
-    // cases with the right hand side of the n equations: the i-th equation has
-    // to be defined in the `case i-1:` and stored in the i-1 position of the
-    // output vector f.
-    // Please, note that this is a parallelized code, so it is mandatory to
-    // follow the explained structure in order to successfully manage the local
-    // and global work of the threads.
-    //
-    // Example: If you want to solve an harmonic oscillator system as the
-    // following:
-    //      y_0' = y_1
-    //      y_1' = -5*y_0
-    // then the code in the body of this function will read as follows:
-    //      switch(threadId){
-    //          case 0:
-    //              f[0] = y[1];
-    //              break;
-    //          case 1:
-    //              f[1] = -5 * y[0];
-    //              break;
-    //      }
-    f[0] = y[1];
-    f[1] = x*y[0];
+void computeComponent(Real x, Real* y, Real* f, Real* data){
+    Real r, r2, theta, pR, pR2, pTheta, pTheta2, b, b2, q;
+    Real sinT, cosT, sinT2, cosT2;
+    Real _R, D, Z, DZplusR, rho1, rho2, rho3;
 
+    // Parallelization of the retrieval of the input data (position of the ray,
+    // momenta and constants), storing it as shared variables. Furthermore,
+    // some really useful numbers are computed; namely: the sine and cosine of
+    // theta (and their squares) and the square of the constant b.
+    // Each thread retrieves its data and make the corresponding computations,
+    // except for the thread 2: the corresponging value of this thread should
+    // be ray's phi, but this value is not used in the system; as this thread
+    // is free to do another calculation, it retrieves the constants b,q (not
+    // directly associated with any thread) and compute b**2
+
+    r = y[0];
+    r2 = r*r;
+    theta = y[1];
+    sinT = sin(theta);
+    cosT = cos(theta);
+    sinT2 = sinT*sinT;
+    cosT2 = cosT*cosT;
+    b = data[0];
+    q = data[1];
+    b2 = b*b;
+    pR = y[3];
+    pTheta = y[4];
+
+    // Parallelization of the computation of somec commonly used numbers, also
+    // stored as shared variables; namely: R, D, Theta (that is called Z) and
+    // rho (and its square and cube). These four numbers let one thread free:
+    // it is used in the computation of the squares of the momenta: pR and
+    // pTheta.
+    _R = R(r, r2, b, q);
+    D = Delta(r, r2);
+    Z = Theta(sinT2, cosT2, b2, q);
+    rho1 = rho(r2, cosT2);
+    rho2 = rho1*rho1;
+    rho3 = rho1*rho2;
+    pR2 = pR*pR;
+    pTheta2 = pTheta*pTheta;
+
+    // Declaration of variables used in the actual computation: dR, dZ, dRho
+    // and dD will store the derivatives of the corresponding functions (with
+    // respect to the corresponding variable in each thread). The sumX values
+    // are used as intermediate steps in the final computations, in order to
+    // ease notation.
+    Real dR, dZ, dRho, dD, sum1, sum2, sum3, sum4, sum5, sum6;
+
+    // Actual computation: each thread computes its corresponding value in the
+    // system; namely:
+    //      Thread 0 -> r
+    //      Thread 1 -> theta
+    //      Thread 2 -> phi
+    //      Thread 3 -> pR
+    //      Thread 4 -> pTheta
+    f[0] = D * pR / rho2;
+
+    f[1] = pTheta / rho2;
+
+    // Derivatives with respect to b
+    dR = dbR(r, r2, b);
+    dZ = dbTheta(sinT2, cosT2, b);
+
+    f[2] = - (dR + D*dZ)/(2*D*rho2);
+
+    // Derivatives with respect to r
+    dRho = drRho(r, r2, cosT2, rho1);
+    dD = drDelta(r);
+    dR = drR(r, r2, b, q);
+
+    DZplusR = D*Z + _R;
+
+    sum1 = + dRho*pTheta2;
+    sum2 = + D*pR2*dRho;
+    sum3 = - (DZplusR*dRho / D);
+    sum4 = - (dD*pR2);
+    sum5 = + (dD*Z + dR) / D;
+    sum6 = - (dD*DZplusR / (D*D));
+
+    f[3] = (sum1 + sum2 + sum3)/rho3 +
+                  (sum4 + sum5 + sum6)/(2*rho2);
+
+    // Derivatives with respect to theta (called z here)
+    dRho = dzRho(r2, sinT, cosT, cosT2, rho1);
+    dZ = dzTheta(sinT, sinT2, cosT, cosT2, b2);
+
+    sum1 = + dRho*pTheta2;
+    sum2 = + D*pR2*dRho;
+    sum3 = - (D*Z + _R)*dRho / D;
+    sum4 = + dZ / (2*rho2);
+
+    f[4] = (sum1 + sum2 + sum3)/rho3 + sum4;
 }
 
 /**
@@ -131,8 +257,7 @@ void computeComponent(Real x, Real* y, Real* f){
  *                       so this variable is useless.
  */
  void RK4Solve(Real originalX0, Real xend, Real* devInitCond, Real h,
-                          Real hmax, Real* globalRtoler, Real* globalAtoler, Real safe, Real fac1, Real fac2, Real beta,
-                          Real uround, int conditionsNumber){
+                          Real hmax, int conditionsNumber, Real* data){
     #ifdef DEBUG
         printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, *((Real*)devX0), xend, ((Real*)devInitCond)[0], ((Real*)devInitCond)[1]);
     #endif
@@ -167,8 +292,8 @@ void computeComponent(Real x, Real* y, Real* f){
     // Retrieve the absolute and relative error tolerances (see the
     // function header's comment to know their purpose) provided to predict
     // the step size and get the ones associated to this only thread.
-    Real* atoler = (Real*) globalAtoler;
-    Real* rtoler = (Real*) globalRtoler;
+    // Real* atoler = (Real*) globalAtoler;
+    // Real* rtoler = (Real*) globalRtoler;
 
     Real x0;
     for(int condition = 0; condition < conditionsNumber; condition++){
@@ -230,20 +355,20 @@ void computeComponent(Real x, Real* y, Real* f){
             // solution, using the Butcher's table described in Table 5.2 ([1])
 
             // K1 computation
-            computeComponent(x0, y0, k1);
+            computeComponent(x0, y0, k1, data);
 
             // K2 computation
             for(int i=0; i<SYSTEM_SIZE; i++)
                 y1[i] = y0[i] + h*(1./5.)*k1[i];
 
-            computeComponent(x0 + (1./5.)*h, y1, k2);
+            computeComponent(x0 + (1./5.)*h, y1, k2, data);
 
             // K3 computation
             for(int i=0; i<SYSTEM_SIZE; i++)
                 y1[i] = y0[i] + h*((3./40.)*k1[i] +
                                    (9./40.)*k2[i]);
 
-            computeComponent(x0 + (3./10.)*h, y1, k3);
+            computeComponent(x0 + (3./10.)*h, y1, k3, data);
 
 
             // K4 computation
@@ -252,7 +377,7 @@ void computeComponent(Real x, Real* y, Real* f){
                                    - (56./15.)*k2[i]
                                    + (32./9.)*k3[i]);
 
-            computeComponent(x0 + (4./5.)*h, y1, k4);
+            computeComponent(x0 + (4./5.)*h, y1, k4, data);
 
 
             // K5 computation
@@ -262,7 +387,7 @@ void computeComponent(Real x, Real* y, Real* f){
                                   + (64448./6561.)*k3[i]
                                   - (212./729.)*k4[i]);
 
-            computeComponent(x0 + (8./9.)*h, y1, k5);
+            computeComponent(x0 + (8./9.)*h, y1, k5, data);
 
 
             // K6 computation
@@ -273,7 +398,7 @@ void computeComponent(Real x, Real* y, Real* f){
                                  + (49./176.)*k4[i]
                                  - (5103./18656.)*k5[i]);
 
-            computeComponent(x0 + h, y1, k6);
+            computeComponent(x0 + h, y1, k6, data);
 
 
             // K7 computation.
@@ -284,7 +409,7 @@ void computeComponent(Real x, Real* y, Real* f){
                                  - (2187./6784.)*k5[i]
                                  + (11./84.)*k6[i]);
 
-            computeComponent(x0 + h, y1, k7);
+            computeComponent(x0 + h, y1, k7, data);
 
 
             // The Butcher's table (Table 5.2, [1]), shows that the estimated
@@ -314,7 +439,7 @@ void computeComponent(Real x, Real* y, Real* f){
                  // stores the right hand size of this inequality to use it as
                  // a scale in the local error computation; this way we
                  // "normalize" the error and we can compare it against 1.
-                 Real sk = atoler[i] + rtoler[i]*fmax(abs(y0[i]), abs(solution[i]));
+                 Real sk = atoli + rtoli*fmax(abs(y0[i]), abs(solution[i]));
 
                  // Compute the square of the local estimated error (scaled
                  // with the previous factor), as the global error will be
@@ -433,20 +558,24 @@ void computeComponent(Real x, Real* y, Real* f){
 int main(int argc, char* argv[]){
 	fprintf(stderr,"Holi");
     Real initCond[MAXBLOCKSIZE * MAXBLOCKSIZE * SYSTEM_SIZE * sizeof(Real)];
-    Real globalRtoler[SYSTEM_SIZE];
-    Real globalAtoler[SYSTEM_SIZE];
+    // Real globalRtoler[SYSTEM_SIZE];
+    // Real globalAtoler[SYSTEM_SIZE];
 
-    for(int i=0; i<SYSTEM_SIZE; i++){
-        globalAtoler[i] = 1e-12;
-        globalRtoler[i] = 1e-6;
-    }
+    Real data[2];
+    data[0] = -3.81716582717122587809;
+    data[1] = 58.28301980847918173367;
+
+    // for(int i=0; i<SYSTEM_SIZE; i++){
+    //     globalAtoler[i] = 1e-12;
+    // //     globalRtoler[i] = 1e-6;
+    // }
 
     Real h = 0.001;
-    Real safe=0.9;
-    Real fac1=0.2;
-    Real fac2=10.0;
-    Real beta=0.04;
-    Real uround=2.3e-16;
+    // Real safe=0.9;
+    // Real fac1=0.2;
+    // Real fac2=10.0;
+    // Real beta=0.04;
+    // Real uround=2.3e-16;
 
     clock_t start, end;
 
@@ -457,13 +586,16 @@ int main(int argc, char* argv[]){
     for(int blockSize = 1; blockSize <= MAXBLOCKSIZE; blockSize++) {
         initCondsNumber = blockSize*blockSize;
 
-        for(int i=0; i<initCondsNumber*SYSTEM_SIZE; i++){
-            initCond[i] = 1.;
+        for(int i=0; i<initCondsNumber*SYSTEM_SIZE; i+=SYSTEM_SIZE){
+            initCond[i+0] = 20.;
+            initCond[i+1] = 1.94134631163816862021;
+            initCond[i+2] = 2.94610185334111251976;
+            initCond[i+3] = 1.01597063355188099720;
+            initCond[i+4] = -7.63433165434140548200;
         }
 
         start = clock();
-        RK4Solve(x0, xend, initCond, h, xend-x0, globalRtoler, globalAtoler,
-                 safe, fac1, fac2, beta, uround, initCondsNumber);
+        RK4Solve(x0, xend, initCond, h, xend-x0, initCondsNumber, data);
         end = clock();
 
         Real timeEx = (end-start)/(double)CLOCKS_PER_SEC;

@@ -197,20 +197,20 @@
         y1[threadId] = y0;
         __syncthreads();
         computeComponent(threadId, x0, y1, k1, data);
-        __syncthreads();
+        // __syncthreads();
 
         // K2 computation
         y1[threadId] = y0 + h*(1./5.)*k1[threadId];
         __syncthreads();
         computeComponent(threadId, x0 + (1./5.)*h, y1, k2, data);
-        __syncthreads();
+        // __syncthreads();
 
         // K3 computation
         y1[threadId] = y0 + h*((3./40.)*k1[threadId] +
                                 (9./40.)*k2[threadId]);
         __syncthreads();
         computeComponent(threadId, x0 + (3./10.)*h, y1, k3, data);
-        __syncthreads();
+        // __syncthreads();
 
         // K4 computation
         y1[threadId] = y0 + h*(  (44./45.)*k1[threadId]
@@ -218,7 +218,7 @@
                                 + (32./9.)*k3[threadId]);
         __syncthreads();
         computeComponent(threadId, x0 + (4./5.)*h, y1, k4, data);
-        __syncthreads();
+        // __syncthreads();
 
         // K5 computation
         y1[threadId] = y0 + h*( (19372./6561.)*k1[threadId]
@@ -227,7 +227,7 @@
                                 - (212./729.)*k4[threadId]);
         __syncthreads();
         computeComponent(threadId, x0 + (8./9.)*h, y1, k5, data);
-        __syncthreads();
+        // __syncthreads();
 
         // K6 computation
         y1[threadId] = y0 + h*((9017./3168.)*k1[threadId]
@@ -237,7 +237,7 @@
                                 - (5103./18656.)*k5[threadId]);
         __syncthreads();
         computeComponent(threadId, x0 + h, y1, k6, data);
-        __syncthreads();
+        // __syncthreads();
 
         // K7 computation.
         y1[threadId] = y0 + h*((35./384.)*k1[threadId]
@@ -247,7 +247,7 @@
                                 + (11./84.)*k6[threadId]);
         __syncthreads();
         computeComponent(threadId, x0 + h, y1, k7, data);
-        __syncthreads();
+        // __syncthreads();
 
         // The Butcher's table (Table 5.2, [1]), shows that the estimated
         // solution has exactly the same coefficients as the ones used to
