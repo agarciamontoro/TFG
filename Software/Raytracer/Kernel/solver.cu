@@ -82,8 +82,9 @@
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- __device__ void RK4Solve(Real x0, Real xend, Real* globalInitCond, Real h,
-                          Real hmax, Real* data, bool* success, int threadId, int blockId){
+ __device__ void RK4Solve(Real x0, Real xend, Real* globalInitCond,
+                          Real* hOrig, Real hmax, Real* data, bool* success,
+                          int threadId, int blockId){
 
     #ifdef DEBUG
         printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)devInitCond)[0], ((Real*)devInitCond)[1]);
@@ -157,6 +158,9 @@
     bool last  = false;
     Real reject = false;
 
+    // Retrieve the value of h
+    Real h = *hOrig;
+
     // Main loop. Each iteration computes a single step of the DOPRI5 algorithm, that roughly comprises the next phases:
     //  0. Check if this step has to be the last one.
     //  1. Computation of the system new value and the estimated error.
@@ -174,8 +178,10 @@
         __syncthreads();
         if(!keepRunning){
             // Let the user know the computation stopped before xEnd
-            if(threadId == 0)
+            if(threadId == 0){
                 *success = false;
+                *hOrig = h;
+            }
 
             // Finish all execution in this block
             return;
@@ -414,9 +420,69 @@
     // Finally, let the user know everything's gonna be alright
     if(threadId == 0){
         *success = true;
+        *hOrig = h;
     }
 
     // Aaaaand that's all, folks! Update system value (each thread its
     // result) in the global memory :)
     globalInitCond[threadId] = solution[threadId];
+}
+
+
+__device__ int sign(Real x){
+    return x < 0 ? -1 : +1;
+}
+
+
+// Given a system point, p1, and a target,
+__device__ int bisect(Real threadId, Real* yOriginal, Real* data, Real step){
+    // Set the current point to the original point and declare an array to
+    // store the value of the system function
+    Real* yCurrent = yOriginal;
+    Real yVelocity[SYSTEM_SIZE];
+
+    // It is necessary to maintain the previous theta to know the direction
+    // change
+    Real prevTheta;
+    prevTheta = yCurrent[1];
+
+    // The first step shall be to the other side and half of its length;
+    step = - step / 2;
+
+    // Loop variables, to control the inner for and to control the iterations
+    // does not exceed a maximum number
+    int i;
+    int iter = 0;
+
+    // This loop implements the main behaviour of the algorithm; basically,
+    // this is how it works:
+    //      1. It advance the point one single step with the Euler algorithm.
+    //      2. If theta has crossed pi/2, it changes the direction of the
+    //      new step. The magnitude of the new step is always half of the
+    //      magnitude of the previous one.
+    //      3. It repeats 1 and 2 until the current theta is very near of Pi/2
+    //      ("very near" is defined by BISECT_TOL) or until the number of
+    //      iterations exceeds a manimum number previously defined
+    while(abs(yCurrent[1] - HALF_PI) > BISECT_TOL && iter < BISECT_MAX_ITER){
+        // 1. Compute value of the function in the current point
+        computeComponent(threadId, 0, yCurrent, yVelocity, data);
+
+        // 1. Advance point with Euler algorithm
+        // TODO: See if this is more efficient than splitting between threads
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            yCurrent[i] = yCurrent[i] + yVelocity[i]*step;
+        }
+
+        // 2. Change the step direction whenever theta crosses the target,
+        // pi/2, and make it half of the previous one.
+        step = step * sign((yCurrent[1] - HALF_PI)*(prevTheta - HALF_PI)) / 2;
+
+        // if(threadId == 0 && blockIdx.x == 98 && blockIdx.y == 52)
+        //     printf("Step at iter %d: %.50f\n", iter, step);
+
+        prevTheta = yCurrent[1];
+
+        iter++;
+    } // 3. End of while
+    return iter;
 }

@@ -7,6 +7,14 @@
 // Declaration of the system size; i.e., the number of equations
 #define SYSTEM_SIZE {{ SYSTEM_SIZE }}
 
+// Useful constant for collision detection
+#define HALF_PI 1.57079632679489655799898173427209258079528808593750
+
+
+// Bisect's constants
+#define BISECT_TOL 0.000001
+#define BISECT_MAX_ITER 100
+
 // Butcher's tableau coefficients
 #define A21 (1./5.)
 
