@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     # Camera lens properties
     camFocalLength = 3
-    camSensorShape = (100, 100)  # (Rows, Columns)
+    camSensorShape = (400, 400)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants

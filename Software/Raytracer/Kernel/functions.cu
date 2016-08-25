@@ -3,53 +3,53 @@
 
 #include "Raytracer/Kernel/common.cu"
 
-__device__ inline Real Delta(Real r, Real r2){
-    return r2 - 2*r + __a2;
-}
+// __device__ Real Delta(Real r, Real r2){
+//     return r2 - 2*r + __a2;
+// }
 
-__device__ inline Real R(Real r, Real r2, Real b, Real q, Real D){
-    Real _P = r2 + __a2 - __a*b;
-    Real bMinusA = b - __a;
+// __device__ Real R(Real r, Real r2, Real b, Real q, Real D){
+//     Real _P = r2 + __a2 - __a*b;
+//     Real bMinusA = b - __a;
+//
+//     return _P*_P - D*(bMinusA*bMinusA + q);
+// }
 
-    return _P*_P - D*(bMinusA*bMinusA + q);
-}
+// __device__ Real dbR(Real r, Real r2, Real b){
+//     return (4*b - 4*__a)*r - 2*b*r2;
+// }
 
-__device__ inline Real dbR(Real r, Real r2, Real b){
-    return (4*b - 4*__a)*r - 2*b*r2;
-}
+// __device__ Real drR(Real r, Real r2, Real b, Real q){
+//     Real bMinusA = b - __a;
+//     return 4*r*(r2 - __a*b + __a2) - (q + bMinusA*bMinusA)*(2*r - 2);
+// }
 
-__device__ inline Real drR(Real r, Real r2, Real b, Real q){
-    Real bMinusA = b - __a;
-    return 4*r*(r2 - __a*b + __a2) - (q + bMinusA*bMinusA)*(2*r - 2);
-}
+// __device__ Real Theta(Real sinT2Inv, Real cosT2, Real b2, Real q){
+//     return q - cosT2*(b2*sinT2Inv - __a2);
+// }
 
-__device__ inline Real Theta(Real sinT2Inv, Real cosT2, Real b2, Real q){
-    return q - cosT2*(b2*sinT2Inv - __a2);
-}
+// __device__ Real dbTheta(Real sinT2Inv, Real cosT2, Real b){
+//     return - 2 * b * cosT2 * sinT2Inv;
+// }
 
-__device__ inline Real dbTheta(Real sinT2Inv, Real cosT2, Real b){
-    return - 2 * b * cosT2 * sinT2Inv;
-}
+// __device__ Real dzTheta(Real sinT, Real sinT2, Real sinT2Inv, Real cosT, Real cosT2, Real b2){
+//     Real cosT3 = cosT2*cosT;
+//     Real sinT3 = sinT2*sinT;
+//
+//     return 2*cosT*((b2*sinT2Inv) - __a2)*sinT + (2*b2*cosT3)/(sinT3);
+// }
 
-__device__ inline Real dzTheta(Real sinT, Real sinT2, Real sinT2Inv, Real cosT, Real cosT2, Real b2){
-    Real cosT3 = cosT2*cosT;
-    Real sinT3 = sinT2*sinT;
+// __device__ Real drDelta(Real r){
+//     return 2*r - 2;
+// }
 
-    return 2*cosT*((b2*sinT2Inv) - __a2)*sinT + (2*b2*cosT3)/(sinT3);
-}
+// __device__ Real rhoSquaredInv(Real r2, Real cosT2){
+//     return 1/(r2 + __a2*cosT2);
+// }
 
-__device__ inline Real drDelta(Real r){
-    return 2*r - 2;
-}
-
-__device__ inline Real rhoSquaredInv(Real r2, Real cosT2){
-    return 1/(r2 + __a2*cosT2);
-}
-
-__device__ inline Real dzRhoTimesRho(Real r2, Real sinT, Real cosT,
-                                     Real cosT2){
-    return - __a2*cosT*sinT;
-}
+// __device__ Real dzRhoTimesRho(Real r2, Real sinT, Real cosT,
+//                                      Real cosT2){
+//     return - __a2*cosT*sinT;
+// }
 
 /**
 * Computes the value of the threadId-th component of the function
@@ -69,7 +69,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
                                  Real* data){
     Real r, r2, theta, pR, pR2, pTheta, pTheta2, b, b2, q;
     Real sinT, cosT, sinT2, sinT2Inv, cosT2;
-    Real _R, D, Dinv, Z, DZplusR, rho2Inv, twoRho2Inv, rho4Inv;
+    Real P, R, D, Dinv, Z, DZplusR, rho2Inv, twoRho2Inv, rho4Inv;
 
     // Retrieval of the input data (position of the ray, momenta and
     // constants).
@@ -81,27 +81,32 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
     // Computation of the square of r, widely used in the computations.
     r2 = r*r;
 
-    // Sine and cosine of theta, as well as their squares.
+    // Sine and cosine of theta, as well as their squares and inverses.
     sincos(theta, &sinT, &cosT);
     sinT2 = sinT*sinT;
     sinT2Inv = 1/sinT2;
     cosT2 = cosT*cosT;
 
     // Retrieval of the constants data: b and q, along with the computation of
-    // the square of b
+    // the square of b and the number b - a, repeateadly used throughout the
+    // computation
     b = data[0];
     q = data[1];
 
     b2 = b*b;
+    Real bMinusA = b - __a;
 
     // Commonly used variables: R, D, Theta (that is called Z) and
     // rho (and its square and cube).
-    D = Delta(r, r2);
-    _R = R(r, r2, b, q, D);
+    D = r2 - 2*r + __a2;
     Dinv = 1/D;
-    Z = Theta(sinT2Inv, cosT2, b2, q);
 
-    rho2Inv = rhoSquaredInv(r2, cosT2);
+    P = r2 - __a * bMinusA;
+    R = P*P - D*(bMinusA*bMinusA + q);
+
+    Z = q - cosT2*(b2*sinT2Inv - __a2);
+
+    rho2Inv = 1/(r2 + __a2*cosT2);
     twoRho2Inv = rho2Inv/2;
     rho4Inv = rho2Inv*rho2Inv;
 
@@ -124,17 +129,17 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
 
     // *********************** EQUATION 3 *********************** //
     // Derivatives with respect to b
-    dR = dbR(r, r2, b);
-    dZ = dbTheta(sinT2Inv, cosT2, b);
+    dR = 4*bMinusA*r - 2*b*r2;
+    dZ = - 2 * b * cosT2 * sinT2Inv;
 
     f[2] = - (dR + D*dZ)*Dinv*twoRho2Inv;
 
     // *********************** EQUATION 4 *********************** //
     // Derivatives with respect to r
-    dD = drDelta(r);
-    dR = drR(r, r2, b, q);
+    dD = 2*r - 2;
+    dR = 4*r*(r2 - __a*bMinusA) - (q + bMinusA*bMinusA)*(2*r - 2);
 
-    DZplusR = D*Z + _R;
+    DZplusR = D*Z + R;
 
     sum1 = + pTheta2;
     sum2 = + D*pR2;
@@ -147,8 +152,12 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
 
     // *********************** EQUATION 5 *********************** //
     // Derivatives with respect to theta (called z here)
-    dRhoTimesRho = dzRhoTimesRho(r2, sinT, cosT, cosT2);
-    dZ = dzTheta(sinT, sinT2, sinT2Inv, cosT, cosT2, b2);
+    dRhoTimesRho = - __a2*cosT*sinT;
+
+    Real cosT3 = cosT2*cosT;
+    Real sinT3 = sinT2*sinT;
+
+    dZ = 2*cosT*((b2*sinT2Inv) - __a2)*sinT + (2*b2*cosT3)/(sinT3);
 
     sum1 = + pTheta2;
     sum2 = + D*pR2;
