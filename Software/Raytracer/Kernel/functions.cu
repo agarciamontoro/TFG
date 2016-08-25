@@ -114,6 +114,9 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
     pR2 = pR*pR;
     pTheta2 = pTheta*pTheta;
 
+    Real twob = 2*b;
+    Real twor = 2*r;
+
     // Declaration of variables used in the actual computation: dR, dZ, dRho
     // and dD will store the derivatives of the corresponding functions (with
     // respect to the corresponding variable in each thread). The sumX values
@@ -129,15 +132,15 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
 
     // *********************** EQUATION 3 *********************** //
     // Derivatives with respect to b
-    dR = 4*bMinusA*r - 2*b*r2;
-    dZ = - 2 * b * cosT2 * sinT2Inv;
+    dR = 4*bMinusA*r - twob*r2;
+    dZ = - twob * cosT2 * sinT2Inv;
 
     f[2] = - (dR + D*dZ)*Dinv*twoRho2Inv;
 
     // *********************** EQUATION 4 *********************** //
     // Derivatives with respect to r
-    dD = 2*r - 2;
-    dR = 4*r*(r2 - __a*bMinusA) - (q + bMinusA*bMinusA)*(2*r - 2);
+    dD = twor - 2;
+    dR = 2*twor*(r2 - __a*bMinusA) - (q + bMinusA*bMinusA)*(twor - 2);
 
     DZplusR = D*Z + R;
 
