@@ -50,10 +50,6 @@ __device__ inline Real rhoSquaredInv(Real r2, Real cosT2){
     return 1/(r2 + __a2*cosT2);
 }
 
-__device__ inline Real drRhoTimesRho(Real r, Real r2, Real cosT2){
-    return r;
-}
-
 __device__ inline Real dzRhoTimesRho(Real r2, Real sinT, Real cosT,
                                      Real cosT2){
     return - __a2*cosT*sinT;
@@ -296,7 +292,6 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
 
     // *********************** EQUATION 4 *********************** //
     // Derivatives with respect to r
-    dRhoTimesRho = drRhoTimesRho(r, r2, cosT2);
     dD = drDelta(r);
     dR = drR(r, r2, b, q);
 
@@ -309,7 +304,7 @@ __device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
     sum5 = + (dD*Z + dR) * Dinv;
     sum6 = - (dD*DZplusR * Dinv * Dinv);
 
-    f[3] = dRhoTimesRho*(sum1 + sum2 + sum3)*rho4Inv + (sum4 + sum5 + sum6)*twoRho2Inv;
+    f[3] = r*(sum1 + sum2 + sum3)*rho4Inv + (sum4 + sum5 + sum6)*twoRho2Inv;
 
     // *********************** EQUATION 5 *********************** //
     // Derivatives with respect to theta (called z here)
