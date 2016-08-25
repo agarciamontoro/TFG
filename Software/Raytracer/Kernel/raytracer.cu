@@ -146,6 +146,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
     // 1 if the computation succeded
     int* globalStatus = (int*) devStatus;
     globalStatus += blockId;
+    int status = *globalStatus;
 
     // Retrieve the position where the initial conditions this block will
     // work with are.
@@ -173,7 +174,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
 
     if(threadId < SYSTEM_SIZE){
 
-        while(*globalStatus == SPHERE && x > xend){
+        while(status == SPHERE && x > xend){
             RK4Solve(x, x + resolution, globalInitCond, h, hmax, data, &success, threadId, blockId);
             __syncthreads();
 
@@ -182,21 +183,23 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                     currentR = globalInitCond[0];
                     currentCos = cos(globalInitCond[1]);
 
-                    *globalStatus = detectCollisions(prevCos, currentCos, prevR, currentR);
+                    status = detectCollisions(prevCos, currentCos, prevR, currentR);
                 }
                 else{
-                    *globalStatus = HORIZON;
+                    status = HORIZON;
                 }
 
                 prevR = currentR;
                 prevCos = currentCos;
             }
 
-
             x += resolution;
             __syncthreads();
 
         } // While globalStatus == SPHERE and x > xend
+
+        if(threadId == 0)
+            *globalStatus = status;
 
     } // If threadId < SYSTEM_SIZE
 }
