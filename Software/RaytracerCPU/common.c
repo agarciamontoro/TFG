@@ -10,7 +10,6 @@
 // Useful constant for collision detection
 #define HALF_PI 1.57079632679489655799898173427209258079528808593750
 
-
 // Bisect's constants
 #define BISECT_TOL 0.000001
 #define BISECT_MAX_ITER 100
