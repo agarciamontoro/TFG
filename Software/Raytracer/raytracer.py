@@ -107,15 +107,28 @@ class RayTracer(metaclass = LoggingClass):
         self.debug = debug
         self.systemSize = 5
 
-        self.numThreads = nextPowerOf2(self.systemSize)
-
         # Set up the necessary objects
         self.camera = camera
         self.kerr = kerr
         self.blackHole = blackHole
 
+        # Get the number of rows and columns of the final image
         self.imageRows = self.camera.sensorShape[0]
         self.imageCols = self.camera.sensorShape[1]
+        numPixels = self.imageRows * self.imageCols
+
+        # Compute the block and grid sizes: given a fixed block dimension of 64
+        # threads (in just 1D), the number of blocks are computed to get at
+        # least as much threads as pixels
+
+        # Fixed size block dimension: 64x1x1
+        self.numThreads = 64
+        self.blockDim = (self.numThreads, 1, 1)
+
+        # Grid dimension computed to cover all the pixels with a thread (there
+        # will be idle threads)
+        numBlocks = int(((numPixels - 1) / self.numThreads) + 1)
+        self.gridDim = (numBlocks, 1, 1)
 
         # Render the kernel
         self._kernelRendering()
@@ -152,6 +165,10 @@ class RayTracer(metaclass = LoggingClass):
 
         # Specify any input variables to the template as a dictionary.
         templateVars = {
+            "IMG_ROWS": self.imageRows,
+            "IMG_COLS": self.imageCols,
+            "NUM_PIXELS": self.imageRows*self.imageCols,
+
             # Camera constants
             "D": self.camera.focalLength,
             "CAM_R": self.camera.r,
@@ -177,7 +194,7 @@ class RayTracer(metaclass = LoggingClass):
             # RK45 solver constants
             "R_TOL_I": 1e-6,
             "A_TOL_I": 1e-12,
-            
+
             "SAFE": 0.9,
             "SAFE_INV": 1/0.9,
 
@@ -200,6 +217,7 @@ class RayTracer(metaclass = LoggingClass):
 
             # Number of equations
             "SYSTEM_SIZE": self.systemSize,
+            "DATA_SIZE": 2,
 
             # Debug switch
             "DEBUG": "#define DEBUG" if self.debug else ""
@@ -256,19 +274,16 @@ class RayTracer(metaclass = LoggingClass):
             self.systemStateGPU,
             self.constantsGPU,
 
-            np.float64(self.imageRows),
-            np.float64(self.imageCols),
             np.float64(self.camera.pixelWidth),
             np.float64(self.camera.pixelHeight),
-            np.float64(self.camera.focalLength),
 
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes the direction of one pixel
-            grid=(self.imageCols, self.imageRows, 1),
+            grid=self.gridDim,
 
             # Block definition -> number of threads x number of threads
             # Each thread in the block computes one RK4 step for one equation
-            block=(1, 1, 1)
+            block=self.blockDim
         )
 
         # TODO: Remove this copy, inefficient!
@@ -290,12 +305,12 @@ class RayTracer(metaclass = LoggingClass):
 
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes the direction of one pixel
-            grid=(self.imageCols, self.imageRows, 1),
+            grid=self.gridDim,
 
             # Block definition -> number of threads x number of threads
             # Each thread in the block computes one RK4 step for one
             # equation
-            block=(self.numThreads, 1, 1)
+            block=self.blockDim
         )
 
 

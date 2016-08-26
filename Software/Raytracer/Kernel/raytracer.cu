@@ -65,55 +65,56 @@ __device__ void getConservedQuantities(Real pTheta, Real pPhi, Real* b,
 }
 
 __global__ void setInitialConditions(void* devInitCond,void* devConstants,
-                                     Real imageRows, Real imageCols,
                                      Real pixelWidth, Real pixelHeight){
-    // Retrieve the id of the block in the grid
-    int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
+    // Unique identifier of this thread
+    int globalThreadId = blockIdx.x * blockDim.x + threadIdx.x;
 
-    // Pointer for the initial conditions of this ray (block)
-    Real* globalInitCond = (Real*) devInitCond;
-    Real* initCond = globalInitCond + blockId*SYSTEM_SIZE;
+    if(globalThreadId < NUM_PIXELS){
+        // Compute X and Y coordinates of this thread in the image
+        int row = globalThreadId / IMG_COLS;
+        int col = globalThreadId % IMG_ROWS;
 
-    // Pointer for the constants of this ray (block)
-    Real* globalConstants = (Real*) devConstants;
-    Real* constants = globalConstants + blockId*2;
+        // Pointer for the initial conditions of this ray (block)
+        Real* globalInitCond = (Real*) devInitCond;
+        Real* initCond = globalInitCond + globalThreadId*SYSTEM_SIZE;
 
-    // Compute pixel position in the physical space
-    Real x = - (blockIdx.x + 0.5 - imageCols/2) * pixelWidth;
-    Real y = (blockIdx.y + 0.5 - imageRows/2) * pixelHeight;
+        // Pointer for the constants of this ray (block)
+        Real* globalConstants = (Real*) devConstants;
+        Real* constants = globalConstants + globalThreadId*2;
 
-    // Compute direction of the incoming ray in the camera's reference
-    // frame
-    Real rayPhi = Pi + atan(x / __d);
-    Real rayTheta = Pi/2 + atan(y / sqrt(__d*__d + x*x));
+        // Compute pixel position in the physical space
+        Real x = - (col + 0.5 - IMG_COLS/2) * pixelWidth;
+        Real y = (row + 0.5 - IMG_ROWS/2) * pixelHeight;
 
-    // Compute canonical momenta of the ray and the conserved quantites b
-    // and q
-    Real pR, pTheta, pPhi, b, q;
-    getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
-    getConservedQuantities(pTheta, pPhi, &b, &q);
+        // Compute direction of the incoming ray in the camera's reference
+        // frame
+        Real rayPhi = Pi + atan(x / __d);
+        Real rayTheta = Pi/2 + atan(y / sqrt(__d*__d + x*x));
 
-    // if(blockIdx.x == 70 && blockIdx.y == 90){
-    //     printf("pR = %.20f\npTheta = %.20f\npPhi = %.20f\nb = %.20f\nq = %.20f, rayTheta = %.20f\nrayPhi = %.20f\n", pR, pTheta, pPhi, b, q, rayTheta, rayPhi);
-    // }
+        // Compute canonical momenta of the ray and the conserved quantites b
+        // and q
+        Real pR, pTheta, pPhi, b, q;
+        getCanonicalMomenta(rayTheta, rayPhi, &pR, &pTheta, &pPhi);
+        getConservedQuantities(pTheta, pPhi, &b, &q);
 
-    #ifdef DEBUG
-        if(blockIdx.x == 0 && blockIdx.y == 0){
-            printf("%.20f, %.20f\n", x, y);
-            printf("INICIALES: theta = %.20f, phi = %.20f, pR = %.20f, pTheta = %.20f, pPhi = %.20f, b = %.20f, q = %.20f", rayTheta, rayPhi, pR, pTheta, pPhi, b, q);
-        }
-    #endif
+        #ifdef DEBUG
+            if(blockIdx.x == 0 && blockIdx.y == 0){
+                printf("%.20f, %.20f\n", x, y);
+                printf("INICIALES: theta = %.20f, phi = %.20f, pR = %.20f, pTheta = %.20f, pPhi = %.20f, b = %.20f, q = %.20f", rayTheta, rayPhi, pR, pTheta, pPhi, b, q);
+            }
+        #endif
 
-    // Save ray's initial conditions
-    initCond[0] = __camR;
-    initCond[1] = __camTheta;
-    initCond[2] = __camPhi;
-    initCond[3] = pR;
-    initCond[4] = pTheta;
+        // Save ray's initial conditions
+        initCond[0] = __camR;
+        initCond[1] = __camTheta;
+        initCond[2] = __camPhi;
+        initCond[3] = pR;
+        initCond[4] = pTheta;
 
-    // Save ray's constants
-    constants[0] = b;
-    constants[1] = q;
+        // Save ray's constants
+        constants[0] = b;
+        constants[1] = q;
+    }
 }
 
 __device__ int detectCollisions(Real prevThetaCentered,
@@ -139,18 +140,15 @@ __device__ int detectCollisions(Real prevThetaCentered,
 __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                        Real hmax, void* devData, int dataSize,
                        void* devStatus, Real resolution){
+    // Unique identifier of this thread
+    int globalThreadId = blockIdx.x * blockDim.x + threadIdx.x;
 
-    // Retrieve the ids of the thread in the block and of the block in the grid
-    int threadId = threadIdx.x + threadIdx.y * blockDim.x;
-    int blockId =  blockIdx.x  + blockIdx.y  * gridDim.x;
-
-    if(threadId < SYSTEM_SIZE){
-
+    if(globalThreadId < NUM_PIXELS){
         // Array of status flags: at the output, the (x,y)-th element will be 0
         // if any error ocurred (namely, the step size was made too small) and
         // 1 if the computation succeded
         int* globalStatus = (int*) devStatus;
-        globalStatus += blockId;
+        globalStatus += globalThreadId;
         int status = *globalStatus;
 
         // Retrieve the position where the initial conditions this block will
@@ -160,21 +158,23 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         // in the system). Then, the position of where these initial conditions
         // are stored in the serialized vector can be computed as blockId * N.
         Real* globalInitCond = (Real*) devInitCond;
-        globalInitCond += blockId * SYSTEM_SIZE;
+        globalInitCond += globalThreadId * SYSTEM_SIZE;
 
         // Pointer to the additional data array used by computeComponent
         Real* globalData = (Real*) devData;
-        globalData += blockId * dataSize;
+        globalData += globalThreadId * dataSize;
 
         // Shared arrays to store the initial conditions and the additional
         // data
-        __shared__ Real initCond[SYSTEM_SIZE],
-                        data[SYSTEM_SIZE];
+        Real initCond[SYSTEM_SIZE], data[DATA_SIZE];
 
-        initCond[threadId] = globalInitCond[threadId];
-        data[threadId] = globalData[threadId];
+        for(int i = 0; i < SYSTEM_SIZE; i++){
+            initCond[i] = globalInitCond[i];
+        }
 
-        __syncthreads();
+        for(int i = 0; i < DATA_SIZE; i++){
+            data[i] = globalData[i];
+        }
 
         // Initialize previous theta and r to the initial conditions
         Real prevThetaCentered, prevR, currentThetaCentered, currentR;
@@ -188,8 +188,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         Real x = x0;
 
         while(status == SPHERE && x > xend){
-            RK4Solve(x, x + resolution, initCond, &h, resolution, data, &success, threadId, blockId);
-            __syncthreads();
+            RK4Solve(x, x + resolution, initCond, &h, resolution, data, &success);
 
             if(success){
                 currentR = initCond[0];
@@ -200,7 +199,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                                           prevR, currentR);
 
                 if(status == DISK){
-                    bisect(threadId, initCond, data, h);
+                    bisect(initCond, data, h);
                 }
             }
             else{
@@ -214,10 +213,12 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
 
         } // While globalStatus == SPHERE and x > xend
 
-        if(threadId == 0)
-            *globalStatus = status;
 
-        globalInitCond[threadId] = initCond[threadId];
+        *globalStatus = status;
 
-    } // If threadId < SYSTEM_SIZE
+        for(int i = 0; i < SYSTEM_SIZE; i++){
+            globalInitCond[i] = initCond[i];
+        }
+
+    } // If threadId < NUM_PIXELS
 }

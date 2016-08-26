@@ -6,6 +6,13 @@
 
 // Declaration of the system size; i.e., the number of equations
 #define SYSTEM_SIZE 5
+#define DATA_SIZE 2
+
+// Declaration of the image parameters: number of rows and columns, as well as
+// the total amount of pixels.
+#define IMG_ROWS 1000
+#define IMG_COLS 1000
+#define NUM_PIXELS 1000000
 
 // Useful constant for collision detection
 #define HALF_PI 1.57079632679489655799898173427209258079528808593750

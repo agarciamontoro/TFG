@@ -83,8 +83,7 @@
  *                       so this variable is useless.
  */
  __device__ void RK4Solve(Real x0, Real xend, Real* initCond,
-                          Real* hOrig, Real hmax, Real* data, bool* success,
-                          int threadId, int blockId){
+                          Real* hOrig, Real hmax, Real* data, bool* success){
     #ifdef DEBUG
         printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)initCond)[0], ((Real*)initCond)[1]);
     #endif
@@ -95,17 +94,10 @@
     // latter. The reason is that the number of threads has to be a power of 2
     // (see reduction technique in the only loop you will find in this function
     // code to know why): then, we can give some rest to the threads that exceeds the number of equations :)
-    // Flag shared between all threads in block to stop execution when one
-    // of them cannot continue
-    __shared__ bool keepRunning;
-
-    if(threadId == 0)
-        keepRunning = true;
-    __syncthreads();
 
     // Shared array between the block threads to store intermediate
     // solutions.
-    __shared__ Real solution[SYSTEM_SIZE];
+    Real solution[SYSTEM_SIZE];
 
     // Loop variable to manage the automatic step size detection.
     // TODO: Implement the hinit method
@@ -118,24 +110,27 @@
 
     // Each thread of each block has to know only the initial condition
     // associated to its own equation:
-    Real y0 = initCond[threadId];
+    Real y0[SYSTEM_SIZE];
+    for(int i = 0; i < SYSTEM_SIZE; i++){
+        y0[i]= initCond[i];
+    }
 
     // Auxiliar arrays to store the intermediate K1, ..., K7 computations
-    __shared__ Real k1[SYSTEM_SIZE],
-                    k2[SYSTEM_SIZE],
-                    k3[SYSTEM_SIZE],
-                    k4[SYSTEM_SIZE],
-                    k5[SYSTEM_SIZE],
-                    k6[SYSTEM_SIZE],
-                    k7[SYSTEM_SIZE];
+    Real k1[SYSTEM_SIZE],
+         k2[SYSTEM_SIZE],
+         k3[SYSTEM_SIZE],
+         k4[SYSTEM_SIZE],
+         k5[SYSTEM_SIZE],
+         k6[SYSTEM_SIZE],
+         k7[SYSTEM_SIZE];
 
     // Auxiliar array to store the intermediate calls to the
     // computeComponent function
-    __shared__ Real y1[SYSTEM_SIZE];
+    Real y1[SYSTEM_SIZE];
 
     // Auxiliary variables used to compute the errors at each step.
     Real sqr;                            // Scaled differences in each eq.
-    __shared__ Real errors[SYSTEM_SIZE]; // Local error of each eq.
+    Real errors[SYSTEM_SIZE]; // Local error of each eq.
     Real err;                            // Global error of the step
 
     // Initial values for the step size automatic prediction variables.
@@ -144,8 +139,6 @@
     // know more about the puropose of each of these variables.
     Real facold = 1.0E-4;
     Real expo1 = 0.2 - beta * 0.75;
-    // Real fac1_inverse = 1.0 / fac1;
-    // Real fac2_inverse = 1.0 / fac2;
     Real fac11, fac;
 
     // Loop variables initialisation. The main loop finishes when `last` is
@@ -159,6 +152,10 @@
     // Retrieve the value of h
     Real h = *hOrig;
 
+    // Declare a counter for the loops, in order not to declare it multiple
+    // times :)
+    int i;
+
     // Main loop. Each iteration computes a single step of the DOPRI5 algorithm, that roughly comprises the next phases:
     //  0. Check if this step has to be the last one.
     //  1. Computation of the system new value and the estimated error.
@@ -171,10 +168,6 @@
     do{
         // TODO: Check that this flag is really necessary
         if (0.1 * abs(h) <= abs(x0) * uround){
-            keepRunning = false;
-        }
-        __syncthreads();
-        if(!keepRunning){
             // Let the user know the computation stopped before xEnd
             *success = false;
             *hOrig = h;
@@ -196,65 +189,67 @@
         // solution, using the Butcher's table described in Table 5.2 ([1])
 
         // K1 computation
-        y1[threadId] = y0;
-        __syncthreads();
-        computeComponent(threadId, x0, y1, k1, data);
-        // __syncthreads();
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            y1[i] = y0[i];
+        }
+        computeComponent(x0, y1, k1, data);
 
         // K2 computation
-        y1[threadId] = y0 + h * A21 * k1[threadId];
-        __syncthreads();
-        computeComponent(threadId, x0 + C2*h, y1, k2, data);
-        // __syncthreads();
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            y1[i] = y0[i] + h * A21 * k1[i];
+        }
+        computeComponent(x0 + C2*h, y1, k2, data);
 
         // K3 computation
-        y1[threadId] = y0 + h*(A31 * k1[threadId] +
-                               A32 * k2[threadId]);
-        __syncthreads();
-        computeComponent(threadId, x0 + C3*h, y1, k3, data);
-        // __syncthreads();
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            y1[i] = y0[i] + h*(A31 * k1[i] +
+                               A32 * k2[i]);
+        }
+        computeComponent(x0 + C3*h, y1, k3, data);
 
         // K4 computation
-        y1[threadId] = y0 + h*(A41 * k1[threadId] +
-                               A42 * k2[threadId] +
-                               A43 * k3[threadId]);
-        __syncthreads();
-        computeComponent(threadId, x0 + C4*h, y1, k4, data);
-        // __syncthreads();
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            y1[i] = y0[i] + h*(A41 * k1[i] +
+                               A42 * k2[i] +
+                               A43 * k3[i]);
+        }
+        computeComponent(x0 + C4*h, y1, k4, data);
 
         // K5 computation
-        y1[threadId] = y0 + h*( A51 * k1[threadId] +
-                                A52 * k2[threadId] +
-                                A53 * k3[threadId] +
-                                A54 * k4[threadId]);
-        __syncthreads();
-        computeComponent(threadId, x0 + C5*h, y1, k5, data);
-        // __syncthreads();
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            y1[i] = y0[i] + h*( A51 * k1[i] +
+                                A52 * k2[i] +
+                                A53 * k3[i] +
+                                A54 * k4[i]);
+        }
+        computeComponent(x0 + C5*h, y1, k5, data);
 
         // K6 computation
-        y1[threadId] = y0 + h*(A61 * k1[threadId] +
-                               A62 * k2[threadId] +
-                               A63 * k3[threadId] +
-                               A64 * k4[threadId] +
-                               A65 * k5[threadId]);
-        __syncthreads();
-        computeComponent(threadId, x0 + C6*h, y1, k6, data);
-        // __syncthreads();
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            y1[i] = y0[i] + h*(A61 * k1[i] +
+                               A62 * k2[i] +
+                               A63 * k3[i] +
+                               A64 * k4[i] +
+                               A65 * k5[i]);
+        }
+        computeComponent(x0 + C6*h, y1, k6, data);
 
         // K7 computation.
-        y1[threadId] = y0 + h*(A71 * k1[threadId] +
-                               A73 * k3[threadId] +
-                               A74 * k4[threadId] +
-                               A75 * k5[threadId] +
-                               A76 * k6[threadId]);
-        __syncthreads();
-        computeComponent(threadId, x0 + C7*h, y1, k7, data);
-        // __syncthreads();
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            y1[i] = y0[i] + h*(A71 * k1[i] +
+                               A73 * k3[i] +
+                               A74 * k4[i] +
+                               A75 * k5[i] +
+                               A76 * k6[i]);
+        }
+        computeComponent(x0 + C7*h, y1, k7, data);
 
         // The Butcher's table (Table 5.2, [1]), shows that the estimated
         // solution has exactly the same coefficients as the ones used to
         // compute K7. Then, the solution is the last computed y1:
-        solution[threadId] = y1[threadId];
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            solution[i] = y1[i];
+        }
 
         // The local error of each equation is computed as the difference
         // between the solution y and the higher order solution \hat{y}, as
@@ -263,72 +258,44 @@
         // from y, the differences between the coefficientes of each
         // solution have been computed and the error is directly obtained
         // using them:
-        errors[threadId] = h*(E1 * k1[threadId] +
-                              E3 * k3[threadId] +
-                              E4 * k4[threadId] +
-                              E5 * k5[threadId] +
-                              E6 * k6[threadId] +
-                              E7 * k7[threadId]);
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            errors[i] = h*(E1 * k1[i] +
+                                  E3 * k3[i] +
+                                  E4 * k4[i] +
+                                  E5 * k5[i] +
+                                  E6 * k6[i] +
+                                  E7 * k7[i]);
+        }
 
         #ifdef DEBUG
             printf("ThreadId %d - K 1-7: K1:%.20f, K2:%.20f, K3:%.20f, K4:%.20f, K5:%.20f, K6:%.20f, K7:%.20f\n", threadId, k1[threadId], k2[threadId], k3[threadId], k4[threadId], k5[threadId], k6[threadId], k7[threadId]);
             printf("ThreadId %d - Local: sol: %.20f, error: %.20f\n", threadId, solution[threadId], errors[threadId]);
         #endif
 
-        // The local estimated error has to satisfy the following
-        // condition: |err[i]| < Atol[i] + Rtol*max(|y_0[i]|, |y_j[i]|)
-        // (see equation (4.10), [1]). The variable sk stores the right
-        // hand size of this inequality to use it as a scale in the local
-        // error computation; this way we "normalize" the error and we can
-        // compare it against 1.
-        Real sk = atoli + rtoli*fmax(abs(y0), abs(solution[threadId]));
+        Real sk;
+        err = 0;
+        for(i = 0; i < SYSTEM_SIZE; i++){
+            // The local estimated error has to satisfy the following
+            // condition: |err[i]| < Atol[i] + Rtol*max(|y_0[i]|, |y_j[i]|)
+            // (see equation (4.10), [1]). The variable sk stores the right
+            // hand size of this inequality to use it as a scale in the local
+            // error computation; this way we "normalize" the error and we can
+            // compare it against 1.
+            sk = atoli + rtoli*fmax(fabs(initCond[i]), fabs(solution[i]));
 
-        // Compute the square of the local estimated error (scaled with the
-        // previous factor), as the global error will be computed as in
-        // equation 4.11 ([1]): the square root of the mean of the squared
-        // local scaled errors.
-        sqr = (errors[threadId])/sk;
-        errors[threadId] = sqr*sqr;
-        __syncthreads();
+            // Compute the square of the local estimated error (scaled with the
+            // previous factor), as the global error will be computed as in
+            // equation 4.11 ([1]): the square root of the mean of the squared
+            // local scaled errors.
+            sqr = (errors[i])/sk;
+            errors[i] = sqr*sqr;
 
-        #ifdef DEBUG
-            printf("ThreadId %d - Diffs: sqr: %.20f, sk: %.20f\n", threadId, sqr, sk);
-        #endif
-
-        // Add the square of the local scaled errors with the usual
-        // parallel reduction technique, storing the result in errors[0]:
-        // Basically, in every step of the loop, the second half of the
-        // remaining array will be added to the first half, considering
-        // half of the previous array at each step. Let's see it with more
-        // detail:
-        // Starting with the first half of the threads (the other half will
-        // be idle until this process finish), each one of them will add to
-        // their own local element of the errors array the element placed
-        // at [its own global thread index in the block + half of the
-        // number of threads]; after this is completed, only the first
-        // quarter of the threads will be considered, adding to their own
-        // elements the values at [its own global thread index in the block
-        // + a quarter of the number of threads]. This process continues,
-        // considering half of the threads considered in the previous step,
-        // until there is only one working thread, the first one, that
-        // makes the final addition: errors[0] = errors[0] + errors[1]
-        // Note that this process forces the number of threads to be a
-        // power of 2: the variable controlling which threads will work at
-        // each step (the variable s in the loop), is initially set to the
-        // half of the block total threads, and successively divided by 2.
-        // for(int s=(blockDim.x*blockDim.y)/2; s>0; s>>=1){
-        //     if (threadId < s && threadId + s < SYSTEM_SIZE) {
-        //         errors[threadId] = errors[threadId] + errors[threadId + s];
-        //     }
-        //
-        //     __syncthreads();
-        // }
-        err = errors[0] + errors[1] + errors[2] + errors[3] + errors[4];
+            err += errors[i];
+        }
 
         // The sum of the local squared errors in now in errors[0], but the
         // global error is the square root of the mean of those local
         // errors: we finish here the computation and store it in err.
-        // err = sqrt(errors[0]/(Real)SYSTEM_SIZE);
         err = sqrt(err/(Real)SYSTEM_SIZE);
 
         // For full information about the step size computation, please see
@@ -392,7 +359,9 @@
 
             // Necessary update for next steps: the local y0 variable holds
             // the current initial condition (now the computed solution)
-            y0 = solution[threadId];
+            for(i = 0; i < SYSTEM_SIZE; i++){
+                y0[i] = solution[i];
+            }
 
             // This step was accepted, so it was not rejected, so reject is
             // false. SCIENCE.
@@ -414,7 +383,6 @@
             }
         #endif
     }while(!last);
-    __syncthreads();
 
     // Finally, let the user know everything's gonna be alright
     *success = true;
@@ -422,7 +390,9 @@
 
     // Aaaaand that's all, folks! Update system value (each thread its
     // result) in the global memory :)
-    initCond[threadId] = solution[threadId];
+    for(int i = 0; i < SYSTEM_SIZE; i++){
+        initCond[i] = solution[i];
+    }
 }
 
 
@@ -432,7 +402,7 @@ __device__ int sign(Real x){
 
 
 // Given a system point, p1, and a target,
-__device__ int bisect(int threadId, Real* yOriginal, Real* data, Real step){
+__device__ int bisect(Real* yOriginal, Real* data, Real step){
     // Set the current point to the original point and declare an array to
     // store the value of the system function
     Real* yCurrent = yOriginal;
@@ -460,11 +430,12 @@ __device__ int bisect(int threadId, Real* yOriginal, Real* data, Real step){
     //      3. It repeats 1 and 2 until the current theta is very near of Pi/2
     //      ("very near" is defined by BISECT_TOL) or until the number of
     //      iterations exceeds a manimum number previously defined
-    while(abs(yCurrent[1] - HALF_PI) > BISECT_TOL && iter < BISECT_MAX_ITER){
+    while(fabs(yCurrent[1] - HALF_PI) > BISECT_TOL && iter < BISECT_MAX_ITER){
         // 1. Compute value of the function in the current point
-        computeComponent(threadId, 0, yCurrent, yVelocity, data);
+        computeComponent(0, yCurrent, yVelocity, data);
 
         // 1. Advance point with Euler algorithm
+        // TODO: See if this is more efficient than splitting between threads
         for(i = 0; i < SYSTEM_SIZE; i++){
             yCurrent[i] = yCurrent[i] + yVelocity[i]*step;
         }

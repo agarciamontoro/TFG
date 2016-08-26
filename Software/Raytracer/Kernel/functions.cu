@@ -65,8 +65,7 @@
  * @param  Real* data          Additional data needed by the function, managed
  *                             by the caller.
  */
-__device__ void computeComponent(int threadId, Real x, Real* y, Real* f,
-                                 Real* data){
+__device__ void computeComponent(Real x, Real* y, Real* f, Real* data){
     // Variables to hold the position of the ray, its momenta and related
     // operations between them and the constant a, which is the spin of the
     // black hole.
