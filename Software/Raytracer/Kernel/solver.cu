@@ -144,8 +144,8 @@
     // know more about the puropose of each of these variables.
     Real facold = 1.0E-4;
     Real expo1 = 0.2 - beta * 0.75;
-    Real fac1_inverse = 1.0 / fac1;
-    Real fac2_inverse = 1.0 / fac2;
+    // Real fac1_inverse = 1.0 / fac1;
+    // Real fac2_inverse = 1.0 / fac2;
     Real fac11, fac;
 
     // Loop variables initialisation. The main loop finishes when `last` is
@@ -188,8 +188,8 @@
         // (multiplied by a safety factor to prevent steps too small)
         // exceeds the end time x_{end}.
         if ((x0 + 1.01*h - xend) * integrationDirection > 0.0){
-          h = xend - x0;
-          last = true;
+            h = xend - x0;
+            last = true;
         }
 
         // PHASE 1. Compute the K1, ..., K7 components and the estimated
@@ -348,7 +348,7 @@
         // We need the multiplying factor (always taking into account the
         // safe factor) to be between fac1 and fac2; i.e., we require
         // fac1 <= hnew/h <= fac2:
-        fac = fmax(fac2_inverse, fmin(fac1_inverse, fac/safe));
+        fac = fmax(fac2_inverse, fmin(fac1_inverse, fac * safeInv));
         // New step final (but temporary) computation
         hnew = h / fac;
 
@@ -362,7 +362,7 @@
         if( err > 1.){
             // Stabilization technique with the minimum and safe factors
             // when the step is rejected.
-            hnew = h / fmin(fac1_inverse, fac11/safe);
+            hnew = h / fmin(fac1_inverse, fac11 * safeInv);
 
             // Set reject variable to true for the next step and make sure
             // this one is not the last step!
@@ -444,7 +444,7 @@ __device__ int bisect(int threadId, Real* yOriginal, Real* data, Real step){
     prevTheta = yCurrent[1];
 
     // The first step shall be to the other side and half of its length;
-    step = - step / 2;
+    step = - step * 0.5;
 
     // Loop variables, to control the inner for and to control the iterations
     // does not exceed a maximum number
@@ -471,7 +471,7 @@ __device__ int bisect(int threadId, Real* yOriginal, Real* data, Real step){
 
         // 2. Change the step direction whenever theta crosses the target,
         // pi/2, and make it half of the previous one.
-        step = step * sign((yCurrent[1] - HALF_PI)*(prevTheta - HALF_PI)) / 2;
+        step = step * sign((yCurrent[1] - HALF_PI)*(prevTheta - HALF_PI)) * 0.5;
 
         prevTheta = yCurrent[1];
 

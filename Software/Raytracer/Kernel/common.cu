@@ -84,8 +84,11 @@
 #define rtoli 1e-06
 #define atoli 1e-12
 #define safe 0.9
+#define safeInv 1.1111111111111112
 #define fac1 0.2
+#define fac1_inverse 5.0
 #define fac2 10.0
+#define fac2_inverse 0.1
 #define beta 0.04
 #define uround 2.3e-16
 

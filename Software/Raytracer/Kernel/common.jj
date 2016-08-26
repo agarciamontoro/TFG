@@ -84,8 +84,11 @@
 #define rtoli {{ R_TOL_I }}
 #define atoli {{ A_TOL_I }}
 #define safe {{ SAFE }}
+#define safeInv {{ SAFE_INV }}
 #define fac1 {{ FAC_1 }}
+#define fac1_inverse {{ FAC_1_INV }}
 #define fac2 {{ FAC_2 }}
+#define fac2_inverse {{ FAC_2_INV }}
 #define beta {{ BETA }}
 #define uround {{ UROUND }}
 

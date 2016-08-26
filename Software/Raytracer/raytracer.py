@@ -177,9 +177,16 @@ class RayTracer(metaclass = LoggingClass):
             # RK45 solver constants
             "R_TOL_I": 1e-6,
             "A_TOL_I": 1e-12,
+            
             "SAFE": 0.9,
+            "SAFE_INV": 1/0.9,
+
             "FAC_1": 0.2,
+            "FAC_1_INV": 1 / 0.2,
+
             "FAC_2": 10.0,
+            "FAC_2_INV": 1 / 10.0,
+
             "BETA": 0.04,
             "UROUND": 2.3e-16,
 
