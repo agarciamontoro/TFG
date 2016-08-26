@@ -1,7 +1,7 @@
 import logging
 import functools
 from inspect import isfunction
-
+import time
 def _logging_method( cls_name, method ):
     """
     This decorator acts on a class method and inyects a call to its logger
@@ -21,8 +21,12 @@ def _logging_method( cls_name, method ):
     @functools.wraps(method)
     def wrapper(self,*args,**kwargs):
         self.logger.debug("Entering method {} of class {}".format(method.__name__,cls_name))
+        start_time =  time.time()
         result = method(self,*args,**kwargs)
-        self.logger.debug("Exited method {} of class {}".format(method.__name__,cls_name))
+        end_time =  time.time()
+        self.logger.debug("Exiting method {} of class {}".format(method.__name__,cls_name))
+        self.logger.debug("Execution of method {} took took {:0.3f} ms".format(method.__name__,
+            end_time - start_time ))
         return result
     return wrapper
 
