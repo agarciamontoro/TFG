@@ -418,12 +418,10 @@
     __syncthreads();
 
     // Finally, let the user know everything's gonna be alright
-    if(threadId == 0){
-        *success = true;
-        *hOrig = h;
-        // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
-        //     printf("SUCCESS: %.10f\n", x0);
-    }
+    *success = true;
+    *hOrig = h;
+    // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
+    //     printf("SUCCESS: %.10f\n", x0);
 
     // Aaaaand that's all, folks! Update system value (each thread its
     // result) in the global memory :)
