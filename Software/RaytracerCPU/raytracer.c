@@ -11,8 +11,6 @@
 #define Pi M_PI
 #define SYSTEM_SIZE 5
 
-#define IMG_COLS 500
-#define IMG_ROWS 500
 #define DATA_SIZE 2
 
 void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR, Real* pTheta,
@@ -132,12 +130,12 @@ int detectCollisions(Real prevThetaCentered, Real currentThetaCentered,
 
 void kernel(Real x0, Real xend, Real* devInitCond, Real h, Real hmax,
             Real* devData, int dataSize, int* devStatus,
-            Real resolution){
-    for(int row = 0; row < IMG_ROWS; row++){
-        for(int col = 0; col < IMG_COLS; col++){
+            Real resolution, int imgRows, int imgCols){
+    for(int row = 0; row < imgRows; row++){
+        for(int col = 0; col < imgCols; col++){
             // Retrieve the ids of the thread in the block and of the block in
             // the grid
-            int blockId =  col  + row  * IMG_COLS;
+            int blockId =  col  + row  * imgCols;
 
             // Array of status flags: at the output, the (x,y)-th element will
             // be 0 if any error ocurred (namely, the step size was made too
@@ -216,33 +214,21 @@ void kernel(Real x0, Real xend, Real* devInitCond, Real h, Real hmax,
     }
 }
 
-int main(int argc, char* argv[]){
-    if(argc < 2){
-      fprintf(stderr, "Oops, where's the output file path? I can't see it!\n");
-      exit(1);
-    }
-
-    FILE *output = fopen(argv[1], "w");
-
-    if (output == NULL) {
-      fprintf(stderr, "Can't open output file %s!\n", argv[1]);
-      exit(1);
-    }
-
-    fprintf(output, "Number of pixels, Computation time\n");
-
-    Real* initCond = (Real*) malloc(IMG_COLS * IMG_ROWS * SYSTEM_SIZE * sizeof(Real));
-    Real* constants = (Real*) malloc(IMG_COLS * IMG_ROWS * DATA_SIZE * sizeof(Real));
-    int* status = (int*) malloc(IMG_COLS * IMG_ROWS * sizeof(int));
+double measureKernelTime(int imgRows, int imgCols){
+    Real* initCond = (Real*) malloc(imgCols * imgRows * SYSTEM_SIZE *
+                                    sizeof(Real));
+    Real* constants = (Real*) malloc(imgCols * imgRows * DATA_SIZE *
+                                     sizeof(Real));
+    int* status = (int*) malloc(imgCols * imgRows * sizeof(int));
 
     // Sensor physical size
     Real W = 2;
     Real H = 2;
 
-    Real pixelWidth = W / (Real) IMG_COLS;
-    Real pixelHeight = H / (Real) IMG_ROWS;
+    Real pixelWidth = W / (Real) imgCols;
+    Real pixelHeight = H / (Real) imgRows;
 
-    setInitialConditions(initCond, constants, IMG_ROWS, IMG_COLS, pixelWidth,
+    setInitialConditions(initCond, constants, imgRows, imgCols, pixelWidth,
                          pixelHeight);
 
     Real x0 = 0.;
@@ -251,28 +237,16 @@ int main(int argc, char* argv[]){
     Real resolution = -1;
 
     clock_t start, end;
+
     start = clock();
-
     kernel(x0, xend, initCond, h, xend-x0, constants, DATA_SIZE, status,
-           resolution);
-
+           resolution, imgRows, imgCols);
     end = clock();
-
-    Real timeExec = (end-start)/(double)CLOCKS_PER_SEC;
-
-    // printf("%f\n", timeExec);
-    fprintf(output, "%d, %.10f\n", IMG_COLS*IMG_ROWS, timeExec);
-
-    // Test to see the images
-    for(int row = 0; row < IMG_ROWS; row++){
-        for(int col = 0; col < IMG_COLS; col++){
-            int pixel = row*IMG_COLS + col;
-            printf("%d, ", status[pixel]);
-        }
-        printf("\n");
-    }
 
     free(status);
     free(constants);
     free(initCond);
+
+    Real timeExec = (end-start)/(double)CLOCKS_PER_SEC;
+    return timeExec;
 }

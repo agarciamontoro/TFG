@@ -120,9 +120,6 @@
     // associated to its own equation:
     Real y0 = initCond[threadId];
 
-    // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
-    //     printf("RK4 INIT: %.10f, %.10f, %.10f, %.10f, %.10f\n", initCond[0], initCond[1], initCond[2], initCond[3], initCond[4]);
-
     // Auxiliar arrays to store the intermediate K1, ..., K7 computations
     __shared__ Real k1[SYSTEM_SIZE],
                     k2[SYSTEM_SIZE],
@@ -420,15 +417,10 @@
     // Finally, let the user know everything's gonna be alright
     *success = true;
     *hOrig = h;
-    // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
-    //     printf("SUCCESS: %.10f\n", x0);
 
     // Aaaaand that's all, folks! Update system value (each thread its
     // result) in the global memory :)
     initCond[threadId] = solution[threadId];
-    // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
-    //     printf("RK4 END : %.10f, %.10f, %.10f, %.10f, %.10f\n", solution[0], solution[1], solution[2], solution[3], solution[4]);
-
 }
 
 
@@ -438,7 +430,7 @@ __device__ int sign(Real x){
 
 
 // Given a system point, p1, and a target,
-__device__ int bisect(Real threadId, Real* yOriginal, Real* data, Real step){
+__device__ int bisect(int threadId, Real* yOriginal, Real* data, Real step){
     // Set the current point to the original point and declare an array to
     // store the value of the system function
     Real* yCurrent = yOriginal;
@@ -471,7 +463,6 @@ __device__ int bisect(Real threadId, Real* yOriginal, Real* data, Real step){
         computeComponent(threadId, 0, yCurrent, yVelocity, data);
 
         // 1. Advance point with Euler algorithm
-        // TODO: See if this is more efficient than splitting between threads
         for(i = 0; i < SYSTEM_SIZE; i++){
             yCurrent[i] = yCurrent[i] + yVelocity[i]*step;
         }
@@ -479,9 +470,6 @@ __device__ int bisect(Real threadId, Real* yOriginal, Real* data, Real step){
         // 2. Change the step direction whenever theta crosses the target,
         // pi/2, and make it half of the previous one.
         step = step * sign((yCurrent[1] - HALF_PI)*(prevTheta - HALF_PI)) / 2;
-
-        // if(threadId == 0 && blockIdx.x == 98 && blockIdx.y == 52)
-        //     printf("Step at iter %d: %.50f\n", iter, step);
 
         prevTheta = yCurrent[1];
 

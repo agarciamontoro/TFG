@@ -204,7 +204,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                                           prevR, currentR);
 
                 if(status == DISK){
-                    // bisect(threadId, initCond, data, h);
+                    bisect(threadId, initCond, data, h);
                 }
             }
             else{
@@ -215,7 +215,6 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
             prevThetaCentered = currentThetaCentered;
 
             x += resolution;
-            // __syncthreads();
 
         } // While globalStatus == SPHERE and x > xend
 
