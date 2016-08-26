@@ -316,18 +316,20 @@
         // power of 2: the variable controlling which threads will work at
         // each step (the variable s in the loop), is initially set to the
         // half of the block total threads, and successively divided by 2.
-        for(int s=(blockDim.x*blockDim.y)/2; s>0; s>>=1){
-            if (threadId < s && threadId + s < SYSTEM_SIZE) {
-                errors[threadId] = errors[threadId] + errors[threadId + s];
-            }
-
-            __syncthreads();
-        }
+        // for(int s=(blockDim.x*blockDim.y)/2; s>0; s>>=1){
+        //     if (threadId < s && threadId + s < SYSTEM_SIZE) {
+        //         errors[threadId] = errors[threadId] + errors[threadId + s];
+        //     }
+        //
+        //     __syncthreads();
+        // }
+        err = errors[0] + errors[1] + errors[2] + errors[3] + errors[4];
 
         // The sum of the local squared errors in now in errors[0], but the
         // global error is the square root of the mean of those local
         // errors: we finish here the computation and store it in err.
-        err = sqrt(errors[0]/(Real)SYSTEM_SIZE);
+        // err = sqrt(errors[0]/(Real)SYSTEM_SIZE);
+        err = sqrt(err/(Real)SYSTEM_SIZE);
 
         // For full information about the step size computation, please see
         // equation (4.13) and its surroundings in [1] and the notes in

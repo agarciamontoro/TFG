@@ -73,5 +73,5 @@ if __name__ == '__main__':
         rayTracer.synchronise()
 
         # Print results both to the CSV file and to the standard output
-        currentData = "{}, {:.10f}".format(side, rayTracer.totalTime)
+        currentData = "{}, {:.10f}".format(side*side, rayTracer.totalTime)
         print(currentData, file=output)

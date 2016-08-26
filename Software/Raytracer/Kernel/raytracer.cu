@@ -182,18 +182,14 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         prevR = initCond[0];
         prevThetaCentered = initCond[1] - HALF_PI;
 
-        // Local variable to know the status of the
+        // Local variable to know the status of the ray
         bool success;
 
         Real x = x0;
 
         while(status == SPHERE && x > xend){
-            if(blockIdx.x == 15 && blockIdx.y == 15 && threadId == 0)
-                printf("[%.10f, %.10f]\n", x, x+resolution);
             RK4Solve(x, x + resolution, initCond, &h, resolution, data, &success, threadId, blockId);
             __syncthreads();
-            // if(blockIdx.x == 0 && blockIdx.y == 0 && threadId == 0)
-            //     printf("%.10f\n", h);
 
             if(success){
                 currentR = initCond[0];
