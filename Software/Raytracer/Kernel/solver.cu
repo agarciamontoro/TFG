@@ -82,8 +82,8 @@
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- __device__ void RK4Solve(Real x0, Real xend, Real* initCond,
-                          Real* hOrig, Real hmax, Real* data, bool* success){
+ __device__ SolverStatus RK4Solve(Real x0, Real xend, Real* initCond,
+                          Real* hOrig, Real hmax, Real* data){
     #ifdef DEBUG
         printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)initCond)[0], ((Real*)initCond)[1]);
     #endif
@@ -169,11 +169,11 @@
         // TODO: Check that this flag is really necessary
         if (0.1 * abs(h) <= abs(x0) * uround){
             // Let the user know the computation stopped before xEnd
-            *success = false;
+            // *success = false;
             *hOrig = h;
 
             // Finish all execution in this block
-            return;
+            return RK45_FAILURE;
         }
 
 
@@ -189,10 +189,13 @@
         // solution, using the Butcher's table described in Table 5.2 ([1])
 
         // K1 computation
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i];
+        computeComponent(x0, y0, k1, data);
+
+        // TODO: This is quite confusing here. EXPLAIN IT, please :)
+        if(k1[1] < STRAIGHT_TOL && k1[2] < STRAIGHT_TOL &&
+           k1[3] < STRAIGHT_TOL && k1[4] < STRAIGHT_TOL){
+            return RK45_STOP;
         }
-        computeComponent(x0, y1, k1, data);
 
         // K2 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
@@ -385,7 +388,7 @@
     }while(!last);
 
     // Finally, let the user know everything's gonna be alright
-    *success = true;
+    // *success = true;
     *hOrig = h;
 
     // Aaaaand that's all, folks! Update system value (each thread its
@@ -393,6 +396,8 @@
     for(int i = 0; i < SYSTEM_SIZE; i++){
         initCond[i] = solution[i];
     }
+
+    return RK45_SUCCESS;
 }
 
 

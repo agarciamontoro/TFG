@@ -103,6 +103,8 @@
 #define HORIZON 2
 #define DISK 1
 #define SPHERE 0
+#define STRAIGHT 
+#define STRAIGHT_TOL 0.001
 
 #define horizonRadius 2.0
 #define innerDiskRadius 9
@@ -110,5 +112,11 @@
 
 // Definition of the data type
 typedef double Real;
+
+typedef enum solverStatus{
+    RK45_SUCCESS,
+    RK45_FAILURE,
+    RK45_STOP
+} SolverStatus;
 
 #endif // __DEFINITIONS__

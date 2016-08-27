@@ -190,15 +190,19 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
        prevThetaCentered = initCond[1] - HALF_PI;
 
        // Local variable to know the status of the ray
-       bool success;
+    //    bool success;
 
        // Current time
        Real x = x0;
+       SolverStatus solverStatus;
 
        while(status == SPHERE && x > xend){
-           RK4Solve(x, x + resolution, initCond, &h, resolution, data, &success);
+           solverStatus = RK4Solve(x, x + resolution, initCond, &h, resolution, data);
 
-           if(success){
+           if(solverStatus == RK45_STOP)
+               break;
+
+           if(solverStatus == RK45_SUCCESS){
                currentR = initCond[0];
                currentThetaCentered = initCond[1] - HALF_PI;
 
@@ -209,24 +213,24 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                    if(status == DISK){
                        bisect(initCond, data, h);
                    }
-               }
-               else{
-                   status = HORIZON;
-               }
-
-               prevR = currentR;
-               prevThetaCentered = currentThetaCentered;
-
-               x += resolution;
-
-           } // While globalStatus == SPHERE and x > xend
-
-
-           *globalStatus = status;
-
-           for(int i = 0; i < SYSTEM_SIZE; i++){
-               globalInitCond[i] = initCond[i];
+           }
+           else{
+               status = HORIZON;
            }
 
-       } // If threadId < NUM_PIXELS
+           prevR = currentR;
+           prevThetaCentered = currentThetaCentered;
+
+           x += resolution;
+
+       } // While globalStatus == SPHERE and x > xend
+
+
+       *globalStatus = status;
+
+       for(int i = 0; i < SYSTEM_SIZE; i++){
+           globalInitCond[i] = initCond[i];
+       }
+
+   } // If threadId < NUM_PIXELS
 }
