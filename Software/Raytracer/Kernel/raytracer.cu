@@ -69,18 +69,21 @@ __global__ void setInitialConditions(void* devInitCond,void* devConstants,
     // Unique identifier of this thread
     int globalThreadId = blockIdx.x * blockDim.x + threadIdx.x;
 
-    if(globalThreadId < NUM_PIXELS){
-        // Compute X and Y coordinates of this thread in the image
-        int row = globalThreadId / IMG_COLS;
-        int col = globalThreadId % IMG_ROWS;
+    // Compute pixel's row and col of this thread
+    int row = blockDim.y * blockIdx.y + threadIdx.y;
+    int col = blockDim.x * blockIdx.x + threadIdx.x;
+
+    if(row < IMG_ROWS && col < IMG_COLS){
+        // Compute pixel unique identifier for this thread
+        int pixel = row*IMG_COLS + col;
 
         // Pointer for the initial conditions of this ray (block)
         Real* globalInitCond = (Real*) devInitCond;
-        Real* initCond = globalInitCond + globalThreadId*SYSTEM_SIZE;
+        Real* initCond = globalInitCond + pixel*SYSTEM_SIZE;
 
         // Pointer for the constants of this ray (block)
         Real* globalConstants = (Real*) devConstants;
-        Real* constants = globalConstants + globalThreadId*2;
+        Real* constants = globalConstants + pixel*2;
 
         // Compute pixel position in the physical space
         Real x = - (col + 0.5 - IMG_COLS/2) * pixelWidth;
@@ -140,85 +143,90 @@ __device__ int detectCollisions(Real prevThetaCentered,
 __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                        Real hmax, void* devData, int dataSize,
                        void* devStatus, Real resolution){
-    // Unique identifier of this thread
-    int globalThreadId = blockIdx.x * blockDim.x + threadIdx.x;
+   // Compute pixel's row and col of this thread
+   int row = blockDim.y * blockIdx.y + threadIdx.y;
+   int col = blockDim.x * blockIdx.x + threadIdx.x;
 
-    if(globalThreadId < NUM_PIXELS){
-        // Array of status flags: at the output, the (x,y)-th element will be 0
-        // if any error ocurred (namely, the step size was made too small) and
-        // 1 if the computation succeded
-        int* globalStatus = (int*) devStatus;
-        globalStatus += globalThreadId;
-        int status = *globalStatus;
+   if(row < IMG_ROWS && col < IMG_COLS){
+       // Compute pixel unique identifier for this thread
+       int pixel = row*IMG_COLS + col;
 
-        // Retrieve the position where the initial conditions this block will
-        // work with are.
-        // Each block, absolutely identified in the grid by blockId, works with
-        // only one initial condition (that has N elements, as N equations are
-        // in the system). Then, the position of where these initial conditions
-        // are stored in the serialized vector can be computed as blockId * N.
-        Real* globalInitCond = (Real*) devInitCond;
-        globalInitCond += globalThreadId * SYSTEM_SIZE;
+       // Array of status flags: at the output, the (x,y)-th element will be 0
+       // if any error ocurred (namely, the step size was made too small) and
+       // 1 if the computation succeded
+       int* globalStatus = (int*) devStatus;
+       globalStatus += pixel;
+       int status = *globalStatus;
 
-        // Pointer to the additional data array used by computeComponent
-        Real* globalData = (Real*) devData;
-        globalData += globalThreadId * dataSize;
+       // Retrieve the position where the initial conditions this block will
+       // work with are.
+       // Each block, absolutely identified in the grid by blockId, works with
+       // only one initial condition (that has N elements, as N equations are
+       // in the system). Then, the position of where these initial conditions
+       // are stored in the serialized vector can be computed as blockId * N.
+       Real* globalInitCond = (Real*) devInitCond;
+       globalInitCond += pixel * SYSTEM_SIZE;
 
-        // Shared arrays to store the initial conditions and the additional
-        // data
-        Real initCond[SYSTEM_SIZE], data[DATA_SIZE];
+       // Pointer to the additional data array used by computeComponent
+       Real* globalData = (Real*) devData;
+       globalData += pixel * dataSize;
 
-        for(int i = 0; i < SYSTEM_SIZE; i++){
-            initCond[i] = globalInitCond[i];
-        }
+       // Shared arrays to store the initial conditions and the additional
+       // data
+       Real initCond[SYSTEM_SIZE], data[DATA_SIZE];
 
-        for(int i = 0; i < DATA_SIZE; i++){
-            data[i] = globalData[i];
-        }
+       for(int i = 0; i < SYSTEM_SIZE; i++){
+           initCond[i] = globalInitCond[i];
+       }
 
-        // Initialize previous theta and r to the initial conditions
-        Real prevThetaCentered, prevR, currentThetaCentered, currentR;
+       for(int i = 0; i < DATA_SIZE; i++){
+           data[i] = globalData[i];
+       }
 
-        prevR = initCond[0];
-        prevThetaCentered = initCond[1] - HALF_PI;
+       // Initialize previous theta and r to the initial conditions
+       Real prevThetaCentered, prevR, currentThetaCentered, currentR;
 
-        // Local variable to know the status of the ray
-        bool success;
+       prevR = initCond[0];
+       prevThetaCentered = initCond[1] - HALF_PI;
 
-        Real x = x0;
+       // Local variable to know the status of the ray
+       bool success;
 
-        while(status == SPHERE && x > xend){
-            RK4Solve(x, x + resolution, initCond, &h, resolution, data, &success);
+       // Current time
+       Real x = x0;
 
-            if(success){
-                currentR = initCond[0];
-                currentThetaCentered = initCond[1] - HALF_PI;
+       while(status == SPHERE && x > xend){
+           RK4Solve(x, x + resolution, initCond, &h, resolution, data, &success);
 
-                status = detectCollisions(prevThetaCentered,
-                                          currentThetaCentered,
-                                          prevR, currentR);
+           if(success){
+               currentR = initCond[0];
+               currentThetaCentered = initCond[1] - HALF_PI;
 
-                if(status == DISK){
-                    bisect(initCond, data, h);
-                }
-            }
-            else{
-                status = HORIZON;
-            }
+               status = detectCollisions(prevThetaCentered,
+                   currentThetaCentered,
+                   prevR, currentR);
 
-            prevR = currentR;
-            prevThetaCentered = currentThetaCentered;
+                   if(status == DISK){
+                       bisect(initCond, data, h);
+                   }
+               }
+               else{
+                   status = HORIZON;
+               }
 
-            x += resolution;
+               prevR = currentR;
+               prevThetaCentered = currentThetaCentered;
 
-        } // While globalStatus == SPHERE and x > xend
+               x += resolution;
+
+           } // While globalStatus == SPHERE and x > xend
 
 
-        *globalStatus = status;
+           *globalStatus = status;
 
-        for(int i = 0; i < SYSTEM_SIZE; i++){
-            globalInitCond[i] = initCond[i];
-        }
+           for(int i = 0; i < SYSTEM_SIZE; i++){
+               globalInitCond[i] = initCond[i];
+           }
 
-    } // If threadId < NUM_PIXELS
+       } // If threadId < NUM_PIXELS
 }

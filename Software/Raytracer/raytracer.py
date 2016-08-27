@@ -53,7 +53,7 @@ DISK = 1
 HORIZON = 2
 
 # Dummy object for the camera (computation of the speed is done here)
-class Camera(metaclass = LoggingClass):
+class Camera(metaclass=LoggingClass):
     def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize):
         # Define position
         self.r = r
@@ -102,7 +102,7 @@ class Camera(metaclass = LoggingClass):
         self.beta = 0
 
 
-class RayTracer(metaclass = LoggingClass):
+class RayTracer(metaclass=LoggingClass):
     def __init__(self, camera, kerr, blackHole, debug=False):
         self.debug = debug
         self.systemSize = 5
@@ -115,20 +115,25 @@ class RayTracer(metaclass = LoggingClass):
         # Get the number of rows and columns of the final image
         self.imageRows = self.camera.sensorShape[0]
         self.imageCols = self.camera.sensorShape[1]
-        numPixels = self.imageRows * self.imageCols
+        self.numPixels = self.imageRows * self.imageCols
 
         # Compute the block and grid sizes: given a fixed block dimension of 64
         # threads (in just 1D), the number of blocks are computed to get at
         # least as much threads as pixels
 
         # Fixed size block dimension: 64x1x1
-        self.numThreads = 64
-        self.blockDim = (self.numThreads, 1, 1)
+        self.blockDimCols = 8
+        self.blockDimRows = 8
+        self.blockDim = (self.blockDimCols, self.blockDimRows, 1)
 
         # Grid dimension computed to cover all the pixels with a thread (there
         # will be idle threads)
-        numBlocks = int(((numPixels - 1) / self.numThreads) + 1)
-        self.gridDim = (numBlocks, 1, 1)
+        self.gridDimCols = int(((self.imageCols - 1) / self.blockDimCols) + 1)
+        self.gridDimRows = int(((self.imageRows - 1) / self.blockDimRows) + 1)
+
+        self.gridDim = (self.gridDimCols, self.gridDimRows, 1)
+
+        print(self.blockDim, self.gridDim)
 
         # Render the kernel
         self._kernelRendering()
