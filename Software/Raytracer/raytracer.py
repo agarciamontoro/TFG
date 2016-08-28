@@ -54,7 +54,7 @@ HORIZON = 2
 STRAIGHT = 3
 
 # Dummy object for the camera (computation of the speed is done here)
-class Camera(metaclass=LoggingClass):
+class Camera:  # (metaclass=LoggingClass):
     def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize):
         # Define position
         self.r = r
@@ -103,7 +103,7 @@ class Camera(metaclass=LoggingClass):
         self.beta = 0
 
 
-class RayTracer(metaclass=LoggingClass):
+class RayTracer:  # (metaclass=LoggingClass):
     def __init__(self, camera, kerr, blackHole, debug=False):
         self.debug = debug
         self.systemSize = 5
@@ -141,9 +141,6 @@ class RayTracer(metaclass=LoggingClass):
 
         # Compute the initial conditions
         self._setUpInitCond()
-
-        # # Build the solver object
-        # self._setUpSolver()
 
         # Create two timers to measure the time
         self.start = driver.Event()
@@ -298,8 +295,8 @@ class RayTracer(metaclass=LoggingClass):
 
         # TODO: Remove this copy, inefficient!
         # Retrieve the computed initial conditions
-        self.systemState = self.systemStateGPU.get()
-        self.constants = self.constantsGPU.get()
+        # self.systemState = self.systemStateGPU.get()
+        # self.constants = self.constantsGPU.get()
 
     def callKernel(self, x, xEnd, resolution=-1):
         self._solve(
@@ -384,7 +381,7 @@ class RayTracer(metaclass=LoggingClass):
             x = 0
             for step in range(numSteps):
                 # Solve the system
-                self.callKernel(x, x + stepSize, resolution=-1)
+                self.callKernel(x, x + stepSize, resolution=stepSize)
 
                 # Advance the step and synchronise
                 x += stepSize
@@ -413,6 +410,8 @@ class RayTracer(metaclass=LoggingClass):
                 if status == SPHERE:
                     pixel = [1, 1, 1]
 
+                pixel = [status, status, status]
+
                 image[row, col, :] = pixel
 
         plt.imshow(image)
@@ -438,8 +437,8 @@ class RayTracer(metaclass=LoggingClass):
             self.drawCamera(ax)
 
             # Draw the rays
-            for row in range(0, self.imageRows, 10):
-                for col in range(0, self.imageCols, 10):
+            for row in range(0, self.imageRows, 20):
+                for col in range(0, self.imageCols, 20):
                     ray = np.transpose(self.plotData[row, col, :, :])
                     self.drawRay(ax, ray, self.plotStatus[row, col, :])
 

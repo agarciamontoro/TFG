@@ -82,10 +82,10 @@
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- __device__ SolverStatus RK4Solve(Real x0, Real xend, Real* initCond,
-                          Real* hOrig, Real hmax, Real* data){
+ __device__ SolverStatus RK4Solve(Real* globalX0, Real xend, Real* initCond,
+                          Real* hOrig, Real hmax, Real* data, int* iterations, float* globalFacold){
     #ifdef DEBUG
-        printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)initCond)[0], ((Real*)initCond)[1]);
+        printf("ThreadId %d - INITS: x0=%.30f, xend=%.30f, y0=(%.30f, %.30f)\n", threadId, x0, xend, ((Real*)initCond)[0], ((Real*)initCond)[1]);
     #endif
 
     // Each equation to solve has a thread that compute its solution. Although
@@ -98,6 +98,10 @@
     // Loop variable to manage the automatic step size detection.
     // TODO: Implement the hinit method
     Real hnew;
+
+    // Retrieve the value of h and the value of x0
+    Real h = *hOrig;
+    Real x0 = *globalX0;
 
     // Check the direction of the integration: to the future or to the past
     // and get the absolute value of the maximum step size.
@@ -127,14 +131,14 @@
     // Auxiliary variables used to compute the errors at each step.
     float sqr;                            // Scaled differences in each eq.
     float errors[SYSTEM_SIZE]; // Local error of each eq.
-    float err;                            // Global error of the step
+    float err = 0;                            // Global error of the step
     float sk; // Scale based on the tolerances
 
     // Initial values for the step size automatic prediction variables.
     // They are basically factors to maintain the new step size in known
     // bounds, but you can see the corresponding chunk of code far below to
     // know more about the puropose of each of these variables.
-    float facold = 1.0E-4;
+    float facold = *globalFacold;
     float expo1 = 0.2 - beta * 0.75;
     float fac11, fac;
 
@@ -145,9 +149,6 @@
     // estimation exceeds 1.
     bool last  = false;
     Real reject = false;
-
-    // Retrieve the value of h
-    Real h = *hOrig;
 
     // Declare a counter for the loops, in order not to declare it multiple
     // times :)
@@ -163,6 +164,12 @@
     //          3.2.1 If this is the last step, finish.
     //          3.2.2 In any other case, iterate again.
     do{
+        *iterations = *iterations + 1;
+
+
+        if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
+            printf("x: %.30f, iter: %d, h: %.30f, r: %.30f, theta: %.30f, phi: %.30f, pr: %.30f, ptheta: %.30f\n", x0, *iterations, h, y0[0], y0[1], y0[2], y0[3], y0[4]);
+
         // TODO: Check that this flag is really necessary
         if (0.1 * abs(h) <= abs(x0) * uround){
             // Let the user knwo the final step
@@ -176,10 +183,10 @@
         // PHASE 0. Check if the current time x_0 plus the current step
         // (multiplied by a safety factor to prevent steps too small)
         // exceeds the end time x_{end}.
-        if ((x0 + 1.01*h - xend) * integrationDirection > 0.0){
-            h = xend - x0;
-            last = true;
-        }
+        // if ((x0 + 1.01*h - xend) * integrationDirection > 0.0){
+        //     h = xend - x0;
+        //     last = true;
+        // }
 
         // PHASE 1. Compute the K1, ..., K7 components and the estimated
         // solution, using the Butcher's table described in Table 5.2 ([1])
@@ -257,9 +264,10 @@
                            E7 * k7[i]);
         }
 
+
         #ifdef DEBUG
-            printf("ThreadId %d - K 1-7: K1:%.20f, K2:%.20f, K3:%.20f, K4:%.20f, K5:%.20f, K6:%.20f, K7:%.20f\n", threadId, k1[threadId], k2[threadId], k3[threadId], k4[threadId], k5[threadId], k6[threadId], k7[threadId]);
-            printf("ThreadId %d - Local: sol: %.20f, error: %.20f\n", threadId, solution[threadId], errors[threadId]);
+            printf("ThreadId %d - K 1-7: K1:%.30f, K2:%.30f, K3:%.30f, K4:%.30f, K5:%.30f, K6:%.30f, K7:%.30f\n", threadId, k1[threadId], k2[threadId], k3[threadId], k4[threadId], k5[threadId], k6[threadId], k7[threadId]);
+            printf("ThreadId %d - Local: sol: %.30f, error: %.30f\n", threadId, solution[threadId], errors[threadId]);
         #endif
 
         err = 0;
@@ -278,14 +286,22 @@
             // local scaled errors.
             sqr = (errors[i])/sk;
             errors[i] = sqr*sqr;
+            if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
+            printf("x: %.30f, iter: %d, errors[%d] = %.30f\n", x0, *iterations, i, errors[i]);
 
             err += errors[i];
         }
 
+        if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
+            printf("x: %.30f, iter: %d, ERRRRRR1: %.30f\n", x0, *iterations, err);
+
         // The sum of the local squared errors in now in errors[0], but the
         // global error is the square root of the mean of those local
         // errors: we finish here the computation and store it in err.
-        err = sqrt(err) * rsqrt((float)SYSTEM_SIZE);
+        err = sqrt(err / SYSTEM_SIZE);
+
+        if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
+            printf("x: %.30f, iter: %d, ERRRRRR2: %.30f\n", x0, *iterations, err);
 
         // For full information about the step size computation, please see
         // equation (4.13) and its surroundings in [1] and the notes in
@@ -309,8 +325,8 @@
         hnew = h / fac;
 
         #ifdef DEBUG
-            printf("ThreadId %d - H aux: expo1: %.20f, err: %.20f, fac11: %.20f, facold: %.20f, fac: %.20f\n", threadId, expo1, err, fac11, facold, fac);
-            printf("ThreadId %d - H new: prevH: %.20f, newH: %.20f\n", threadId, hnew);
+            printf("ThreadId %d - H aux: expo1: %.30f, err: %.30f, fac11: %.30f, facold: %.30f, fac: %.30f\n", threadId, expo1, err, fac11, facold, fac);
+            printf("ThreadId %d - H new: prevH: %.30f, newH: %.30f\n", threadId, hnew);
         #endif
 
         // Check whether the normalized error, err, is below or over 1.:
@@ -356,24 +372,27 @@
         }
 
         // Final step size update!
-        if(!last)
+        // if(!last)
             h = hnew;
 
         #ifdef DEBUG
             if(threadId == 0){
                 if(err > 1.){
-                    printf("\n###### CHANGE: err: %.20f, h: %.20f\n\n", err, h);
+                    printf("\n###### CHANGE: err: %.30f, h: %.30f\n\n", err, h);
                 }
                 else{
-                    printf("\n###### ======:  err: %.20f, h: %.20f\n\n", err, h);
+                    printf("\n###### ======:  err: %.30f, h: %.30f\n\n", err, h);
                 }
             }
         #endif
-    }while(!last);
+    }while(x0 > xend);
 
     // Finally, let the user know everything's gonna be alright
     // *success = true;
     *hOrig = h;
+
+    *globalFacold = facold;
+    *globalX0 = x0;
 
     // Aaaaand that's all, folks! Update system value (each thread its
     // result) in the global memory :)

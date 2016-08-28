@@ -118,21 +118,17 @@ __global__ void setInitialConditions(void* devInitCond,void* devConstants,
     }
 }
 
-__device__ int detectCollisions(Real prevThetaCentered,
-                                Real currentThetaCentered, Real prevR,
-                                Real currentR){
-    if (currentR <= horizonRadius){
-        return HORIZON;
-    }
-
-    if(prevThetaCentered*currentThetaCentered < 0 &&
-       prevR > innerDiskRadius && currentR > innerDiskRadius &&
-       prevR < outerDiskRadius && currentR < outerDiskRadius){
-        return DISK;
-    }
-
-    return SPHERE;
-}
+// __device__ int detectCollisions(Real prevThetaCentered,
+//                                 Real currentThetaCentered, Real prevR,
+//                                 Real currentR){
+//     if(prevThetaCentered*currentThetaCentered < 0 &&
+//        prevR > innerDiskRadius && currentR > innerDiskRadius &&
+//        prevR < outerDiskRadius && currentR < outerDiskRadius){
+//         return DISK;
+//     }
+//
+//     return SPHERE;
+// }
 
 
 __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
@@ -175,30 +171,44 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
        memcpy(data, globalData, sizeof(Real)*DATA_SIZE);
 
        // Initialize previous theta and r to the initial conditions
-       Real prevThetaCentered, prevR, currentThetaCentered, currentR;
+       Real prevR, currentR;
+       int prevThetaSign, currentThetaSign;
 
        prevR = initCond[0];
-       prevThetaCentered = initCond[1] - HALF_PI;
+       prevThetaSign = sign(initCond[1] - HALF_PI);
 
        // Local variable to know the status of the ray
 
        // Current time
        Real x = x0;
        SolverStatus solverStatus;
+       Real prevInit[SYSTEM_SIZE];
+
+       int iterations = 0;
+
+       float facold = 1.0E-4;
 
        while(status == SPHERE && x > xend){
-           solverStatus = RK4Solve(x, x + resolution, initCond, &h, resolution, data);
+        //    if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
+        //         printf("x: %.10f, iter: %d, h: %.10f, r: %.10f, theta: %.10f, phi: %.10f, pr: %.10f, ptheta: %.10f\n", x, iterations, h, initCond[0], initCond[1], initCond[2], initCond[3], initCond[4]);
+
+           solverStatus = RK4Solve(&x, x + resolution, initCond, &h, 0.1, data, &iterations, &facold);
+
+        //    if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
+        //         printf("x: %.10f, iter: %d, h: %.10f, r: %.10f, theta: %.10f, phi: %.10f, pr: %.10f, ptheta: %.10f\n\n---\n\n", x, iterations, h, initCond[0], initCond[1], initCond[2], initCond[3], initCond[4]);
 
            if(solverStatus == RK45_SUCCESS){
                currentR = initCond[0];
-               currentThetaCentered = initCond[1] - HALF_PI;
+               currentThetaSign = sign(initCond[1] - HALF_PI);
 
-               status = detectCollisions(prevThetaCentered,
-                                         currentThetaCentered,
-                                         prevR, currentR);
+               if(prevThetaSign != currentThetaSign){
+                   memcpy(prevInit, initCond, sizeof(Real)*SYSTEM_SIZE);
+                   bisect(prevInit, data, resolution);
 
-               if(status == DISK){
-                   bisect(initCond, data, h);
+                   currentR = prevInit[0];
+
+                   if(innerDiskRadius < currentR && currentR < outerDiskRadius)
+                        status = DISK;
                }
            }
            else{
@@ -206,14 +216,16 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
            }
 
            prevR = currentR;
-           prevThetaCentered = currentThetaCentered;
+           prevThetaSign = currentThetaSign;
 
-           x += resolution;
+        //    x += resolution;
 
        } // While globalStatus == SPHERE and x > xend
 
+        //   if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
+        //        printf("x: %.10f, iter: %d, h: %.10f, r: %.10f, theta: %.10f, phi: %.10f, pr: %.10f, ptheta: %.10f\n", x, iterations, h, initCond[0], initCond[1], initCond[2], initCond[3], initCond[4]);
 
-       *globalStatus = status;
+       *globalStatus = iterations;
 
        // Update the data in global memory
        memcpy(globalInitCond, initCond, sizeof(Real)*SYSTEM_SIZE);

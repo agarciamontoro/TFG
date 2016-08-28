@@ -166,7 +166,7 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
         // solution, using the Butcher's table described in Table 5.2 ([1])
 
         // K1 computation
-        computeComponent(x0, y0, k1, data);
+        computeComponent(y0, k1, data);
 
         // Compute the step size
         h = getStepSize(y0, k1, fabs(hmax));
@@ -192,19 +192,19 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
         for(i = 0; i < SYSTEM_SIZE; i++){
             y1[i] = y0[i] + half_h * k1[i];
         }
-        computeComponent(x0 + half_h, y1, k2, data);
+        computeComponent(y1, k2, data);
 
         // K3 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
             y1[i] = y0[i] + half_h * k2[i];
         }
-        computeComponent(x0 + half_h, y1, k3, data);
+        computeComponent(y1, k3, data);
 
         // K4 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
             y1[i] = y0[i] + h * k3[i];
         }
-        computeComponent(x0 + h, y1, k4, data);
+        computeComponent(y1, k4, data);
 
 
         for(i = 0; i < SYSTEM_SIZE; i++){
@@ -265,7 +265,7 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step){
     //      iterations exceeds a manimum number previously defined
     while(fabs(yCurrent[1] - HALF_PI) > BISECT_TOL && iter < BISECT_MAX_ITER){
         // 1. Compute value of the function in the current point
-        computeComponent(0, yCurrent, yVelocity, data);
+        computeComponent(yCurrent, yVelocity, data);
 
         // 1. Advance point with Euler algorithm
         // TODO: See if this is more efficient than splitting between threads
