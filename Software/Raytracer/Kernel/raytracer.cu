@@ -2,6 +2,7 @@
 #include <math.h>
 #include <assert.h>
 #include "Raytracer/Kernel/common.cu"
+#include "Raytracer/Kernel/solver.cu"
 
 #define Pi M_PI
 #define SYSTEM_SIZE 5
@@ -134,9 +135,6 @@ __device__ int detectCollisions(Real prevThetaCentered,
 }
 
 
-
-#include "Raytracer/Kernel/solver.cu"
-
 __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                        Real hmax, void* devData, int dataSize,
                        void* devStatus, Real resolution){
@@ -172,13 +170,9 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
        // data
        Real initCond[SYSTEM_SIZE], data[DATA_SIZE];
 
-       for(int i = 0; i < SYSTEM_SIZE; i++){
-           initCond[i] = globalInitCond[i];
-       }
-
-       for(int i = 0; i < DATA_SIZE; i++){
-           data[i] = globalData[i];
-       }
+       // Retrieve the data from global to local memory :)
+       memcpy(initCond, globalInitCond, sizeof(Real)*SYSTEM_SIZE);
+       memcpy(data, globalData, sizeof(Real)*DATA_SIZE);
 
        // Initialize previous theta and r to the initial conditions
        Real prevThetaCentered, prevR, currentThetaCentered, currentR;
@@ -221,9 +215,8 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
 
        *globalStatus = status;
 
-       for(int i = 0; i < SYSTEM_SIZE; i++){
-           globalInitCond[i] = initCond[i];
-       }
+       // Update the data in global memory
+       memcpy(globalInitCond, initCond, sizeof(Real)*SYSTEM_SIZE);
 
    } // If threadId < NUM_PIXELS
 }

@@ -285,7 +285,7 @@
         // The sum of the local squared errors in now in errors[0], but the
         // global error is the square root of the mean of those local
         // errors: we finish here the computation and store it in err.
-        err = sqrt(err / (float)SYSTEM_SIZE);
+        err = sqrt(err) * rsqrt((float)SYSTEM_SIZE);
 
         // For full information about the step size computation, please see
         // equation (4.13) and its surroundings in [1] and the notes in
@@ -397,8 +397,8 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step){
 
     // It is necessary to maintain the previous theta to know the direction
     // change
-    Real prevTheta;
-    prevTheta = yCurrent[1];
+    Real prevThetaCentered, currentThetaCentered;
+    prevThetaCentered = yCurrent[1] - HALF_PI;
 
     // The first step shall be to the other side and half of its length;
     step = - step * 0.5;
@@ -417,7 +417,7 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step){
     //      3. It repeats 1 and 2 until the current theta is very near of Pi/2
     //      ("very near" is defined by BISECT_TOL) or until the number of
     //      iterations exceeds a manimum number previously defined
-    while(fabs(yCurrent[1] - HALF_PI) > BISECT_TOL && iter < BISECT_MAX_ITER){
+    while(fabs(prevThetaCentered) > BISECT_TOL && iter < BISECT_MAX_ITER){
         // 1. Compute value of the function in the current point
         computeComponent(0, yCurrent, yVelocity, data);
 
@@ -427,11 +427,13 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step){
             yCurrent[i] = yCurrent[i] + yVelocity[i]*step;
         }
 
+        currentThetaCentered = yCurrent[1] - HALF_PI;
+
         // 2. Change the step direction whenever theta crosses the target,
         // pi/2, and make it half of the previous one.
-        step = step * sign((yCurrent[1] - HALF_PI)*(prevTheta - HALF_PI)) * 0.5;
+        step = step * sign(currentThetaCentered * prevThetaCentered) * 0.5;
 
-        prevTheta = yCurrent[1];
+        prevThetaCentered = currentThetaCentered;
 
         iter++;
     } // 3. End of while
