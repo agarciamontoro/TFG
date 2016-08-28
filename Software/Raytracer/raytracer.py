@@ -217,7 +217,6 @@ class RayTracer(metaclass=LoggingClass):
             "SPHERE": SPHERE,  # A ray that has not yet collide with anything.
             "DISK": DISK,  # A ray that has collided with the disk.
             "HORIZON": HORIZON,  # A ray that has collided with the black hole.
-            "STRAIGHT_TOL": 1e-3,            
 
             # Data type
             "REAL": codeType,

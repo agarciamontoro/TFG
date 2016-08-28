@@ -129,17 +129,18 @@
     Real y1[SYSTEM_SIZE];
 
     // Auxiliary variables used to compute the errors at each step.
-    Real sqr;                            // Scaled differences in each eq.
-    Real errors[SYSTEM_SIZE]; // Local error of each eq.
-    Real err;                            // Global error of the step
+    float sqr;                            // Scaled differences in each eq.
+    float errors[SYSTEM_SIZE]; // Local error of each eq.
+    float err;                            // Global error of the step
+    float sk; // Scale based on the tolerances
 
     // Initial values for the step size automatic prediction variables.
     // They are basically factors to maintain the new step size in known
     // bounds, but you can see the corresponding chunk of code far below to
     // know more about the puropose of each of these variables.
-    Real facold = 1.0E-4;
-    Real expo1 = 0.2 - beta * 0.75;
-    Real fac11, fac;
+    float facold = 1.0E-4;
+    float expo1 = 0.2 - beta * 0.75;
+    float fac11, fac;
 
     // Loop variables initialisation. The main loop finishes when `last` is
     // set to true, event that happens when the current x0 plus the current
@@ -168,11 +169,10 @@
     do{
         // TODO: Check that this flag is really necessary
         if (0.1 * abs(h) <= abs(x0) * uround){
-            // Let the user know the computation stopped before xEnd
-            // *success = false;
+            // Let the user knwo the final step
             *hOrig = h;
 
-            // Finish all execution in this block
+            // Let the user know the computation stopped before xEnd
             return RK45_FAILURE;
         }
 
@@ -190,12 +190,6 @@
 
         // K1 computation
         computeComponent(x0, y0, k1, data);
-
-        // TODO: This is quite confusing here. EXPLAIN IT, please :)
-        if(k1[1] < STRAIGHT_TOL && k1[2] < STRAIGHT_TOL &&
-           k1[3] < STRAIGHT_TOL && k1[4] < STRAIGHT_TOL){
-            return RK45_STOP;
-        }
 
         // K2 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
@@ -263,11 +257,11 @@
         // using them:
         for(i = 0; i < SYSTEM_SIZE; i++){
             errors[i] = h*(E1 * k1[i] +
-                                  E3 * k3[i] +
-                                  E4 * k4[i] +
-                                  E5 * k5[i] +
-                                  E6 * k6[i] +
-                                  E7 * k7[i]);
+                           E3 * k3[i] +
+                           E4 * k4[i] +
+                           E5 * k5[i] +
+                           E6 * k6[i] +
+                           E7 * k7[i]);
         }
 
         #ifdef DEBUG
@@ -275,7 +269,6 @@
             printf("ThreadId %d - Local: sol: %.20f, error: %.20f\n", threadId, solution[threadId], errors[threadId]);
         #endif
 
-        Real sk;
         err = 0;
         for(i = 0; i < SYSTEM_SIZE; i++){
             // The local estimated error has to satisfy the following
@@ -299,7 +292,7 @@
         // The sum of the local squared errors in now in errors[0], but the
         // global error is the square root of the mean of those local
         // errors: we finish here the computation and store it in err.
-        err = sqrt(err/(Real)SYSTEM_SIZE);
+        err = sqrt(err / (float)SYSTEM_SIZE);
 
         // For full information about the step size computation, please see
         // equation (4.13) and its surroundings in [1] and the notes in
@@ -314,7 +307,7 @@
 
         // Stabilization computations:
         fac11 = pow (err, expo1);
-        fac = fac11 / pow(facold,beta);
+        fac = fac11 / pow(facold, (float)beta);
         // We need the multiplying factor (always taking into account the
         // safe factor) to be between fac1 and fac2; i.e., we require
         // fac1 <= hnew/h <= fac2:

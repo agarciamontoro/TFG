@@ -103,8 +103,6 @@
 #define HORIZON {{ HORIZON }}
 #define DISK {{ DISK }}
 #define SPHERE {{ SPHERE }}
-#define STRAIGHT {{ STRAIGHT }}
-#define STRAIGHT_TOL {{ STRAIGHT_TOL }}
 
 #define horizonRadius {{ HORIZON_RADIUS }}
 #define innerDiskRadius {{ INNER_DISK_RADIUS }}
@@ -115,8 +113,7 @@ typedef {{ REAL }} Real;
 
 typedef enum solverStatus{
     RK45_SUCCESS,
-    RK45_FAILURE,
-    RK45_STOP
+    RK45_FAILURE
 } SolverStatus;
 
 #endif // __DEFINITIONS__

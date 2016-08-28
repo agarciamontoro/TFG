@@ -190,7 +190,6 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
        prevThetaCentered = initCond[1] - HALF_PI;
 
        // Local variable to know the status of the ray
-    //    bool success;
 
        // Current time
        Real x = x0;
@@ -199,20 +198,17 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
        while(status == SPHERE && x > xend){
            solverStatus = RK4Solve(x, x + resolution, initCond, &h, resolution, data);
 
-           if(solverStatus == RK45_STOP)
-               break;
-
            if(solverStatus == RK45_SUCCESS){
                currentR = initCond[0];
                currentThetaCentered = initCond[1] - HALF_PI;
 
                status = detectCollisions(prevThetaCentered,
-                   currentThetaCentered,
-                   prevR, currentR);
+                                         currentThetaCentered,
+                                         prevR, currentR);
 
-                   if(status == DISK){
-                       bisect(initCond, data, h);
-                   }
+               if(status == DISK){
+                   bisect(initCond, data, h);
+               }
            }
            else{
                status = HORIZON;
