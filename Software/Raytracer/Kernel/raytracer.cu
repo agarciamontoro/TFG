@@ -135,7 +135,7 @@ __device__ int detectCollisions(Real prevThetaCentered,
 
 
 
-#include "Raytracer/Kernel/solver_alt.cu"
+#include "Raytracer/Kernel/solver.cu"
 
 __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                        Real hmax, void* devData, int dataSize,

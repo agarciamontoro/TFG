@@ -146,7 +146,7 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
     bool last  = false;
 
     // Retrieve the value of h
-    Real h;
+    Real h, half_h;
 
     // Declare a counter for the loops, in order not to declare it multiple
     // times :)
@@ -181,27 +181,24 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
         }
 
 
-        if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 4 && threadIdx.y == 2)
-            printf("%f\n", h);
-
         // See if we've collided with the horizon
         if(h == 0){
-            if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 4 && threadIdx.y == 2)
-                printf("Holi\n");
             return RK45_FAILURE;
         }
 
+        half_h = h*0.5;
+
         // K2 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h * 0.5 * k1[i];
+            y1[i] = y0[i] + half_h * k1[i];
         }
-        computeComponent(x0 + 0.5*h, y1, k2, data);
+        computeComponent(x0 + half_h, y1, k2, data);
 
         // K3 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h * 0.5 * k2[i];
+            y1[i] = y0[i] + half_h * k2[i];
         }
-        computeComponent(x0 + 0.5*h, y1, k3, data);
+        computeComponent(x0 + half_h, y1, k3, data);
 
         // K4 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
@@ -211,7 +208,7 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
 
 
         for(i = 0; i < SYSTEM_SIZE; i++){
-            y0[i] = y0[i] + (1./6.) * h * (k1[i] + 2*k2[i] + 2*k3[i] + k4[i]);
+            y0[i] = y0[i] + (1./6.) * h * (k1[i] + 2*(k2[i] + k3[i]) + k4[i]);
         }
 
         // Advance current time!

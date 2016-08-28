@@ -95,10 +95,6 @@
     // (see reduction technique in the only loop you will find in this function
     // code to know why): then, we can give some rest to the threads that exceeds the number of equations :)
 
-    // Shared array between the block threads to store intermediate
-    // solutions.
-    Real solution[SYSTEM_SIZE];
-
     // Loop variable to manage the automatic step size detection.
     // TODO: Implement the hinit method
     Real hnew;
@@ -108,12 +104,12 @@
     Real integrationDirection = xend - x0 > 0. ? +1. : -1.;
     hmax = abs(hmax);
 
+    size_t sizeBytes = sizeof(Real)*SYSTEM_SIZE;
+
     // Each thread of each block has to know only the initial condition
     // associated to its own equation:
     Real y0[SYSTEM_SIZE];
-    for(int i = 0; i < SYSTEM_SIZE; i++){
-        y0[i]= initCond[i];
-    }
+    memcpy(y0, initCond, sizeBytes);
 
     // Auxiliar arrays to store the intermediate K1, ..., K7 computations
     Real k1[SYSTEM_SIZE],
@@ -243,10 +239,7 @@
 
         // The Butcher's table (Table 5.2, [1]), shows that the estimated
         // solution has exactly the same coefficients as the ones used to
-        // compute K7. Then, the solution is the last computed y1:
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            solution[i] = y1[i];
-        }
+        // compute K7. Then, the solution is the last computed y1!
 
         // The local error of each equation is computed as the difference
         // between the solution y and the higher order solution \hat{y}, as
@@ -277,7 +270,7 @@
             // hand size of this inequality to use it as a scale in the local
             // error computation; this way we "normalize" the error and we can
             // compare it against 1.
-            sk = atoli + rtoli*fmax(fabs(initCond[i]), fabs(solution[i]));
+            sk = atoli + rtoli*fmax(fabs(initCond[i]), fabs(y1[i]));
 
             // Compute the square of the local estimated error (scaled with the
             // previous factor), as the global error will be computed as in
@@ -355,9 +348,7 @@
 
             // Necessary update for next steps: the local y0 variable holds
             // the current initial condition (now the computed solution)
-            for(i = 0; i < SYSTEM_SIZE; i++){
-                y0[i] = solution[i];
-            }
+            memcpy(y0, y1, sizeBytes);
 
             // This step was accepted, so it was not rejected, so reject is
             // false. SCIENCE.
@@ -386,9 +377,7 @@
 
     // Aaaaand that's all, folks! Update system value (each thread its
     // result) in the global memory :)
-    for(int i = 0; i < SYSTEM_SIZE; i++){
-        initCond[i] = solution[i];
-    }
+    memcpy(initCond, y0, sizeBytes);
 
     return RK45_SUCCESS;
 }
