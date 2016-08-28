@@ -30,9 +30,9 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
     float f1 = SOLVER_DELTA / (fabs(vel[0] / pos[0]) + fabs(vel[1]) +
                                fabs(vel[2]));
 
-    float f2 = fabs((pos[0] - horizonRadius) / (0.5*vel[0]));
+    float f2 = (pos[0] - horizonRadius) / fabs((2*vel[0]));
 
-    return fmin(hmax, fmin(f1, f2));
+    return - fmin(hmax, fmin(f1, f2));
 }
 
 
@@ -169,14 +169,8 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
         computeComponent(x0, y0, k1, data);
 
         // Compute the step size
-        h = getStepSize(y0, k1, hmax);
-        if(blockIdx.x == 750 && blockIdx.y == 170)
-            printf("%f\n", h);
+        h = getStepSize(y0, k1, fabs(hmax));
 
-        // See if we've collided with the horizon
-        if(h == 0){
-            return RK45_FAILURE;
-        }
 
         // PHASE 0. Check if the current time x_0 plus the current step
         // (multiplied by a safety factor to prevent steps too small)
@@ -186,61 +180,42 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
             last = true;
         }
 
+
+        if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 4 && threadIdx.y == 2)
+            printf("%f\n", h);
+
+        // See if we've collided with the horizon
+        if(h == 0){
+            if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 4 && threadIdx.y == 2)
+                printf("Holi\n");
+            return RK45_FAILURE;
+        }
+
         // K2 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h * A21 * k1[i];
+            y1[i] = y0[i] + h * 0.5 * k1[i];
         }
-        computeComponent(x0 + C2*h, y1, k2, data);
+        computeComponent(x0 + 0.5*h, y1, k2, data);
 
         // K3 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h*(A31 * k1[i] +
-                               A32 * k2[i]);
+            y1[i] = y0[i] + h * 0.5 * k2[i];
         }
-        computeComponent(x0 + C3*h, y1, k3, data);
+        computeComponent(x0 + 0.5*h, y1, k3, data);
 
         // K4 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h*(A41 * k1[i] +
-                               A42 * k2[i] +
-                               A43 * k3[i]);
+            y1[i] = y0[i] + h * k3[i];
         }
-        computeComponent(x0 + C4*h, y1, k4, data);
+        computeComponent(x0 + h, y1, k4, data);
 
-        // K5 computation
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h*( A51 * k1[i] +
-                                A52 * k2[i] +
-                                A53 * k3[i] +
-                                A54 * k4[i]);
-        }
-        computeComponent(x0 + C5*h, y1, k5, data);
 
-        // K6 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h*(A61 * k1[i] +
-                               A62 * k2[i] +
-                               A63 * k3[i] +
-                               A64 * k4[i] +
-                               A65 * k5[i]);
-        }
-        computeComponent(x0 + C6*h, y1, k6, data);
-
-        // K7 computation.
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h*(A71 * k1[i] +
-                               A73 * k3[i] +
-                               A74 * k4[i] +
-                               A75 * k5[i] +
-                               A76 * k6[i]);
+            y0[i] = y0[i] + (1./6.) * h * (k1[i] + 2*k2[i] + 2*k3[i] + k4[i]);
         }
 
         // Advance current time!
         x0 += h;
-
-        // Necessary update for next steps: the local y0 variable holds
-        // the current initial condition (now the computed solution)
-        memcpy(y0, y1, sizeof(Real)*SYSTEM_SIZE);
     }while(!last);
 
     // Finally, let the user know everything's gonna be alright
