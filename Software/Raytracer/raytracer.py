@@ -119,16 +119,16 @@ class RayTracer(metaclass=LoggingClass):
         self.numPixels = self.imageRows * self.imageCols
 
         # Compute the block and grid sizes: given a fixed block dimension of 64
-        # threads (in just 1D), the number of blocks are computed to get at
-        # least as much threads as pixels
+        # threads (in an 8x8 shape), the number of blocks are computed to get
+        # at least as much threads as pixels
 
-        # Fixed size block dimension: 64x1x1
+        # Fixed size block dimension: 8x8x1
         self.blockDimCols = 8
         self.blockDimRows = 8
         self.blockDim = (self.blockDimCols, self.blockDimRows, 1)
 
         # Grid dimension computed to cover all the pixels with a thread (there
-        # will be idle threads)
+        # will be some idle threads)
         self.gridDimCols = int(((self.imageCols - 1) / self.blockDimCols) + 1)
         self.gridDimRows = int(((self.imageRows - 1) / self.blockDimRows) + 1)
 

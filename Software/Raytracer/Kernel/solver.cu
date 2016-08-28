@@ -185,20 +185,20 @@
         // solution, using the Butcher's table described in Table 5.2 ([1])
 
         // K1 computation
-        computeComponent(x0, y0, k1, data);
+        computeComponent(y0, k1, data);
 
         // K2 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
             y1[i] = y0[i] + h * A21 * k1[i];
         }
-        computeComponent(x0 + C2*h, y1, k2, data);
+        computeComponent(y1, k2, data);
 
         // K3 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
             y1[i] = y0[i] + h*(A31 * k1[i] +
                                A32 * k2[i]);
         }
-        computeComponent(x0 + C3*h, y1, k3, data);
+        computeComponent(y1, k3, data);
 
         // K4 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
@@ -206,7 +206,7 @@
                                A42 * k2[i] +
                                A43 * k3[i]);
         }
-        computeComponent(x0 + C4*h, y1, k4, data);
+        computeComponent(y1, k4, data);
 
         // K5 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
@@ -215,7 +215,7 @@
                                 A53 * k3[i] +
                                 A54 * k4[i]);
         }
-        computeComponent(x0 + C5*h, y1, k5, data);
+        computeComponent(y1, k5, data);
 
         // K6 computation
         for(i = 0; i < SYSTEM_SIZE; i++){
@@ -225,7 +225,7 @@
                                A64 * k4[i] +
                                A65 * k5[i]);
         }
-        computeComponent(x0 + C6*h, y1, k6, data);
+        computeComponent(y1, k6, data);
 
         // K7 computation.
         for(i = 0; i < SYSTEM_SIZE; i++){
@@ -235,7 +235,7 @@
                                A75 * k5[i] +
                                A76 * k6[i]);
         }
-        computeComponent(x0 + C7*h, y1, k7, data);
+        computeComponent(y1, k7, data);
 
         // The Butcher's table (Table 5.2, [1]), shows that the estimated
         // solution has exactly the same coefficients as the ones used to
@@ -396,11 +396,12 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step){
     Real yVelocity[SYSTEM_SIZE];
 
     // It is necessary to maintain the previous theta to know the direction
-    // change
+    // change; we'll store it centered in zero, and not in pi/2 in order to
+    // removes some useless substractions in the main loop.
     Real prevThetaCentered, currentThetaCentered;
     prevThetaCentered = yCurrent[1] - HALF_PI;
 
-    // The first step shall be to the other side and half of its length;
+    // The first step shall be to the other side and half of its length.
     step = - step * 0.5;
 
     // Loop variables, to control the inner for and to control the iterations
@@ -419,7 +420,7 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step){
     //      iterations exceeds a manimum number previously defined
     while(fabs(prevThetaCentered) > BISECT_TOL && iter < BISECT_MAX_ITER){
         // 1. Compute value of the function in the current point
-        computeComponent(0, yCurrent, yVelocity, data);
+        computeComponent(yCurrent, yVelocity, data);
 
         // 1. Advance point with Euler algorithm
         // TODO: See if this is more efficient than splitting between threads
@@ -427,12 +428,14 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step){
             yCurrent[i] = yCurrent[i] + yVelocity[i]*step;
         }
 
+        // Compute the current theta, centered in zero
         currentThetaCentered = yCurrent[1] - HALF_PI;
 
         // 2. Change the step direction whenever theta crosses the target,
         // pi/2, and make it half of the previous one.
         step = step * sign(currentThetaCentered * prevThetaCentered) * 0.5;
 
+        // Update the previous theta, centered in zero, with the current one
         prevThetaCentered = currentThetaCentered;
 
         iter++;
