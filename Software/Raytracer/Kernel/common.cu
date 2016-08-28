@@ -99,6 +99,10 @@
 #define beta 0.04
 #define uround 2.3e-16
 
+// RK45_alt parameters
+#define SOLVER_DELTA 0.03125
+#define SOLVER_EPSILON 1e-06
+
 // Convention for ray's status
 #define HORIZON 2
 #define DISK 1

@@ -66,9 +66,6 @@ __device__ void getConservedQuantities(Real pTheta, Real pPhi, Real* b,
 
 __global__ void setInitialConditions(void* devInitCond,void* devConstants,
                                      Real pixelWidth, Real pixelHeight){
-    // Unique identifier of this thread
-    int globalThreadId = blockIdx.x * blockDim.x + threadIdx.x;
-
     // Compute pixel's row and col of this thread
     int row = blockDim.y * blockIdx.y + threadIdx.y;
     int col = blockDim.x * blockIdx.x + threadIdx.x;
@@ -138,7 +135,7 @@ __device__ int detectCollisions(Real prevThetaCentered,
 
 
 
-#include "Raytracer/Kernel/solver.cu"
+#include "Raytracer/Kernel/solver_alt.cu"
 
 __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                        Real hmax, void* devData, int dataSize,

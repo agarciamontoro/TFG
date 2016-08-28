@@ -213,6 +213,10 @@ class RayTracer(metaclass=LoggingClass):
             "BETA": 0.04,
             "UROUND": 2.3e-16,
 
+            # Constants for the alternative version of the solver
+            "SOLVER_DELTA": 0.03125,
+            "SOLVER_EPSILON": 1e-6,
+
             # Convention for ray status
             "SPHERE": SPHERE,  # A ray that has not yet collide with anything.
             "DISK": DISK,  # A ray that has collided with the disk.

@@ -21,7 +21,7 @@ class BlackHole:
         self.b2 = self._b0(self.r1)
 
         # Horizon radius
-        self.horizonRadius = (2 + sqrt(4 - 4*self.a2)) / 2
+        self.horizonRadius = 1 + sqrt(1 - self.a2)
 
         # Disk inner and outer radius
         self.innerDiskRadius = innerDiskRadius

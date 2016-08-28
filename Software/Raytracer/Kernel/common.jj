@@ -99,6 +99,10 @@
 #define beta {{ BETA }}
 #define uround {{ UROUND }}
 
+// RK45_alt parameters
+#define SOLVER_DELTA {{ SOLVER_DELTA }}
+#define SOLVER_EPSILON {{ SOLVER_EPSILON }}
+
 // Convention for ray's status
 #define HORIZON {{ HORIZON }}
 #define DISK {{ DISK }}
