@@ -278,7 +278,9 @@
             // hand size of this inequality to use it as a scale in the local
             // error computation; this way we "normalize" the error and we can
             // compare it against 1.
-            sk = atoli + rtoli*fmax(fabs(initCond[i]), fabs(y1[i]));
+            sk = atoli + rtoli*fmax(fabs(y0[i]), fabs(y1[i]));
+            // if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
+            // printf("x: %.30f, iter: %d, initCond[%d] = %.30f\n", x0, *iterations, i, initCond[i]);
 
             // Compute the square of the local estimated error (scaled with the
             // previous factor), as the global error will be computed as in
@@ -286,22 +288,20 @@
             // local scaled errors.
             sqr = (errors[i])/sk;
             errors[i] = sqr*sqr;
-            if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
-            printf("x: %.30f, iter: %d, errors[%d] = %.30f\n", x0, *iterations, i, errors[i]);
 
             err += errors[i];
         }
 
-        if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
-            printf("x: %.30f, iter: %d, ERRRRRR1: %.30f\n", x0, *iterations, err);
+        // if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
+        //     printf("x: %.30f, iter: %d, ERRRRRR1: %.30f\n", x0, *iterations, err);
 
         // The sum of the local squared errors in now in errors[0], but the
         // global error is the square root of the mean of those local
         // errors: we finish here the computation and store it in err.
         err = sqrt(err / SYSTEM_SIZE);
 
-        if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
-            printf("x: %.30f, iter: %d, ERRRRRR2: %.30f\n", x0, *iterations, err);
+        // if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
+        //     printf("x: %.30f, iter: %d, ERRRRRR2: %.30f\n", x0, *iterations, err);
 
         // For full information about the step size computation, please see
         // equation (4.13) and its surroundings in [1] and the notes in
