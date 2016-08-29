@@ -133,102 +133,102 @@ __global__ void setInitialConditions(void* devInitCond,void* devConstants,
 
 __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                        Real hmax, void* devData, int dataSize,
-                       void* devStatus, Real resolution){
-   // Compute pixel's row and col of this thread
-   int row = blockDim.y * blockIdx.y + threadIdx.y;
-   int col = blockDim.x * blockIdx.x + threadIdx.x;
+                       void* devStatus, Real resolutionOrig){
+    // Compute pixel's row and col of this thread
+    int row = blockDim.y * blockIdx.y + threadIdx.y;
+    int col = blockDim.x * blockIdx.x + threadIdx.x;
 
-   if(row < IMG_ROWS && col < IMG_COLS){
-       // Compute pixel unique identifier for this thread
-       int pixel = row*IMG_COLS + col;
+    if(row < IMG_ROWS && col < IMG_COLS){
+    // Compute pixel unique identifier for this thread
+    int pixel = row*IMG_COLS + col;
 
-       // Array of status flags: at the output, the (x,y)-th element will be 0
-       // if any error ocurred (namely, the step size was made too small) and
-       // 1 if the computation succeded
-       int* globalStatus = (int*) devStatus;
-       globalStatus += pixel;
-       int status = *globalStatus;
+    // Array of status flags: at the output, the (x,y)-th element will be 0
+    // if any error ocurred (namely, the step size was made too small) and
+    // 1 if the computation succeded
+    int* globalStatus = (int*) devStatus;
+    globalStatus += pixel;
+    int status = *globalStatus;
 
-       // Retrieve the position where the initial conditions this block will
-       // work with are.
-       // Each block, absolutely identified in the grid by blockId, works with
-       // only one initial condition (that has N elements, as N equations are
-       // in the system). Then, the position of where these initial conditions
-       // are stored in the serialized vector can be computed as blockId * N.
-       Real* globalInitCond = (Real*) devInitCond;
-       globalInitCond += pixel * SYSTEM_SIZE;
+    // Retrieve the position where the initial conditions this block will
+    // work with are.
+    // Each block, absolutely identified in the grid by blockId, works with
+    // only one initial condition (that has N elements, as N equations are
+    // in the system). Then, the position of where these initial conditions
+    // are stored in the serialized vector can be computed as blockId * N.
+    Real* globalInitCond = (Real*) devInitCond;
+    globalInitCond += pixel * SYSTEM_SIZE;
 
-       // Pointer to the additional data array used by computeComponent
-       Real* globalData = (Real*) devData;
-       globalData += pixel * dataSize;
+    // Pointer to the additional data array used by computeComponent
+    Real* globalData = (Real*) devData;
+    globalData += pixel * dataSize;
 
-       // Shared arrays to store the initial conditions and the additional
-       // data
-       Real initCond[SYSTEM_SIZE], data[DATA_SIZE];
+    // Shared arrays to store the initial conditions and the additional
+    // data
+    Real initCond[SYSTEM_SIZE], data[DATA_SIZE];
 
-       // Retrieve the data from global to local memory :)
-       memcpy(initCond, globalInitCond, sizeof(Real)*SYSTEM_SIZE);
-       memcpy(data, globalData, sizeof(Real)*DATA_SIZE);
+    // Retrieve the data from global to local memory :)
+    memcpy(initCond, globalInitCond, sizeof(Real)*SYSTEM_SIZE);
+    memcpy(data, globalData, sizeof(Real)*DATA_SIZE);
 
-       // Initialize previous theta and r to the initial conditions
-       Real prevR, currentR;
-       int prevThetaSign, currentThetaSign;
+    // Initialize previous theta and r to the initial conditions
+    Real prevR, currentR;
+    int prevThetaSign, currentThetaSign;
 
-       prevR = initCond[0];
-       prevThetaSign = sign(initCond[1] - HALF_PI);
+    prevR = initCond[0];
+    prevThetaSign = sign(initCond[1] - HALF_PI);
 
-       // Local variable to know the status of the ray
+    // Local variable to know the status of the ray
 
-       // Current time
-       Real x = x0;
-       SolverStatus solverStatus;
-       Real prevInit[SYSTEM_SIZE];
+    // Current time
+    Real x = x0;
+    SolverStatus solverStatus;
+    Real prevInit[SYSTEM_SIZE];
 
-       int iterations = 0;
+    int iterations = 0;
 
-       float facold = 1.0E-4;
+    float facold = 1.0e-4;
+    Real resolution;
 
-       while(status == SPHERE && x > xend){
-        //    if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
-        //         printf("x: %.10f, iter: %d, h: %.10f, r: %.10f, theta: %.10f, phi: %.10f, pr: %.10f, ptheta: %.10f\n", x, iterations, h, initCond[0], initCond[1], initCond[2], initCond[3], initCond[4]);
+    while(status == SPHERE && x > xend){
+        resolution = - abs((initCond[1] - HALF_PI) / (initCond[4]));
 
-           solverStatus = RK4Solve(&x, x + resolution, initCond, &h, 0.1, data, &iterations, &facold);
+        if(resolution > MIN_RESOL)
+            resolution = MIN_RESOL;
+        if(resolution < MAX_RESOL)
+            resolution = MAX_RESOL;
 
-        //    if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
-        //         printf("x: %.10f, iter: %d, h: %.10f, r: %.10f, theta: %.10f, phi: %.10f, pr: %.10f, ptheta: %.10f\n\n---\n\n", x, iterations, h, initCond[0], initCond[1], initCond[2], initCond[3], initCond[4]);
+        solverStatus = RK4Solve(&x, x + resolution, initCond, &h, resolution,
+                                data, &iterations, &facold);
 
-           if(solverStatus == RK45_SUCCESS){
-               currentR = initCond[0];
-               currentThetaSign = sign(initCond[1] - HALF_PI);
+        if(solverStatus == RK45_SUCCESS){
+            currentR = initCond[0];
+            currentThetaSign = sign(initCond[1] - HALF_PI);
 
-               if(prevThetaSign != currentThetaSign){
-                   memcpy(prevInit, initCond, sizeof(Real)*SYSTEM_SIZE);
-                   bisect(prevInit, data, resolution);
+            if(prevThetaSign != currentThetaSign){
+                memcpy(prevInit, initCond, sizeof(Real)*SYSTEM_SIZE);
+                bisect(prevInit, data, resolution);
 
-                   currentR = prevInit[0];
+                currentR = prevInit[0];
 
-                   if(innerDiskRadius < currentR && currentR < outerDiskRadius)
-                        status = DISK;
-               }
-           }
-           else{
-               status = HORIZON;
-           }
+                if(innerDiskRadius < currentR && currentR < outerDiskRadius){
+                    status = DISK;
+                    memcpy(initCond, prevInit, sizeof(Real)*SYSTEM_SIZE);
+                }
+            }
+        }
+        else{
+            status = HORIZON;
+        }
 
-           prevR = currentR;
-           prevThetaSign = currentThetaSign;
+        prevR = currentR;
+        prevThetaSign = currentThetaSign;
 
-        //    x += resolution;
+    } // While globalStatus == SPHERE and x > xend
 
-       } // While globalStatus == SPHERE and x > xend
+    *globalStatus = status;
 
-        //   if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
-        //        printf("x: %.10f, iter: %d, h: %.10f, r: %.10f, theta: %.10f, phi: %.10f, pr: %.10f, ptheta: %.10f\n", x, iterations, h, initCond[0], initCond[1], initCond[2], initCond[3], initCond[4]);
+    // Update the data in global memory
+    memcpy(globalInitCond, initCond, sizeof(Real)*SYSTEM_SIZE);
 
-       *globalStatus = iterations;
-
-       // Update the data in global memory
-       memcpy(globalInitCond, initCond, sizeof(Real)*SYSTEM_SIZE);
-
-   } // If threadId < NUM_PIXELS
+    } // If threadId < NUM_PIXELS
 }

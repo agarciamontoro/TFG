@@ -98,6 +98,8 @@
 #define fac2_inverse {{ FAC_2_INV }}
 #define beta {{ BETA }}
 #define uround {{ UROUND }}
+#define MAX_RESOL {{ MAX_RESOL }}
+#define MIN_RESOL {{ MIN_RESOL }}
 
 // RK45_alt parameters
 #define SOLVER_DELTA {{ SOLVER_DELTA }}

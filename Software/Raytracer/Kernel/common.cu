@@ -98,6 +98,8 @@
 #define fac2_inverse 0.1
 #define beta 0.04
 #define uround 2.3e-16
+#define MAX_RESOL -2.0
+#define MIN_RESOL -0.1
 
 // RK45_alt parameters
 #define SOLVER_DELTA 0.03125

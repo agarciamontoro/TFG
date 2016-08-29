@@ -166,9 +166,8 @@
     do{
         *iterations = *iterations + 1;
 
-
-        if(blockIdx.x == 50 && blockIdx.y == 50 && threadIdx.x == 0 && threadIdx.y == 0)
-            printf("x: %.30f, iter: %d, h: %.30f, r: %.30f, theta: %.30f, phi: %.30f, pr: %.30f, ptheta: %.30f\n", x0, *iterations, h, y0[0], y0[1], y0[2], y0[3], y0[4]);
+        // if(blockIdx.x == 12 && blockIdx.y == 34 && threadIdx.x == 4 && threadIdx.y == 6)
+        //     printf("x: %.30f, iter: %d, h: %.30f, r: %.30f, theta: %.30f, phi: %.30f, pr: %.30f, ptheta: %.30f\n", x0, *iterations, h, y0[0], y0[1], y0[2], y0[3], y0[4]);
 
         // TODO: Check that this flag is really necessary
         if (0.1 * abs(h) <= abs(x0) * uround){
@@ -270,6 +269,10 @@
             printf("ThreadId %d - Local: sol: %.30f, error: %.30f\n", threadId, solution[threadId], errors[threadId]);
         #endif
 
+
+
+        // if(blockIdx.x == 12 && blockIdx.y == 34 && threadIdx.x == 4 && threadIdx.y == 6)
+        //     printf("INITCOND x: %.30f, iter: %d, h: %.30f, r: %.30f, theta: %.30f, phi: %.30f, pr: %.30f, ptheta: %.30f\n", x0, *iterations, h, initCond[0], initCond[1], initCond[2], initCond[3], initCond[4]);
         err = 0;
         for(i = 0; i < SYSTEM_SIZE; i++){
             // The local estimated error has to satisfy the following
@@ -373,7 +376,7 @@
 
         // Final step size update!
         // if(!last)
-            h = hnew;
+        h = hnew;
 
         #ifdef DEBUG
             if(threadId == 0){

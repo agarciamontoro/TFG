@@ -56,7 +56,7 @@ if __name__ == '__main__':
     rayTracer = RayTracer(camera, kerr, blackHole)
 
     # Draw the image
-    rayTracer.rayTrace(-90, stepsPerKernel=90, resolution=-1)
+    rayTracer.rayTrace(-90, kernelCalls=1)
     print(rayTracer.totalTime)
     rayTracer.synchronise()
     # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
