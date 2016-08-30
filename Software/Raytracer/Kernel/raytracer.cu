@@ -187,15 +187,15 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
     int iterations = 0;
 
     float facold = 1.0e-4;
-    Real resolution;
+    Real resolution = -1.0;
 
     while(status == SPHERE && x > xend){
-        resolution = - abs((initCond[1] - HALF_PI) / (initCond[4]));
-
-        if(resolution > MIN_RESOL)
-            resolution = MIN_RESOL;
-        if(resolution < MAX_RESOL)
-            resolution = MAX_RESOL;
+        // resolution = - abs((initCond[1] - HALF_PI) / (initCond[4]));
+        //
+        // if(resolution > MIN_RESOL)
+        //     resolution = MIN_RESOL;
+        // if(resolution < MAX_RESOL)
+        //     resolution = MAX_RESOL;
 
         solverStatus = RK4Solve(&x, x + resolution, initCond, &h, resolution,
                                 data, &iterations, &facold);
