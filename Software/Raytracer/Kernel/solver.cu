@@ -82,8 +82,8 @@
  *                       2.3E-16. TODO: This detection is not yet implemented,
  *                       so this variable is useless.
  */
- __device__ SolverStatus RK4Solve(Real x0, Real xend, Real* initCond,
-                          Real* hOrig, Real hmax, Real* data){
+ __device__ SolverStatus RK4Solve(Real* globalX0, Real xend, Real* initCond,
+                          Real* hOrig, Real hmax, Real* data, float* globalFacold){
     #ifdef DEBUG
         printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)initCond)[0], ((Real*)initCond)[1]);
     #endif
@@ -98,6 +98,10 @@
     // Loop variable to manage the automatic step size detection.
     // TODO: Implement the hinit method
     Real hnew;
+
+    // Retrieve the value of h
+    Real h = *hOrig;
+    Real x0 = *globalX0;
 
     // Check the direction of the integration: to the future or to the past
     // and get the absolute value of the maximum step size.
@@ -134,7 +138,7 @@
     // They are basically factors to maintain the new step size in known
     // bounds, but you can see the corresponding chunk of code far below to
     // know more about the puropose of each of these variables.
-    float facold = 1.0E-4;
+    float facold = *globalFacold;
     float expo1 = 0.2 - beta * 0.75;
     float fac11, fac;
 
@@ -145,9 +149,6 @@
     // estimation exceeds 1.
     bool last  = false;
     Real reject = false;
-
-    // Retrieve the value of h
-    Real h = *hOrig;
 
     // Declare a counter for the loops, in order not to declare it multiple
     // times :)
@@ -176,10 +177,10 @@
         // PHASE 0. Check if the current time x_0 plus the current step
         // (multiplied by a safety factor to prevent steps too small)
         // exceeds the end time x_{end}.
-        if ((x0 + 1.01*h - xend) * integrationDirection > 0.0){
-            h = xend - x0;
-            last = true;
-        }
+        // if ((x0 + 1.01*h - xend) * integrationDirection > 0.0){
+        //     h = xend - x0;
+        //     last = true;
+        // }
 
         // PHASE 1. Compute the K1, ..., K7 components and the estimated
         // solution, using the Butcher's table described in Table 5.2 ([1])
@@ -356,7 +357,7 @@
         }
 
         // Final step size update!
-        if(!last)
+        // if(!last)
             h = hnew;
 
         #ifdef DEBUG
@@ -369,11 +370,14 @@
                 }
             }
         #endif
-    }while(!last);
+    }while(x0 > xend);
 
     // Finally, let the user know everything's gonna be alright
     // *success = true;
     *hOrig = h;
+
+    *globalFacold = facold;
+    *globalX0 = x0;
 
     // Aaaaand that's all, folks! Update system value (each thread its
     // result) in the global memory :)

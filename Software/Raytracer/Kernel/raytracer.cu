@@ -118,21 +118,21 @@ __global__ void setInitialConditions(void* devInitCond,void* devConstants,
     }
 }
 
-__device__ int detectCollisions(Real prevThetaCentered,
-                                Real currentThetaCentered, Real prevR,
-                                Real currentR){
-    if (currentR <= horizonRadius){
-        return HORIZON;
-    }
-
-    if(prevThetaCentered*currentThetaCentered < 0 &&
-       prevR > innerDiskRadius && currentR > innerDiskRadius &&
-       prevR < outerDiskRadius && currentR < outerDiskRadius){
-        return DISK;
-    }
-
-    return SPHERE;
-}
+//__device__ int detectCollisions(Real prevThetaCentered,
+//                                Real currentThetaCentered, Real prevR,
+//                                Real currentR){
+//    if (currentR <= horizonRadius){
+//        return HORIZON;
+//    }
+//
+//    if(prevThetaCentered*currentThetaCentered < 0 &&
+//       prevR > innerDiskRadius && currentR > innerDiskRadius &&
+//       prevR < outerDiskRadius && currentR < outerDiskRadius){
+//        return DISK;
+//    }
+//
+//    return SPHERE;
+//}
 
 
 __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
@@ -178,27 +178,36 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
        Real prevThetaCentered, prevR, currentThetaCentered, currentR;
 
        prevR = initCond[0];
-       prevThetaCentered = initCond[1] - HALF_PI;
+       prevThetaCentered = sign(initCond[1] - HALF_PI);
 
        // Local variable to know the status of the ray
+
+       Real prevInit[SYSTEM_SIZE];
 
        // Current time
        Real x = x0;
        SolverStatus solverStatus;
 
+       float facold = 1.e-4;
+
        while(status == SPHERE && x > xend){
-           solverStatus = RK4Solve(x, x + resolution, initCond, &h, resolution, data);
+
+           solverStatus = RK4Solve(&x, x + resolution, initCond, &h, resolution, data, &facold);
 
            if(solverStatus == RK45_SUCCESS){
                currentR = initCond[0];
-               currentThetaCentered = initCond[1] - HALF_PI;
+               currentThetaCentered = sign(initCond[1] - HALF_PI);
 
-               status = detectCollisions(prevThetaCentered,
-                                         currentThetaCentered,
-                                         prevR, currentR);
+               if(currentThetaCentered != prevThetaCentered){
+                   memcpy(prevInit, initCond, sizeof(Real)*SYSTEM_SIZE);
+                   bisect(prevInit, data, resolution);
 
-               if(status == DISK){
-                   bisect(initCond, data, h);
+                   currentR = prevInit[0];
+
+                   if(innerDiskRadius < currentR && currentR < outerDiskRadius){
+                       status = DISK;
+                       memcpy(initCond, prevInit, sizeof(Real)*SYSTEM_SIZE);
+                   }
                }
            }
            else{
@@ -208,7 +217,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
            prevR = currentR;
            prevThetaCentered = currentThetaCentered;
 
-           x += resolution;
+        //    x += resolution;
 
        } // While globalStatus == SPHERE and x > xend
 
