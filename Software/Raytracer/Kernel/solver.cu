@@ -170,7 +170,7 @@
         //     printf("x: %.30f, iter: %d, h: %.30f, r: %.30f, theta: %.30f, phi: %.30f, pr: %.30f, ptheta: %.30f\n", x0, *iterations, h, y0[0], y0[1], y0[2], y0[3], y0[4]);
 
         // TODO: Check that this flag is really necessary
-        if (0.1 * abs(h) <= abs(x0) * uround){
+        if (0.1 * abs(h) <= abs(x0) * uround || (y0[0] - horizonRadius <= 1e-3)){
             // Let the user knwo the final step
             *hOrig = h;
 
