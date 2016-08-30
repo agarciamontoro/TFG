@@ -169,7 +169,9 @@
         // if(blockIdx.x == 12 && blockIdx.y == 34 && threadIdx.x == 4 && threadIdx.y == 6)
         //     printf("x: %.30f, iter: %d, h: %.30f, r: %.30f, theta: %.30f, phi: %.30f, pr: %.30f, ptheta: %.30f\n", x0, *iterations, h, y0[0], y0[1], y0[2], y0[3], y0[4]);
 
-        // TODO: Check that this flag is really necessary
+        // Check that the step size is not too small and that the horizon is
+        // not too near. Although the last condition belongs to the raytracer
+        // logic, it HAS to be checked here.
         if (0.1 * abs(h) <= abs(x0) * uround || (y0[0] - horizonRadius <= 1e-3)){
             // Let the user knwo the final step
             *hOrig = h;
@@ -410,8 +412,10 @@ __device__ int sign(Real x){
 }
 
 
+#include "Raytracer/Kernel/solver_alt.cu"
+
 // Given a system point, p1, and a target,
-__device__ int bisect(Real* yOriginal, Real* data, Real step){
+__device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
     // Set the current point to the original point and declare an array to
     // store the value of the system function
     Real* yCurrent = yOriginal;
@@ -431,6 +435,12 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step){
     int i;
     int iter = 0;
 
+    int iterations = 0;
+    float facold = 1.0e-4;
+    Real h = -step*0.01;
+
+    SolverStatus solverStatus;
+
     // This loop implements the main behaviour of the algorithm; basically,
     // this is how it works:
     //      1. It advance the point one single step with the Euler algorithm.
@@ -439,16 +449,23 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step){
     //      magnitude of the previous one.
     //      3. It repeats 1 and 2 until the current theta is very near of Pi/2
     //      ("very near" is defined by BISECT_TOL) or until the number of
-    //      iterations exceeds a manimum number previously defined
+    //      iterations exceeds a maximum number previously defined.
     while(fabs(prevThetaCentered) > BISECT_TOL && iter < BISECT_MAX_ITER){
-        // 1. Compute value of the function in the current point
-        computeComponent(yCurrent, yVelocity, data);
+        // // 1. Compute value of the function in the current point
+        // computeComponent(yCurrent, yVelocity, data);
+        //
+        // // 1. Advance point with Euler algorithm
+        // // TODO: See if this is more efficient than splitting between threads
+        // for(i = 0; i < SYSTEM_SIZE; i++){
+        //     yCurrent[i] = yCurrent[i] + yVelocity[i]*step;
+        // }
+        solverStatus = RK4Solve_ALT(x, x + step, yCurrent, &h, step, data);
+        x += step;
 
-        // 1. Advance point with Euler algorithm
-        // TODO: See if this is more efficient than splitting between threads
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            yCurrent[i] = yCurrent[i] + yVelocity[i]*step;
-        }
+        if(solverStatus == RK45_FAILURE)
+            return -1;
+
+        // if(blockIdx.x == 43 && blockIdx.y == 124 && threadIdx.x == 0 && threadIdx.y == 0)
 
         // Compute the current theta, centered in zero
         currentThetaCentered = yCurrent[1] - HALF_PI;
@@ -462,5 +479,6 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step){
 
         iter++;
     } // 3. End of while
+
     return iter;
 }

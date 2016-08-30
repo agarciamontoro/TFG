@@ -138,6 +138,12 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
     int row = blockDim.y * blockIdx.y + threadIdx.y;
     int col = blockDim.x * blockIdx.x + threadIdx.x;
 
+    __shared__ int numBisects;
+
+    if(threadIdx.x == 0 && threadIdx.y == 0)
+        numBisects = 0;
+    __syncthreads();
+
     if(row < IMG_ROWS && col < IMG_COLS){
         // Compute pixel unique identifier for this thread
         int pixel = row*IMG_COLS + col;
@@ -206,13 +212,27 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
 
                 if(prevThetaSign != currentThetaSign){
                     memcpy(prevInit, initCond, sizeof(Real)*SYSTEM_SIZE);
-                    bisect(prevInit, data, resolution);
 
+                    // if(threadIdx.x == 0 && threadIdx.y == 0)
+                    //     printf("%10f - ", prevInit[0]);
+
+                    int st = bisect(prevInit, data, resolution, x);
+                    atomicAdd(&numBisects, st);
+
+                    // if(threadIdx.x == 0 && threadIdx.y == 0)
+                    //     printf("%10f, %10f\n", currentR, prevInit[0]);
+
+                    // printf("%d, %d, %d, %d, %d\n", blockIdx.x, blockIdx.y, threadIdx.x, threadIdx.y, st);
                     currentR = prevInit[0];
+
+                    if(st == -1){
+                        status = HORIZON;
+                        break;
+                    }
 
                     if(innerDiskRadius < currentR && currentR < outerDiskRadius){
                         status = DISK;
-                        // memcpy(initCond, prevInit, sizeof(Real)*SYSTEM_SIZE);
+                        memcpy(initCond, prevInit, sizeof(Real)*SYSTEM_SIZE);
                     }
                 }
             }
@@ -229,6 +249,11 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
 
         // Update the data in global memory
         memcpy(globalInitCond, initCond, sizeof(Real)*SYSTEM_SIZE);
+
+        __syncthreads();
+
+        if(threadIdx.x == 0 && threadIdx.y == 0)
+            printf("%d\n", numBisects);
 
     } // If threadId < NUM_PIXELS
 }
