@@ -415,7 +415,7 @@ __device__ int sign(Real x){
 #include "Raytracer/Kernel/solver_alt.cu"
 
 // Given a system point, p1, and a target,
-__device__ int bisect(Real* yOriginal, Real* data, Real step, Real x, int* innerIterations){
+__device__ int bisect(Real* yOriginal, Real* data, Real step, Real x/*, int* innerIterations*/){
     // Set the current point to the original point and declare an array to
     // store the value of the system function
     Real* yCurrent = yOriginal;
@@ -439,7 +439,7 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x, int* inner
     float facold = 1.0e-4;
     Real h = -step*0.01;
 
-    *innerIterations = 0;
+    // *innerIterations = 0;
 
     SolverStatus solverStatus;
 
@@ -461,7 +461,7 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x, int* inner
         // for(i = 0; i < SYSTEM_SIZE; i++){
         //     yCurrent[i] = yCurrent[i] + yVelocity[i]*step;
         // }
-        solverStatus = RK4Solve_ALT(x, x + step, yCurrent, &h, step, data, innerIterations);
+        solverStatus = RK4Solve_ALT(x, x + step, yCurrent, &h, step, data/*, innerIterations*/);
         x += step;
 
         if(solverStatus == RK45_FAILURE)

@@ -200,6 +200,8 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         float facold = 1.0e-4;
         Real resolution = -1.0;
 
+        int bisectIter;
+
         while(status == SPHERE && x > xend){
             // resolution = - abs((initCond[1] - HALF_PI) / (initCond[4]));
             //
@@ -220,11 +222,11 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
 
                     // if(threadIdx.x == 0 && threadIdx.y == 0)
                     //     printf("%10f - ", prevInit[0]);
-                    int innerIterations;
-                    int bisectIter = bisect(prevInit, data, resolution, x, &innerIterations);
-                    atomicAdd(&numBisects, 1);
-                    atomicAdd(&iterBisect, bisectIter);
-                    atomicAdd(&iterRK4, innerIterations);
+                    // int innerIterations;
+                    bisectIter = bisect(prevInit, data, resolution, x/*, &innerIterations*/);
+                    // atomicAdd(&numBisects, 1);
+                    // atomicAdd(&iterBisect, bisectIter);
+                    // atomicAdd(&iterRK4, innerIterations);
 
                     // if(threadIdx.x == 0 && threadIdx.y == 0)
                     //     printf("%10f, %10f\n", currentR, prevInit[0]);
@@ -257,10 +259,10 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         // Update the data in global memory
         memcpy(globalInitCond, initCond, sizeof(Real)*SYSTEM_SIZE);
 
-        __syncthreads();
+        // __syncthreads();
 
-        if(threadIdx.x == 0 && threadIdx.y == 0)
-            printf("%d, %d, %d\n", numBisects, iterBisect, iterRK4);
+        // if(threadIdx.x == 0 && threadIdx.y == 0)
+        //    printf("%d, %d, %d\n", numBisects, iterBisect, iterRK4);
 
     } // If threadId < NUM_PIXELS
 }

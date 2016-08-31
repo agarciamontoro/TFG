@@ -123,8 +123,8 @@ class RayTracer:  # (metaclass=LoggingClass):
         # at least as much threads as pixels
 
         # Fixed size block dimension: 8x8x1
-        self.blockDimCols = 16
-        self.blockDimRows = 16
+        self.blockDimCols = 8
+        self.blockDimRows = 8
         self.blockDim = (self.blockDimCols, self.blockDimRows, 1)
 
         # Grid dimension computed to cover all the pixels with a thread (there
