@@ -28,7 +28,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
     # Black hole constants
-    spin = 0.9999999999
+    spin = 0.0000000001
     innerDiskRadius = 9
     outerDiskRadius = 20
 

@@ -139,9 +139,14 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
     int col = blockDim.x * blockIdx.x + threadIdx.x;
 
     __shared__ int numBisects;
+    __shared__ int iterBisect;
+    __shared__ int iterRK4;
 
-    if(threadIdx.x == 0 && threadIdx.y == 0)
+    if(threadIdx.x == 0 && threadIdx.y == 0){
         numBisects = 0;
+        iterBisect = 0;
+        iterRK4 = 0;
+    }
     __syncthreads();
 
     if(row < IMG_ROWS && col < IMG_COLS){
@@ -215,9 +220,11 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
 
                     // if(threadIdx.x == 0 && threadIdx.y == 0)
                     //     printf("%10f - ", prevInit[0]);
-
-                    int st = bisect(prevInit, data, resolution, x);
-                    atomicAdd(&numBisects, st);
+                    int innerIterations;
+                    int bisectIter = bisect(prevInit, data, resolution, x, &innerIterations);
+                    atomicAdd(&numBisects, 1);
+                    atomicAdd(&iterBisect, bisectIter);
+                    atomicAdd(&iterRK4, innerIterations);
 
                     // if(threadIdx.x == 0 && threadIdx.y == 0)
                     //     printf("%10f, %10f\n", currentR, prevInit[0]);
@@ -225,7 +232,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                     // printf("%d, %d, %d, %d, %d\n", blockIdx.x, blockIdx.y, threadIdx.x, threadIdx.y, st);
                     currentR = prevInit[0];
 
-                    if(st == -1){
+                    if(bisectIter == -1){
                         status = HORIZON;
                         break;
                     }
@@ -253,7 +260,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         __syncthreads();
 
         if(threadIdx.x == 0 && threadIdx.y == 0)
-            printf("%d\n", numBisects);
+            printf("%d, %d, %d\n", numBisects, iterBisect, iterRK4);
 
     } // If threadId < NUM_PIXELS
 }

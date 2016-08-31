@@ -100,7 +100,7 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
  *                       so this variable is useless.
  */
  __device__ SolverStatus RK4Solve_ALT(Real x0, Real xend, Real* initCond,
-                          Real* hOrig, Real hmax, Real* data){
+                          Real* hOrig, Real hmax, Real* data, int* iterations){
     #ifdef DEBUG
         printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)initCond)[0], ((Real*)initCond)[1]);
     #endif
@@ -153,8 +153,6 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
     // times :)
     int i;
 
-    int iterations = 0;
-
     // Main loop. Each iteration computes a single step of the DOPRI5 algorithm, that roughly comprises the next phases:
     //  0. Check if this step has to be the last one.
     //  1. Computation of the system new value and the estimated error.
@@ -165,7 +163,7 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
     //          3.2.1 If this is the last step, finish.
     //          3.2.2 In any other case, iterate again.
     do{
-        iterations += 1;
+        *iterations = *iterations+1;
         // PHASE 1. Compute the K1, ..., K7 components and the estimated
         // solution, using the Butcher's table described in Table 5.2 ([1])
 
