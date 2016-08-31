@@ -67,7 +67,7 @@
 
 // Black hole's spin and its square
 #define __a  0.9999999999
-#define __a2 __a * __a
+#define __a2 0.9999999998
 
 // Camera constants
 #define __d 3
@@ -118,8 +118,13 @@
 typedef double Real;
 
 typedef enum solverStatus{
-    RK45_SUCCESS,
-    RK45_FAILURE
+    SOLVER_SUCCESS,
+    SOLVER_FAILURE
 } SolverStatus;
+
+// Sign function
+__device__ inline int sign(Real x){
+    return x < 0 ? -1 : +1;
+}
 
 #endif // __DEFINITIONS__

@@ -3,54 +3,6 @@
 
 #include "Raytracer/Kernel/common.cu"
 
-// __device__ Real Delta(Real r, Real r2){
-//     return r2 - 2*r + __a2;
-// }
-//
-// __device__ Real R(Real r, Real r2, Real b, Real q, Real D){
-//     Real _P = r2 + __a2 - __a*b;
-//     Real bMinusA = b - __a;
-//
-//     return _P*_P - D*(bMinusA*bMinusA + q);
-// }
-//
-// __device__ Real dbR(Real r, Real r2, Real b){
-//     return (4*b - 4*__a)*r - 2*b*r2;
-// }
-//
-// __device__ Real drR(Real r, Real r2, Real b, Real q){
-//     Real bMinusA = b - __a;
-//     return 4*r*(r2 - __a*b + __a2) - (q + bMinusA*bMinusA)*(2*r - 2);
-// }
-//
-// __device__ Real Theta(Real sinT2Inv, Real cosT2, Real b2, Real q){
-//     return q - cosT2*(b2*sinT2Inv - __a2);
-// }
-//
-// __device__ Real dbTheta(Real sinT2Inv, Real cosT2, Real b){
-//     return - 2 * b * cosT2 * sinT2Inv;
-// }
-//
-// __device__ Real dzTheta(Real sinT, Real sinT2, Real sinT2Inv, Real cosT, Real cosT2, Real b2){
-//     Real cosT3 = cosT2*cosT;
-//     Real sinT3 = sinT2*sinT;
-//
-//     return 2*cosT*((b2*sinT2Inv) - __a2)*sinT + (2*b2*cosT3)/(sinT3);
-// }
-//
-// __device__ Real drDelta(Real r){
-//     return 2*r - 2;
-// }
-//
-// __device__ Real rhoSquaredInv(Real r2, Real cosT2){
-//     return 1/(r2 + __a2*cosT2);
-// }
-//
-// __device__ Real dzRhoTimesRho(Real r2, Real sinT, Real cosT,
-//                                      Real cosT2){
-//     return - __a2*cosT*sinT;
-// }
-
 /**
 * Computes the value of the threadId-th component of the function
 * F(t) = (f1(t), ..., fn(t)) and stores it in the memory pointed by f

@@ -44,17 +44,13 @@ def spher2cart(points):
     return x, y, z
 
 
-# Kindly borrowed from http://stackoverflow.com/a/14267825
-def nextPowerOf2(x):
-    return 1 << (x-1).bit_length()
-
 SPHERE = 0
 DISK = 1
 HORIZON = 2
 STRAIGHT = 3
 
 # Dummy object for the camera (computation of the speed is done here)
-class Camera:  # (metaclass=LoggingClass):
+class Camera(metaclass=LoggingClass):
     def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize):
         # Define position
         self.r = r
@@ -103,7 +99,7 @@ class Camera:  # (metaclass=LoggingClass):
         self.beta = 0
 
 
-class RayTracer:  # (metaclass=LoggingClass):
+class RayTracer(metaclass=LoggingClass):
     def __init__(self, camera, kerr, blackHole, debug=False):
         self.debug = debug
         self.systemSize = 5
@@ -181,6 +177,7 @@ class RayTracer:  # (metaclass=LoggingClass):
 
             # Black hole constants
             "SPIN": self.blackHole.a,
+            "SPIN2": self.blackHole.a**2,
             "B1": self.blackHole.b1,
             "B2": self.blackHole.b2,
             "HORIZON_RADIUS": self.blackHole.horizonRadius,

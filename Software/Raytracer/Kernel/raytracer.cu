@@ -223,7 +223,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                                       resolution, data, &iterations, &facold);
 
             // PHASE 2: Check whether the ray has collided with the horizon
-            if(solverStatus == RK45_SUCCESS){
+            if(solverStatus == SOLVER_SUCCESS){
                 // PHASE 2.1: Check if theta has crossed pi/2
 
                 // Update current theta

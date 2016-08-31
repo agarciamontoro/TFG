@@ -1,9 +1,12 @@
 /**
- * This file implements a numerical solver for systems of N first order
- * ordinary differential equations (y' = F(x,y)), using the Dormand and Prince
- * algorithm: a Runge-Kutta method of order 5(4) called DOPRI5.
- * The algorithm is described in [1] and [2]. Specifically, see Table 5.2 ([1])
- * for the Butcher's table and Section II.4, subsection "Automatic Step Size Control" ([1]), for the automatic control of the solver inner step size. See also Section IV.2 ([2]) for the stabilized algorithm.
+ * This file implements two numerical solvers for systems of N first order
+ * ordinary differential equations (y' = F(x,y)).
+ * The first solver, implemented in SolverRK45 and originally called DOPRI5, is
+ * described in [1] and [2]. Specifically, see Table 5.2 ([1]) for the
+ * Butcher's table and Section II.4, subsection "Automatic Step Size Control"
+ * ([1]), for the automatic control of the solver inner step size. See also
+ * Section IV.2 ([2]) for the stabilized algorithm.
+ * The second solver, SolverRK45, is adapted from [3], and described at [4].
  *
  * Given an ODEs system, a matrix of initial conditions, each one of the form
  * (x_0, y_0), and an interval [x_0, x_{end}], this code computes the value of
@@ -13,6 +16,12 @@
  * -------------------------------
  * [1] "Solving Ordinary Differential Equations I", by E. Hairer, S. P. Nørsett and G. Wanner.
  * [2] "Solving Ordinary Differential Equations II", by E. Hairer, S. P. Nørsett and G. Wanner.
+ * [3] "A massive parallel ODE integrator for performing general relativistic
+ * radiative transfer using ray tracing", by chanchikwan.
+ * https://github.com/chanchikwan/gray
+ * [4] "GRay: A massively parallel GPU-based code for ray tracing in
+ * relativistic spacetimes", by Chi-Kwan Chan, Dimitrios P. Saltis and Feryal
+ * Özel.
  */
 
 #include <stdio.h>
@@ -21,70 +30,44 @@
 #include "Raytracer/Kernel/common.cu"
 #include "Raytracer/Kernel/functions.cu"
 
-__device__ int sign(Real x){
-    return x < 0 ? -1 : +1;
-}
-
 /**
  * Applies the DOPRI5 algorithm over the system defined in the computeComponent
  * function, using the initial conditions specified in devX0 and devInitCond,
  * and returning the solution found at xend.
- *
- * @param[in,out]  Real  x0           Start of the integration interval
- * 						 [x_0, {end}].
- * @param[in]      Real  xend         End of the integration interval
- *                       [x_0, x{end}].
- * @param[in,out]  void  *devInitCond Device pointer to a serialized matrix of
- *                       initial conditions; i.e., given a 2D matrix of R rows
- *                       and C columns, where every entry is an n-tuple of
- *                       initial conditions (y_0[0], y_0[1], ..., y_0[n-1]),
- *                       the vector pointed by devInitCond contains R*C*n
- *                       serialized entries, starting with the first row from
- *                       left to right, then the second one in the same order
- *                       and so on.
- *                       The elements of vector pointed by devInitCond are
- *                       replaced with the new computed values at the end of
- *                       the algorithm; please, make sure you will not need
- *                       them after calling this procedure.
- * @param[in]      Real  h            Step size. This code controls
- *                       automatically the step size, but this value is taken
- *                       as a test for the first try.
- * @param[in]      Real  hmax         Value of the maximum step size allowed,
- * 						 usually defined as x_{end} - x_0, as we do not to
- * 						 exceed x_{end} in one iteration.
- * @param[in]      void* globalRtoler Device pointer to a vector of n Reals,
- *                       where the i-th element specifies the relative error
- *                       tolerance for the i-th equation at each step, as
- *                       defined in the following inequality, that has to hold
- *                       for every intermediate step j:
- *                       	|err[i]| < Atol[i] + Rtol*max(|y_0[i]|, |y_j[i]|),
- *                       where err[i] is the estimation of the error in the
- *                       i-th equation at each step. Defaults to 1e-6 for every
- *                       equation.
- * @param[in]      void* globalAtoler Device pointer to a vector of n Reals,
- *                       where the i-th element specifies the absolute error
- *                       tolerance for the i-th equation at each step, as
- *                       defined in the previous inequality. Defaults to 1e-12
- *                       for every equation.
- * @param[in]      Real  safe         Factor in [0., 1.] used in the step size
- *                       prediction to increase the probability of an
- *                       acceptable error in the next iteration. Defaults to
- *                       0.9.
- * @param[in]      Real  fac1         Minimum factor used in the step size
- *                       prediction. The predicted new step is then:
- *                       	h_{new} > fac1 * h_{prev}
- * @param[in]      Real  fac2         Minimum factor used in the step size
- *                       prediction. The predicted new step is then:
- *                       	h_{new} < fac1 * h_{prev}
- * @param[in]      Real  beta         Factor used in the stabilization of the
- *                       step size control. Defaults to 0.04.
- * @param[in]      Real  uround       Rounding unit -should be equal to the
- *                       machine precision-, used in the detection of really
- *                       small step sizes. If the following inequality holds
- *                       0.1|h| <= |x|uround, then the step size is
- *                       too small to continue the computation. Defaults to
- *                       2.3E-16. TODO: This detection is not yet implemented,
- *                       so this variable is useless.
+ * @param[in,out]  Real*  globalX0     Start of the integration interval
+ *                        [x_0, x_{end}]. At the output, this variable is set
+ *                        to the final time the solver reached.
+ * @param[in]      Real   xend         End of the integration interval
+ *                        [x_0, x_{end}].
+ * @param[in,out]  Real*  initCond     Device pointer to a serialized matrix of
+ *                        initial conditions; i.e., given a 2D matrix of R rows
+ *                        and C columns, where every entry is an n-tuple of
+ *                        initial conditions (y_0[0], y_0[1], ..., y_0[n-1]),
+ *                        the vector pointed by devInitCond contains R*C*n
+ *                        serialized entries, starting with the first row from
+ *                        left to right, then the second one in the same order
+ *                        and so on.
+ *                        The elements of vector pointed by initCond are
+ *                        replaced with the new computed values at the end of
+ *                        the algorithm; please, make sure you will not need
+ *                        them after calling this procedure.
+ * @param[in,out]  Real*  hOrig        Step size. This code controls
+ *                        automatically the step size, but this value is taken
+ *                        as a test for the first try; furthermore, the method
+ *                        returns the last computed value of h to let the user
+ *                        know the final state of the solver.
+ * @param[in]      Real   hmax         Value of the maximum step size allowed,
+ *                        usually defined as x_{end} - x_0, as we do not to
+ *                        exceed x_{end} in one iteration.
+ * @param[in]      Real*  data         Device pointer to a serialized matrix of
+ *                        additional data to be passed to computeComonent;
+ *                        currently, this is used to pass the constants b and q
+ *                        of each ray to the computeComponent method.
+ * @param[out]     int*   iterations   Output variable to know how many
+ *                        iterations were spent in the computation
+ * @param[in,out]  float* globalFacold Input and output variable, used as a
+ *                        first value for facold and to let the caller know the
+ *                        final value of facold.
  */
  __device__ SolverStatus SolverRK45(Real* globalX0, Real xend, Real* initCond,
                           Real* hOrig, Real hmax, Real* data, int* iterations, float* globalFacold){
@@ -175,7 +158,7 @@ __device__ int sign(Real x){
             *hOrig = h;
 
             // Let the user know the computation stopped before xEnd
-            return RK45_FAILURE;
+            return SOLVER_FAILURE;
         }
 
         // PHASE 0. Check if the current time x_0 plus the current step
@@ -387,36 +370,81 @@ __device__ int sign(Real x){
 
 
     // Finally, let the user know everything's gonna be alright
-    return RK45_SUCCESS;
+    return SOLVER_SUCCESS;
 }
 
-// hmax has to be positive
+/**
+ * Auxiliar method used by SolverRK4 in order to obtain an adapted step size.
+ * This is heavily influenced by the raytracer logic, and it has sense only in
+ * this context, not as a general automatic step controller. The returned step
+ * size depends on the distance to the horizon, the speed and the angular
+ * change speed of the current ray state, passed to this method in the pos and
+ * vel arrays.
+ * This code is adapted from [3], his original author is chanchikwan.
+ *
+ * @param[in]       Real* pos           Pointer to an array of at least three
+ *                        componentes in the following order: current distance
+ *                        to the horizon, current theta, current phi. It is
+ *                        usually called with the ray state; i.e., the array
+ *                        with the 5 components used throughout this sofware:
+ *                        r, theta, phi, pR and pTheta. Currently, the last two
+ *                        components are completely ignored.
+ *
+ * @param[in]       Real* vel           Pointer to an array of at least three
+ *                        componentes in the following order: current value of
+ *                        the derivative of the distance to the horizon,
+ *                        current value of the derivative of theta, current
+ *                        value of the derivative of phi. It is usually called
+ *                        with the returned values of computeComponent, that
+ *                        gives the values of theSE derivatives we need.
+ *                        Although the current passed array has also the values
+ *                        of the derivatives of pR and pTheta, these two
+ *                        components are ignored.
+ *
+ * @param[in]       Real  hmax          Value of the maximum step size allowed.
+ *
+ * @return          Real                Absolute value of the step size that
+ *                        shall be used in the RK4 solver. Please, note that in
+ *                        order to use this value, you have to
+ *                        take into account the direction of the integration:
+ *                        if the integration is to the past, the value you need
+ *                        is the opposite of the returned value.
+ */
 static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
+    // Make sure the hmax value is positive, as we are only interested on the
+    // size of the step, not the sign.
+    hmax = fabs(hmax);
+
+    // If the current position is zero, return a special value that tells the
+    // solver to stop
     if(pos[0] < horizonRadius + SOLVER_EPSILON){
         return 0; // too close to the black hole
     }
 
-    // See equation (2) in Chi-kwan Chan's paper
+    // Compute the two values from which we are gonna take the minimum one.
+    // See equation (2) in Chi-kwan Chan's paper [4] for more information.
     float f1 = SOLVER_DELTA / (fabs(vel[0] / pos[0]) + fabs(vel[1]) +
                                fabs(vel[2]));
 
     float f2 = (pos[0] - horizonRadius) / fabs((2*vel[0]));
 
+    // Take the minimum of the previous computed values, always uppper bounded
+    // by the provided hmax.
     return fmin(hmax, fmin(f1, f2));
 }
 
 
-
 /**
- * Applies the DOPRI5 algorithm over the system defined in the computeComponent
- * function, using the initial conditions specified in devX0 and devInitCond,
- * and returning the solution found at xend.
- *
- * @param[in,out]  Real  x0           Start of the integration interval
- * 						 [x_0, {end}].
- * @param[in]      Real  xend         End of the integration interval
- *                       [x_0, x{end}].
- * @param[in,out]  void  *devInitCond Device pointer to a serialized matrix of
+ * Usual Runge-Kutta 4 solver, adapted from [3]. The solver uses the system
+ * defined in the computeComponent function, using the initial conditions
+ * specified in x0 and initCond, and returning the solution found at xend.
+ * Furthermore, the step size is automatically computed using the getStepSize
+ * function, also adapted from [3].
+ * @param[in]      Real  x0       Start of the integration interval
+ *                       [x_0, x_{end}].
+ * @param[in]      Real  xend     End of the integration interval
+ *                       [x_0, x_{end}].
+ * @param[in,out]  Real* initCond Device pointer to a serialized matrix of
  *                       initial conditions; i.e., given a 2D matrix of R rows
  *                       and C columns, where every entry is an n-tuple of
  *                       initial conditions (y_0[0], y_0[1], ..., y_0[n-1]),
@@ -424,62 +452,27 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
  *                       serialized entries, starting with the first row from
  *                       left to right, then the second one in the same order
  *                       and so on.
- *                       The elements of vector pointed by devInitCond are
+ *                       The elements of vector pointed by initCond are
  *                       replaced with the new computed values at the end of
  *                       the algorithm; please, make sure you will not need
  *                       them after calling this procedure.
- * @param[in]      Real  h            Step size. This code controls
- *                       automatically the step size, but this value is taken
- *                       as a test for the first try.
- * @param[in]      Real  hmax         Value of the maximum step size allowed,
- * 						 usually defined as x_{end} - x_0, as we do not to
- * 						 exceed x_{end} in one iteration.
- * @param[in]      void* globalRtoler Device pointer to a vector of n Reals,
- *                       where the i-th element specifies the relative error
- *                       tolerance for the i-th equation at each step, as
- *                       defined in the following inequality, that has to hold
- *                       for every intermediate step j:
- *                       	|err[i]| < Atol[i] + Rtol*max(|y_0[i]|, |y_j[i]|),
- *                       where err[i] is the estimation of the error in the
- *                       i-th equation at each step. Defaults to 1e-6 for every
- *                       equation.
- * @param[in]      void* globalAtoler Device pointer to a vector of n Reals,
- *                       where the i-th element specifies the absolute error
- *                       tolerance for the i-th equation at each step, as
- *                       defined in the previous inequality. Defaults to 1e-12
- *                       for every equation.
- * @param[in]      Real  safe         Factor in [0., 1.] used in the step size
- *                       prediction to increase the probability of an
- *                       acceptable error in the next iteration. Defaults to
- *                       0.9.
- * @param[in]      Real  fac1         Minimum factor used in the step size
- *                       prediction. The predicted new step is then:
- *                       	h_{new} > fac1 * h_{prev}
- * @param[in]      Real  fac2         Minimum factor used in the step size
- *                       prediction. The predicted new step is then:
- *                       	h_{new} < fac1 * h_{prev}
- * @param[in]      Real  beta         Factor used in the stabilization of the
- *                       step size control. Defaults to 0.04.
- * @param[in]      Real  uround       Rounding unit -should be equal to the
- *                       machine precision-, used in the detection of really
- *                       small step sizes. If the following inequality holds
- *                       0.1|h| <= |x|uround, then the step size is
- *                       too small to continue the computation. Defaults to
- *                       2.3E-16. TODO: This detection is not yet implemented,
- *                       so this variable is useless.
+ * @param[out]     Real* hOrig    This code controls automatically the step
+ * 						 size. This output variable is used to comunicate the
+ * 						 caller the last step size computed.
+ * @param[in]      Real  hmax     Value of the maximum step size allowed,
+ *                       usually defined as x_{end} - x_0, as we do not to
+ *                       exceed x_{end} in one iteration.
+ * @param[in]      Real* data     Device pointer to a serialized
+ *                       matrix of additional data to be passed to
+ *                       computeComonent; currently, this is used to pass the
+ *                       constants b and q of each ray to the computeComponent
+ *                       method.
  */
  __device__ SolverStatus SolverRK4(Real x0, Real xend, Real* initCond,
-                          Real* hOrig, Real hmax, Real* data/*, int* iterations*/){
+                          Real* hOrig, Real hmax, Real* data){
     #ifdef DEBUG
         printf("ThreadId %d - INITS: x0=%.20f, xend=%.20f, y0=(%.20f, %.20f)\n", threadId, x0, xend, ((Real*)initCond)[0], ((Real*)initCond)[1]);
     #endif
-
-    // Each equation to solve has a thread that compute its solution. Although
-    // in an ideal situation the number of threads is exactly the same as the
-    // number of equations, it is usual that the former is greater than the
-    // latter. The reason is that the number of threads has to be a power of 2
-    // (see reduction technique in the only loop you will find in this function
-    // code to know why): then, we can give some rest to the threads that exceeds the number of equations :)
 
     // Check the direction of the integration: to the future or to the past
     // and get the absolute value of the maximum step size.
@@ -514,38 +507,41 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
     // times :)
     int i;
 
-    // Main loop. Each iteration computes a single step of the DOPRI5 algorithm, that roughly comprises the next phases:
-    //  0. Check if this step has to be the last one.
-    //  1. Computation of the system new value and the estimated error.
-    //  2. Computation of the new step size.
-    //  3. Check if the current step has to be repeated:
-    //      3.1 If the estimated global error > 1., repeat the step.
-    //      3.2 In any other case, update the current time and:
-    //          3.2.1 If this is the last step, finish.
-    //          3.2.2 In any other case, iterate again.
+    // Main loop. Each iteration computes a single step of the RK4 algorithm,
+    // that roughly comprises the next phases:
+    //  0. Compute the new step size.
+    //  1. Check if the current step has to be the last one; i.e., check that
+    //  x0+h exceeds or not xend
+    //  2. Check if the ray has collided with the horizon, inspecting the value
+    //  returned by getStepSize;
+    //  3. Computation of the system new value.
     do{
-        // PHASE 1. Compute the K1, ..., K7 components and the estimated
-        // solution, using the Butcher's table described in Table 5.2 ([1])
+        // PHASE 0. Compute the new step size (we need K1 in order to do that)
+        // and check if the current time x_0 plus the computed step exceeds the
+        // end time x_{end}.
 
         // K1 computation
         computeComponent(y0, k1, data);
 
         // Compute the step size
-        h = integrationDirection * getStepSize(y0, k1, fabs(hmax));
+        h = integrationDirection * getStepSize(y0, k1, hmax);
 
-        // PHASE 0. Check if the current time x_0 plus the current step
-        // (multiplied by a safety factor to prevent steps too small)
-        // exceeds the end time x_{end}.
-        if ((x0 + /*1.01**/h - xend) * integrationDirection > 0.0){
+        // PHASE 1. Check if this step has to be the last one
+        if ((x0 + h - xend) * integrationDirection > 0.0){
             h = xend - x0;
             last = true;
         }
 
-        // See if we've collided with the horizon
+        // PHASE 2. See if we've collided with the horizon (getStepSize returns
+        // 0 if the horizon is too close to continue with the computation)
         if(h == 0){
-            return RK45_FAILURE;
+            return SOLVER_FAILURE;
         }
 
+        // PHASE 3. Compute the K1, ..., K4 components and the estimated
+        // solution, using the RK4 Butcher's table
+
+        // Pre-compute a value that is used later in the code.
         half_h = h*0.5;
 
         // K2 computation
@@ -586,11 +582,29 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
     *hOrig = h;
 
     // Finally, let the user know everything's gonna be alright
-    return RK45_SUCCESS;
+    return SOLVER_SUCCESS;
 }
 
 
-// Given a system point, p1, and a target,
+/**
+ * This function receives the current state of a ray that has just crossed the equatorial plane (theta = pi/2) and makes a binary search of the exact (with a tolerance of BISECT_TOL) point in which the ray crossed it. This code expects the following:
+ * 		- In time = x, the ray is at one side of the equatorial plane.
+ * 		- In time = x-step, the ray was at the opposite side of the equatorial
+ * 		plane.
+ * @param  {[type]} Real* yOriginal     Pointer to the array where the ray
+ *                        state is stored, following the usual order used
+ *                        throughout this code: r, theta, phi, pR and pTheta.
+ * @param  {[type]} Real* data          Device pointer to a serialized matrix
+ *                        of additional data to be passed to computeComonent;
+ *                        currently, this is used to pass the constants b and q
+ *                        of each ray to the computeComponent method.
+ * @param  {[type]} Real  step          x-step was the last time in which the
+ *                        ray was found in the opposite side of the equatorial
+ *                        plane it is in the current time; i.e., at time = x.
+ * @param  {[type]} Real  x             Current time.
+ * @return          int                 Number of iterations used in the binary
+ *                        search.
+ */
 __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
     // It is necessary to maintain the previous theta to know the direction
     // change; we'll store it centered in zero, and not in pi/2 in order to
@@ -601,17 +615,19 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
     // The first step shall be to the other side and half of its length.
     step = - step * 0.5;
 
-    // Loop variables, to control the inner for and to control the iterations
-    // does not exceed a maximum number
+    // Loop variables, to control that the iterations does not exceed a maximum
+    // number
     int iter = 0;
 
+    // Step passed to the RK4 solver (currently not used)
     Real h = -step*0.01;
 
+    // Variable to control the success or failure of the solver
     SolverStatus solverStatus;
 
     // This loop implements the main behaviour of the algorithm; basically,
     // this is how it works:
-    //      1. It advance the point one single step with the Euler algorithm.
+    //      1. It advance the point one single step with the RK4 algorithm.
     //      2. If theta has crossed pi/2, it changes the direction of the
     //      new step. The magnitude of the new step is always half of the
     //      magnitude of the previous one.
@@ -619,18 +635,21 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
     //      ("very near" is defined by BISECT_TOL) or until the number of
     //      iterations exceeds a maximum number previously defined.
     while(fabs(prevThetaCentered) > BISECT_TOL && iter < BISECT_MAX_ITER){
+        // 1. Advance the ray one step.
         solverStatus = SolverRK4(x, x + step, yOriginal, &h, step, data);
         x += step;
 
-        if(solverStatus == RK45_FAILURE)
+        // Safety guard in case the solver fails.
+        if(solverStatus == SOLVER_FAILURE){
             return -1;
+        }
 
         // Compute the current theta, centered in zero
         currentThetaCentered = yOriginal[1] - HALF_PI;
 
         // 2. Change the step direction whenever theta crosses the target,
         // pi/2, and make it half of the previous one.
-        step = step * sign(currentThetaCentered * prevThetaCentered) * 0.5;
+        step = step * sign(currentThetaCentered)*sign(prevThetaCentered) * 0.5;
 
         // Update the previous theta, centered in zero, with the current one
         prevThetaCentered = currentThetaCentered;
@@ -638,5 +657,6 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
         iter++;
     } // 3. End of while
 
+    // Return the number of iterations spent in the loop
     return iter;
 }

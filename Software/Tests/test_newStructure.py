@@ -61,7 +61,7 @@ if __name__ == '__main__':
     rayTracer.synchronise()
     # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
     rayTracer.plotImage()
-    #
-    # Generate the 3D scene
-    # rayTracer.generate3Dscene(-70, 100)
+
+    # # Generate the 3D scene
+    # rayTracer.generate3Dscene(-70, 500)
     # rayTracer.plotScene()

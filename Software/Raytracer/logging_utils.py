@@ -25,7 +25,7 @@ def _logging_method( cls_name, method ):
         result = method(self,*args,**kwargs)
         end_time =  time.time()
         self.logger.debug("Exiting method {} of class {}".format(method.__name__,cls_name))
-        self.logger.debug("Execution of method {} took took {:0.3f} seconds".format(method.__name__,
+        self.logger.debug("Execution of method {} took {:0.3f} seconds".format(method.__name__,
             end_time - start_time ))
         return result
     return wrapper
@@ -63,7 +63,3 @@ class LoggingClass(type):
         attrs['__init__'] = _inyect_logger(attrs['__init__'])
 
         return super().__new__(meta, name, bases, attrs)
-
-
-
-
