@@ -18,8 +18,8 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "Raytracer/Kernel/common.cu"
-#include "Raytracer/Kernel/functions.cu"
+#include "Kernel/common.cu"
+#include "Kernel/functions.cu"
 
 // hmax has to be positive
 static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
@@ -112,14 +112,6 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
     // (see reduction technique in the only loop you will find in this function
     // code to know why): then, we can give some rest to the threads that exceeds the number of equations :)
 
-    // Shared array between the block threads to store intermediate
-    // solutions.
-    Real solution[SYSTEM_SIZE];
-
-    // Loop variable to manage the automatic step size detection.
-    // TODO: Implement the hinit method
-    Real hnew;
-
     // Check the direction of the integration: to the future or to the past
     // and get the absolute value of the maximum step size.
     Real integrationDirection = xend - x0 > 0. ? +1. : -1.;
@@ -163,7 +155,6 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
     //          3.2.1 If this is the last step, finish.
     //          3.2.2 In any other case, iterate again.
     do{
-        // *iterations = *iterations+1;
         // PHASE 1. Compute the K1, ..., K7 components and the estimated
         // solution, using the Butcher's table described in Table 5.2 ([1])
 
@@ -185,9 +176,6 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
         if(h == 0){
             return RK45_FAILURE;
         }
-
-        // if(blockIdx.x == 23 && blockIdx.y == 55 && threadIdx.x == 6 && threadIdx.y == 0)
-        // printf("(%d, %d, %d, %d), x: %.30f, xend: %.30f, h: %.30f, hmax: %.30f, r: %.30f\n", blockIdx.x, blockIdx.y, threadIdx.x, threadIdx.y, x0, xend, h, hmax, y0[0]);
 
         half_h = h*0.5;
 
@@ -217,16 +205,7 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
         // Advance current time!
         x0 += h;
 
-        // if(blockIdx.x == 43 && blockIdx.y == 124 && threadIdx.x == 0 && threadIdx.y == 0)
-        //     printf("x: %.30f, r: %.30f\n", x0, y0[0]);
-
     }while(!last && (xend - x0) > 0.0);
-
-
-    // printf("(%d, %d, %d, %d), Iterations: %d\n", blockIdx.x, blockIdx.y, threadIdx.x, threadIdx.y, iterations);
-    // Finally, let the user know everything's gonna be alright
-    // *success = true;
-    *hOrig = h;
 
     // Aaaaand that's all, folks! Update system value (each thread its
     // result) in the global memory :)
@@ -234,61 +213,9 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
         initCond[i] = y0[i];
     }
 
+    // Update the user's h
+    *hOrig = h;
+
+    // Finally, let the user know everything's gonna be alright
     return RK45_SUCCESS;
 }
-
-
-// __device__ int sign(Real x){
-//     return x < 0 ? -1 : +1;
-// }
-
-
-// // Given a system point, p1, and a target,
-// __device__ int bisect(Real* yOriginal, Real* data, Real step){
-//     // Set the current point to the original point and declare an array to
-//     // store the value of the system function
-//     Real* yCurrent = yOriginal;
-//     Real yVelocity[SYSTEM_SIZE];
-//
-//     // It is necessary to maintain the previous theta to know the direction
-//     // change
-//     Real prevTheta;
-//     prevTheta = yCurrent[1];
-//
-//     // The first step shall be to the other side and half of its length;
-//     step = - step * 0.5;
-//
-//     // Loop variables, to control the inner for and to control the iterations
-//     // does not exceed a maximum number
-//     int i;
-//     int iter = 0;
-//
-//     // This loop implements the main behaviour of the algorithm; basically,
-//     // this is how it works:
-//     //      1. It advance the point one single step with the Euler algorithm.
-//     //      2. If theta has crossed pi/2, it changes the direction of the
-//     //      new step. The magnitude of the new step is always half of the
-//     //      magnitude of the previous one.
-//     //      3. It repeats 1 and 2 until the current theta is very near of Pi/2
-//     //      ("very near" is defined by BISECT_TOL) or until the number of
-//     //      iterations exceeds a manimum number previously defined
-//     while(fabs(yCurrent[1] - HALF_PI) > BISECT_TOL && iter < BISECT_MAX_ITER){
-//         // 1. Compute value of the function in the current point
-//         computeComponent(yCurrent, yVelocity, data);
-//
-//         // 1. Advance point with Euler algorithm
-//         // TODO: See if this is more efficient than splitting between threads
-//         for(i = 0; i < SYSTEM_SIZE; i++){
-//             yCurrent[i] = yCurrent[i] + yVelocity[i]*step;
-//         }
-//
-//         // 2. Change the step direction whenever theta crosses the target,
-//         // pi/2, and make it half of the previous one.
-//         step = step * sign((yCurrent[1] - HALF_PI)*(prevTheta - HALF_PI)) * 0.5;
-//
-//         prevTheta = yCurrent[1];
-//
-//         iter++;
-//     } // 3. End of while
-//     return iter;
-// }
