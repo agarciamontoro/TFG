@@ -591,17 +591,17 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
  * 		- In time = x, the ray is at one side of the equatorial plane.
  * 		- In time = x-step, the ray was at the opposite side of the equatorial
  * 		plane.
- * @param  {[type]} Real* yOriginal     Pointer to the array where the ray
+ * @param[in,out]   Real* yOriginal     Pointer to the array where the ray
  *                        state is stored, following the usual order used
  *                        throughout this code: r, theta, phi, pR and pTheta.
- * @param  {[type]} Real* data          Device pointer to a serialized matrix
+ * @param[in]       Real* data          Device pointer to a serialized matrix
  *                        of additional data to be passed to computeComonent;
  *                        currently, this is used to pass the constants b and q
  *                        of each ray to the computeComponent method.
- * @param  {[type]} Real  step          x-step was the last time in which the
+ * @param[in]       Real  step          x-step was the last time in which the
  *                        ray was found in the opposite side of the equatorial
  *                        plane it is in the current time; i.e., at time = x.
- * @param  {[type]} Real  x             Current time.
+ * @param[in]       Real  x             Current time.
  * @return          int                 Number of iterations used in the binary
  *                        search.
  */

@@ -367,6 +367,8 @@ class RayTracer(metaclass=LoggingClass):
             self.plotData = np.zeros((self.imageRows, self.imageCols,
                                       3, numSteps+1))
             self.plotData[:, :, :, 0] = self.systemState[:, :, :3]
+
+            # Initialize plotStatus with a matriz full of zeros
             self.plotStatus = np.empty((self.imageRows, self.imageCols,
                                        numSteps+1))
             self.plotStatus[:, :, 0] = 0
@@ -374,7 +376,7 @@ class RayTracer(metaclass=LoggingClass):
             x = 0
             for step in range(numSteps):
                 # Solve the system
-                self.callKernel(x, x + stepSize, resolution=stepSize)
+                self.callKernel(x, x + stepSize)
 
                 # Advance the step and synchronise
                 x += stepSize
@@ -428,8 +430,8 @@ class RayTracer(metaclass=LoggingClass):
             self.drawCamera(ax)
 
             # Draw the rays
-            for row in range(0, self.imageRows, 20):
-                for col in range(0, self.imageCols, 20):
+            for row in range(0, self.imageRows, 10):
+                for col in range(0, self.imageCols, 10):
                     ray = np.transpose(self.plotData[row, col, :, :])
                     self.drawRay(ax, ray, self.plotStatus[row, col, :])
 
