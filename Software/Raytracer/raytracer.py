@@ -306,7 +306,6 @@ class RayTracer(metaclass=LoggingClass):
             np.float64(-0.001),
             np.float64(xEnd - x),
             self.constantsGPU,
-            np.int32(2),
             self.rayStatusGPU,
 
             # Grid definition -> number of blocks x number of blocks.

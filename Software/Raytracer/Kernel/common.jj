@@ -14,9 +14,8 @@
 #define IMG_COLS {{ IMG_COLS }}
 #define NUM_PIXELS {{ NUM_PIXELS }}
 
-// Useful constant for collision detection
+// Useful constant: pi/2
 #define HALF_PI 1.57079632679489655799898173427209258079528808593750
-
 
 // Bisect's constants
 #define BISECT_TOL 0.000001
@@ -87,7 +86,7 @@
 #define __alpha {{ ALPHA }}
 #define __omega {{ OMEGA }}
 
-// RK45 parameters
+// SolverRK45 parameters
 #define rtoli {{ R_TOL_I }}
 #define atoli {{ A_TOL_I }}
 #define safe {{ SAFE }}
@@ -101,7 +100,7 @@
 #define MAX_RESOL {{ MAX_RESOL }}
 #define MIN_RESOL {{ MIN_RESOL }}
 
-// RK45_alt parameters
+// SolverRK4 parameters
 #define SOLVER_DELTA {{ SOLVER_DELTA }}
 #define SOLVER_EPSILON {{ SOLVER_EPSILON }}
 
@@ -110,6 +109,7 @@
 #define DISK {{ DISK }}
 #define SPHERE {{ SPHERE }}
 
+// Black hole parameters: horizon radius and disk definition
 #define horizonRadius {{ HORIZON_RADIUS }}
 #define innerDiskRadius {{ INNER_DISK_RADIUS }}
 #define outerDiskRadius {{ OUTER_DISK_RADIUS }}
@@ -117,12 +117,18 @@
 // Definition of the data type
 typedef {{ REAL }} Real;
 
+// Enumerate to make the communication between SolverRK4(5) and its callers
+// easier
 typedef enum solverStatus{
     SOLVER_SUCCESS,
     SOLVER_FAILURE
 } SolverStatus;
 
-// Sign function
+/**
+ * Returns the sign of `x`; i.e., it returns +1 if x >= 0 and -1 otherwise.
+ * @param  x The number whose sign has to be returned
+ * @return   Sign of `x`, considering 0 as positive.
+ */
 __device__ inline int sign(Real x){
     return x < 0 ? -1 : +1;
 }

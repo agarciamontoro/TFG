@@ -10,13 +10,12 @@
 
 // Declaration of the image parameters: number of rows and columns, as well as
 // the total amount of pixels.
-#define IMG_ROWS 1
-#define IMG_COLS 1
-#define NUM_PIXELS 1
+#define IMG_ROWS 1000
+#define IMG_COLS 1000
+#define NUM_PIXELS 1000000
 
-// Useful constant for collision detection
+// Useful constant: pi/2
 #define HALF_PI 1.57079632679489655799898173427209258079528808593750
-
 
 // Bisect's constants
 #define BISECT_TOL 0.000001
@@ -87,7 +86,7 @@
 #define __alpha 0.966094463626
 #define __omega 7.39861124801e-05
 
-// RK45 parameters
+// SolverRK45 parameters
 #define rtoli 1e-06
 #define atoli 1e-12
 #define safe 0.9
@@ -101,7 +100,7 @@
 #define MAX_RESOL -2.0
 #define MIN_RESOL -0.1
 
-// RK45_alt parameters
+// SolverRK4 parameters
 #define SOLVER_DELTA 0.03125
 #define SOLVER_EPSILON 1e-06
 
@@ -110,6 +109,7 @@
 #define DISK 1
 #define SPHERE 0
 
+// Black hole parameters: horizon radius and disk definition
 #define horizonRadius 1.00001414214
 #define innerDiskRadius 9
 #define outerDiskRadius 20
@@ -117,12 +117,18 @@
 // Definition of the data type
 typedef double Real;
 
+// Enumerate to make the communication between SolverRK4(5) and its callers
+// easier
 typedef enum solverStatus{
     SOLVER_SUCCESS,
     SOLVER_FAILURE
 } SolverStatus;
 
-// Sign function
+/**
+ * Returns the sign of `x`; i.e., it returns +1 if x >= 0 and -1 otherwise.
+ * @param  x The number whose sign has to be returned
+ * @return   Sign of `x`, considering 0 as positive.
+ */
 __device__ inline int sign(Real x){
     return x < 0 ? -1 : +1;
 }
