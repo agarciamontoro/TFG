@@ -44,10 +44,6 @@ def spher2cart(points):
     return x, y, z
 
 
-# Kindly borrowed from http://stackoverflow.com/a/14267825
-def nextPowerOf2(x):
-    return 1 << (x-1).bit_length()
-
 SPHERE = 0
 DISK = 1
 HORIZON = 2
@@ -142,9 +138,6 @@ class RayTracer(metaclass=LoggingClass):
         # Compute the initial conditions
         self._setUpInitCond()
 
-        # # Build the solver object
-        # self._setUpSolver()
-
         # Create two timers to measure the time
         self.start = driver.Event()
         self.end = driver.Event()
@@ -184,6 +177,7 @@ class RayTracer(metaclass=LoggingClass):
 
             # Black hole constants
             "SPIN": self.blackHole.a,
+            "SPIN2": self.blackHole.a**2,
             "B1": self.blackHole.b1,
             "B2": self.blackHole.b2,
             "HORIZON_RADIUS": self.blackHole.horizonRadius,
@@ -212,6 +206,9 @@ class RayTracer(metaclass=LoggingClass):
 
             "BETA": 0.04,
             "UROUND": 2.3e-16,
+
+            "MIN_RESOL": -0.1,
+            "MAX_RESOL": -2.0,
 
             # Constants for the alternative version of the solver
             "SOLVER_DELTA": 0.03125,
@@ -301,7 +298,7 @@ class RayTracer(metaclass=LoggingClass):
         self.systemState = self.systemStateGPU.get()
         self.constants = self.constantsGPU.get()
 
-    def callKernel(self, x, xEnd, resolution=-1):
+    def callKernel(self, x, xEnd):
         self._solve(
             np.float64(x),
             np.float64(xEnd),
@@ -311,7 +308,6 @@ class RayTracer(metaclass=LoggingClass):
             self.constantsGPU,
             np.int32(2),
             self.rayStatusGPU,
-            np.float64(resolution),
 
             # Grid definition -> number of blocks x number of blocks.
             # Each block computes the direction of one pixel
@@ -325,7 +321,7 @@ class RayTracer(metaclass=LoggingClass):
 
 
 
-    def rayTrace(self, xEnd, stepsPerKernel=100, resolution=-1):
+    def rayTrace(self, xEnd, kernelCalls=1):
         """
         Args:
             xEnd (float): Time in which the system will be integrated. After
@@ -342,23 +338,17 @@ class RayTracer(metaclass=LoggingClass):
         # Initialize current time
         x = np.float64(0)
 
-        # Computation of the total number of iterations
-        totalIterations = abs(xEnd) / abs(resolution)
-
-        # Compute number of kernel calls
-        kernelCalls = int(np.ceil(totalIterations / stepsPerKernel))
-
         # Compute iteration interval
         interval = xEnd / kernelCalls
 
         # Send the rays to the outer space!
         for _ in range(kernelCalls):
-            print(x, x+interval, resolution)
+            print(x, x+interval)
             # Start timing
             self.start.record()
 
             # Call the kernel!
-            self.callKernel(x, x + interval, resolution)
+            self.callKernel(x, x + interval)
 
             # Update time
             x += interval
@@ -377,6 +367,8 @@ class RayTracer(metaclass=LoggingClass):
             self.plotData = np.zeros((self.imageRows, self.imageCols,
                                       3, numSteps+1))
             self.plotData[:, :, :, 0] = self.systemState[:, :, :3]
+
+            # Initialize plotStatus with a matriz full of zeros
             self.plotStatus = np.empty((self.imageRows, self.imageCols,
                                        numSteps+1))
             self.plotStatus[:, :, 0] = 0
@@ -384,7 +376,7 @@ class RayTracer(metaclass=LoggingClass):
             x = 0
             for step in range(numSteps):
                 # Solve the system
-                self.callKernel(x, x + stepSize, resolution=-1)
+                self.callKernel(x, x + stepSize)
 
                 # Advance the step and synchronise
                 x += stepSize

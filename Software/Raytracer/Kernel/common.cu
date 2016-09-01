@@ -66,8 +66,8 @@
 #define E7 (- 1./40.)
 
 // Black hole's spin and its square
-#define __a  1e-08
-#define __a2 __a * __a
+#define __a  0.9999999999
+#define __a2 0.9999999998
 
 // Camera constants
 #define __d 3
@@ -77,15 +77,15 @@
 #define __camBeta 0
 
 // Black hole constants
-#define __b1 -5.19615229843
-#define __b2 5.19615231843
+#define __b1 -6.99999999983
+#define __b2 2.00002449496
 
 // Kerr constants
-#define __ro 30.0
-#define __delta 840.0
-#define __pomega 29.9463819688
-#define __alpha 0.966091783079
-#define __omega 7.40740740741e-13
+#define __ro 30.0000595223
+#define __delta 840.9999999998
+#define __pomega 29.9641187548
+#define __alpha 0.966094463626
+#define __omega 7.39861124801e-05
 
 // RK45 parameters
 #define rtoli 1e-06
@@ -98,6 +98,8 @@
 #define fac2_inverse 0.1
 #define beta 0.04
 #define uround 2.3e-16
+#define MAX_RESOL -2.0
+#define MIN_RESOL -0.1
 
 // RK45_alt parameters
 #define SOLVER_DELTA 0.03125
@@ -108,7 +110,7 @@
 #define DISK 1
 #define SPHERE 0
 
-#define horizonRadius 2.0
+#define horizonRadius 1.00001414214
 #define innerDiskRadius 9
 #define outerDiskRadius 20
 
@@ -116,8 +118,13 @@
 typedef double Real;
 
 typedef enum solverStatus{
-    RK45_SUCCESS,
-    RK45_FAILURE
+    SOLVER_SUCCESS,
+    SOLVER_FAILURE
 } SolverStatus;
+
+// Sign function
+__device__ inline int sign(Real x){
+    return x < 0 ? -1 : +1;
+}
 
 #endif // __DEFINITIONS__

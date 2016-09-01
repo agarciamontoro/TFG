@@ -28,7 +28,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
     # Black hole constants
-    spin = 0.00000001
+    spin = 0.9999999999
     innerDiskRadius = 9
     outerDiskRadius = 20
 
@@ -56,12 +56,12 @@ if __name__ == '__main__':
     rayTracer = RayTracer(camera, kerr, blackHole)
 
     # Draw the image
-    rayTracer.rayTrace(-90, stepsPerKernel=90, resolution=-1)
+    rayTracer.rayTrace(-90, kernelCalls=1)
     print(rayTracer.totalTime)
     rayTracer.synchronise()
     # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
     rayTracer.plotImage()
-    #
-    # # # Generate the 3D scene
-    # #rayTracer.generate3Dscene(-70, 10)
-    # #rayTracer.plotScene()
+
+    # # Generate the 3D scene
+    # rayTracer.generate3Dscene(-70, 500)
+    # rayTracer.plotScene()
