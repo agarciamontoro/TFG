@@ -39,7 +39,7 @@ if __name__ == '__main__':
 
     # Camera lens properties
     camFocalLength = 3
-    camSensorShape = (1000, 1000)  # (Rows, Columns)
+    camSensorShape = (1, 1)  # (Rows, Columns)
     camSensorSize = (2, 2)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants
@@ -55,13 +55,16 @@ if __name__ == '__main__':
     # Create the raytracer!
     rayTracer = RayTracer(camera, kerr, blackHole)
 
-    # Draw the image
-    rayTracer.rayTrace(-90, kernelCalls=1)
-    print(rayTracer.totalTime)
-    rayTracer.synchronise()
-    # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
-    rayTracer.plotImage()
+    # Override initial conditions
+    rayTracer.override_initial_conditions(10, 1.415, 0, 1.445, -0.659734)
 
-    # # Generate the 3D scene
-    # rayTracer.generate3Dscene(-70, 500)
-    # rayTracer.plotScene()
+    # Draw the image
+    # rayTracer.rayTrace(-90, kernelCalls=1)
+    # print(rayTracer.totalTime)
+    # rayTracer.synchronise()
+    # # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
+    # rayTracer.plotImage()
+
+    # Generate the 3D scene
+    rayTracer.generate3Dscene(-70, 500)
+    rayTracer.plotScene()

@@ -10,9 +10,9 @@
 
 // Declaration of the image parameters: number of rows and columns, as well as
 // the total amount of pixels.
-#define IMG_ROWS 1000
-#define IMG_COLS 1000
-#define NUM_PIXELS 1000000
+#define IMG_ROWS 1
+#define IMG_COLS 1
+#define NUM_PIXELS 1
 
 // Useful constant for collision detection
 #define HALF_PI 1.57079632679489655799898173427209258079528808593750
