@@ -10,6 +10,7 @@ import mpl_toolkits.mplot3d.art3d as art3d
 from pycuda import driver, compiler, gpuarray, tools
 import jinja2
 
+sys.path.append('../Utils')
 from logging_utils import LoggingClass
 
 # When importing this module we are initializing the device.
@@ -51,7 +52,55 @@ STRAIGHT = 3
 
 # Dummy object for the camera (computation of the speed is done here)
 class Camera(metaclass=LoggingClass):
+    """Pinhole camera placed near a Kerr black hole.
+
+    This class contains the necessary data to define a camera that is located on the coordinate system of a Kerr black hole.
+
+    Attributes:
+        r (double): Distance to the coordinate origin; i.e., distance to the
+            black hole centre.
+        r2 (double): Square of `r`.
+        theta (double): Inclination of the camera with respect to the black
+            hole.
+        phi (double): Azimuth of the camera with respect to the black hole.
+        focalLength (double): Distance between the focal point (where every row
+            that reaces the camera has to pass through) and the focal plane
+            (where the actual sensor/film is placed).
+        sensorSize (tuple): 2-tuple that defines the physical dimensions of the
+            sensor in the following way: `(Height, Width)`.
+        sensorShape (tuple): 2-tuple that defines the number of pixels of the
+            sensor in the following way: `(Number of rows, Number of columns)`.
+        pixelWidth (double): Width of one single pixel in physical units. It is
+            computed as `Number of columns / Sensor width`.
+        pixelHeight (double): Height of one single pixel in physical units. It
+            is computed as `Number of rows / Sensor height`.
+        beta (double): Speed of the camera, that follows a circular orbit
+            around the black hole in the equatorial plane. It is computed using
+            the formula (A.7) of Thorne's paper.
+    """
+
     def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize):
+        """Builds the camera defined by `focalLength`, `sensorShape` and
+        `sensorSize` and locates it at the passed coordinates :math:`(r_c,
+        \\theta_c, \\phi_c)`
+
+        Args:
+            r (double): Distance to the coordinate origin; i.e., distance to
+                the black hole centre.
+            r2 (double): Square of `r`.
+            theta (double): Inclination of the camera with respect to the black
+                hole.
+            phi (double): Azimuth of the camera with respect to the black hole.
+            focalLength (double): Distance between the focal point (where every
+                row that reaces the camera has to pass through) and the focal
+                plane (where the actual sensor/film is placed).
+            sensorSize (tuple): 2-tuple that defines the physical dimensions of
+                the sensor in the following way: `(Height, Width)`.
+            sensorShape (tuple): 2-tuple that defines the number of pixels of
+                the sensor in the following way: `(Number of rows, Number of
+                columns)`.
+        """
+
         # Define position
         self.r = r
         self.r2 = r**2
@@ -83,6 +132,18 @@ class Camera(metaclass=LoggingClass):
         self.maxTheta = self.maxPhi = -np.inf
 
     def setSpeed(self, kerr, blackHole):
+        """Given a Kerr metric and a black hole, set the speed of the camera at
+        a circular orbit in the equatorial plane, following formula (A.7) of
+        Thorne's paper.
+
+        Args:
+            kerr (Kerr): A Kerr object containing the constants needed for the
+                equations.
+            blackHole (BlackHole): A BlackHole object containing the
+                specifications of the black hole located a the coordinate
+                origin.
+        """
+
         # Retrieve blackhole's spin and some Kerr constants
         a = blackHole.a
         r = self.r
@@ -100,6 +161,46 @@ class Camera(metaclass=LoggingClass):
 
 
 class RayTracer(metaclass=LoggingClass):
+    """Relativistic spacetime ray tracer.
+
+    This class generates images of what an observer would see near a rotating
+    black hole.
+
+    This is an abstraction layer over the CUDA kernel that integrates the ODE
+    system specified in equations (A.15) of Thorne's paper. It integrates,
+    backwards in time, a set of rays near a Kerr black hole, computing its
+    trajectories from the focal point of a camera located near the black hole.
+
+    The RayTracer class hides all the black magic behind the CUDA code, giving
+    a nice and simple interface to the user that just wants some really cool, and scientifically accurate, images.
+
+    Given a scene composed by a camera, a Kerr metric and a black hole, the RayTracer just expects a time :math:`x_{end}` to solve the system.
+
+    Example:
+        >>> spin = 0.9999999999
+        >>> innerDiskRadius = 9
+        >>> outerDiskRadius = 20
+
+        >>> camR = 30
+        >>> camTheta = 1.511
+        >>> camPhi = 0
+
+        >>> camFocalLength = 3
+        >>> camSensorShape = (1000, 1000)  # (Rows, Columns)
+        >>> camSensorSize = (2, 2)         # (Height, Width)
+
+        >>> blackHole = BlackHole(spin, innerDiskRadius, outerDiskRadius)
+        >>> camera = Camera(camR, camTheta, camPhi,
+        ...                 camFocalLength, camSensorShape, camSensorSize)
+        >>> kerr = KerrMetric(camera, blackHole)
+
+        >>> camera.setSpeed(kerr, blackHole)
+
+        >>> rayTracer = RayTracer(camera, kerr, blackHole)
+        >>> rayTracer.rayTrace(-90)
+        >>> rayTracer.synchronise()
+        >>> rayTracer.plotImage()
+    """
     def __init__(self, camera, kerr, blackHole, debug=False):
         self.debug = debug
         self.systemSize = 5
@@ -317,8 +418,6 @@ class RayTracer(metaclass=LoggingClass):
             # equation
             block=self.blockDim
         )
-
-
 
     def rayTrace(self, xEnd, kernelCalls=1):
         """
