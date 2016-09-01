@@ -24,7 +24,28 @@ Indices and tables
 Testing
 =======
 
-.. currentmodule:: rk4
+.. .. currentmodule:: raytracer
 
-.. autoclass:: RK4Solver
+.. autoclass:: kerr.KerrMetric
     :members:
+
+.. autoclass:: raytracer.Camera
+    :members:
+
+.. autoclass:: raytracer.RayTracer
+    :members:
+
+This is a test to know whether the figure automatic numbering really works. See :numref:`my-figure-ref` if everything's fine.
+
+.. _my-figure-ref:
+.. figure:: ../../../Res/sphinxTest.png
+   :scale: 50 %
+   :alt: map to buried treasure
+
+   This is the caption of the figure (a simple paragraph).
+
+   The legend consists of all elements after the caption.  In this
+   case, the legend consists of this paragraph and the following
+   table.
+
+.. bibliography:: ../../Report/Bibliography.bib

@@ -35,6 +35,10 @@ class BlackHole:
 
 
 class KerrMetric:
+    """Object to store the constants defined by the camera and black hole in
+    the relativistic spacetime.
+    """
+
     def __init__(self, camera, blackHole):
         # Retrieve blackhole's spin and its square
         a = blackHole.a

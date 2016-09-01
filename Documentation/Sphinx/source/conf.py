@@ -21,8 +21,10 @@ import sphinx_bootstrap_theme
 
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('../../..'))
+sys.path.insert(0, os.path.abspath('../../../Software/Raytracer'))
 sys.path.insert(0, os.path.abspath('../../../Software/RK4'))
+sys.path.insert(0, os.path.abspath('../../../Software/Utils'))
 
 # -- General configuration ------------------------------------------------
 
@@ -40,6 +42,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
+    'sphinxcontrib.bibtex'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -348,6 +351,8 @@ texinfo_documents = [
 #
 # texinfo_no_detailmenu = False
 
+# Number the figures
+numfig = True
 
 # # Taken from http://stackoverflow.com/a/5599712
 # def skip(app, what, name, obj, skip, options):

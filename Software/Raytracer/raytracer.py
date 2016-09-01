@@ -132,14 +132,18 @@ class Camera(metaclass=LoggingClass):
         self.maxTheta = self.maxPhi = -np.inf
 
     def setSpeed(self, kerr, blackHole):
-        """Given a Kerr metric and a black hole, set the speed of the camera at
-        a circular orbit in the equatorial plane, following formula (A.7) of
-        Thorne's paper.
+        """Given a Kerr metric and a black hole, this method sets the speed of
+        the camera at a circular orbit in the equatorial plane, following formula (A.7) of :cite:`thorne15`:
+
+        .. math::
+            \\beta = \\frac{\\varpi}{\\alpha}(\\Omega - \\omega),
+
+        where :math:`\\Omega = \\frac{1}{a + r_c^{3/2}}` and the other constants are the ones defined in the Kerr metric object. See :class:`~.KerrMetric`.
 
         Args:
-            kerr (Kerr): A Kerr object containing the constants needed for the
+            kerr (:class:`~.KerrMetric`): A :class:`~.KerrMetric` object containing the constants needed for the
                 equations.
-            blackHole (BlackHole): A BlackHole object containing the
+            blackHole (:class:`~.BlackHole`): A :class:`~.BlackHole` object containing the
                 specifications of the black hole located a the coordinate
                 origin.
         """
@@ -177,29 +181,43 @@ class RayTracer(metaclass=LoggingClass):
     Given a scene composed by a camera, a Kerr metric and a black hole, the RayTracer just expects a time :math:`x_{end}` to solve the system.
 
     Example:
-        >>> spin = 0.9999999999
-        >>> innerDiskRadius = 9
-        >>> outerDiskRadius = 20
+        Define the characteristics of the black hole and build it::
 
-        >>> camR = 30
-        >>> camTheta = 1.511
-        >>> camPhi = 0
+            spin = 0.9999999999
+            innerDiskRadius = 9
+            outerDiskRadius = 20
+            blackHole = BlackHole(spin, innerDiskRadius, outerDiskRadius)
 
-        >>> camFocalLength = 3
-        >>> camSensorShape = (1000, 1000)  # (Rows, Columns)
-        >>> camSensorSize = (2, 2)         # (Height, Width)
+        Define the specifications of the camera and build it::
 
-        >>> blackHole = BlackHole(spin, innerDiskRadius, outerDiskRadius)
-        >>> camera = Camera(camR, camTheta, camPhi,
-        ...                 camFocalLength, camSensorShape, camSensorSize)
-        >>> kerr = KerrMetric(camera, blackHole)
+            camR = 30
+            camTheta = 1.511
+            camPhi = 0
+            camFocalLength = 3
+            camSensorShape = (1000, 1000)  # (Rows, Columns)
+            camSensorSize = (2, 2)         # (Height, Width)
+            camera = Camera(camR, camTheta, camPhi,
+                            camFocalLength, camSensorShape, camSensorSize)
 
-        >>> camera.setSpeed(kerr, blackHole)
+        Create a Kerr metric with the previous two objects::
 
-        >>> rayTracer = RayTracer(camera, kerr, blackHole)
-        >>> rayTracer.rayTrace(-90)
-        >>> rayTracer.synchronise()
-        >>> rayTracer.plotImage()
+            kerr = KerrMetric(camera, blackHole)
+
+        Set the speed of the camera once the Kerr metric and the black hole are
+        created: it needs some info from both of these objects::
+
+            camera.setSpeed(kerr, blackHole)
+
+        Finally, build the raytracer with the camera, the metric and the black
+        hole...::
+
+            rayTracer = RayTracer(camera, kerr, blackHole)
+
+        ...and generate the image!::
+
+            rayTracer.rayTrace(-90)
+            rayTracer.synchronise()
+            rayTracer.plotImage()
     """
     def __init__(self, camera, kerr, blackHole, debug=False):
         self.debug = debug
