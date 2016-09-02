@@ -28,7 +28,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
     # Black hole constants
-    spin = 0.0000000001
+    spin = 0.9999999999
     innerDiskRadius = 9
     outerDiskRadius = 20
 
@@ -38,9 +38,9 @@ if __name__ == '__main__':
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 3
-    camSensorShape = (1000, 1000)  # (Rows, Columns)
-    camSensorSize = (2, 2)       # (Height, Width)
+    camFocalLength = 2
+    camSensorShape = (1000, 2000)  # (Rows, Columns)
+    camSensorSize = (2, 4)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants
     # above
@@ -54,14 +54,9 @@ if __name__ == '__main__':
 
     # Create the raytracer!
     rayTracer = RayTracer(camera, kerr, blackHole)
-
-    # Draw the image
     rayTracer.rayTrace(-90, kernelCalls=1)
-    print(rayTracer.totalTime)
-    rayTracer.synchronise()
-    # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
-    rayTracer.plotImage()
 
-    # # Generate the 3D scene
-    # rayTracer.generate3Dscene(-70, 500)
-    # rayTracer.plotScene()
+    texture = np.empty((500, 2363, 3), dtype=np.float64)
+    texture[:, :, :] = mpl.image.imread('../../Res/squaredTextureDisk.png')[:, :, :3]
+
+    rayTracer.texturedImage(texture)

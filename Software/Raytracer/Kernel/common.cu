@@ -11,8 +11,8 @@
 // Declaration of the image parameters: number of rows and columns, as well as
 // the total amount of pixels.
 #define IMG_ROWS 1000
-#define IMG_COLS 1000
-#define NUM_PIXELS 1000000
+#define IMG_COLS 2000
+#define NUM_PIXELS 2000000
 
 // Useful constant: pi/2
 #define HALF_PI 1.57079632679489655799898173427209258079528808593750
@@ -69,7 +69,7 @@
 #define __a2 0.9999999998
 
 // Camera constants
-#define __d 3
+#define __d 2
 #define __camR 30
 #define __camTheta 1.511
 #define __camPhi 0

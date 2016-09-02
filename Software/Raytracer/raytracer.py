@@ -372,6 +372,9 @@ class RayTracer(metaclass=LoggingClass):
         # Get the solver function from the compiled module
         self._solve = mod.get_function("kernel")
 
+        # Get the image generation function from the compiled module
+        self.generateImage = mod.get_function("generate_image")
+
         # # Get the collision detection function from the compiled module
         # self._detectCollisions = mod.get_function("detectCollisions")
 
@@ -644,3 +647,31 @@ class RayTracer(metaclass=LoggingClass):
         self.rayStatus = self.rayStatusGPU.get()
         self.systemState = self.systemStateGPU.get()
 
+
+    def texturedImage(self, texture):
+        """Image should be a 2D array where each entry is a 3-tuple of Reals between 0.0 and 1.0
+        """
+
+        textureGPU = gpuarray.to_gpu(texture)
+        self.image = np.empty((self.imageRows, self.imageCols, 3),
+                              dtype=np.float64)
+        imageGPU = gpuarray.to_gpu(self.image)
+
+        self.generateImage(
+            self.systemStateGPU,
+            self.rayStatusGPU,
+            textureGPU,
+            imageGPU,
+
+            # Grid definition -> number of blocks x number of blocks.
+            # Each block computes the direction of one pixel
+            grid=self.gridDim,
+
+            # Block definition -> number of threads x number of threads
+            # Each thread in the block computes one RK4 step for one equation
+            block=self.blockDim
+        )
+
+        self.image = imageGPU.get()
+        plt.imshow(self.image)
+        plt.show()
