@@ -164,10 +164,9 @@
         // PHASE 0. Check if the current time x_0 plus the current step
         // (multiplied by a safety factor to prevent steps too small)
         // exceeds the end time x_{end}.
-        // if ((x0 + 1.01*h - xend) * integrationDirection > 0.0){
-        //     h = xend - x0;
-        //     last = true;
-        // }
+         if ((x0 + 1.01*h - xend) * integrationDirection > 0.0){
+             h = xend - x0;
+         }
 
         // PHASE 1. Compute the K1, ..., K7 components and the estimated
         // solution, using the Butcher's table described in Table 5.2 ([1])
