@@ -56,12 +56,12 @@ if __name__ == '__main__':
     rayTracer = RayTracer(camera, kerr, blackHole)
 
     # Draw the image
-    rayTracer.rayTrace(-90, kernelCalls=1)
-    print(rayTracer.totalTime)
-    rayTracer.synchronise()
+    #rayTracer.rayTrace(-90, kernelCalls=1)
+    #print(rayTracer.totalTime)
+    #rayTracer.synchronise()
     # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
-    rayTracer.plotImage()
+    #rayTracer.plotImage()
 
     # # Generate the 3D scene
-    # rayTracer.generate3Dscene(-70, 500)
-    # rayTracer.plotScene()
+    rayTracer.generate3Dscene(-70, 200)
+    rayTracer.plotScene()
