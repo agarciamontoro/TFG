@@ -1,5 +1,26 @@
 from numpy import sqrt,sin,cos
+import numpy as np
 
+
+def collect_rays(self, xEnd=-30, numSteps=300):
+    stepSize = xEnd/numSteps
+
+    # Initialize plotData with the initial position of the rays
+    self.rayData = np.zeros((self.imageRows, self.imageCols,
+                               5, numSteps+1))
+    self.rayData[:, :, :, 0] = self.systemState[:, :, :]
+
+    x = 0
+    for step in range(numSteps):
+        # Solve the system
+        self.callKernel(x, x + stepSize)
+
+        # Advance the step and synchronise
+        x += stepSize
+        self.synchronise()
+
+        # Get the data and store it for future plot
+        self.rayData[:, :, :, step + 1] = self.systemState
 
 def override_initial_conditions(self, r, cam_theta, cam_phi, theta_cs, phi_cs):
         # Calculate initial vector direction
@@ -39,6 +60,7 @@ def override_initial_conditions(self, r, cam_theta, cam_phi, theta_cs, phi_cs):
         b = pPhi
         q = pTheta**2 + cos(theta)**2*(b**2 / sin(theta)**2 - a2)
 
+        print(r,pR,pTheta,b,q)
         # HACK THE INITIAL CONDITIONS
 
         self.systemState[:,:,0] = r
@@ -49,4 +71,3 @@ def override_initial_conditions(self, r, cam_theta, cam_phi, theta_cs, phi_cs):
 
         self.constants[:,:,0] = b
         self.constants[:,:,1] = q
-
