@@ -1,6 +1,8 @@
 from numpy import sqrt,sin,cos
 import numpy as np
 
+from pycuda import gpuarray
+
 
 def collect_rays(self, xEnd=-30, numSteps=300):
     stepSize = xEnd/numSteps
@@ -71,3 +73,7 @@ def override_initial_conditions(self, r, cam_theta, cam_phi, theta_cs, phi_cs):
 
         self.constants[:,:,0] = b
         self.constants[:,:,1] = q
+
+        self.systemStateGPU = gpuarray.to_gpu(self.systemState)
+        self.constantsGPU = gpuarray.to_gpu(self.constants)
+

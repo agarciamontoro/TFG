@@ -59,11 +59,29 @@ class Test_Solver(unittest.TestCase):
 
         for row in range(0, self.rayTracer.imageRows):
             for col in range(0, self.rayTracer.imageCols):
-               pass# npt.assert_almost_equal(mathematica_data,
-                    #                    self.rayTracer.rayData[row,col].T, decimal=4)
+                npt.assert_almost_equal(mathematica_data,
+                                        self.rayTracer.rayData[row,col].T, decimal=5)
 
-        import IPython
-        IPython.embed()
+
+
+    def test_idempotency(self):
+        # Override the initial conditions of the raytracer
+        self.rayTracer.override_initial_conditions(10,1.415,0,1.445,-0.659734)
+
+        # Integrate the rays and collect the data
+        self.rayTracer.collect_rays()
+
+        # Read the Mathematica's ray data from the csv
+
+        first_run_data = self.rayTracer.rayData
+
+        # Second run
+        self.rayTracer.override_initial_conditions(10,1.415,0,1.445,-0.659734)
+        self.rayTracer.collect_rays()
+        second_run_data = self.rayTracer.rayData
+
+        self.assertTrue( np.all(first_run_data == second_run_data) )
+
 
 if __name__ == '__main__':
     # Run all the tests
