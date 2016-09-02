@@ -344,7 +344,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
 
         // Size of the interval in whose extrems we will check whether the ray
         // has crossed theta = pi/2
-        Real resolution = -1.0;
+        Real resolution = -0.1;
 
         // MAIN LOOP. Each iteration has the following phases:
         //   -> 0. Check that the ray has not collided with the disk or with
