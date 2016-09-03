@@ -1,6 +1,11 @@
 #ifndef __DEFINITIONS__
 #define __DEFINITIONS__
 
+// Pi and Pi/2 constants
+#include <math.h>
+#define Pi M_PI
+#define HALF_PI 1.57079632679489655799898173427209258079528808593750
+
 // Debug switch
 {{ DEBUG }}
 
@@ -14,8 +19,6 @@
 #define IMG_COLS {{ IMG_COLS }}
 #define NUM_PIXELS {{ NUM_PIXELS }}
 
-// Useful constant: pi/2
-#define HALF_PI 1.57079632679489655799898173427209258079528808593750
 
 // Bisect's constants
 #define BISECT_TOL 0.000001

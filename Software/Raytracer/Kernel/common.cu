@@ -1,6 +1,11 @@
 #ifndef __DEFINITIONS__
 #define __DEFINITIONS__
 
+// Pi and Pi/2 constants
+#include <math.h>
+#define Pi M_PI
+#define HALF_PI 1.57079632679489655799898173427209258079528808593750
+
 // Debug switch
 
 
@@ -14,8 +19,6 @@
 #define IMG_COLS 2000
 #define NUM_PIXELS 2000000
 
-// Useful constant: pi/2
-#define HALF_PI 1.57079632679489655799898173427209258079528808593750
 
 // Bisect's constants
 #define BISECT_TOL 0.000001
@@ -71,7 +74,7 @@
 // Camera constants
 #define __d 2
 #define __camR 30
-#define __camTheta 1.511
+#define __camTheta 1.5707963267948966
 #define __camPhi 0
 #define __camBeta 0
 
@@ -80,11 +83,11 @@
 #define __b2 2.00002449496
 
 // Kerr constants
-#define __ro 30.0000595223
+#define __ro 30.0
 #define __delta 840.9999999998
-#define __pomega 29.9641187548
-#define __alpha 0.966094463626
-#define __omega 7.39861124801e-05
+#define __pomega 30.0177725134
+#define __alpha 0.966094335849
+#define __omega 7.39863864975e-05
 
 // SolverRK45 parameters
 #define rtoli 1e-06
@@ -112,7 +115,7 @@
 // Black hole parameters: horizon radius and disk definition
 #define horizonRadius 1.00001414214
 #define innerDiskRadius 9
-#define outerDiskRadius 20
+#define outerDiskRadius 8
 
 // Definition of the data type
 typedef double Real;

@@ -9,6 +9,7 @@ from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import pyplot as plt
+from matplotlib import image as mimg
 
 # Import the raytracer
 sys.path.append('../Raytracer')
@@ -30,11 +31,11 @@ if __name__ == '__main__':
     # Black hole constants
     spin = 0.9999999999
     innerDiskRadius = 9
-    outerDiskRadius = 20
+    outerDiskRadius = 8
 
     # Camera position
     camR = 30
-    camTheta = 1.511
+    camTheta = Pi/2
     camPhi = 0
 
     # Camera lens properties
@@ -54,9 +55,14 @@ if __name__ == '__main__':
 
     # Create the raytracer!
     rayTracer = RayTracer(camera, kerr, blackHole)
-    rayTracer.rayTrace(-90, kernelCalls=1)
+    rayTracer.rayTrace(-170, kernelCalls=1)
 
-    texture = np.empty((500, 2363, 3), dtype=np.float64)
-    texture[:, :, :] = mpl.image.imread('../../Res/squaredTextureDisk.png')[:, :, :3]
+    disk = np.empty((500, 2363, 3), dtype=np.float64)
+    disk[:, :, :] = mimg.imread('../../Res/Textures/disk.png')[:, :, :3]
 
-    rayTracer.texturedImage(texture)
+    # sphere = np.empty((1440, 2880, 3), dtype=np.float64)
+    # sphere = np.empty((437, 867, 3), dtype=np.float64)
+    sphere = np.empty((1500, 3000, 3), dtype=np.float64)
+    sphere[:, :, :] = mimg.imread('../../Res/Textures/milkyWay.png')[:, :, :3]
+
+    rayTracer.texturedImage(disk, sphere)

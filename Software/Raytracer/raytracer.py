@@ -648,11 +648,13 @@ class RayTracer(metaclass=LoggingClass):
         self.systemState = self.systemStateGPU.get()
 
 
-    def texturedImage(self, texture):
+    def texturedImage(self, disk, sphere):
         """Image should be a 2D array where each entry is a 3-tuple of Reals between 0.0 and 1.0
         """
 
-        textureGPU = gpuarray.to_gpu(texture)
+        diskGPU = gpuarray.to_gpu(disk)
+        sphereGPU = gpuarray.to_gpu(sphere)
+
         self.image = np.empty((self.imageRows, self.imageCols, 3),
                               dtype=np.float64)
         imageGPU = gpuarray.to_gpu(self.image)
@@ -660,7 +662,15 @@ class RayTracer(metaclass=LoggingClass):
         self.generateImage(
             self.systemStateGPU,
             self.rayStatusGPU,
-            textureGPU,
+
+            diskGPU,
+            np.int32(disk.shape[0]),
+            np.int32(disk.shape[1]),
+
+            sphereGPU,
+            np.int32(sphere.shape[0]),
+            np.int32(sphere.shape[1]),
+
             imageGPU,
 
             # Grid definition -> number of blocks x number of blocks.
