@@ -7,8 +7,7 @@ def _logging_method( cls_name, method ):
     """
     This decorator acts on a class method and inyects a call to its logger
     (that is supposed to be stored in the "logger" instance) before and after
-    the execution of the method ONLY if '__logmodule__' is defined in the module
-    where the class is being decorated and its boolean value is True.
+    the execution of the method.
 
     :param cls_name: String
         The name of the class that has the method
@@ -71,19 +70,20 @@ class LoggingClass(type):
         if '__init__' in attrs:
             attrs['__init__'] = _inyect_logger(attrs['__init__'])
         else:
+            @_inyect_logger
             def dummy__init__(self,*args,**kwargs):
                 pass
-
+            @_inyect_logger
             def super__init__(self,*args,**kwargs):
                 cls = self.__class__
                 super(cls,self).__init__(*args,**kwargs)
 
             for base in bases:
                 if '__init__' in base.__dict__:
-                    attrs['__init__'] = _inyect_logger(super__init__)
+                    attrs['__init__'] = super__init__
                     break
             else:
-                attrs['__init__'] = _inyect_logger(dummy__init__)
+                attrs['__init__'] = dummy__init__
 
 
         return super().__new__(meta, name, bases, attrs)
