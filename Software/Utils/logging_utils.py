@@ -7,7 +7,8 @@ def _logging_method( cls_name, method ):
     """
     This decorator acts on a class method and inyects a call to its logger
     (that is supposed to be stored in the "logger" instance) before and after
-    the execution of the method.
+    the execution of the method ONLY if '__logmodule__' is defined in the module
+    where the class is being decorated and its boolean value is True.
 
     :param cls_name: String
         The name of the class that has the method
