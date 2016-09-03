@@ -13,6 +13,8 @@ import jinja2
 sys.path.append('../Utils')
 from logging_utils import LoggingClass
 
+__logmodule__ = True
+
 # When importing this module we are initializing the device.
 # Now, we can call the device and send information using
 # the apropiate tools in the pycuda module.
