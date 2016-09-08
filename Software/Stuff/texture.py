@@ -31,17 +31,17 @@ if __name__ == '__main__':
     # Black hole constants
     spin = 0.9999999999
     innerDiskRadius = 9
-    outerDiskRadius = 8
+    outerDiskRadius = 20
 
     # Camera position
     camR = 30
-    camTheta = Pi/2
+    camTheta = 1.511
     camPhi = 0
 
     # Camera lens properties
-    camFocalLength = 2
-    camSensorShape = (1000, 2000)  # (Rows, Columns)
-    camSensorSize = (2, 4)       # (Height, Width)
+    camFocalLength = 1.5
+    camSensorShape = (1000, 1500)  # (Rows, Columns)
+    camSensorSize = (2, 3)       # (Height, Width)
 
     # Create the black hole, the camera and the metric with the constants
     # above
@@ -57,12 +57,9 @@ if __name__ == '__main__':
     rayTracer = RayTracer(camera, kerr, blackHole)
     rayTracer.rayTrace(-170, kernelCalls=1)
 
-    disk = np.empty((500, 2363, 3), dtype=np.float64)
-    disk[:, :, :] = mimg.imread('../../Res/Textures/disk.png')[:, :, :3]
+    # Load the textures
+    disk = mimg.imread('../../Res/Textures/adisk.png')[:, :, :3]
+    sphere = mimg.imread('../../Res/Textures/milkyWay.png')[:, :, :3]
 
-    # sphere = np.empty((1440, 2880, 3), dtype=np.float64)
-    # sphere = np.empty((437, 867, 3), dtype=np.float64)
-    sphere = np.empty((1500, 3000, 3), dtype=np.float64)
-    sphere[:, :, :] = mimg.imread('../../Res/Textures/milkyWay.png')[:, :, :3]
-
-    rayTracer.texturedImage(disk, sphere)
+    # Create the image
+    rayTracer.texturedImage(disk.astype(np.float64), sphere.astype(np.float64))
