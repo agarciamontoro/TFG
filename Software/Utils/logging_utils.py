@@ -1,6 +1,7 @@
 import logging
 import functools
 from inspect import isfunction
+import sys
 import time
 def _logging_method( cls_name, method ):
     """
@@ -20,13 +21,19 @@ def _logging_method( cls_name, method ):
 
     @functools.wraps(method)
     def wrapper(self,*args,**kwargs):
-        self.logger.debug("Entering method {} of class {}".format(method.__name__,cls_name))
-        start_time =  time.time()
-        result = method(self,*args,**kwargs)
-        end_time =  time.time()
-        self.logger.debug("Exiting method {} of class {}".format(method.__name__,cls_name))
-        self.logger.debug("Execution of method {} took {:0.3f} seconds".format(method.__name__,
-            end_time - start_time ))
+        if getattr(sys.modules[self.__class__.__module__],'__logmodule__',False):
+            self.logger.debug("Entering method {} of class {}".format(method.__name__,cls_name))
+            start_time =  time.time()
+            result = method(self,*args,**kwargs)
+            end_time =  time.time()
+            self.logger.debug("Exiting method {} of class {}".format(method.__name__,cls_name))
+            self.logger.debug("Execution of method {} took {:0.3f} seconds".format(method.__name__,
+                end_time - start_time ))
+
+        else:
+            result = method(self,*args,**kwargs)
+
+
         return result
     return wrapper
 
@@ -60,6 +67,23 @@ class LoggingClass(type):
             if isfunction(attr) :
                 attrs[attrname] = _logging_method(name,attr)
 
-        attrs['__init__'] = _inyect_logger(attrs['__init__'])
+        if '__init__' in attrs:
+            attrs['__init__'] = _inyect_logger(attrs['__init__'])
+        else:
+            @_inyect_logger
+            def dummy__init__(self,*args,**kwargs):
+                pass
+            @_inyect_logger
+            def super__init__(self,*args,**kwargs):
+                cls = self.__class__
+                super(cls,self).__init__(*args,**kwargs)
+
+            for base in bases:
+                if '__init__' in base.__dict__:
+                    attrs['__init__'] = super__init__
+                    break
+            else:
+                attrs['__init__'] = dummy__init__
+
 
         return super().__new__(meta, name, bases, attrs)
