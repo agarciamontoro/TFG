@@ -56,8 +56,8 @@
     \frenchspacing
     \raggedbottom
     \selectlanguage{british} % american ngerman
-    %\renewcommand*{\bibname}{new name}
-    %\setbibpreamble{}
+    % \renewcommand*{\bibname}{new name}
+    % \setbibpreamble{}
     \pagenumbering{roman}
     \pagestyle{plain}
 
@@ -90,8 +90,29 @@
     %interlingua se que. Al via multo esser specimen, campo responder que
     %da. Le usate medical addresses pro, europa origine sanctificate nos se.}
 
+%%%% Grupos tipo teorema
+
+\newtheorem{defi}{Definition}
+
+\newtheorem{teor}[defi]{Theorem}
+
+\newtheorem{pro}[defi]{Proposition}
+
+\newtheorem{cor}[defi]{Corollary}
+
+\newtheorem{lem}[defi]{Lemma}
+
+\newtheorem{rem}[defi]{Remark}
+
+\newtheorem{exam}[defi]{Example}
+
+
+
     \part{Introduction}
+    \include{Chapters/lorentzianVS}
     \include{Chapters/ChapterXX}
+    \include{Chapters/notionST}
+
     \cleardoublepage
 
 % ********************************************************************
@@ -106,7 +127,7 @@
 %********************************************************************
 % Other Stuff in the Back
 %*******************************************************
-    %\cleardoublepage\include{FrontBackmatter/Bibliography}
+   \cleardoublepage\include{FrontBackmatter/Bibliography}
     %\cleardoublepage\include{FrontBackmatter/Declaration}
     %\cleardoublepage\include{FrontBackmatter/Colophon}
 
