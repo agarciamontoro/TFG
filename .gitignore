@@ -109,6 +109,7 @@ ENV/
 *.fot
 *.cb
 *.cb2
+TFG.pdf
 
 ## Intermediate documents:
 *.dvi

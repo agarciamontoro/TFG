@@ -11,7 +11,7 @@ $v\neq 0$). The \emph{light cone} is the subset of $V$ consisting of all null ve
 
 The basic tool we will use to study Lorentzian products is the following result \cite[Lemma 5.26]{oneill83}
 
-\begin{lem}\label{basic} If $v$ is a timelike vector of $(V,g)$ then we have the orthogonal decomposition
+\begin{lemma}\label{basic} If $v$ is a timelike vector of $(V,g)$ then we have the orthogonal decomposition
 \[
 V=\mathrm{Span}\{v\}\oplus v^{\perp},
 \]
@@ -19,40 +19,36 @@ where $v^{\perp}=\{u\in V\, : \, g(u,v)=0\}(=\mathrm{Span}\{v\}^{\perp})$. Moreo
 of $g$ on $v^{\perp}$ is positive definite (i.e. $g_{{\mid}_{v^{\perp}}}$ is a Euclidean product) and
 the restriction of $g$ to $\mathrm{Span}\{v\}$ is negative definite (i.e. $(-g)_{{\mid}_{\mathrm{Span}\{v\}}}$
 is a Euclidean product).
-\end{lem}
+\end{lemma}
 
-\begin{rem} {\rm This result is not true if $v$ is assumed to be null. In fact, in this case $v\in v^{\perp}$.
-On the other hand, for $v\neq 0$ spacelike, the analogous decomposition holds but if dim$V\geq 3$ then
-$g_{{\mid}_{v^{\perp}}}$ is also Lorentzian.}
-\end{rem}
+\begin{remark}
+    This result is not true if $v$ is assumed to be null. In fact, in this case $v\in v^{\perp}$.
+    On the other hand, for $v\neq 0$ spacelike, the analogous decomposition holds but if dim$V\geq 3$ then $g_{{\mid}_{v^{\perp}}}$ is also Lorentzian.
+\end{remark}
 
-\begin{rem}\label{classic_Schwarz}{\rm The classical Euclidean geometry holds in positive definite subspaces
-of a Lorentzian vector space; in particular, the Schwarz inequality holds
-true in $v^{\perp}$, for any timelike vector $v$,
-\[
-\mid g(u,w)\mid \leq \sqrt{g(u,u)}\sqrt{g(w,w)}
-\]
-for all $u,w\in v^{\perp}$, with equality if and only if $u$ and $w$ are linearly dependent.}
-\end{rem}
+\begin{remark}\label{classic_Schwarz}
+    The classical Euclidean geometry holds in positive definite subspaces of a Lorentzian vector space; in particular, the Schwarz inequality holds true in $v^{\perp}$, for any timelike vector $v$,
+    \[
+        \mid g(u,w)\mid \leq \sqrt{g(u,u)}\sqrt{g(w,w)}
+    \]
+    for all $u,w\in v^{\perp}$, with equality if and only if $u$ and $w$ are linearly dependent.
+\end{remark}
 
 One sees that any two timelike vectors of $(V,g)$ are never orthogonal.
 However, for null vectors we have  \cite[Cor. 1.1.5]{sachs77}, \cite[p. 155]{oneill83}.
 
-\begin{pro} Given two null vectors $x,y$ of a Lorentzian vector space $(V,g)$ we have
+\begin{proposition} Given two null vectors $x,y$ of a Lorentzian vector space $(V,g)$ we have
 $g(x,y)=0$ if and only if $x$ and $y$ are linearly dependent.
-\end{pro}
-\emph{Proof}. Using Lemma \ref{basic} we write $V=\mathrm{Span}\{v\}\oplus v^{\perp},$ where $g(v,v)=-1$. Therefore we
-have
-\[
-x=av+u, \quad u\in v^{\perp}, \quad u\neq 0, \quad g(u,u)=a^2, \quad (a\neq 0),
-\]
-\[
-y=bv+w, \quad w\in v^{\perp}, \quad w\neq 0, \quad g(v,v)=b^2, \quad (b\neq 0).
-\]
-If $g(x,y)=0$ then $\mid g(u,w)\mid = \sqrt{g(u,u)}\sqrt{g(w,w)}$ and therefore $u=kw$ for some $k\in \R$. In fact, $k=a/b$.
-The converse is trivial.\hfill{$\Box$}
+\end{proposition}
 
-\vspace{2mm}
+\begin{proof}
+    Using Lemma \ref{basic} we write $V=\mathrm{Span}\{v\}\oplus v^{\perp},$ where $g(v,v)=-1$. Therefore we have
+    \begin{align*}
+        x=av+u, \quad u\in v^{\perp}, \quad u\neq 0, \quad g(u,u)=a^2, \quad (a\neq 0),\\
+        y=bv+w, \quad w\in v^{\perp}, \quad w\neq 0, \quad g(v,v)=b^2, \quad (b\neq 0).
+    \end{align*}
+    If $g(x,y)=0$ then $\mid g(u,w)\mid = \sqrt{g(u,u)}\sqrt{g(w,w)}$ and therefore $u=kw$ for some $k\in \R$. In fact, $k=a/b$. The converse is trivial.
+\end{proof}
 
 Let $\mathcal{T}(V,g)$ be the subset of $V$ consisting of all timelike vectors of $(V,g)$. For each $v\in \mathcal{T}(V,g)$ we put
 \[
@@ -66,89 +62,85 @@ we know $g(v,w)\neq 0$. Therefore, either $w\in C(v)$ or $w\in C(-v)$ and so
 for any $v\in \mathcal{T}(V,g)$. We call $C(v)$ the \emph{time cone} defined by $v$. The following result characterizes
 when two timelike vectors lie to the same time cone \cite[Lemma 5.29]{oneill83}
 
-\begin{lem}\label{time_cone}
+\begin{lemma}\label{time_cone}
 Given $u,v\in \mathcal{T}(V,g)$, they belong to the same time cone if and only if $g(u,v)<0$.
-\end{lem}
+\end{lemma}
 
-\noindent \emph{Proof}. Clearly, if $g(u,v)<0$ then $u\in C(v)$, and so $u$ and $v$ belong to the time cone
-defined by $v$. Conversely, using again Lemma \ref{basic} we write
-\[
-u=aw+y, \quad g(w,w)=-1, \quad y\in w^{\perp}, \quad a=-g(u,w)>0,
-\]
-\[
-v=bw+z, \quad g(w,w)=-1, \quad z\in w^{\perp}, \quad b=-g(v,w)>0.
-\]
-Taking into account
-\[
-\sqrt{g(y,y)}<a \quad \mathrm{and} \quad \sqrt{g(z,z)}<b,
-\]
-we have
-\[
-g(u,v)\leq -ab+\mid g(y,z)\mid \leq -ab + \sqrt{g(y,y)}\sqrt{g(z,z)}<-ab+ab=0.
-\]
-\hfill{$\Box$}
-\begin{cor}\label{convexity}
+\begin{proof}
+    Clearly, if $g(u,v)<0$ then $u\in C(v)$, and so $u$ and $v$ belong to the time cone defined by $v$. Conversely, using again Lemma \ref{basic} we write
+    \begin{align*}
+        u=aw+y, \quad g(w,w)=-1, \quad y\in w^{\perp}, \quad a=-g(u,w)>0,//
+        v=bw+z, \quad g(w,w)=-1, \quad z\in w^{\perp}, \quad b=-g(v,w)>0.
+    \end{align*}
+    Taking into account
+    \[
+    \sqrt{g(y,y)}<a \quad \mathrm{and} \quad \sqrt{g(z,z)}<b,
+    \]
+    we have
+    \[
+    g(u,v)\leq -ab+\mid g(y,z)\mid \leq -ab + \sqrt{g(y,y)}\sqrt{g(z,z)}<-ab+ab=0.
+    \]
+\end{proof}
+
+\begin{corollary}\label{convexity}
 Given $w\in\mathcal{T}(V,g)$, $u,v\in C(w)$ and $a,b\in \R$, $a,b\geq 0$, $a^2+b^2 \neq 0,$ we have $au+bv\in C(w)$.
-\end{cor}
-\noindent \emph{Proof}. Compute $g(au+bv,w)=a g(u,w)+ b g(v,w)<0$ and use previous result. \hfill{$\Box$}
-\begin{rem}{\rm
-Time cones are then convex subsets of $V$. On the other hand, note that if $u\in C(v)$ then $C(u)=C(v)$.}
-\end{rem}
+\end{corollary}
 
-We have seen in Remark \ref{classic_Schwarz} that the classical Schwarz inequality
-holds true in positive definite subspaces of a Lorentzian vector space. In general,
-this inequality does not hold for any pair of vectors. However, if we pay attention
-only on timelike vectors we have the so-called \emph{wrong-way Schwarz inequality}
-\cite[Prop. 5.30]{oneill83}
+\begin{proof}
+    Compute $g(au+bv,w)=a g(u,w)+ b g(v,w)<0$ and use previous result.
+\end{proof}
 
-\begin{pro}\label{wrong_way} For any $u,v \in \mathcal{T}(V,g)$ we have
-\[
-\mid g(u,v) \mid \geq \sqrt{-g(u,u)}\sqrt{-g(v,v)}
-\]
-and equality holds if and only if $u$ and $v$ are linearly dependent.
-\end{pro}
-\noindent \emph{Proof}. We write using Lemma \ref{basic}
-\[
-u=av+x, \quad a\in \R, \quad x\in v^{\perp},
-\]
-and therefore
-\[
-g(u,v)^2=a^2g(v,v)^2, \quad \quad g(u,u)=a^2g(v,v)+g(x,x)<0,
-\]
-which gives
-\[
-g(u,v)^2=\{g(u,u)-g(x,x)\}g(v,v) \geq g(u,u)g(v,v),
-\]
-and equality holds if and only if $g(x,x)=0$, i.e. $x=0$,
-which means $u=av$.
+\begin{remark}
+    Time cones are then convex subsets of $V$. On the other hand, note that if $u\in C(v)$ then $C(u)=C(v)$.
+\end{remark}
 
-\hfill{$\Box$}
+We have seen in Remark \ref{classic_Schwarz} that the classical Schwarz inequality holds true in positive definite subspaces of a Lorentzian vector space. In general, this inequality does not hold for any pair of vectors. However, if we pay attention only on timelike vectors we have the so-called \emph{wrong-way Schwarz inequality} \cite[Prop. 5.30]{oneill83}
 
-\vspace{2mm}
+\begin{proposition}\label{wrong_way}
+    For any $u,v \in \mathcal{T}(V,g)$ we have
+    \[
+        \mid g(u,v) \mid \geq \sqrt{-g(u,u)}\sqrt{-g(v,v)}
+    \]
+    and equality holds if and only if $u$ and $v$ are linearly dependent.
+\end{proposition}
 
-Taking into account Lemma \ref{time_cone}, if two timelike vectors $u$ and $v$
-belong to the same time cone we have, from Proposition \ref{wrong_way},
+\begin{proof}
+    We write using Lemma \ref{basic}
+    \[
+        u=av+x, \quad a\in \R, \quad x\in v^{\perp},
+    \]
+    and therefore
+    \[
+        g(u,v)^2=a^2g(v,v)^2, \quad \quad g(u,u)=a^2g(v,v)+g(x,x)<0,
+    \]
+    which gives
+    \[
+        g(u,v)^2=\{g(u,u)-g(x,x)\}g(v,v) \geq g(u,u)g(v,v),
+    \]
+    and equality holds if and only if $g(x,x)=0$, i.e. $x=0$, which means $u=av$.
+\end{proof}
+
+Taking into account Lemma \ref{time_cone}, if two timelike vectors $u$ and $v$ belong to the same time cone we have, from Proposition \ref{wrong_way},
 \[
--g(u,v) \geq \sqrt{-g(u,u)}\sqrt{-g(v,v)},
+    -g(u,v) \geq \sqrt{-g(u,u)}\sqrt{-g(v,v)},
 \]
 and therefore, there exists a unique $\theta \in \R$, $\theta \geq 0$, such that
 \[
-\cosh \theta =\frac{-g(u,v)}{\sqrt{-g(u,u)}\sqrt{-g(v,v)}},
+    \cosh \theta =\frac{-g(u,v)}{\sqrt{-g(u,u)}\sqrt{-g(v,v)}},
 \]
 which is called the \emph{hyperbolic angle} between $u$ and $v$.
 
 \vspace{2mm}
 
-As a consequence of Proposition \ref{wrong_way}, taking in mind Lemma \ref{time_cone}
-we get the so-called \emph{wrong-way Minkowski inequality} \cite[Cor. 5.31]{oneill83}
+As a consequence of Proposition \ref{wrong_way}, taking in mind Lemma \ref{time_cone} we get the so-called \emph{wrong-way Minkowski inequality} \cite[Cor. 5.31]{oneill83}
 
-\begin{cor}\label{Minkowski}
-For any $u,v \in \mathcal{T}(V,g)$ in the same time cone we have
-\[
-\sqrt{-g(u+v,u+v)} \geq \sqrt{-g(u,u)}+\sqrt{-g(v,v)}
-\]
-and equality holds if and only if $u$ and $v$ are linearly dependent.
-\end{cor}
+\begin{corollary}\label{Minkowski}
+    For any $u,v \in \mathcal{T}(V,g)$ in the same time cone we have
+    \[
+        \sqrt{-g(u+v,u+v)} \geq \sqrt{-g(u,u)}+\sqrt{-g(v,v)}
+    \]
+    and equality holds if and only if $u$ and $v$ are linearly dependent.
+\end{corollary}
 
 
 Now, we will explain a genuine notion in Lorentzian geometry. Let $(V,g)$ be a Lorentzian

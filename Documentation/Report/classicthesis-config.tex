@@ -282,11 +282,23 @@
 % 9. Custom settings
 % ****************************************************************************************************
 
+
+\usepackage{amsthm}
+
+\theoremstyle{plain}
 \newtheorem{theorem}{Theorem}
 \newtheorem{corollary}{Corollary}
 \newtheorem{proposition}{Proposition}
 \newtheorem{lemma}{Lemma}
+
+\theoremstyle{definition}
 \newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+
 \def\vs{\vspace{5mm}}
 
 \makeatletter
@@ -295,6 +307,7 @@
 \let\c@lemma\c@theorem
 \let\c@definition\c@theorem
 \let\c@example\c@theorem
+\let\c@remark\c@theorem
 \makeatother
 
 \def\M{{\mathcal M}}
@@ -305,14 +318,34 @@
 \def\that{T}
 
 \usepackage{amssymb}
-\newenvironment{proof}{\noindent{\textbf{Proof.}}}{\hfill$\blacksquare$\vs}
+% \newenvironment{proof}{\noindent{\textbf{Proof.}}}{\hfill$\blacksquare$\vs}
 
-\newenvironment{Remark}{\stepcounter{theorem} \noindent {\textbf{Remark
-\thetheorem}.}
-}{}
+% \newenvironment{remark}{\stepcounter{theorem} \noindent {\textbf{Remark
+% \thetheorem}.}
+% }{}
 
 % Custom commands - Added by Alejandro García
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+% \newcommand{\H}{\mathbb{H}}
+
+\def\Q{{\mathbb Q}}
+% \def\R{{\mathbb R}}
+% \def\N{{\mathbb N}}
+\def\Z{{\mathbb Z}}
+% \def\C{{\mathbb C}}
+\def\S{{\mathbb S}}
+\def\L{{\mathbb L}}
+\def\H{{\mathbb H}}
+\def\K{{\mathbb K}}
+\def\X{{\mathbb X}}
+\def\Y{{\mathbb Y}}
+% \def\Z{{\mathbb Z}}
+\def\A{{\mathbb A}}
+\def\J{{\mathbb J}}
+\def\I{{\mathbb I}}
+\def\T{{\mathbb T}}
+
 
 % Custom packages - Added by Alejandro García
 \usepackage{tikz}
