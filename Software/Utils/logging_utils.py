@@ -67,23 +67,30 @@ class LoggingClass(type):
             if isfunction(attr) :
                 attrs[attrname] = _logging_method(name,attr)
 
+        cls = super().__new__(meta, name, bases, attrs)
+
         if '__init__' in attrs:
-            attrs['__init__'] = _inyect_logger(attrs['__init__'])
+            setattr(cls,'__init__', _inyect_logger(attrs['__init__']))
         else:
             @_inyect_logger
             def dummy__init__(self,*args,**kwargs):
                 pass
+
+            # This is a little tricky because in order to preserve the __mro__ we
+            # need to call super() with the correct arguments **but** we cannot
+            # use self.__class__ because that will break class inheritance with
+            # a fancy eternal recursion. My solution? From the deeps of hell:
+            # A cool closure of the cls variable into the __init__!
+
             @_inyect_logger
             def super__init__(self,*args,**kwargs):
-                cls = self.__class__
                 super(cls,self).__init__(*args,**kwargs)
 
             for base in bases:
                 if '__init__' in base.__dict__:
-                    attrs['__init__'] = super__init__
+                    setattr(cls,'__init__', super__init__)
                     break
             else:
-                attrs['__init__'] = dummy__init__
+                setattr(cls,'__init__',  dummy__init__)
 
-
-        return super().__new__(meta, name, bases, attrs)
+        return cls
