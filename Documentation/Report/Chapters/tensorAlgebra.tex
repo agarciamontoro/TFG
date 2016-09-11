@@ -1,0 +1,54 @@
+\chapter{Tensor Algebra}
+
+This chapter covers some basic tools needed in the further development of this work.
+
+\section{Tensors on a generic vector space}
+
+\subsection{The notion of tensor}
+
+\begin{definition}
+    Let $V_1, V_2, \dots, V_r$ and $W$ be vector spaces over the same field $K$. A multilinear ---$r$ times linear--- map from $V_1 \times V_2 \cdots \times V_r$ to $W$ is a map
+    \[
+        T \colon V_1 \times V_2 \cdots \times V_r \longrightarrow W
+    \]
+    that is linear in each of its components; \ie, that verifies the following conditions:
+    \begin{enumerate}
+        \item $\begin{aligned}[t]
+	        T(x_1, \dots, x_i+x_i', \dots, x_r) = &T(x_1, \dots, x_i, \dots, x_r) + \\&T(x_1, \dots, x_i', \dots, x_r).
+        \end{aligned}$
+        \item $T(x_1, \dots, a x_i, \dots, x_r) = aT(x_1, \dots, x_i, \dots, x_r)$.
+    \end{enumerate}
+    for every $i \in \{1, 2, \dots, r\}$, where $x_j$ is an arbitrary vector in $V_j$ and $a \in K$.
+\end{definition}
+
+Before going ahead with the proper definition of tensor, we must remember the concept of dual space.
+
+Given a vector space $V$ over a field $K$, its \emph{dual space} is the vector space defined as
+\[
+	V^* \defeq \Hom_K(V,K);
+\]
+that is, $V^*$ is the set of all linear maps $\varphi : V \to K$.
+
+Moreover, if $V$ is finite-dimensional, the dimensions of $V$ and $V^*$ are the same and, given a base of $V$, $B = \{v_1, \dots, v_n\}$, its \emph{dual basis} is built as $B^* = \{\varphi^1, \dots, \varphi^n\}$, where
+\[
+	\varphi^i(v_j) = \delta^i_j.
+\]
+
+One important result concerning dual spaces tells us that the dual space of the dual space of $V$, denoted by $V^{**}$, is isomorphic to $V$, and that the isomorphism between them is natural; \ie, it can be described without the choice of a basis. The natural isomorphism is the following one:
+
+\begin{alignat*}{2}
+	\psi \colon V &\longrightarrow& V^{**} \\
+	v &\longmapsto& \psi_v \colon V^* &\longrightarrow K \\
+	&&\varphi &\longmapsto \psi_v(\varphi) \defeq \varphi(v)
+\end{alignat*}
+
+\begin{definition}
+	Let $V$ be a vector space over a field $K$, being $V^*$ its dual space. A tensor $r$ ($\geq 0$) times contravariant and $s$ ($\geq 0$) times covariant; \ie, a tensor of type $(r,s)$, is a multilinear map
+	\[
+		T \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r copies}} \times \underbrace{V \times \cdots \times V}_{\text{s copies}} \longrightarrow K.
+	\]
+\end{definition}
+
+
+
+\section{Tensors on a Lorentzian vector space}

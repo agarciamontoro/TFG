@@ -1,24 +1,18 @@
 \chapter{Lorentzian vector spaces}
-Let $V$ be a real vector space with $\mathrm{dim}\, V=n(\geq 2)$ and let $g$ be a non-degenerate
-symmetric bilinear form on $V$ with index 1, i.e., $g(u,v)=0$ for all $v\in V$ implies $u=0$,
-and the maximum dimension of a subspace $L$ of $V$ such that $g(u,u)\leq 0$ for all $u\in L$
-with equality if and only if $u=0$ is 1. We will say that $g$ is a \emph{Lorentzian product}
-and $(V,g)$ a \emph{Lorentzian vector space}. A vector $v$ is said to be \emph{spacelike}
-(resp. \emph{timelike}, \emph{null}) if $g(v,v)>0$ or $v=0$ (resp. $g(v,v)<0$, $g(v,v)=0$ and
-$v\neq 0$). The \emph{light cone} is the subset of $V$ consisting of all null vectors of $(V,g)$.
+Let $V$ be a real vector space with $\mathrm{dim}\, V=n(\geq 2)$ and let $g$ be a non-degenerate symmetric bilinear form on $V$ with index 1, i.e., $g(u,v)=0$ for all $v\in V$ implies $u=0$, and the maximum dimension of a subspace $L$ of $V$ such that $g(u,u)\leq 0$ for all $u\in L$ with equality if and only if $u=0$ is 1. We will say that $g$ is a \emph{Lorentzian product} and $(V,g)$ a \emph{Lorentzian vector space}. A vector $v$ is said to be \emph{spacelike}
+(resp. \emph{timelike}, \emph{null}) if $g(v,v)>0$ or $v=0$ (resp. $g(v,v)<0$, $g(v,v)=0$ and $v\neq 0$). The \emph{light cone} is the subset of $V$ consisting of all null vectors of $(V,g)$.
 
 \vspace{2mm}
 
 The basic tool we will use to study Lorentzian products is the following result \cite[Lemma 5.26]{oneill83}
 
-\begin{lemma}\label{basic} If $v$ is a timelike vector of $(V,g)$ then we have the orthogonal decomposition
-\[
-V=\mathrm{Span}\{v\}\oplus v^{\perp},
-\]
-where $v^{\perp}=\{u\in V\, : \, g(u,v)=0\}(=\mathrm{Span}\{v\}^{\perp})$. Moreover, the restriction
-of $g$ on $v^{\perp}$ is positive definite (i.e. $g_{{\mid}_{v^{\perp}}}$ is a Euclidean product) and
-the restriction of $g$ to $\mathrm{Span}\{v\}$ is negative definite (i.e. $(-g)_{{\mid}_{\mathrm{Span}\{v\}}}$
-is a Euclidean product).
+\begin{lemma}\label{basic}
+    If $v$ is a timelike vector of $(V,g)$ then we have the orthogonal decomposition
+    \[
+        V = \mathrm{Span}\{v\}\oplus v^{\perp},
+    \]
+    where $v^{\perp}=\{u\in V\, : \, g(u,v)=0\}(=\mathrm{Span}\{v\}^{\perp})$. Moreover, the restriction of $g$ on $v^{\perp}$ is positive definite (i.e. $g_{{\mid}_{v^{\perp}}}$ is a Euclidean product) and the restriction of $g$ to $\mathrm{Span}\{v\}$ is negative definite (i.e. $(-g)_{{\mid}_{\mathrm{Span}\{v\}}}$
+    is a Euclidean product).
 \end{lemma}
 
 \begin{remark}
@@ -69,7 +63,7 @@ Given $u,v\in \mathcal{T}(V,g)$, they belong to the same time cone if and only i
 \begin{proof}
     Clearly, if $g(u,v)<0$ then $u\in C(v)$, and so $u$ and $v$ belong to the time cone defined by $v$. Conversely, using again Lemma \ref{basic} we write
     \begin{align*}
-        u=aw+y, \quad g(w,w)=-1, \quad y\in w^{\perp}, \quad a=-g(u,w)>0,//
+        u=aw+y, \quad g(w,w)=-1, \quad y\in w^{\perp}, \quad a=-g(u,w)>0,\\
         v=bw+z, \quad g(w,w)=-1, \quad z\in w^{\perp}, \quad b=-g(v,w)>0.
     \end{align*}
     Taking into account

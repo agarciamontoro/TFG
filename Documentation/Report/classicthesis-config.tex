@@ -346,6 +346,14 @@
 \def\I{{\mathbb I}}
 \def\T{{\mathbb T}}
 
+\makeatletter
+\newcommand*{\defeq}{\mathrel{\rlap{%
+                     \raisebox{0.3ex}{$\m@th\cdot$}}%
+                     \raisebox{-0.3ex}{$\m@th\cdot$}}%
+                     =}
+\makeatother
+
+\DeclareMathOperator{\Hom}{Hom}
 
 % Custom packages - Added by Alejandro García
 \usepackage{tikz}
