@@ -7,6 +7,7 @@ This chapter covers some basic tools needed in the further development of this w
 \subsection{The notion of tensor}
 
 \begin{definition}
+	\label{def:multilinear}
     Let $V_1, V_2, \dots, V_r$ and $W$ be vector spaces over the same field $K$. A multilinear ---$r$ times linear--- map from $V_1 \times V_2 \cdots \times V_r$ to $W$ is a map
     \[
         T \colon V_1 \times V_2 \cdots \times V_r \longrightarrow W
@@ -21,7 +22,7 @@ This chapter covers some basic tools needed in the further development of this w
     for every $i \in \{1, 2, \dots, r\}$, where $x_j$ is an arbitrary vector in $V_j$ and $a \in K$.
 \end{definition}
 
-Before going ahead with the proper definition of tensor, we must remember the concept of dual space.
+Before going ahead with the definition of tensor, we must remember the concept of dual space.
 
 Given a vector space $V$ over a field $K$, its \emph{dual space} is the vector space defined as
 \[
@@ -29,26 +30,65 @@ Given a vector space $V$ over a field $K$, its \emph{dual space} is the vector s
 \]
 that is, $V^*$ is the set of all linear maps $\varphi : V \to K$.
 
-Moreover, if $V$ is finite-dimensional, the dimensions of $V$ and $V^*$ are the same and, given a base of $V$, $B = \{v_1, \dots, v_n\}$, its \emph{dual basis} is built as $B^* = \{\varphi^1, \dots, \varphi^n\}$, where
+There are some interesting results concerning dual spaces that will be important in the understanding of the notion of tensor.
+
+First of all, it is known that if $V$ is finite-dimensional, the dimensions of $V$ and $V^*$ are the same and, given a base of $V$, $B = \{v_1, \dots, v_n\}$, its \emph{dual basis} is built as $B^* = \{\varphi^1, \dots, \varphi^n\}$\footnote{From now on, Latin letters with subscripts will denote vectors, whereas Greek letters with superscripts will denote one-forms.}, where
 \[
 	\varphi^i(v_j) = \delta^i_j.
 \]
 
-One important result concerning dual spaces tells us that the dual space of the dual space of $V$, denoted by $V^{**}$, is isomorphic to $V$, and that the isomorphism between them is natural; \ie, it can be described without the choice of a basis. The natural isomorphism is the following one:
+Furthermore, the reflexiveness theorem \change{Reflexiveness theorem is the worst translation ever} tells us that there exists a natural isomorphism between $V$ and its double dual space, $V^{**}$, when $V$ is finite-dimensional. This isomorphism assigns, to every vector $v \in V$, a function that maps every one-form into its evaluation on $v$:
+\begin{align*}
+	\psi \colon V &\longrightarrow V^{**} \\
+	v &\longmapsto \psi_v \colon \begin{aligned}[t]
+		V^* &\longrightarrow K \\
+		\varphi &\longmapsto \varphi(v).
+	\end{aligned}
+\end{align*}
 
-\begin{alignat*}{2}
-	\psi \colon V &\longrightarrow& V^{**} \\
-	v &\longmapsto& \psi_v \colon V^* &\longrightarrow K \\
-	&&\varphi &\longmapsto \psi_v(\varphi) \defeq \varphi(v)
-\end{alignat*}
+With the concepts of multilinear maps and dual spaces we can now built the definition of tensor, core concept of this section.
 
 \begin{definition}
-	Let $V$ be a vector space over a field $K$, being $V^*$ its dual space. A tensor $r$ ($\geq 0$) times contravariant and $s$ ($\geq 0$) times covariant; \ie, a tensor of type $(r,s)$, is a multilinear map
+	\label{def:tensor}
+	Let $V$ be a vector space over a field $K$, being $V^*$ its dual space. A tensor $r$ ($\geq 0$) times contravariant and $s$ ($\geq 0$) times covariant ---\ie, a tensor of type $(r,s)$--- is a multilinear map
 	\[
 		T \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r copies}} \times \underbrace{V \times \cdots \times V}_{\text{s copies}} \longrightarrow K.
 	\]
 \end{definition}
 
-
+\begin{example}
+	The following examples show how interesting the notion of tensor is, as it can include a lot of mathematical objects under the same concept; for example, we will see that both vectors and one-forms are tensors.
+	
+	We consider $V$ a $n$-dimensional vector space and $V^*$ its dual space.
+	\begin{enumerate}
+		\item Let $\varphi \in V^*$; \ie,  $\varphi \colon V \to K$ is a one-form. From definition \autoref{def:tensor} it is clear that $\varphi$ is a tensor of type $(0,1)$ over $V$.
+		\item Let $v \in V$ be a vector. Using the natural isomorphism between $V$ and its double dual space, the vector $v$ can be identified with $\psi_v$, and thus we can understand $v$ as a tensor of type $(1,0)$.
+		\item One usual example of a tensor of type $(1,1)$ is the following. Consider $f \in \End_K V$ and let $T_f \colon V^* \times V \to K$ be the map defined as $T_f(v, \varphi) \defeq \varphi(f(v))$. It is clear that $T_f$ is a tensor of type $(1,1)$. Moreover, if we consider $f$ to be the identity map $1_V$, then $T_{1_V}$ is the tensor that maps every pair of (vector, one-form) to the evaluation of the one-form on the vector; \ie, is the tensor associated to the natural isomorphism between $V$ and $V^**$.
+		\item Common operations on several mathematical fields can also be seen as tensors. For example, the inner product can be defined as a tensor of type $(0,2)$ as follows:
+		\begin{align*}
+			T \colon V \times V &\to K\\
+			(v,w) &\mapsto \sum_{i=1}^n v_i w_i.
+		\end{align*}
+		In general, \unsure{Are bilinear forms (0,2) tensors?} every bilinear form is a $(0,2)$ tensor.
+	\end{enumerate}
+\end{example}
 
 \section{Tensors on a Lorentzian vector space}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

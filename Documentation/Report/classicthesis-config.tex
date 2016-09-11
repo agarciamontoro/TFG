@@ -282,21 +282,23 @@
 % 9. Custom settings
 % ****************************************************************************************************
 
+\usepackage{chngcntr}
+\counterwithin{figure}{chapter}
 
 \usepackage{amsthm}
 
 \theoremstyle{plain}
-\newtheorem{theorem}{Theorem}
-\newtheorem{corollary}{Corollary}
-\newtheorem{proposition}{Proposition}
-\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}[chapter]
+\newtheorem{corollary}{Corollary}[chapter]
+\newtheorem{proposition}{Proposition}[chapter]
+\newtheorem{lemma}{Lemma}[chapter]
 
 \theoremstyle{definition}
-\newtheorem{definition}{Definition}
-\newtheorem{example}{Example}
+\newtheorem{definition}{Definition}[chapter]
+\newtheorem{example}{Example}[chapter]
 
 \theoremstyle{remark}
-\newtheorem{remark}{Remark}
+\newtheorem{remark}{Remark}[chapter]
 
 
 \def\vs{\vspace{5mm}}
@@ -354,6 +356,17 @@
 \makeatother
 
 \DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\End}{End}
 
-% Custom packages - Added by Alejandro García
 \usepackage{tikz}
+
+%\usepackage{todonotes}
+
+% To do notes, taken from http://tex.stackexchange.com/a/178806
+\usepackage{xargs}                      % Use more than one optional parameter in a new commands
+\usepackage[colorinlistoftodos,prependcaption,textsize=small]{todonotes}
+\newcommandx{\fixme}[2][1=]{{\let\marginpar\oldmarginpar \todo[#1]{#2}}}
+\newcommandx{\unsure}[2][1=]{\fixme[linecolor=red,backgroundcolor=red!25,bordercolor=red,#1]{#2}}
+\newcommandx{\change}[2][1=]{\fixme[linecolor=blue,backgroundcolor=blue!25,bordercolor=blue,#1]{#2}}
+\newcommandx{\info}[2][1=]{\fixme[linecolor=OliveGreen,backgroundcolor=OliveGreen!25,bordercolor=OliveGreen,#1]{#2}}
+\newcommandx{\improvement}[2][1=]{\fixme[linecolor=Plum,backgroundcolor=Plum!25,bordercolor=Plum,#1]{#2}}
