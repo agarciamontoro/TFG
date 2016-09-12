@@ -479,7 +479,15 @@ cdef int SolverRK45( double [:] initCond, double* globalX0, double xend,
     # Copy initial conditions to initial array
 
     cdef double y0[5] # TODO Esto no es un poco movida en el codigo original?
-    
+   
+    # This may seem a bit odd but is here because the signature of the function
+    # KerrGeodesicEquations needs a pointer in its first entrance and the first
+    # time the function is called to compute K1 it needs the data in initCond but
+    # this is a memoryview. So we need to copy the data into a C array and back when
+    # ended. TODO: Use cpython.array.array and cpython.array.clone maybe?
+    #Look here:
+    #    http://stackoverflow.com/questions/18462785/what-is-the-recommended-way-of-allocating-memory-for-a-typed-memory-view
+
     for i in range(5): # TODO: SYSTEM_SIZE
         y0[i] = initCond[i]
 
