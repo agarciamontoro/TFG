@@ -96,8 +96,8 @@ Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear t
 	These operations satisfy the following properties:
 	\begin{enumerate}
 		\item $(T+T') + T'' = T + (T'+T'')$.
-		\item There exists a \emph{null tensor} $T_0 \in \tensors_{r,s}(V)$, defined as $T_0(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = 0, \forall \varphi^i \in V^*, \forall v_i \in V$, such that $T_0 + T = T + T_0 = T \;\forall T \in \tensors_{r,s}(V)$.
-		\item For each $T\in\tensors_{r,s}(V)$ there exists an \emph{opposite tensor} $-T$ defined as $(-T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = - T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)$ that satisfies $T + (-T) = -T + T = 0$.
+		\item There exists a \emph{null tensor} $T_0 \in \tensors_{r,s}(V)$, defined as \[T_0(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = 0, \forall \varphi^i \in V^*, \forall v_i \in V,\] such that $T_0 + T = T + T_0 = T \;\forall T \in \tensors_{r,s}(V)$.
+		\item For each $T\in\tensors_{r,s}(V)$ there exists an \emph{opposite tensor} $-T$ defined as \[(-T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = - T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)\] that satisfies $T + (-T) = -T + T = 0$.
 		\item $T + T' = T' + T$.
 	\end{enumerate}
 	This provides abelian group structure to the $\tensors_{r,s}(V)$. The following properties finally show that $\tensors_{r,s}(V)$ is a vector space:
@@ -171,6 +171,26 @@ The study of the tensor product and its properties will help us to prove the fol
 	
 	To prove that $\mathcal{B}_T$ is linearly independent, it is trivial to see that a linear combination of the elements in $\mathcal{B}_T$ equals the null tensor $T_0$ if and only if all the coefficients are zero.
 \end{proof}
+
+Two particularly important examples of the above theorem let us grasp the duality between vectors and one-forms.
+
+Consider $V$ an $n$-dimensional vector space, with basis $B = \{v_1, \dots, v_n\}$ and dual basis $B^* = \{\varphi^i, \dots, \varphi^n\}$.
+
+We know that $\tensors_{1,0}(V) = V^{**}$, and using reflexiveness theorem we can write each vector $v \in V \simeq V^{**}$ as
+\[
+v = \sum_{j=1}^n b^j v_j,
+\]
+where each coordinate is the projection of the vector using the corresponding one-form: $a^j = \varphi^j(v)$.
+
+Similarly, we can consider $\tensors_{0,1}(V) = V^*$. Each of its elements, $\psi \in V^*$, can be written in terms of the tensor basis $\mathcal{B}_{\tensors_{0,1}(V)} = B^*$:
+\[
+	\psi = \sum_{i=1}^n a_i \varphi^i,
+\]
+Note here that the coordinates are retrieved evaluating the form in each element of the basis $B$, $a_i = \psi(v_i)$.
+
+This shows that both evaluating a one-form on the elements of the basis $B$ and projecting a vector with the elements of the basis $B^*$ can be seen as dual operations: both of them gives the coordinates of the corresponding element on the corresponding basis.
+
+The notion of tensor help us to understand this duality, as we can see both elements and both operations as the \emph{same} mathematical entity, expressed in different bases with the corresponding change of coordinates.
 
 \section{Tensors on a Lorentzian vector space}
 
