@@ -109,14 +109,15 @@ Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear t
 	\end{enumerate}
 \end{proof}
 
-Now that we know that $\tensors_{r,s}(V)$ is a vector space, we should ask it about its dimension. Before going down that road, let us define the tensor product, which will be key to answer the question about the dimension.
+Now that we know that $\tensors_{r,s}(V)$ is a vector space, it will be important to study its dimension. Before going down that road, let us define the tensor product, concept upon which we will be able to build a basis for $\tensors_{r,s}(V)$.
 
 \begin{definition}[Tensor product]
-	Let $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. The \emph{tensor product} $T \otimes T'$ is defined as follows:
+	Let $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. The \emph{tensor product} \[T \otimes T' \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r+r' copies}} \times \underbrace{V \times \cdots \times V}_{\text{s+s' copies}}\] is defined as follows:
 	\begin{align*}
-		(T \otimes T')(\varphi^1, \dots, \varphi^r, \varphi^{r+1}, \dots, \varphi^{r+r'}, v_1, \dots, v_s, v_{s+1}, \dots, v_{s+s'}) \defeq \\ T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) T(\varphi^{r+1}, \dots, \varphi^{r+r'}, v_{s+1}, \dots, v_{s}+s') \in K,
+		&(T \otimes T')(\varphi^1, \dots, \varphi^{r+r'}, v_1, \dots, v_{s+s'}) \defeq \\
+		&T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) T(\varphi^{r+1}, \dots, \varphi^{r+r'}, v_{s+1}, \dots, v_{s+s'}) \in K,
 	\end{align*}
-	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r\}$ and $v_j \in V$ for all $j \in \{1,\dots,s\}$.
+	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r+r'\}$ and $v_j \in V$ for all $j \in \{1,\dots,s+s'\}$.
 \end{definition}
 
 It is easy to prove that $T \otimes T' \in \tensors_{r+r',s+s'}(V)$ for every $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. However, the proof is long and cumbersome to write, and it can be found in almost every elementary book on tensor algebra.\unsure{Add reference.}
@@ -128,7 +129,7 @@ Furthermore, we can see that, given $T \in \tensors_{r,s}(V)$, $T' \in \tensors_
 \end{align*}
 and the following equality holds:
 \[
-	(T \otimes T') \otimes T'' = T \otimes (T' \otimes T'')
+	(T \otimes T') \otimes T'' = T \otimes (T' \otimes T'').
 \]
 In fact, the application
 \begin{align*}
@@ -137,7 +138,7 @@ In fact, the application
 \end{align*}
 is a bilinear map.
 
-All this study on the tensor product and this properties will help us to prove the following theorem, that builds a basis for every $\tensors_{r,s}(V)$.
+The study of the tensor product and its properties will help us to prove the following theorem, that builds a basis for every $\tensors_{r,s}(V)$.
 
 \begin{theorem}
 	Let $V$ be an $n$-dimensional vector space over a field $K$. Let $\mathcal{B} = \{v_1, \dots, v_n\}$ be a basis of $V$ and $\mathcal{B^*} = \{\varphi^1, \dots, \varphi^n\}$ be  its dual basis. Then,
@@ -154,14 +155,21 @@ All this study on the tensor product and this properties will help us to prove t
 	In order to prove that $\mathcal{B}_T$ is a linear span of $\tensors_{r,s}(V)$, let us consider $T\in\tensors_{r,s}(V)$. Then, if
 	\begin{align*}
 		\psi^1& = \sum_{i_1 = 1}^n a_{i_1}^1 \varphi^{i_1},\; \cdots,\; \psi^r = \sum_{i_r = 1}^n a_{i_r}^r \varphi^{i_r} \textrm{ and} \\
-		w_1 &= \sum_{j_1 = 1}^n b^{j_1}_1 v_{j_1},\; \cdots,\; w_s = \sum_{j_s = 1}^n a_{j_s}^s v_{j_r}
+		w_1 &= \sum_{j_1 = 1}^n b^{j_1}_1 v_{j_1},\; \cdots,\; w_s = \sum_{j_s = 1}^n b^{j_s}_s v_{j_s}
 	\end{align*}
 	we can write
 	\[
-		T(\psi^1, \dots, \psi^r, w_1, \dots, w_s) = \sum_{i_1,\dots,i_r\\j_1,\dots,j_s}
+		T(\psi^1, \dots, \psi^r, w_1, \dots, w_s) = \sum_{\substack{i_1,\dots,i_r\\j_1,\dots,j_s}} a_{i_1}^1 \cdots a_{i_r}^r b^{j_1}_1 \dots b^{j_s}_s t_{j_1, \dots, j_r}^{i_1, \dots, i_r}
 	\]
-
-	For a detailed proof, see \cite{romero86}.
+	where $t_{j_1, \dots, j_r}^{i_1, \dots, i_r} \defeq T(\varphi{i_1}, \dots, \varphi^{j_r}, v_{j_1}, \dots, v_{j_s})$.
+	
+	Following this reasoning ---see \cite{romero86} for the details---, we can finally write
+	\[
+		T = \sum_{\substack{i_1,\dots,i_r\\j_1,\dots,j_s}} t_{j_1, \dots, j_r}^{i_1, \dots, i_r} \left( \varphi^{i_1} \otimes \dots \otimes \varphi^{i_r} \otimes v_{j_1} \otimes \dots \otimes v_{j_s} \right),
+	\]
+	which proves that $\mathcal{B}_T$ spans $\tensors_{r,s}(V)$.
+	
+	To prove that $\mathcal{B}_T$ is linearly independent, it is trivial to see that a linear combination of the elements in $\mathcal{B}_T$ equals the null tensor $T_0$ if and only if all the coefficients are zero.
 \end{proof}
 
 \section{Tensors on a Lorentzian vector space}
