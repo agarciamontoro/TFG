@@ -46,7 +46,7 @@ Furthermore, the reflexiveness theorem \change{Reflexiveness theorem is the wors
 	\end{aligned}
 \end{align*}
 
-With the concepts of multilinear maps and dual spaces we can now built the definition of tensor, core concept of this section.
+With the concepts of multilinear maps and dual spaces we can now build the definition of tensor, core concept of this section.
 
 \begin{definition}[Tensor]
 	\label{def:tensor}
@@ -60,21 +60,21 @@ With the concepts of multilinear maps and dual spaces we can now built the defin
 \begin{example}
 	The following examples show how interesting the notion of tensor is, as it can include a vast selection of mathematical objects under the same concept; for example, we will see that both vectors and one-forms are tensors.
 	
-	Let $V$ be an\unsure{Is this "an" or "a"?} $n$-dimensional vector space and $V^*$ its dual space.
+	Let $V$ be an $n$-dimensional vector space and $V^*$ its dual space.
 	\begin{enumerate}
 		\item Let $\varphi \in V^*$; \ie,  $\varphi \colon V \to K$ is a one-form. From definition \autoref{def:tensor} it is clear that $\varphi$ is a tensor of type $(0,1)$ over $V$.
-		\item Let $v \in V$ be a vector. Using the natural isomorphism between $V$ and its double dual space, the vector $v$ can be identified with $\psi_v \colon V \to K$, and thus we can understand $v$ as a tensor of type $(1,0)$.
+		\item Let $v \in V$ be a vector. Using the natural isomorphism between $V$ and its double dual space, the vector $v$ can be identified with $\psi_v \colon V^* \to K$, and thus we can understand $v$ as a tensor of type $(1,0)$.
 		\item Consider now $f \in \End_K V$ and let $T_f \colon V^* \times V \to K$ be the map defined as $T_f(v, \varphi) \defeq \varphi(f(v))$. It is clear that $T_f$ is a tensor of type $(1,1)$. Moreover, if we consider $f$ to be the identity map $1_V$, then $T_{1_V}$ is the tensor that maps every pair of (vector, one-form) to the evaluation of the one-form on the vector; \ie, is the tensor associated to the natural isomorphism between $V$ and $V^{**}$.
 		\item Common operations on several mathematical fields can also be seen as tensors. For example, the inner product can be defined as a tensor of type $(0,2)$ as follows:
 		\begin{align*}
 			T \colon V \times V &\to K\\
 			(v,w) &\mapsto \sum_{i=1}^n v_i w_i.
 		\end{align*}
-		In general, \unsure{Are bilinear forms (0,2) tensors?} every bilinear form is a $(0,2)$ tensor. This follows from the definition of bilinear form, which satisfies all conditions in Definiton \autoref{def:tensor}.
+		In general, every bilinear form is a $(0,2)$ tensor. This follows from the definition of bilinear form, which satisfies all conditions in Definiton \autoref{def:tensor}.
 	\end{enumerate}
 \end{example}
 
-\subsection{Tensor operations:  addition, product by a scalar and tensor product}
+\subsection{Tensor addition, product by a scalar and tensor product}
 Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear that both $\tensors_{1,0}(V) = V^*$ and $\tensors_{0,1}(V) = V^{**}$ are vector spaces over K. A natural question arises: is $\tensors_{r,s(V)}$ a space vector for arbitrary $r$ and $s$? The following result gives us the answer we are looking for.
 
 \begin{theorem}
@@ -96,8 +96,8 @@ Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear t
 	These operations satisfy the following properties:
 	\begin{enumerate}
 		\item $(T+T') + T'' = T + (T'+T'')$.
-		\item There exists $T_0 \in \tensors_{r,s}(V)$, defined as $T_0(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = 0, \forall \varphi^i \in V^*, \forall v_i \in V$, such that $T_0 + T = T + T_0 = T \;\forall T \in \tensors_{r,s}(V)$. This is called the null tensor.
-		\item For each $T\in\tensors_{r,s}(V)$ there exists an opposite tensor $-T$ defined as $(-T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = - T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)$ that satisfies $T + (-T) = -T + T = 0$.
+		\item There exists a \emph{null tensor} $T_0 \in \tensors_{r,s}(V)$, defined as $T_0(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = 0, \forall \varphi^i \in V^*, \forall v_i \in V$, such that $T_0 + T = T + T_0 = T \;\forall T \in \tensors_{r,s}(V)$.
+		\item For each $T\in\tensors_{r,s}(V)$ there exists an \emph{opposite tensor} $-T$ defined as $(-T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = - T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)$ that satisfies $T + (-T) = -T + T = 0$.
 		\item $T + T' = T' + T$.
 	\end{enumerate}
 	This provides abelian group structure to the $\tensors_{r,s}(V)$. The following properties finally show that $\tensors_{r,s}(V)$ is a vector space:
