@@ -6,7 +6,7 @@ This chapter covers some basic tools needed in the further development of this w
 
 \subsection{The notion of tensor}
 
-\begin{definition}
+\begin{definition}[Multilinear map]
 	\label{def:multilinear}
     Let $V_1, V_2, \dots, V_r$ and $W$ be vector spaces over the same field $K$. A multilinear ---$r$ times linear--- map from $V_1 \times V_2 \cdots \times V_r$ to $W$ is a map
     \[
@@ -48,30 +48,121 @@ Furthermore, the reflexiveness theorem \change{Reflexiveness theorem is the wors
 
 With the concepts of multilinear maps and dual spaces we can now built the definition of tensor, core concept of this section.
 
-\begin{definition}
+\begin{definition}[Tensor]
 	\label{def:tensor}
 	Let $V$ be a vector space over a field $K$, being $V^*$ its dual space. A tensor $r$ ($\geq 0$) times contravariant and $s$ ($\geq 0$) times covariant ---\ie, a tensor of type $(r,s)$--- is a multilinear map
 	\[
 		T \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r copies}} \times \underbrace{V \times \cdots \times V}_{\text{s copies}} \longrightarrow K.
 	\]
+	Tensors of type $(0,s)$ are said to be \emph{covariant}, whereas tensors of type $(r,0)$ are called \emph{contravariant}.
 \end{definition}
 
 \begin{example}
-	The following examples show how interesting the notion of tensor is, as it can include a lot of mathematical objects under the same concept; for example, we will see that both vectors and one-forms are tensors.
+	The following examples show how interesting the notion of tensor is, as it can include a vast selection of mathematical objects under the same concept; for example, we will see that both vectors and one-forms are tensors.
 	
-	We consider $V$ a $n$-dimensional vector space and $V^*$ its dual space.
+	Let $V$ be an\unsure{Is this "an" or "a"?} $n$-dimensional vector space and $V^*$ its dual space.
 	\begin{enumerate}
 		\item Let $\varphi \in V^*$; \ie,  $\varphi \colon V \to K$ is a one-form. From definition \autoref{def:tensor} it is clear that $\varphi$ is a tensor of type $(0,1)$ over $V$.
-		\item Let $v \in V$ be a vector. Using the natural isomorphism between $V$ and its double dual space, the vector $v$ can be identified with $\psi_v$, and thus we can understand $v$ as a tensor of type $(1,0)$.
-		\item One usual example of a tensor of type $(1,1)$ is the following. Consider $f \in \End_K V$ and let $T_f \colon V^* \times V \to K$ be the map defined as $T_f(v, \varphi) \defeq \varphi(f(v))$. It is clear that $T_f$ is a tensor of type $(1,1)$. Moreover, if we consider $f$ to be the identity map $1_V$, then $T_{1_V}$ is the tensor that maps every pair of (vector, one-form) to the evaluation of the one-form on the vector; \ie, is the tensor associated to the natural isomorphism between $V$ and $V^**$.
+		\item Let $v \in V$ be a vector. Using the natural isomorphism between $V$ and its double dual space, the vector $v$ can be identified with $\psi_v \colon V \to K$, and thus we can understand $v$ as a tensor of type $(1,0)$.
+		\item Consider now $f \in \End_K V$ and let $T_f \colon V^* \times V \to K$ be the map defined as $T_f(v, \varphi) \defeq \varphi(f(v))$. It is clear that $T_f$ is a tensor of type $(1,1)$. Moreover, if we consider $f$ to be the identity map $1_V$, then $T_{1_V}$ is the tensor that maps every pair of (vector, one-form) to the evaluation of the one-form on the vector; \ie, is the tensor associated to the natural isomorphism between $V$ and $V^{**}$.
 		\item Common operations on several mathematical fields can also be seen as tensors. For example, the inner product can be defined as a tensor of type $(0,2)$ as follows:
 		\begin{align*}
 			T \colon V \times V &\to K\\
 			(v,w) &\mapsto \sum_{i=1}^n v_i w_i.
 		\end{align*}
-		In general, \unsure{Are bilinear forms (0,2) tensors?} every bilinear form is a $(0,2)$ tensor.
+		In general, \unsure{Are bilinear forms (0,2) tensors?} every bilinear form is a $(0,2)$ tensor. This follows from the definition of bilinear form, which satisfies all conditions in Definiton \autoref{def:tensor}.
 	\end{enumerate}
 \end{example}
+
+\subsection{Tensor operations:  addition, product by a scalar and tensor product}
+Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear that both $\tensors_{1,0}(V) = V^*$ and $\tensors_{0,1}(V) = V^{**}$ are vector spaces over K. A natural question arises: is $\tensors_{r,s(V)}$ a space vector for arbitrary $r$ and $s$? The following result gives us the answer we are looking for.
+
+\begin{theorem}
+	Let $T, T' \in \tensors_{r,s}(V)$ be two tensors of type $(r,s)$ and $a \in K$ a scalar. Consider the following operations:
+	\begin{itemize}
+		\item $\begin{aligned}[t]
+			(T+T') (\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) \defeq &T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) +\\
+			&T'(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s).
+		\end{aligned}$
+		\item $(a T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) \defeq a T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)$.
+	\end{itemize}
+	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r\}$ and $v_j \in V$ for all $j \in \{1,\dots,s\}$.
+	
+	The set $\tensors_{r,s}(V)$ with the preceding addition and product by scalar is a vector space.
+\end{theorem}
+
+\begin{proof}
+	It is clear, from Definition \autoref{def:tensor}, that $T+T', aT \in \tensors_{r,s}(V)$, given the linearity in each of the components of both $T$ and $T'$.
+	These operations satisfy the following properties:
+	\begin{enumerate}
+		\item $(T+T') + T'' = T + (T'+T'')$.
+		\item There exists $T_0 \in \tensors_{r,s}(V)$, defined as $T_0(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = 0, \forall \varphi^i \in V^*, \forall v_i \in V$, such that $T_0 + T = T + T_0 = T \;\forall T \in \tensors_{r,s}(V)$. This is called the null tensor.
+		\item For each $T\in\tensors_{r,s}(V)$ there exists an opposite tensor $-T$ defined as $(-T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = - T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)$ that satisfies $T + (-T) = -T + T = 0$.
+		\item $T + T' = T' + T$.
+	\end{enumerate}
+	This provides abelian group structure to the $\tensors_{r,s}(V)$. The following properties finally show that $\tensors_{r,s}(V)$ is a vector space:
+	\begin{enumerate}
+		\item $a(T+T') = aT+ aT', \;\;\forall a \in K, \;\forall T,T' \in \tensors_{r,s}(V)$.
+		\item $(a+b)T = aT + bT, \;\;\forall a,b \in K, \;\forall T \in \tensors_{r,s}(V)$.
+		\item $(ab)T = a(bT), \;\;\forall a,b \in K, \;\forall T \in \tensors_{r,s}(V)$.
+		\item $1T = T, \;\;\forall T \in \tensors_{r,s}(V)$, where $1$ is the unity in $K$.
+	\end{enumerate}
+\end{proof}
+
+Now that we know that $\tensors_{r,s}(V)$ is a vector space, we should ask it about its dimension. Before going down that road, let us define the tensor product, which will be key to answer the question about the dimension.
+
+\begin{definition}[Tensor product]
+	Let $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. The \emph{tensor product} $T \otimes T'$ is defined as follows:
+	\begin{align*}
+		(T \otimes T')(\varphi^1, \dots, \varphi^r, \varphi^{r+1}, \dots, \varphi^{r+r'}, v_1, \dots, v_s, v_{s+1}, \dots, v_{s+s'}) \defeq \\ T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) T(\varphi^{r+1}, \dots, \varphi^{r+r'}, v_{s+1}, \dots, v_{s}+s') \in K,
+	\end{align*}
+	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r\}$ and $v_j \in V$ for all $j \in \{1,\dots,s\}$.
+\end{definition}
+
+It is easy to prove that $T \otimes T' \in \tensors_{r+r',s+s'}(V)$ for every $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. However, the proof is long and cumbersome to write, and it can be found in almost every elementary book on tensor algebra.\unsure{Add reference.}
+
+Furthermore, we can see that, given $T \in \tensors_{r,s}(V)$, $T' \in \tensors_{r',s'}(V)$ and $T'' \in \tensors_{r'',s''}(V)$:
+\begin{align*}
+	(T \otimes T') \otimes T'' &\in \tensors_{r+r'+r'', s+s'+s''}(V),\\
+	T \otimes (T' \otimes T'') &\in \tensors_{r+r'+r'', s+s'+s''}(V)
+\end{align*}
+and the following equality holds:
+\[
+	(T \otimes T') \otimes T'' = T \otimes (T' \otimes T'')
+\]
+In fact, the application
+\begin{align*}
+	\tensors_{r,s}(V) \times \tensors_{r',s'}(V) &\longrightarrow \tensors_{r+r',s+s'}(V) \\
+	(T,T') &\longmapsto T \otimes T'
+\end{align*}
+is a bilinear map.
+
+All this study on the tensor product and this properties will help us to prove the following theorem, that builds a basis for every $\tensors_{r,s}(V)$.
+
+\begin{theorem}
+	Let $V$ be an $n$-dimensional vector space over a field $K$. Let $\mathcal{B} = \{v_1, \dots, v_n\}$ be a basis of $V$ and $\mathcal{B^*} = \{\varphi^1, \dots, \varphi^n\}$ be  its dual basis. Then,
+	\begin{align*}
+		\mathcal{B}_T = \{\varphi^{i_1} \otimes \dots \otimes \varphi^{i_r} \otimes v_{j_1} \otimes \dots \otimes v_{j_s} \textrm{ , } &\textrm{where every index moves} \\
+		&\textrm{independently from $1$ to $n$}  \}
+	\end{align*}
+	is a basis of $\tensors_{r,s}(V)$. As a consequence, $\dim_K\tensors_{r,s}(V) = n^{r+s}$.
+\end{theorem}
+
+\begin{proof}
+	%First of all, let us note $t^{i_1,\dots,i_r}_{j_1,\dots,j_s} \defeq T(\varphi^{i_1}, \dots, \varphi^{i_r}, v_{j_1}, \dots, v_{j_r}) \in K$.
+
+	In order to prove that $\mathcal{B}_T$ is a linear span of $\tensors_{r,s}(V)$, let us consider $T\in\tensors_{r,s}(V)$. Then, if
+	\begin{align*}
+		\psi^1& = \sum_{i_1 = 1}^n a_{i_1}^1 \varphi^{i_1},\; \cdots,\; \psi^r = \sum_{i_r = 1}^n a_{i_r}^r \varphi^{i_r} \textrm{ and} \\
+		w_1 &= \sum_{j_1 = 1}^n b^{j_1}_1 v_{j_1},\; \cdots,\; w_s = \sum_{j_s = 1}^n a_{j_s}^s v_{j_r}
+	\end{align*}
+	we can write
+	\[
+		T(\psi^1, \dots, \psi^r, w_1, \dots, w_s) = \sum_{i_1,\dots,i_r\\j_1,\dots,j_s}
+	\]
+
+	For a detailed proof, see \cite{romero86}.
+\end{proof}
 
 \section{Tensors on a Lorentzian vector space}
 
