@@ -198,39 +198,53 @@ cdef void Solver(double x, double xend, int n_steps,
     cdef double hOrig = 0.01
     cdef double globalFacold = 1.0e-4
     cdef double step = (xend - x) / n_steps
-    cdef int current_step
+    cdef int current_step, i
     
     
+    # Create arrays to use in the solver and copy the initial conditions and
+    # data to them. This may seem a bit odd but is here because the function KerrGeodesicEquations
+    # is called with the initial data to compute K1 and with the calculated data to compute K2,...,Kn.
+    # As the type of the initCond variable is a memoryview we would need to use another memoryview to
+    # match the signature of the function but to do this we would need to allocate memory in the heap
+    # and we do NOT want to do this. So we use arrays of known size ( 5 ) and therefore we cannot use the
+    # memoryview that this function recieves. So we create ONCE two arrays and copy the data into them.
+    # Notice that this is done ONCE in contrast to the option of doing whatever alternative in the RK45Solver
+    # that will be called n_steps times, so the overhead is minimum with this option.
+
+    cdef double initial_conditions[5]
+    cdef double aditional_data[3]
+
+    for i in range(5): # TODO: SYSTEM_SIZE
+        initial_conditions[i] = initCond[i]
+
+    for i in range(3):
+        aditional_data[i] = data[i]
+
     # Store initial step conditions
 
-    result[0,0] = initCond[0]
-    result[0,1] = initCond[1]
-    result[0,2] = initCond[2]
-    result[0,3] = initCond[3]
-    result[0,4] = initCond[4]
+    result[0,0] = initial_conditions[0]
+    result[0,1] = initial_conditions[1]
+    result[0,2] = initial_conditions[2]
+    result[0,3] = initial_conditions[3]
+    result[0,4] = initial_conditions[4]
 
 
     for current_step in range(n_steps):
-        SolverRK45( initCond, &x, x+step, &hOrig, 0.1, data, &globalFacold)
-        
+        SolverRK45( initial_conditions, &x, x+step, &hOrig, 0.1, aditional_data, &globalFacold)
+
         # Store the result of the integration in the buffer
 
-        result[current_step + 1,0] = initCond[0]
-        result[current_step + 1,1] = initCond[1]
-        result[current_step + 1,2] = initCond[2]
-        result[current_step + 1,3] = initCond[3]
-        result[current_step + 1,4] = initCond[4]
-
-
-
-
-
+        result[current_step + 1,0] = initial_conditions[0]
+        result[current_step + 1,1] = initial_conditions[1]
+        result[current_step + 1,2] = initial_conditions[2]
+        result[current_step + 1,3] = initial_conditions[3]
+        result[current_step + 1,4] = initial_conditions[4]
 
 
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
 @cython.cdivision(True)    # tuern off zerodivisioncheck
-cdef void KerrGeodesicEquations(double* y, double* f,double [:] data):
+cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     """
     This function computes the right hand side of the Kerr geodesic equations described
     in http://arxiv.org/abs/1502.03808.
@@ -257,7 +271,7 @@ cdef void KerrGeodesicEquations(double* y, double* f,double [:] data):
 
             Where t is the independent variable (propper time).
 
-    :param data: memoryview (acting as pointer to double)
+    :param data: pointer to double
         Aditional data needed for the computation. Explicitly:
 
             0 -> b ( Angular momentum)
@@ -389,8 +403,8 @@ cdef void KerrGeodesicEquations(double* y, double* f,double [:] data):
 @cython.boundscheck(False) # turn off bounds-checking for entire function
 @cython.wraparound(False)  # turn off negative index wrapping for entire function
 @cython.cdivision(True)    # tuern off zerodivisioncheck
-cdef int SolverRK45( double [:] initCond, double* globalX0, double xend,
-                     double* hOrig   , double hmax, double [:] data,
+cdef int SolverRK45( double* initCond, double* globalX0, double xend,
+                     double* hOrig   , double hmax, double* data,
                      double* globalFacold,
                      double rtoli   = 1e-06,
                      double atoli   = 1e-12,
@@ -474,24 +488,7 @@ cdef int SolverRK45( double [:] initCond, double* globalX0, double xend,
     hmax = abs(hmax)
 
     cdef size_t sizeBytes = sizeof(double)*SYSTEM_SIZE
-    
-
-    # Copy initial conditions to initial array
-
-    cdef double y0[5] # TODO Esto no es un poco movida en el codigo original?
-   
-    # This may seem a bit odd but is here because the signature of the function
-    # KerrGeodesicEquations needs a pointer in its first entrance and the first
-    # time the function is called to compute K1 it needs the data in initCond but
-    # this is a memoryview. So we need to copy the data into a C array and back when
-    # ended. TODO: Use cpython.array.array and cpython.array.clone maybe?
-    #Look here:
-    #    http://stackoverflow.com/questions/18462785/what-is-the-recommended-way-of-allocating-memory-for-a-typed-memory-view
-
-    for i in range(5): # TODO: SYSTEM_SIZE
-        y0[i] = initCond[i]
-
-
+     
     # Auxiliar arrays to store the intermediate K1, ..., K7 computations
     # TODO: This 2 is SYSTEM_SIZE!!
     cdef double k1[5]
@@ -553,26 +550,26 @@ cdef int SolverRK45( double [:] initCond, double* globalX0, double xend,
         
 
         # K1 computation
-        KerrGeodesicEquations(y0, k1, data)
+        KerrGeodesicEquations(initCond, k1, data)
 
         # K2 computation
 
         for i in range(5): # TODO: SYSTEM_SIZE
-            y1[i] = y0[i] + h * A21 * k1[i]
+            y1[i] = initCond[i] + h * A21 * k1[i]
 
         KerrGeodesicEquations(y1, k2, data)
 
         # K3 computation
 
         for i in range(5): # TODO: SYSTEM_SIZE
-             y1[i] = y0[i] + h*(A31 * k1[i] + A32 * k2[i])
+             y1[i] = initCond[i] + h*(A31 * k1[i] + A32 * k2[i])
 
         KerrGeodesicEquations(y1, k3, data)
 
         # K4 computation
 
         for i in range(5): # TODO: SYSTEM_SIZE
-            y1[i] = y0[i] + h*(A41 * k1[i] +
+            y1[i] = initCond[i] + h*(A41 * k1[i] +
                                A42 * k2[i] +
                                A43 * k3[i])
 
@@ -581,7 +578,7 @@ cdef int SolverRK45( double [:] initCond, double* globalX0, double xend,
         # K5 computation
 
         for i in range(5): # TODO: SYSTEM_SIZE   
-            y1[i] = y0[i] + h*( A51 * k1[i] +
+            y1[i] = initCond[i] + h*( A51 * k1[i] +
                                 A52 * k2[i] +
                                 A53 * k3[i] +
                                 A54 * k4[i])
@@ -591,7 +588,7 @@ cdef int SolverRK45( double [:] initCond, double* globalX0, double xend,
         # K6 computation
         
         for i in range(5): # TODO: SYSTEM_SIZE
-            y1[i] = y0[i] + h*(A61 * k1[i] +
+            y1[i] = initCond[i] + h*(A61 * k1[i] +
                                A62 * k2[i] +
                                A63 * k3[i] +
                                A64 * k4[i] +
@@ -602,7 +599,7 @@ cdef int SolverRK45( double [:] initCond, double* globalX0, double xend,
         # K7 computation
 
         for i in range(5): # TODO: SYSTEM_SIZE
-            y1[i] = y0[i] + h*(A71 * k1[i] +
+            y1[i] = initCond[i] + h*(A71 * k1[i] +
                                A73 * k3[i] +
                                A74 * k4[i] +
                                A75 * k5[i] +
@@ -641,7 +638,7 @@ cdef int SolverRK45( double [:] initCond, double* globalX0, double xend,
             # hand size of this inequality to use it as a scale in the local
             # error computation this way we "normalize" the error and we can
             # compare it against 1.
-            sk = atoli + rtoli*fmax(fabs(y0[i]), fabs(y1[i]))
+            sk = atoli + rtoli*fmax(fabs(initCond[i]), fabs(y1[i]))
 
             # Compute the square of the local estimated error (scaled with the
             # previous factor), as the global error will be computed as in
@@ -707,11 +704,11 @@ cdef int SolverRK45( double [:] initCond, double* globalX0, double xend,
             if reject:
                 hnew = integrationDirection * fmin(fabs(hnew), fabs(h))
 
-            # Necessary update for next steps: the local y0 variable holds
+            # Necessary update for next steps: the local initCond variable holds
             # the current initial condition (now the computed solution)
 
             for i in range(5): # TODO: SYSTEM_SIZE
-                y0[i] = y1[i]
+                initCond[i] = y1[i]
 
             # This step was accepted, so it was not rejected, so reject is
             # false. SCIENCE.
@@ -724,12 +721,6 @@ cdef int SolverRK45( double [:] initCond, double* globalX0, double xend,
         h = hnew
 
     # END WHILE LOOP
-
-    # Aaaaand that's all, folks! Update system value (each thread its
-    # result) in the global memory :)
-    
-    for i in range(5): # TODO: SYSTEM_SIZE
-         initCond[i] = y0[i]
 
     # Update the user's h, facold and x0 
     
