@@ -145,9 +145,9 @@ As a particular example, we can define the tensor product between two tensors of
 \[
 	v \otimes \varphi \in \tensors_{1,1}(V),
 \]
-that maps every pair $(\psi, w)$ to the scalar $\psi(v)\varphi(w)$.
+which maps every pair $(\psi, w)$ to the scalar $\psi(v)\varphi(w)$.
 
-The study of the tensor product and its properties will help us to prove the following theorem, that builds a basis for every $\tensors_{r,s}(V)$.
+Upon this concept, and using the known properties of the dual vector space and its basis, we can state and prove a theorem that builds a basis for every $\tensors_{r,s}(V)$.
 
 \begin{theorem}
 	Let $V$ be an $n$-dimensional vector space over a field $K$. Let $\mathcal{B} = \{v_1, \dots, v_n\}$ be a basis of $V$ and $\mathcal{B^*} = \{\varphi^1, \dots, \varphi^n\}$ be  its dual basis. Then,
@@ -164,11 +164,11 @@ The study of the tensor product and its properties will help us to prove the fol
 	In order to prove that $\mathcal{B}_T$ is a linear span of $\tensors_{r,s}(V)$, let us consider $T\in\tensors_{r,s}(V)$. Then, if
 	\begin{align*}
 		\psi^1& = \sum_{i_1 = 1}^n a_{i_1}^1 \varphi^{i_1},\quad \cdots,\quad \psi^r = \sum_{i_r = 1}^n a_{i_r}^r \varphi^{i_r} \textrm{ and} \\
-		w_1 &= \sum_{j_1 = 1}^n b^{j_1}_1 v_{j_1},\quad \cdots,\quad w_s = \sum_{j_s = 1}^n b^{j_s}_s v_{j_s}
+		w_1 &= \sum_{j_1 = 1}^n b^{j_1}_1 v_{j_1},\quad \cdots,\quad w_s = \sum_{j_s = 1}^n b^{j_s}_s v_{j_s},
 	\end{align*}
 	we can write
 	\[
-		T(\psi^1, \dots, \psi^r, w_1, \dots, w_s) = \sum_{\substack{i_1,\dots,i_s\\j_1,\dots,j_r}} a_{i_1}^1 \cdots a_{i_r}^r b^{j_1}_1 \dots b^{j_s}_s t_{j_1, \dots, j_s}^{i_1, \dots, i_r}
+		T(\psi^1, \dots, \psi^r, w_1, \dots, w_s) = \sum_{\substack{i_1,\dots,i_s\\j_1,\dots,j_r}} a_{i_1}^1 \cdots a_{i_r}^r b^{j_1}_1 \dots b^{j_s}_s t_{j_1, \dots, j_s}^{i_1, \dots, i_r},
 	\]
 	where $t_{j_1, \dots, j_s}^{i_1, \dots, i_r} \defeq T(\varphi^{i_1}, \dots, \varphi^{i_r}, v_{j_1}, \dots, v_{j_s})$.
 	
@@ -219,24 +219,25 @@ First of all, we must remember the relationship between the change of basis on a
 Let $B = (v_1, \dots, v_n)$ and $B' = (v_1', \dots, v_n')$ be two bases of $V(K)$, and suppose that\change{Exchange a and b roles}
 \begin{equation}
 	\label{eq:changeV}
-	v_j' = \sum_{i=1}^n a_j^i v_i \textrm{, where } a_j^i \in K.
+	v_j' = \sum_{i=1}^n b_j^i v_i \textrm{, where } a_j^i \in K.
 \end{equation}
 
 It is known that ---see \cite[p. 162]{romero86}---, if $B^* = (\varphi^1, \dots, \varphi^n)$ and $B'^* = (\varphi'^1, \dots, \varphi'^n)$ are the dual bases of the two preceding ones, the elements of the bases are related in the \emph{opposite} way as before:
 \[
-	\varphi^i = \sum_{j=1}^n a_j^i \varphi'^j.
+	\varphi^i = \sum_{j=1}^n b_j^i \varphi'^j.
 \]
 
 Furthermore, we can see that\change{Exchange a and b roles}
 \begin{equation}
 	\label{eq:changeV*}
-	\varphi'^i = \sum_{l=1}^n b_l^i \varphi'^l,
+	\varphi'^i = \sum_{l=1}^n a_l^i \varphi'^l,
 \end{equation}
-where $b_k^i$ is the element placed on the $i$-th row, $l$-th column of  the inverse matrix of $(a^i_j)$.
+where $a_l^i$ is the element placed on the $i$-th row, $l$-th column of  the inverse matrix of $(b^i_j)$.
 
-This change of bases in $V$ a nd $V^*$  is key to understand the following Proposition, which tells us how  the coordinates of a tensor change when the basis of $\tensors_{r,s}(V)$.
+This change of bases in $V$ a nd $V^*$  is key to understand \autoref{pro:changeT}, which tells us how  the coordinates of a tensor change when the basis of $\tensors_{r,s}(V)$.
 
 \begin{proposition}
+	\label{pro:changeT}
 	Let $B$, $B'$ and $B^*$, $B'^*$ the bases of $V$ and $V^*$ described above and consider two ordered bases of $\tensors_{r,s}(V)$ obtained from
 	\begin{align*}
 		\mathcal{B}_T = \{v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s} \textrm{ , } &\textrm{where every index moves} \\
@@ -250,7 +251,7 @@ This change of bases in $V$ a nd $V^*$  is key to understand the following Propo
 	
 	Then, the analytic expression of the change of coordinates of a tensor $T \in \tensors_{r,s}(V)$ is the following:\change{Exchange a and b roles}
 	\begin{align*}
-		t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} = \sum b_{i_1}^{k_1} \cdots b_{i_k}^{k_r} a_{l_1}^{j_1} \cdots a_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r}
+		t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} = \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r}
 	\end{align*}
 	where the coefficients are the ones defined in \autoref{eq:changeV} and \autoref{eq:changeV*}
 \end{proposition}
@@ -259,9 +260,9 @@ This change of bases in $V$ a nd $V^*$  is key to understand the following Propo
 	Considering the change of bases in $V$ and $V^*$, the proof is direct, using the definition of the coordinates of a tensor $T \in \tensors_{r,s}(V)$:
 	\begin{align*}
 		t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} &= T(\varphi'^{k_1}, \dots, \varphi'^{k_r}, v_{l_1}', \dots, v_{l_s}')  = \\
-		&= T(\sum_{i_1}b_{i_1}^{k_1}\varphi^{i_1}, \dots, \sum_{i_r}b_{i_r}^{k_r}\varphi{i_r}, \sum_{j_1} a_{l_1}^{j_1} v_{j_1}, \dots, \sum_{j_s} a_{l_s}^{j_s} v_{j_s}) = \\
-		&= \sum b_{i_1}^{k_1} \cdots b_{i_k}^{k_r} a_{l_1}^{j_1} \cdots a_{l_s}^{j_s} T(\varphi^{k_1}, \dots, \varphi^{k_r}, v_{l_1}, \dots, v_{l_s}) = \\
-		&= \sum b_{i_1}^{k_1} \cdots b_{i_k}^{k_r} a_{l_1}^{j_1} \cdots a_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r}
+		&= T(\sum a_{i_1}^{k_1}\varphi^{i_1}, \dots, \sum a_{i_r}^{k_r}\varphi{i_r}, \sum b_{l_1}^{j_1} v_{j_1}, \dots, \sum b_{l_s}^{j_s} v_{j_s}) = \\
+		&= \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} T(\varphi^{k_1}, \dots, \varphi^{k_r}, v_{l_1}, \dots, v_{l_s}) = \\
+		&= \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r}
 	\end{align*}
 \end{proof}
 
@@ -269,26 +270,26 @@ We can study now the particular examples of tensors of order 2.
 
 For $r = s = 1$, the expression of the change of coordinates is\change{Exchange a and b roles}
 \[
-	t'^k_{\phantom{'}l} = \sum_{i,j}^n b^k_i a_l^j  t^i_j \quad \forall k,l \in \{1,2,\dots,n\}.
+	t'^k_{\phantom{'}l} = \sum_{i,j = 1}^n a^k_i b_l^j  t^i_j \quad \forall k,l \in \{1,2,\dots,n\}.
 \]
 
 This expression can be written using matrix notation as follows:
 \begin{equation}
 	\label{eq:tensors11}
-	(t'^k_{\phantom{'}l}) = \mathbf{A}^{-1} (t^i_j) \mathbf{A}
+	(t'^k_{\phantom{'}l}) = \mathbf{A} (t^i_j) \mathbf{A}^{-1}
 \end{equation}
-where $A$ is the matrix $(a_j^i)$ whose elements are the ones defined in \autoref{eq:changeV}.
+where $\mathbf{A}$ is the matrix $\left(a_j^i\right)$ whose elements are the ones defined in \autoref{eq:changeV}.
 
 This last expression is very interesting, as it tells us that the \emph{matrices} of the coordinates of $T$ in both bases of $\tensors_{r,s}(V)$ are similar.
 
 Remember now the third item in \autoref{ex:tensors}: it established a relationship between $\tensors_{1,1}(V)$ and $\End_K V$, that is now clear again: we see that \autoref{eq:tensors11} is not only the change of coordinates of a tensor, but also the expression of the change of basis matrix of the corresponding endomorphism.
 
-This is not surprising as both spaces are isomorphic, with a natural \emph{isomorphism} between them:
+This is not surprising as both spaces are isomorphic, with a \emph{natural} isomorphism between them:
 \begin{theorem}
 	The map
 	\begin{align*}
-		\End_K V &\longrightarrow \tensors_{1,1}(V)\\
-		f &\longmapsto T_f,
+		\End_K V &\longrightarrow \tensors_{1,1}(V),\\
+		f &\longmapsto T_f
 	\end{align*}
 	where $T_f(\varphi, v) = \varphi(f(v)) \; \forall \varphi \in V^* \; \forall v \in V$, is an isomorphism.
 \end{theorem}
@@ -298,21 +299,22 @@ This is not surprising as both spaces are isomorphic, with a natural \emph{isomo
 	Suppose now that $T_f = T_0$; \ie, $\varphi(f(v)) = 0 \; \forall \varphi \in V^* \; \forall v \in V$. This implies immediately that $f(v) = 0 \; \forall v \in V$, as it is known that if $\psi(w) = 0$ for every $\psi \in V$, then $w = 0$. This shows that $f$ is the zero mapping, which proves that the map is one-to-one.
 \end{proof}
 
-Similarly, we can study tensors of type $(2,0)$ and $(0,2)$.
-
-For tensors of type $(2,0)$, the expression is\change{Exchange a and b roles}
+Similarly, we can study tensors of type $(2,0)$ and $(0,2)$. For tensors of type $(2,0)$, the expression is
 \[
-	t'^{kl} = \sum_{i,j}b_i^k b_j^l t^{ij},
+	t'^{kl} = \sum_{i,j=1}^n a_i^k a_j^l t^{ij},
 \]
-whereas for tensors of type $(0,2)$, its change of coordinates is\change{Exchange a and b roles}
+whereas for tensors of type $(0,2)$, the change of coordinates is given by
 \[
-	t'_{kl} = \sum_{i,j} a_k^i a_l^j t_{ij}.
+	t'_{kl} = \sum_{i,j=1}^n b_k^i b_l^j t_{ij}.
 \]
 
+These expressions can also be written with matrix notation, where $\mathbf{A} = \left(a^i_j\right)$ is the matrix defined above and where we note $\mathbf{A}^{-t}$ to be the transpose of the inverse of $\mathbf{A}$:
+\begin{align*}
+	\left(t'^{kl}\right) &= \mathbf{A} t^{ij} \mathbf{A}^t \\
+	\left(t'_{kl}\right) &= \mathbf{A}^{-t} t_{ij} \mathbf{A}^{-1}
+\end{align*}
 
-
-
-
+\subsection{Physics definition of tensor}
 
 
 
