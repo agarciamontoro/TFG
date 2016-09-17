@@ -2373,6 +2373,8 @@ static void __pyx_f_6metric_calculate_inverse_metric(double __pyx_v_r, double __
   double __pyx_v_omega;
   double __pyx_v_pomega;
   double __pyx_v_ro2;
+  double __pyx_v_ro2inv;
+  double __pyx_v_deltainv;
   double __pyx_v_pomega2;
   CYTHON_UNUSED double __pyx_v_omega2;
   __Pyx_RefNannyDeclarations
@@ -2477,22 +2479,40 @@ static void __pyx_f_6metric_calculate_inverse_metric(double __pyx_v_r, double __
  *     # Compute auxiliar products
  * 
  *     cdef double ro2 = ro * ro             # <<<<<<<<<<<<<<
- *     cdef double pomega2 = pomega*pomega
- *     cdef double omega2 = omega * omega
+ *     cdef double ro2inv = 1.0 / ro2
+ *     cdef double deltainv = 1.0 / delta
  */
   __pyx_v_ro2 = (__pyx_v_ro * __pyx_v_ro);
 
   /* "metric.pyx":73
  * 
  *     cdef double ro2 = ro * ro
+ *     cdef double ro2inv = 1.0 / ro2             # <<<<<<<<<<<<<<
+ *     cdef double deltainv = 1.0 / delta
+ *     cdef double pomega2 = pomega*pomega
+ */
+  __pyx_v_ro2inv = (1.0 / __pyx_v_ro2);
+
+  /* "metric.pyx":74
+ *     cdef double ro2 = ro * ro
+ *     cdef double ro2inv = 1.0 / ro2
+ *     cdef double deltainv = 1.0 / delta             # <<<<<<<<<<<<<<
+ *     cdef double pomega2 = pomega*pomega
+ *     cdef double omega2 = omega * omega
+ */
+  __pyx_v_deltainv = (1.0 / __pyx_v_delta);
+
+  /* "metric.pyx":75
+ *     cdef double ro2inv = 1.0 / ro2
+ *     cdef double deltainv = 1.0 / delta
  *     cdef double pomega2 = pomega*pomega             # <<<<<<<<<<<<<<
  *     cdef double omega2 = omega * omega
  *     # Construct the nonzero components of the metric
  */
   __pyx_v_pomega2 = (__pyx_v_pomega * __pyx_v_pomega);
 
-  /* "metric.pyx":74
- *     cdef double ro2 = ro * ro
+  /* "metric.pyx":76
+ *     cdef double deltainv = 1.0 / delta
  *     cdef double pomega2 = pomega*pomega
  *     cdef double omega2 = omega * omega             # <<<<<<<<<<<<<<
  *     # Construct the nonzero components of the metric
@@ -2500,62 +2520,62 @@ static void __pyx_f_6metric_calculate_inverse_metric(double __pyx_v_r, double __
  */
   __pyx_v_omega2 = (__pyx_v_omega * __pyx_v_omega);
 
-  /* "metric.pyx":77
+  /* "metric.pyx":79
  *     # Construct the nonzero components of the metric
  * 
- *     kerr_metric[0,0] = - 1.0 / delta * ( r2 + a2 + a * pomega2 * omega)             # <<<<<<<<<<<<<<
- *     kerr_metric[1,1] = delta / ro2
- *     kerr_metric[2,2] = 1 / ro2
+ *     kerr_metric[0,0] = - deltainv * ( r2 + a2 + a * pomega2 * omega)             # <<<<<<<<<<<<<<
+ *     kerr_metric[1,1] = delta * ro2inv
+ *     kerr_metric[2,2] = ro2inv
  */
   __pyx_t_1 = 0;
   __pyx_t_2 = 0;
   if (__pyx_t_1 < 0) __pyx_t_1 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_kerr_metric.shape[1];
-  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_1 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_2 * __pyx_v_kerr_metric.strides[1]) )) = ((-1.0 / __pyx_v_delta) * ((__pyx_v_r2 + __pyx_v_a2) + ((__pyx_v_a * __pyx_v_pomega2) * __pyx_v_omega)));
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_1 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_2 * __pyx_v_kerr_metric.strides[1]) )) = ((-__pyx_v_deltainv) * ((__pyx_v_r2 + __pyx_v_a2) + ((__pyx_v_a * __pyx_v_pomega2) * __pyx_v_omega)));
 
-  /* "metric.pyx":78
+  /* "metric.pyx":80
  * 
- *     kerr_metric[0,0] = - 1.0 / delta * ( r2 + a2 + a * pomega2 * omega)
- *     kerr_metric[1,1] = delta / ro2             # <<<<<<<<<<<<<<
- *     kerr_metric[2,2] = 1 / ro2
- *     kerr_metric[3,3] = ( delta - a2 * sintheta2 ) / (ro2 * delta * sintheta2 )
+ *     kerr_metric[0,0] = - deltainv * ( r2 + a2 + a * pomega2 * omega)
+ *     kerr_metric[1,1] = delta * ro2inv             # <<<<<<<<<<<<<<
+ *     kerr_metric[2,2] = ro2inv
+ *     kerr_metric[3,3] = ( delta / sintheta2 - a2  ) * ro2inv * deltainv
  */
   __pyx_t_3 = 1;
   __pyx_t_4 = 1;
   if (__pyx_t_3 < 0) __pyx_t_3 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_v_kerr_metric.shape[1];
-  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_3 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_4 * __pyx_v_kerr_metric.strides[1]) )) = (__pyx_v_delta / __pyx_v_ro2);
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_3 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_4 * __pyx_v_kerr_metric.strides[1]) )) = (__pyx_v_delta * __pyx_v_ro2inv);
 
-  /* "metric.pyx":79
- *     kerr_metric[0,0] = - 1.0 / delta * ( r2 + a2 + a * pomega2 * omega)
- *     kerr_metric[1,1] = delta / ro2
- *     kerr_metric[2,2] = 1 / ro2             # <<<<<<<<<<<<<<
- *     kerr_metric[3,3] = ( delta - a2 * sintheta2 ) / (ro2 * delta * sintheta2 )
- *     kerr_metric[0,3] = - 2.0 * a * r / ro2 / delta
+  /* "metric.pyx":81
+ *     kerr_metric[0,0] = - deltainv * ( r2 + a2 + a * pomega2 * omega)
+ *     kerr_metric[1,1] = delta * ro2inv
+ *     kerr_metric[2,2] = ro2inv             # <<<<<<<<<<<<<<
+ *     kerr_metric[3,3] = ( delta / sintheta2 - a2  ) * ro2inv * deltainv
+ *     kerr_metric[0,3] = - 2.0 * a * r * ro2inv * deltainv
  */
   __pyx_t_5 = 2;
   __pyx_t_6 = 2;
   if (__pyx_t_5 < 0) __pyx_t_5 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_6 < 0) __pyx_t_6 += __pyx_v_kerr_metric.shape[1];
-  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_5 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_6 * __pyx_v_kerr_metric.strides[1]) )) = (1.0 / __pyx_v_ro2);
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_5 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_6 * __pyx_v_kerr_metric.strides[1]) )) = __pyx_v_ro2inv;
 
-  /* "metric.pyx":80
- *     kerr_metric[1,1] = delta / ro2
- *     kerr_metric[2,2] = 1 / ro2
- *     kerr_metric[3,3] = ( delta - a2 * sintheta2 ) / (ro2 * delta * sintheta2 )             # <<<<<<<<<<<<<<
- *     kerr_metric[0,3] = - 2.0 * a * r / ro2 / delta
+  /* "metric.pyx":82
+ *     kerr_metric[1,1] = delta * ro2inv
+ *     kerr_metric[2,2] = ro2inv
+ *     kerr_metric[3,3] = ( delta / sintheta2 - a2  ) * ro2inv * deltainv             # <<<<<<<<<<<<<<
+ *     kerr_metric[0,3] = - 2.0 * a * r * ro2inv * deltainv
  *     kerr_metric[3,0] = kerr_metric[0,3]
  */
   __pyx_t_7 = 3;
   __pyx_t_8 = 3;
   if (__pyx_t_7 < 0) __pyx_t_7 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_8 < 0) __pyx_t_8 += __pyx_v_kerr_metric.shape[1];
-  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_7 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_8 * __pyx_v_kerr_metric.strides[1]) )) = ((__pyx_v_delta - (__pyx_v_a2 * __pyx_v_sintheta2)) / ((__pyx_v_ro2 * __pyx_v_delta) * __pyx_v_sintheta2));
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_7 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_8 * __pyx_v_kerr_metric.strides[1]) )) = ((((__pyx_v_delta / __pyx_v_sintheta2) - __pyx_v_a2) * __pyx_v_ro2inv) * __pyx_v_deltainv);
 
-  /* "metric.pyx":81
- *     kerr_metric[2,2] = 1 / ro2
- *     kerr_metric[3,3] = ( delta - a2 * sintheta2 ) / (ro2 * delta * sintheta2 )
- *     kerr_metric[0,3] = - 2.0 * a * r / ro2 / delta             # <<<<<<<<<<<<<<
+  /* "metric.pyx":83
+ *     kerr_metric[2,2] = ro2inv
+ *     kerr_metric[3,3] = ( delta / sintheta2 - a2  ) * ro2inv * deltainv
+ *     kerr_metric[0,3] = - 2.0 * a * r * ro2inv * deltainv             # <<<<<<<<<<<<<<
  *     kerr_metric[3,0] = kerr_metric[0,3]
  * 
  */
@@ -2563,11 +2583,11 @@ static void __pyx_f_6metric_calculate_inverse_metric(double __pyx_v_r, double __
   __pyx_t_10 = 3;
   if (__pyx_t_9 < 0) __pyx_t_9 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_10 < 0) __pyx_t_10 += __pyx_v_kerr_metric.shape[1];
-  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_9 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_10 * __pyx_v_kerr_metric.strides[1]) )) = ((((-2.0 * __pyx_v_a) * __pyx_v_r) / __pyx_v_ro2) / __pyx_v_delta);
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_9 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_10 * __pyx_v_kerr_metric.strides[1]) )) = ((((-2.0 * __pyx_v_a) * __pyx_v_r) * __pyx_v_ro2inv) * __pyx_v_deltainv);
 
-  /* "metric.pyx":82
- *     kerr_metric[3,3] = ( delta - a2 * sintheta2 ) / (ro2 * delta * sintheta2 )
- *     kerr_metric[0,3] = - 2.0 * a * r / ro2 / delta
+  /* "metric.pyx":84
+ *     kerr_metric[3,3] = ( delta / sintheta2 - a2  ) * ro2inv * deltainv
+ *     kerr_metric[0,3] = - 2.0 * a * r * ro2inv * deltainv
  *     kerr_metric[3,0] = kerr_metric[0,3]             # <<<<<<<<<<<<<<
  * 
  * 
@@ -2594,7 +2614,7 @@ static void __pyx_f_6metric_calculate_inverse_metric(double __pyx_v_r, double __
   __Pyx_RefNannyFinishContext();
 }
 
-/* "metric.pyx":85
+/* "metric.pyx":87
  * 
  * 
  * cdef void calculate_metric(double r, double theta,             # <<<<<<<<<<<<<<
@@ -2631,7 +2651,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
   Py_ssize_t __pyx_t_14;
   __Pyx_RefNannySetupContext("calculate_metric", 0);
 
-  /* "metric.pyx":90
+  /* "metric.pyx":92
  *     # Calculate metric quantities
  * 
  *     cdef double r2 = r*r             # <<<<<<<<<<<<<<
@@ -2640,7 +2660,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_r2 = (__pyx_v_r * __pyx_v_r);
 
-  /* "metric.pyx":91
+  /* "metric.pyx":93
  * 
  *     cdef double r2 = r*r
  *     cdef double a2 = a*a             # <<<<<<<<<<<<<<
@@ -2649,7 +2669,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_a2 = (__pyx_v_a * __pyx_v_a);
 
-  /* "metric.pyx":93
+  /* "metric.pyx":95
  *     cdef double a2 = a*a
  * 
  *     cdef double ro = sqrt(r2 + a2 * cos(theta)**2)             # <<<<<<<<<<<<<<
@@ -2658,7 +2678,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_ro = sqrt((__pyx_v_r2 + (__pyx_v_a2 * pow(cos(__pyx_v_theta), 2.0))));
 
-  /* "metric.pyx":94
+  /* "metric.pyx":96
  * 
  *     cdef double ro = sqrt(r2 + a2 * cos(theta)**2)
  *     cdef double delta = r2 - 2*r + a2             # <<<<<<<<<<<<<<
@@ -2667,7 +2687,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_delta = ((__pyx_v_r2 - (2.0 * __pyx_v_r)) + __pyx_v_a2);
 
-  /* "metric.pyx":95
+  /* "metric.pyx":97
  *     cdef double ro = sqrt(r2 + a2 * cos(theta)**2)
  *     cdef double delta = r2 - 2*r + a2
  *     cdef double sigma = sqrt( (r2 + a2) * (r2 + a2) - a2 * delta * sin(theta)*sin(theta))             # <<<<<<<<<<<<<<
@@ -2676,7 +2696,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_sigma = sqrt((((__pyx_v_r2 + __pyx_v_a2) * (__pyx_v_r2 + __pyx_v_a2)) - (((__pyx_v_a2 * __pyx_v_delta) * sin(__pyx_v_theta)) * sin(__pyx_v_theta))));
 
-  /* "metric.pyx":96
+  /* "metric.pyx":98
  *     cdef double delta = r2 - 2*r + a2
  *     cdef double sigma = sqrt( (r2 + a2) * (r2 + a2) - a2 * delta * sin(theta)*sin(theta))
  *     cdef double alpha = ro * sqrt(delta) / sigma             # <<<<<<<<<<<<<<
@@ -2685,7 +2705,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_alpha = ((__pyx_v_ro * sqrt(__pyx_v_delta)) / __pyx_v_sigma);
 
-  /* "metric.pyx":97
+  /* "metric.pyx":99
  *     cdef double sigma = sqrt( (r2 + a2) * (r2 + a2) - a2 * delta * sin(theta)*sin(theta))
  *     cdef double alpha = ro * sqrt(delta) / sigma
  *     cdef double omega = 2.0 * a * r / (sigma * sigma)             # <<<<<<<<<<<<<<
@@ -2694,7 +2714,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_omega = (((2.0 * __pyx_v_a) * __pyx_v_r) / (__pyx_v_sigma * __pyx_v_sigma));
 
-  /* "metric.pyx":98
+  /* "metric.pyx":100
  *     cdef double alpha = ro * sqrt(delta) / sigma
  *     cdef double omega = 2.0 * a * r / (sigma * sigma)
  *     cdef double pomega = sigma * sin(theta) / ro             # <<<<<<<<<<<<<<
@@ -2703,7 +2723,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_pomega = ((__pyx_v_sigma * sin(__pyx_v_theta)) / __pyx_v_ro);
 
-  /* "metric.pyx":102
+  /* "metric.pyx":104
  *     # Compute auxiliar products
  * 
  *     cdef double ro2 = ro * ro             # <<<<<<<<<<<<<<
@@ -2712,7 +2732,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_ro2 = (__pyx_v_ro * __pyx_v_ro);
 
-  /* "metric.pyx":103
+  /* "metric.pyx":105
  * 
  *     cdef double ro2 = ro * ro
  *     cdef double pomega2 = pomega*pomega             # <<<<<<<<<<<<<<
@@ -2721,7 +2741,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_pomega2 = (__pyx_v_pomega * __pyx_v_pomega);
 
-  /* "metric.pyx":104
+  /* "metric.pyx":106
  *     cdef double ro2 = ro * ro
  *     cdef double pomega2 = pomega*pomega
  *     cdef double omega2 = omega * omega             # <<<<<<<<<<<<<<
@@ -2730,7 +2750,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
  */
   __pyx_v_omega2 = (__pyx_v_omega * __pyx_v_omega);
 
-  /* "metric.pyx":107
+  /* "metric.pyx":109
  *     # Construct the nonzero components of the metric
  * 
  *     kerr_metric[0,0] = - alpha * alpha + pomega2 * omega2             # <<<<<<<<<<<<<<
@@ -2743,7 +2763,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
   if (__pyx_t_2 < 0) __pyx_t_2 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_1 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_2 * __pyx_v_kerr_metric.strides[1]) )) = (((-__pyx_v_alpha) * __pyx_v_alpha) + (__pyx_v_pomega2 * __pyx_v_omega2));
 
-  /* "metric.pyx":108
+  /* "metric.pyx":110
  * 
  *     kerr_metric[0,0] = - alpha * alpha + pomega2 * omega2
  *     kerr_metric[1,1] = ro2 / delta             # <<<<<<<<<<<<<<
@@ -2756,7 +2776,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
   if (__pyx_t_4 < 0) __pyx_t_4 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_3 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_4 * __pyx_v_kerr_metric.strides[1]) )) = (__pyx_v_ro2 / __pyx_v_delta);
 
-  /* "metric.pyx":109
+  /* "metric.pyx":111
  *     kerr_metric[0,0] = - alpha * alpha + pomega2 * omega2
  *     kerr_metric[1,1] = ro2 / delta
  *     kerr_metric[2,2] = ro2             # <<<<<<<<<<<<<<
@@ -2769,7 +2789,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
   if (__pyx_t_6 < 0) __pyx_t_6 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_5 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_6 * __pyx_v_kerr_metric.strides[1]) )) = __pyx_v_ro2;
 
-  /* "metric.pyx":110
+  /* "metric.pyx":112
  *     kerr_metric[1,1] = ro2 / delta
  *     kerr_metric[2,2] = ro2
  *     kerr_metric[3,3] = pomega2             # <<<<<<<<<<<<<<
@@ -2782,7 +2802,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
   if (__pyx_t_8 < 0) __pyx_t_8 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_7 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_8 * __pyx_v_kerr_metric.strides[1]) )) = __pyx_v_pomega2;
 
-  /* "metric.pyx":111
+  /* "metric.pyx":113
  *     kerr_metric[2,2] = ro2
  *     kerr_metric[3,3] = pomega2
  *     kerr_metric[0,3] = - pomega2 * omega             # <<<<<<<<<<<<<<
@@ -2795,7 +2815,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
   if (__pyx_t_10 < 0) __pyx_t_10 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_9 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_10 * __pyx_v_kerr_metric.strides[1]) )) = ((-__pyx_v_pomega2) * __pyx_v_omega);
 
-  /* "metric.pyx":112
+  /* "metric.pyx":114
  *     kerr_metric[3,3] = pomega2
  *     kerr_metric[0,3] = - pomega2 * omega
  *     kerr_metric[3,0] = kerr_metric[0,3]             # <<<<<<<<<<<<<<
@@ -2811,7 +2831,7 @@ static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_th
   if (__pyx_t_14 < 0) __pyx_t_14 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_13 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_14 * __pyx_v_kerr_metric.strides[1]) )) = (*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_11 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_12 * __pyx_v_kerr_metric.strides[1]) )));
 
-  /* "metric.pyx":85
+  /* "metric.pyx":87
  * 
  * 
  * cdef void calculate_metric(double r, double theta,             # <<<<<<<<<<<<<<

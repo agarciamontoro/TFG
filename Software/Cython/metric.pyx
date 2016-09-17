@@ -70,15 +70,17 @@ cdef void calculate_inverse_metric(double r, double theta,
     # Compute auxiliar products
 
     cdef double ro2 = ro * ro
+    cdef double ro2inv = 1.0 / ro2
+    cdef double deltainv = 1.0 / delta
     cdef double pomega2 = pomega*pomega
     cdef double omega2 = omega * omega
     # Construct the nonzero components of the metric
 
-    kerr_metric[0,0] = - 1.0 / delta * ( r2 + a2 + a * pomega2 * omega)
-    kerr_metric[1,1] = delta / ro2
-    kerr_metric[2,2] = 1 / ro2
-    kerr_metric[3,3] = ( delta - a2 * sintheta2 ) / (ro2 * delta * sintheta2 )
-    kerr_metric[0,3] = - 2.0 * a * r / ro2 / delta
+    kerr_metric[0,0] = - deltainv * ( r2 + a2 + a * pomega2 * omega)
+    kerr_metric[1,1] = delta * ro2inv
+    kerr_metric[2,2] = ro2inv
+    kerr_metric[3,3] = ( delta / sintheta2 - a2  ) * ro2inv * deltainv
+    kerr_metric[0,3] = - 2.0 * a * r * ro2inv * deltainv
     kerr_metric[3,0] = kerr_metric[0,3]
 
 
