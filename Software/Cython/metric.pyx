@@ -27,6 +27,18 @@ cpdef np.ndarray[np.float64_t, ndim=2] metric(double r, double theta, double phi
 
     return kerr_metric
 
+cpdef np.ndarray[np.float64_t, ndim=2] inverse_metric(double r, double theta, double phi, double a):
+
+    # Create output matrix
+
+    cdef np.ndarray[np.float64_t, ndim=2] kerr_metric = np.zeros((4,4))
+
+    # Calculate values
+
+    calculate_inverse_metric(r, theta, phi, a , kerr_metric)
+
+    return kerr_metric
+
 
 
 ################################################
@@ -40,6 +52,34 @@ cpdef np.ndarray[np.float64_t, ndim=2] metric(double r, double theta, double phi
 # Please, check using cython -a {this_file_name}.pyx that these functions do not have python-related code,
 # which is indicated by yellow lines in the html output.
 
+
+cdef void calculate_inverse_metric(double r, double theta,
+        double phi, double a, double [:,:] kerr_metric):
+
+    cdef double r2 = r*r
+    cdef double a2 = a*a
+    cdef double sintheta2 = sin(theta) * sin(theta)
+
+    cdef double ro = sqrt(r2 + a2 * cos(theta)**2)
+    cdef double delta = r2 - 2*r + a2
+    cdef double sigma = sqrt( (r2 + a2) * (r2 + a2) - a2 * delta * sintheta2)
+    cdef double alpha = ro * sqrt(delta) / sigma
+    cdef double omega = 2.0 * a * r / (sigma * sigma)
+    cdef double pomega = sigma * sin(theta) / ro
+
+    # Compute auxiliar products
+
+    cdef double ro2 = ro * ro
+    cdef double pomega2 = pomega*pomega
+    cdef double omega2 = omega * omega
+    # Construct the nonzero components of the metric
+
+    kerr_metric[0,0] = - 1.0 / delta * ( r2 + a2 + a * pomega2 * omega)
+    kerr_metric[1,1] = delta / ro2
+    kerr_metric[2,2] = 1 / ro2
+    kerr_metric[3,3] = ( delta - a2 * sintheta2 ) / (ro2 * delta * sintheta2 )
+    kerr_metric[0,3] = - 2.0 * a * r / ro2 / delta
+    kerr_metric[3,0] = kerr_metric[0,3]
 
 
 cdef void calculate_metric(double r, double theta,
@@ -68,6 +108,6 @@ cdef void calculate_metric(double r, double theta,
     kerr_metric[1,1] = ro2 / delta
     kerr_metric[2,2] = ro2
     kerr_metric[3,3] = pomega2
-    kerr_metric[0,3] = -2 * pomega2 * omega
+    kerr_metric[0,3] = - pomega2 * omega
     kerr_metric[3,0] = kerr_metric[0,3]
 
