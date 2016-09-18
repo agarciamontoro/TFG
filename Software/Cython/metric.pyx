@@ -15,7 +15,7 @@ cimport cython
 # Notice that these functions HAVE overhead because they interface with python code and
 # python objects will be constructed and unpacked each time the function is summoned.
 
-cpdef np.ndarray[np.float64_t, ndim=2] metric(double r, double theta, double phi, double a):
+cpdef np.ndarray[np.float64_t, ndim=2] metric(double r, double theta, double a):
 
     # Create output matrix
 
@@ -23,11 +23,11 @@ cpdef np.ndarray[np.float64_t, ndim=2] metric(double r, double theta, double phi
 
     # Calculate values
 
-    calculate_metric(r, theta, phi, a , kerr_metric)
+    calculate_metric(r, theta, a , kerr_metric)
 
     return kerr_metric
 
-cpdef np.ndarray[np.float64_t, ndim=2] inverse_metric(double r, double theta, double phi, double a):
+cpdef np.ndarray[np.float64_t, ndim=2] inverse_metric(double r, double theta, double a):
 
     # Create output matrix
 
@@ -35,11 +35,12 @@ cpdef np.ndarray[np.float64_t, ndim=2] inverse_metric(double r, double theta, do
 
     # Calculate values
 
-    calculate_inverse_metric(r, theta, phi, a , kerr_metric)
+    calculate_inverse_metric(r, theta, a , kerr_metric)
 
     return kerr_metric
 
-
+cpdef double kretschmann(double r, double theta, double a):
+    return calculate_Kretschmann(r, theta, a)
 
 ################################################
 ##                C FUNCTIONS                 ##
@@ -54,7 +55,7 @@ cpdef np.ndarray[np.float64_t, ndim=2] inverse_metric(double r, double theta, do
 
 
 cdef void calculate_inverse_metric(double r, double theta,
-        double phi, double a, double [:,:] kerr_metric):
+        double a, double [:,:] kerr_metric):
 
     cdef double r2 = r*r
     cdef double a2 = a*a
@@ -85,7 +86,7 @@ cdef void calculate_inverse_metric(double r, double theta,
 
 
 cdef void calculate_metric(double r, double theta,
-        double phi, double a, double [:,:] kerr_metric):
+        double a, double [:,:] kerr_metric):
 
     # Calculate metric quantities 
 
@@ -113,3 +114,16 @@ cdef void calculate_metric(double r, double theta,
     kerr_metric[0,3] = - pomega2 * omega
     kerr_metric[3,0] = kerr_metric[0,3]
 
+cdef double calculate_Kretschmann( double r, double theta, double a):
+
+    cdef double acostheta2 = ( a * cos(theta) ) * ( a * cos(theta) )
+    cdef double acostheta4 = acostheta2 * acostheta2
+    cdef double acostheta6 = acostheta4 * acostheta2
+    cdef double r2 = r*r
+    cdef double r4 = r2 * r2
+    cdef double r6 = r4 * r2
+    
+    cdef double numerator =  48.0 * ( 15.0 * acostheta4 - acostheta6 - 15.0 * r4 * acostheta2 + r6)
+    cdef double denom     =  acostheta2 + r2
+    denom          =  denom * denom * denom * denom * denom * denom
+    return numerator / denom

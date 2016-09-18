@@ -286,6 +286,71 @@ body.cython { font-family: courier; font-size: 12; }
 .cython.score-252 {background-color: #FFFF09;}
 .cython.score-253 {background-color: #FFFF09;}
 .cython.score-254 {background-color: #FFFF09;}
+.cython .hll { background-color: #ffffcc }
+.cython  { background: #f8f8f8; }
+.cython .c { color: #408080; font-style: italic } /* Comment */
+.cython .err { border: 1px solid #FF0000 } /* Error */
+.cython .k { color: #008000; font-weight: bold } /* Keyword */
+.cython .o { color: #666666 } /* Operator */
+.cython .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.cython .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.cython .cp { color: #BC7A00 } /* Comment.Preproc */
+.cython .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.cython .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.cython .cs { color: #408080; font-style: italic } /* Comment.Special */
+.cython .gd { color: #A00000 } /* Generic.Deleted */
+.cython .ge { font-style: italic } /* Generic.Emph */
+.cython .gr { color: #FF0000 } /* Generic.Error */
+.cython .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.cython .gi { color: #00A000 } /* Generic.Inserted */
+.cython .go { color: #888888 } /* Generic.Output */
+.cython .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.cython .gs { font-weight: bold } /* Generic.Strong */
+.cython .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.cython .gt { color: #0044DD } /* Generic.Traceback */
+.cython .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.cython .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.cython .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.cython .kp { color: #008000 } /* Keyword.Pseudo */
+.cython .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.cython .kt { color: #B00040 } /* Keyword.Type */
+.cython .m { color: #666666 } /* Literal.Number */
+.cython .s { color: #BA2121 } /* Literal.String */
+.cython .na { color: #7D9029 } /* Name.Attribute */
+.cython .nb { color: #008000 } /* Name.Builtin */
+.cython .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.cython .no { color: #880000 } /* Name.Constant */
+.cython .nd { color: #AA22FF } /* Name.Decorator */
+.cython .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.cython .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.cython .nf { color: #0000FF } /* Name.Function */
+.cython .nl { color: #A0A000 } /* Name.Label */
+.cython .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.cython .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.cython .nv { color: #19177C } /* Name.Variable */
+.cython .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.cython .w { color: #bbbbbb } /* Text.Whitespace */
+.cython .mb { color: #666666 } /* Literal.Number.Bin */
+.cython .mf { color: #666666 } /* Literal.Number.Float */
+.cython .mh { color: #666666 } /* Literal.Number.Hex */
+.cython .mi { color: #666666 } /* Literal.Number.Integer */
+.cython .mo { color: #666666 } /* Literal.Number.Oct */
+.cython .sb { color: #BA2121 } /* Literal.String.Backtick */
+.cython .sc { color: #BA2121 } /* Literal.String.Char */
+.cython .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.cython .s2 { color: #BA2121 } /* Literal.String.Double */
+.cython .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.cython .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.cython .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.cython .sx { color: #008000 } /* Literal.String.Other */
+.cython .sr { color: #BB6688 } /* Literal.String.Regex */
+.cython .s1 { color: #BA2121 } /* Literal.String.Single */
+.cython .ss { color: #19177C } /* Literal.String.Symbol */
+.cython .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.cython .vc { color: #19177C } /* Name.Variable.Class */
+.cython .vg { color: #19177C } /* Name.Variable.Global */
+.cython .vi { color: #19177C } /* Name.Variable.Instance */
+.cython .il { color: #666666 } /* Literal.Number.Integer.Long */
     </style>
     <script>
     function toggleDiv(id) {
@@ -302,7 +367,7 @@ body.cython { font-family: courier; font-size: 12; }
     Click on a line that starts with a "<code>+</code>" to see the C code that Cython generated for it.
 </p>
 <p>Raw output: <a href="metric.c">metric.c</a></p>
-<div class="cython"><pre class="cython line score-11" onclick='toggleDiv(this)'>+<span class="">01</span>: #cython: language_level=3, boundscheck=False,cdivision=True</pre>
+<div class="cython"><pre class="cython line score-11" onclick='toggleDiv(this)'>+<span class="">001</span>: <span class="c">#cython: language_level=3, boundscheck=False,cdivision=True</span></pre>
 <pre class='cython code score-11 '>
   /* "metric.pyx":1
  * #cython: language_level=3, boundscheck=False,cdivision=True             # &lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;
@@ -313,29 +378,29 @@ body.cython { font-family: courier; font-size: 12; }
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
   if (<span class='py_c_api'>PyDict_SetItem</span>(__pyx_d, __pyx_n_s_test, __pyx_t_1) &lt; 0) __PYX_ERR(0, 1, __pyx_L1_error)
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_1); __pyx_t_1 = 0;
-</pre><pre class="cython line score-0">&#xA0;<span class="">02</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">03</span>: from libc.math cimport *</pre>
-<pre class="cython line score-0">&#xA0;<span class="">04</span>: from libc.string cimport memcpy</pre>
-<pre class="cython line score-0">&#xA0;<span class="">05</span>: cimport numpy as np</pre>
-<pre class="cython line score-8" onclick='toggleDiv(this)'>+<span class="">06</span>: import numpy as np</pre>
+</pre><pre class="cython line score-0">&#xA0;<span class="">002</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">003</span>: <span class="k">from</span> <span class="nn">libc.math</span> <span class="k">cimport</span> <span class="o">*</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">004</span>: <span class="k">from</span> <span class="nn">libc.string</span> <span class="k">cimport</span> <span class="n">memcpy</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">005</span>: <span class="k">cimport</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span></pre>
+<pre class="cython line score-8" onclick='toggleDiv(this)'>+<span class="">006</span>: <span class="k">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span></pre>
 <pre class='cython code score-8 '>  __pyx_t_1 = <span class='pyx_c_api'>__Pyx_Import</span>(__pyx_n_s_numpy, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
   if (<span class='py_c_api'>PyDict_SetItem</span>(__pyx_d, __pyx_n_s_np, __pyx_t_1) &lt; 0) __PYX_ERR(0, 6, __pyx_L1_error)
   <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_1); __pyx_t_1 = 0;
-</pre><pre class="cython line score-0">&#xA0;<span class="">07</span>: cimport cython</pre>
-<pre class="cython line score-0">&#xA0;<span class="">08</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">09</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">10</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">11</span>: ################################################</pre>
-<pre class="cython line score-0">&#xA0;<span class="">12</span>: ##         PYTHON-ACCESIBLE FUNCTIONS         ##</pre>
-<pre class="cython line score-0">&#xA0;<span class="">13</span>: ################################################</pre>
-<pre class="cython line score-0">&#xA0;<span class="">14</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">15</span>: # Notice that these functions HAVE overhead because they interface with python code and</pre>
-<pre class="cython line score-0">&#xA0;<span class="">16</span>: # python objects will be constructed and unpacked each time the function is summoned.</pre>
-<pre class="cython line score-0">&#xA0;<span class="">17</span>: </pre>
-<pre class="cython line score-105" onclick='toggleDiv(this)'>+<span class="">18</span>: cpdef np.ndarray[np.float64_t, ndim=2] metric(double r, double theta, double phi, double a):</pre>
-<pre class='cython code score-105 '>static PyObject *__pyx_pw_6metric_1metric(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_6metric_metric(double __pyx_v_r, double __pyx_v_theta, double __pyx_v_phi, double __pyx_v_a, CYTHON_UNUSED int __pyx_skip_dispatch) {
+</pre><pre class="cython line score-0">&#xA0;<span class="">007</span>: <span class="k">cimport</span> <span class="nn">cython</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">008</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">009</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">010</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">011</span>: <span class="c">################################################</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">012</span>: <span class="c">##         PYTHON-ACCESIBLE FUNCTIONS         ##</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">013</span>: <span class="c">################################################</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">014</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">015</span>: <span class="c"># Notice that these functions HAVE overhead because they interface with python code and</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">016</span>: <span class="c"># python objects will be constructed and unpacked each time the function is summoned.</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">017</span>: </pre>
+<pre class="cython line score-86" onclick='toggleDiv(this)'>+<span class="">018</span>: <span class="k">cpdef</span> <span class="kt">np</span>.<span class="kt">ndarray</span>[<span class="kt">np</span>.<span class="nf">float64_t</span><span class="p">,</span> <span class="nf">ndim</span><span class="o">=</span><span class="mf">2</span><span class="p">]</span> <span class="n">metric</span><span class="p">(</span><span class="n">double</span> <span class="n">r</span><span class="p">,</span> <span class="n">double</span> <span class="n">theta</span><span class="p">,</span> <span class="n">double</span> <span class="n">a</span><span class="p">):</span></pre>
+<pre class='cython code score-86 '>static PyObject *__pyx_pw_6metric_1metric(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_6metric_metric(double __pyx_v_r, double __pyx_v_theta, double __pyx_v_a, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyArrayObject *__pyx_v_kerr_metric = 0;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_kerr_metric;
   __Pyx_Buffer __pyx_pybuffer_kerr_metric;
@@ -375,19 +440,17 @@ static PyObject *__pyx_pw_6metric_1metric(PyObject *__pyx_self, PyObject *__pyx_
 static PyObject *__pyx_pw_6metric_1metric(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   double __pyx_v_r;
   double __pyx_v_theta;
-  double __pyx_v_phi;
   double __pyx_v_a;
   PyObject *__pyx_r = 0;
   <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
   <span class='refnanny'>__Pyx_RefNannySetupContext</span>("metric (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&amp;__pyx_n_s_r,&amp;__pyx_n_s_theta,&amp;__pyx_n_s_phi,&amp;__pyx_n_s_a,0};
-    PyObject* values[4] = {0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&amp;__pyx_n_s_r,&amp;__pyx_n_s_theta,&amp;__pyx_n_s_a,0};
+    PyObject* values[3] = {0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = <span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args);
       switch (pos_args) {
-        case  4: values[3] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 3);
         case  3: values[2] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 2);
         case  2: values[1] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 1);
         case  1: values[0] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 0);
@@ -402,56 +465,49 @@ static PyObject *__pyx_pw_6metric_1metric(PyObject *__pyx_self, PyObject *__pyx_
         case  1:
         if (likely((values[1] = <span class='py_c_api'>PyDict_GetItem</span>(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
         else {
-          <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("metric", 1, 4, 4, 1); __PYX_ERR(0, 18, __pyx_L3_error)
+          <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("metric", 1, 3, 3, 1); __PYX_ERR(0, 18, __pyx_L3_error)
         }
         case  2:
-        if (likely((values[2] = <span class='py_c_api'>PyDict_GetItem</span>(__pyx_kwds, __pyx_n_s_phi)) != 0)) kw_args--;
+        if (likely((values[2] = <span class='py_c_api'>PyDict_GetItem</span>(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("metric", 1, 4, 4, 2); __PYX_ERR(0, 18, __pyx_L3_error)
-        }
-        case  3:
-        if (likely((values[3] = <span class='py_c_api'>PyDict_GetItem</span>(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
-        else {
-          <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("metric", 1, 4, 4, 3); __PYX_ERR(0, 18, __pyx_L3_error)
+          <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("metric", 1, 3, 3, 2); __PYX_ERR(0, 18, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args &gt; 0)) {
         if (unlikely(<span class='pyx_c_api'>__Pyx_ParseOptionalKeywords</span>(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "metric") &lt; 0)) __PYX_ERR(0, 18, __pyx_L3_error)
       }
-    } else if (<span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args) != 4) {
+    } else if (<span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 0);
       values[1] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 1);
       values[2] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 2);
-      values[3] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 3);
     }
     __pyx_v_r = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[0]); if (unlikely((__pyx_v_r == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 18, __pyx_L3_error)
     __pyx_v_theta = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[1]); if (unlikely((__pyx_v_theta == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 18, __pyx_L3_error)
-    __pyx_v_phi = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[2]); if (unlikely((__pyx_v_phi == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 18, __pyx_L3_error)
-    __pyx_v_a = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[3]); if (unlikely((__pyx_v_a == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 18, __pyx_L3_error)
+    __pyx_v_a = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[2]); if (unlikely((__pyx_v_a == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 18, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("metric", 1, 4, 4, <span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args)); __PYX_ERR(0, 18, __pyx_L3_error)
+  <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("metric", 1, 3, 3, <span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args)); __PYX_ERR(0, 18, __pyx_L3_error)
   __pyx_L3_error:;
   <span class='pyx_c_api'>__Pyx_AddTraceback</span>("metric.metric", __pyx_clineno, __pyx_lineno, __pyx_filename);
   <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_6metric_metric(__pyx_self, __pyx_v_r, __pyx_v_theta, __pyx_v_phi, __pyx_v_a);
+  __pyx_r = __pyx_pf_6metric_metric(__pyx_self, __pyx_v_r, __pyx_v_theta, __pyx_v_a);
 
   /* function exit code */
   <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_6metric_metric(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, double __pyx_v_theta, double __pyx_v_phi, double __pyx_v_a) {
+static PyObject *__pyx_pf_6metric_metric(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, double __pyx_v_theta, double __pyx_v_a) {
   PyObject *__pyx_r = NULL;
   <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
   <span class='refnanny'>__Pyx_RefNannySetupContext</span>("metric", 0);
   <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_6metric_metric(__pyx_v_r, __pyx_v_theta, __pyx_v_phi, __pyx_v_a, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_6metric_metric(__pyx_v_r, __pyx_v_theta, __pyx_v_a, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 18, __pyx_L1_error)
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -467,10 +523,10 @@ static PyObject *__pyx_pf_6metric_metric(CYTHON_UNUSED PyObject *__pyx_self, dou
   <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
   return __pyx_r;
 }
-</pre><pre class="cython line score-0">&#xA0;<span class="">19</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">20</span>:     # Create output matrix</pre>
-<pre class="cython line score-0">&#xA0;<span class="">21</span>: </pre>
-<pre class="cython line score-23" onclick='toggleDiv(this)'>+<span class="">22</span>:     cdef np.ndarray[np.float64_t, ndim=2] kerr_metric = np.zeros((4,4))</pre>
+</pre><pre class="cython line score-0">&#xA0;<span class="">019</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">020</span>:     <span class="c"># Create output matrix</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">021</span>: </pre>
+<pre class="cython line score-23" onclick='toggleDiv(this)'>+<span class="">022</span>:     <span class="k">cdef</span> <span class="kt">np</span>.<span class="kt">ndarray</span>[<span class="kt">np</span>.<span class="nf">float64_t</span><span class="p">,</span> <span class="nf">ndim</span><span class="o">=</span><span class="mf">2</span><span class="p">]</span> <span class="n">kerr_metric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mf">4</span><span class="p">,</span><span class="mf">4</span><span class="p">))</span></pre>
 <pre class='cython code score-23 '>  __pyx_t_1 = <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 22, __pyx_L1_error)
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
   __pyx_t_2 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_t_1, __pyx_n_s_zeros); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 22, __pyx_L1_error)
@@ -499,38 +555,412 @@ static PyObject *__pyx_pf_6metric_metric(CYTHON_UNUSED PyObject *__pyx_self, dou
   __pyx_tuple__2 = <span class='py_c_api'>PyTuple_Pack</span>(1, __pyx_tuple_); if (unlikely(!__pyx_tuple__2)) __PYX_ERR(0, 22, __pyx_L1_error)
   <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_tuple__2);
   <span class='refnanny'>__Pyx_GIVEREF</span>(__pyx_tuple__2);
-</pre><pre class="cython line score-0">&#xA0;<span class="">23</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">24</span>:     # Calculate values</pre>
-<pre class="cython line score-0">&#xA0;<span class="">25</span>: </pre>
-<pre class="cython line score-2" onclick='toggleDiv(this)'>+<span class="">26</span>:     calculate_metric(r, theta, phi, a , kerr_metric)</pre>
+</pre><pre class="cython line score-0">&#xA0;<span class="">023</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">024</span>:     <span class="c"># Calculate values</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">025</span>: </pre>
+<pre class="cython line score-2" onclick='toggleDiv(this)'>+<span class="">026</span>:     <span class="n">calculate_metric</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">a</span> <span class="p">,</span> <span class="n">kerr_metric</span><span class="p">)</span></pre>
 <pre class='cython code score-2 '>  __pyx_t_4 = <span class='pyx_c_api'>__Pyx_PyObject_to_MemoryviewSlice_dsds_double</span>(((PyObject *)__pyx_v_kerr_metric));
   if (unlikely(!__pyx_t_4.memview)) __PYX_ERR(0, 26, __pyx_L1_error)
-  __pyx_f_6metric_calculate_metric(__pyx_v_r, __pyx_v_theta, __pyx_v_phi, __pyx_v_a, __pyx_t_4);
+  __pyx_f_6metric_calculate_metric(__pyx_v_r, __pyx_v_theta, __pyx_v_a, __pyx_t_4);
   __PYX_XDEC_MEMVIEW(&amp;__pyx_t_4, 1);
-</pre><pre class="cython line score-0">&#xA0;<span class="">27</span>: </pre>
-<pre class="cython line score-2" onclick='toggleDiv(this)'>+<span class="">28</span>:     return kerr_metric</pre>
+</pre><pre class="cython line score-0">&#xA0;<span class="">027</span>: </pre>
+<pre class="cython line score-2" onclick='toggleDiv(this)'>+<span class="">028</span>:     <span class="k">return</span> <span class="n">kerr_metric</span></pre>
 <pre class='cython code score-2 '>  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(((PyObject *)__pyx_r));
   <span class='pyx_macro_api'>__Pyx_INCREF</span>(((PyObject *)__pyx_v_kerr_metric));
   __pyx_r = ((PyArrayObject *)__pyx_v_kerr_metric);
   goto __pyx_L0;
-</pre><pre class="cython line score-0">&#xA0;<span class="">29</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">30</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">31</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">32</span>: ################################################</pre>
-<pre class="cython line score-0">&#xA0;<span class="">33</span>: ##                C FUNCTIONS                 ##</pre>
-<pre class="cython line score-0">&#xA0;<span class="">34</span>: ################################################</pre>
-<pre class="cython line score-0">&#xA0;<span class="">35</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">36</span>: # This functios will be (hopefully) compliled in pure C and they will not have any Python overhead</pre>
-<pre class="cython line score-0">&#xA0;<span class="">37</span>: # of any kind. This means that all the loops and math operations are free of the python-lag.</pre>
-<pre class="cython line score-0">&#xA0;<span class="">38</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">39</span>: # ¡IMPORTANT!</pre>
-<pre class="cython line score-0">&#xA0;<span class="">40</span>: # Please, check using cython -a {this_file_name}.pyx that these functions do not have python-related code,</pre>
-<pre class="cython line score-0">&#xA0;<span class="">41</span>: # which is indicated by yellow lines in the html output.</pre>
-<pre class="cython line score-0">&#xA0;<span class="">42</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">43</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">44</span>: </pre>
-<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">45</span>: cdef void calculate_metric(double r, double theta,</pre>
-<pre class='cython code score-0 '>static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_theta, CYTHON_UNUSED double __pyx_v_phi, double __pyx_v_a, __Pyx_memviewslice __pyx_v_kerr_metric) {
+</pre><pre class="cython line score-0">&#xA0;<span class="">029</span>: </pre>
+<pre class="cython line score-86" onclick='toggleDiv(this)'>+<span class="">030</span>: <span class="k">cpdef</span> <span class="kt">np</span>.<span class="kt">ndarray</span>[<span class="kt">np</span>.<span class="nf">float64_t</span><span class="p">,</span> <span class="nf">ndim</span><span class="o">=</span><span class="mf">2</span><span class="p">]</span> <span class="n">inverse_metric</span><span class="p">(</span><span class="n">double</span> <span class="n">r</span><span class="p">,</span> <span class="n">double</span> <span class="n">theta</span><span class="p">,</span> <span class="n">double</span> <span class="n">a</span><span class="p">):</span></pre>
+<pre class='cython code score-86 '>static PyObject *__pyx_pw_6metric_3inverse_metric(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyArrayObject *__pyx_f_6metric_inverse_metric(double __pyx_v_r, double __pyx_v_theta, double __pyx_v_a, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  PyArrayObject *__pyx_v_kerr_metric = 0;
+  __Pyx_LocalBuf_ND __pyx_pybuffernd_kerr_metric;
+  __Pyx_Buffer __pyx_pybuffer_kerr_metric;
+  PyArrayObject *__pyx_r = NULL;
+  <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
+  <span class='refnanny'>__Pyx_RefNannySetupContext</span>("inverse_metric", 0);
+  __pyx_pybuffer_kerr_metric.pybuffer.buf = NULL;
+  __pyx_pybuffer_kerr_metric.refcount = 0;
+  __pyx_pybuffernd_kerr_metric.data = NULL;
+  __pyx_pybuffernd_kerr_metric.rcbuffer = &amp;__pyx_pybuffer_kerr_metric;
+/* … */
+  /* function exit code */
+  __pyx_L1_error:;
+  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_t_1);
+  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_t_2);
+  __PYX_XDEC_MEMVIEW(&amp;__pyx_t_4, 1);
+  { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
+    __Pyx_PyThreadState_declare
+    __Pyx_PyThreadState_assign
+    <span class='pyx_c_api'>__Pyx_ErrFetch</span>(&amp;__pyx_type, &amp;__pyx_value, &amp;__pyx_tb);
+    <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_kerr_metric.rcbuffer-&gt;pybuffer);
+  <span class='pyx_c_api'>__Pyx_ErrRestore</span>(__pyx_type, __pyx_value, __pyx_tb);}
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("metric.inverse_metric", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  goto __pyx_L2;
+  __pyx_L0:;
+  <span class='pyx_c_api'>__Pyx_SafeReleaseBuffer</span>(&amp;__pyx_pybuffernd_kerr_metric.rcbuffer-&gt;pybuffer);
+  __pyx_L2:;
+  <span class='pyx_macro_api'>__Pyx_XDECREF</span>((PyObject *)__pyx_v_kerr_metric);
+  <span class='refnanny'>__Pyx_XGIVEREF</span>((PyObject *)__pyx_r);
+  <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_6metric_3inverse_metric(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_6metric_3inverse_metric(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  double __pyx_v_r;
+  double __pyx_v_theta;
+  double __pyx_v_a;
+  PyObject *__pyx_r = 0;
+  <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
+  <span class='refnanny'>__Pyx_RefNannySetupContext</span>("inverse_metric (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&amp;__pyx_n_s_r,&amp;__pyx_n_s_theta,&amp;__pyx_n_s_a,0};
+    PyObject* values[3] = {0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = <span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 2);
+        case  2: values[1] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 1);
+        case  1: values[0] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = <span class='py_c_api'>PyDict_Size</span>(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = <span class='py_c_api'>PyDict_GetItem</span>(__pyx_kwds, __pyx_n_s_r)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = <span class='py_c_api'>PyDict_GetItem</span>(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
+        else {
+          <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("inverse_metric", 1, 3, 3, 1); __PYX_ERR(0, 30, __pyx_L3_error)
+        }
+        case  2:
+        if (likely((values[2] = <span class='py_c_api'>PyDict_GetItem</span>(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
+        else {
+          <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("inverse_metric", 1, 3, 3, 2); __PYX_ERR(0, 30, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args &gt; 0)) {
+        if (unlikely(<span class='pyx_c_api'>__Pyx_ParseOptionalKeywords</span>(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "inverse_metric") &lt; 0)) __PYX_ERR(0, 30, __pyx_L3_error)
+      }
+    } else if (<span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args) != 3) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 0);
+      values[1] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 1);
+      values[2] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 2);
+    }
+    __pyx_v_r = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[0]); if (unlikely((__pyx_v_r == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 30, __pyx_L3_error)
+    __pyx_v_theta = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[1]); if (unlikely((__pyx_v_theta == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 30, __pyx_L3_error)
+    __pyx_v_a = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[2]); if (unlikely((__pyx_v_a == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 30, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("inverse_metric", 1, 3, 3, <span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args)); __PYX_ERR(0, 30, __pyx_L3_error)
+  __pyx_L3_error:;
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("metric.inverse_metric", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_6metric_2inverse_metric(__pyx_self, __pyx_v_r, __pyx_v_theta, __pyx_v_a);
+
+  /* function exit code */
+  <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_6metric_2inverse_metric(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, double __pyx_v_theta, double __pyx_v_a) {
+  PyObject *__pyx_r = NULL;
+  <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
+  <span class='refnanny'>__Pyx_RefNannySetupContext</span>("inverse_metric", 0);
+  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_r);
+  __pyx_t_1 = ((PyObject *)__pyx_f_6metric_inverse_metric(__pyx_v_r, __pyx_v_theta, __pyx_v_a, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 30, __pyx_L1_error)
+  <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_t_1);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("metric.inverse_metric", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  <span class='refnanny'>__Pyx_XGIVEREF</span>(__pyx_r);
+  <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
+  return __pyx_r;
+}
+</pre><pre class="cython line score-0">&#xA0;<span class="">031</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">032</span>:     <span class="c"># Create output matrix</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">033</span>: </pre>
+<pre class="cython line score-23" onclick='toggleDiv(this)'>+<span class="">034</span>:     <span class="k">cdef</span> <span class="kt">np</span>.<span class="kt">ndarray</span>[<span class="kt">np</span>.<span class="nf">float64_t</span><span class="p">,</span> <span class="nf">ndim</span><span class="o">=</span><span class="mf">2</span><span class="p">]</span> <span class="n">kerr_metric</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mf">4</span><span class="p">,</span><span class="mf">4</span><span class="p">))</span></pre>
+<pre class='cython code score-23 '>  __pyx_t_1 = <span class='pyx_c_api'>__Pyx_GetModuleGlobalName</span>(__pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 34, __pyx_L1_error)
+  <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
+  __pyx_t_2 = <span class='pyx_c_api'>__Pyx_PyObject_GetAttrStr</span>(__pyx_t_1, __pyx_n_s_zeros); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 34, __pyx_L1_error)
+  <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_2);
+  <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_1); __pyx_t_1 = 0;
+/* … */
+  __pyx_tuple__3 = <span class='py_c_api'>PyTuple_Pack</span>(2, __pyx_int_4, __pyx_int_4); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 34, __pyx_L1_error)
+  <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_tuple__3);
+  <span class='refnanny'>__Pyx_GIVEREF</span>(__pyx_tuple__3);
+  __pyx_t_1 = <span class='pyx_c_api'>__Pyx_PyObject_Call</span>(__pyx_t_2, __pyx_tuple__4, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 34, __pyx_L1_error)
+  <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
+  <span class='pyx_macro_api'>__Pyx_DECREF</span>(__pyx_t_2); __pyx_t_2 = 0;
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(<span class='pyx_c_api'>__Pyx_TypeTest</span>(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 34, __pyx_L1_error)
+  __pyx_t_3 = ((PyArrayObject *)__pyx_t_1);
+  {
+    __Pyx_BufFmt_StackElem __pyx_stack[1];
+    if (unlikely(<span class='pyx_c_api'>__Pyx_GetBufferAndValidate</span>(&amp;__pyx_pybuffernd_kerr_metric.rcbuffer-&gt;pybuffer, (PyObject*)__pyx_t_3, &amp;__Pyx_TypeInfo_nn___pyx_t_5numpy_float64_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+      __pyx_v_kerr_metric = ((PyArrayObject *)Py_None); <span class='pyx_macro_api'>__Pyx_INCREF</span>(Py_None); __pyx_pybuffernd_kerr_metric.rcbuffer-&gt;pybuffer.buf = NULL;
+      __PYX_ERR(0, 34, __pyx_L1_error)
+    } else {__pyx_pybuffernd_kerr_metric.diminfo[0].strides = __pyx_pybuffernd_kerr_metric.rcbuffer-&gt;pybuffer.strides[0]; __pyx_pybuffernd_kerr_metric.diminfo[0].shape = __pyx_pybuffernd_kerr_metric.rcbuffer-&gt;pybuffer.shape[0]; __pyx_pybuffernd_kerr_metric.diminfo[1].strides = __pyx_pybuffernd_kerr_metric.rcbuffer-&gt;pybuffer.strides[1]; __pyx_pybuffernd_kerr_metric.diminfo[1].shape = __pyx_pybuffernd_kerr_metric.rcbuffer-&gt;pybuffer.shape[1];
+    }
+  }
+  __pyx_t_3 = 0;
+  __pyx_v_kerr_metric = ((PyArrayObject *)__pyx_t_1);
+  __pyx_t_1 = 0;
+  __pyx_tuple__4 = <span class='py_c_api'>PyTuple_Pack</span>(1, __pyx_tuple__3); if (unlikely(!__pyx_tuple__4)) __PYX_ERR(0, 34, __pyx_L1_error)
+  <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_tuple__4);
+  <span class='refnanny'>__Pyx_GIVEREF</span>(__pyx_tuple__4);
+</pre><pre class="cython line score-0">&#xA0;<span class="">035</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">036</span>:     <span class="c"># Calculate values</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">037</span>: </pre>
+<pre class="cython line score-2" onclick='toggleDiv(this)'>+<span class="">038</span>:     <span class="n">calculate_inverse_metric</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">a</span> <span class="p">,</span> <span class="n">kerr_metric</span><span class="p">)</span></pre>
+<pre class='cython code score-2 '>  __pyx_t_4 = <span class='pyx_c_api'>__Pyx_PyObject_to_MemoryviewSlice_dsds_double</span>(((PyObject *)__pyx_v_kerr_metric));
+  if (unlikely(!__pyx_t_4.memview)) __PYX_ERR(0, 38, __pyx_L1_error)
+  __pyx_f_6metric_calculate_inverse_metric(__pyx_v_r, __pyx_v_theta, __pyx_v_a, __pyx_t_4);
+  __PYX_XDEC_MEMVIEW(&amp;__pyx_t_4, 1);
+</pre><pre class="cython line score-0">&#xA0;<span class="">039</span>: </pre>
+<pre class="cython line score-2" onclick='toggleDiv(this)'>+<span class="">040</span>:     <span class="k">return</span> <span class="n">kerr_metric</span></pre>
+<pre class='cython code score-2 '>  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(((PyObject *)__pyx_r));
+  <span class='pyx_macro_api'>__Pyx_INCREF</span>(((PyObject *)__pyx_v_kerr_metric));
+  __pyx_r = ((PyArrayObject *)__pyx_v_kerr_metric);
+  goto __pyx_L0;
+</pre><pre class="cython line score-0">&#xA0;<span class="">041</span>: </pre>
+<pre class="cython line score-78" onclick='toggleDiv(this)'>+<span class="">042</span>: <span class="k">cpdef</span> <span class="kt">double</span> <span class="nf">kretschmann</span><span class="p">(</span><span class="n">double</span> <span class="n">r</span><span class="p">,</span> <span class="n">double</span> <span class="n">theta</span><span class="p">,</span> <span class="n">double</span> <span class="n">a</span><span class="p">):</span></pre>
+<pre class='cython code score-78 '>static PyObject *__pyx_pw_6metric_5kretschmann(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static double __pyx_f_6metric_kretschmann(double __pyx_v_r, double __pyx_v_theta, double __pyx_v_a, CYTHON_UNUSED int __pyx_skip_dispatch) {
+  double __pyx_r;
+  <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
+  <span class='refnanny'>__Pyx_RefNannySetupContext</span>("kretschmann", 0);
+/* … */
+  /* function exit code */
+  __pyx_L0:;
+  <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
+  return __pyx_r;
+}
+
+/* Python wrapper */
+static PyObject *__pyx_pw_6metric_5kretschmann(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyObject *__pyx_pw_6metric_5kretschmann(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  double __pyx_v_r;
+  double __pyx_v_theta;
+  double __pyx_v_a;
+  PyObject *__pyx_r = 0;
+  <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
+  <span class='refnanny'>__Pyx_RefNannySetupContext</span>("kretschmann (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&amp;__pyx_n_s_r,&amp;__pyx_n_s_theta,&amp;__pyx_n_s_a,0};
+    PyObject* values[3] = {0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = <span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args);
+      switch (pos_args) {
+        case  3: values[2] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 2);
+        case  2: values[1] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 1);
+        case  1: values[0] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 0);
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = <span class='py_c_api'>PyDict_Size</span>(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = <span class='py_c_api'>PyDict_GetItem</span>(__pyx_kwds, __pyx_n_s_r)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        case  1:
+        if (likely((values[1] = <span class='py_c_api'>PyDict_GetItem</span>(__pyx_kwds, __pyx_n_s_theta)) != 0)) kw_args--;
+        else {
+          <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("kretschmann", 1, 3, 3, 1); __PYX_ERR(0, 42, __pyx_L3_error)
+        }
+        case  2:
+        if (likely((values[2] = <span class='py_c_api'>PyDict_GetItem</span>(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
+        else {
+          <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("kretschmann", 1, 3, 3, 2); __PYX_ERR(0, 42, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args &gt; 0)) {
+        if (unlikely(<span class='pyx_c_api'>__Pyx_ParseOptionalKeywords</span>(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "kretschmann") &lt; 0)) __PYX_ERR(0, 42, __pyx_L3_error)
+      }
+    } else if (<span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args) != 3) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 0);
+      values[1] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 1);
+      values[2] = <span class='py_macro_api'>PyTuple_GET_ITEM</span>(__pyx_args, 2);
+    }
+    __pyx_v_r = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[0]); if (unlikely((__pyx_v_r == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 42, __pyx_L3_error)
+    __pyx_v_theta = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[1]); if (unlikely((__pyx_v_theta == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 42, __pyx_L3_error)
+    __pyx_v_a = __pyx_<span class='py_c_api'>PyFloat_AsDouble</span>(values[2]); if (unlikely((__pyx_v_a == (double)-1) &amp;&amp; <span class='py_c_api'>PyErr_Occurred</span>())) __PYX_ERR(0, 42, __pyx_L3_error)
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  <span class='pyx_c_api'>__Pyx_RaiseArgtupleInvalid</span>("kretschmann", 1, 3, 3, <span class='py_macro_api'>PyTuple_GET_SIZE</span>(__pyx_args)); __PYX_ERR(0, 42, __pyx_L3_error)
+  __pyx_L3_error:;
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("metric.kretschmann", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  __pyx_r = __pyx_pf_6metric_4kretschmann(__pyx_self, __pyx_v_r, __pyx_v_theta, __pyx_v_a);
+
+  /* function exit code */
+  <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_6metric_4kretschmann(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, double __pyx_v_theta, double __pyx_v_a) {
+  PyObject *__pyx_r = NULL;
+  <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
+  <span class='refnanny'>__Pyx_RefNannySetupContext</span>("kretschmann", 0);
+  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_r);
+  __pyx_t_1 = <span class='py_c_api'>PyFloat_FromDouble</span>(__pyx_f_6metric_kretschmann(__pyx_v_r, __pyx_v_theta, __pyx_v_a, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 42, __pyx_L1_error)
+  <span class='refnanny'>__Pyx_GOTREF</span>(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* function exit code */
+  __pyx_L1_error:;
+  <span class='pyx_macro_api'>__Pyx_XDECREF</span>(__pyx_t_1);
+  <span class='pyx_c_api'>__Pyx_AddTraceback</span>("metric.kretschmann", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  <span class='refnanny'>__Pyx_XGIVEREF</span>(__pyx_r);
+  <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
+  return __pyx_r;
+}
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">043</span>:     <span class="k">return</span> <span class="n">calculate_Kretschmann</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></pre>
+<pre class='cython code score-0 '>  __pyx_r = __pyx_f_6metric_calculate_Kretschmann(__pyx_v_r, __pyx_v_theta, __pyx_v_a);
+  goto __pyx_L0;
+</pre><pre class="cython line score-0">&#xA0;<span class="">044</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">045</span>: <span class="c">################################################</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">046</span>: <span class="c">##                C FUNCTIONS                 ##</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">047</span>: <span class="c">################################################</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">048</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">049</span>: <span class="c"># This functios will be (hopefully) compliled in pure C and they will not have any Python overhead</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">050</span>: <span class="c"># of any kind. This means that all the loops and math operations are free of the python-lag.</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">051</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">052</span>: <span class="c"># ¡IMPORTANT!</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">053</span>: <span class="c"># Please, check using cython -a {this_file_name}.pyx that these functions do not have python-related code,</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">054</span>: <span class="c"># which is indicated by yellow lines in the html output.</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">055</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">056</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">057</span>: <span class="k">cdef</span> <span class="kt">void</span> <span class="nf">calculate_inverse_metric</span><span class="p">(</span><span class="n">double</span> <span class="n">r</span><span class="p">,</span> <span class="n">double</span> <span class="n">theta</span><span class="p">,</span></pre>
+<pre class='cython code score-0 '>static void __pyx_f_6metric_calculate_inverse_metric(double __pyx_v_r, double __pyx_v_theta, double __pyx_v_a, __Pyx_memviewslice __pyx_v_kerr_metric) {
+  double __pyx_v_r2;
+  double __pyx_v_a2;
+  double __pyx_v_sintheta2;
+  double __pyx_v_ro;
+  double __pyx_v_delta;
+  double __pyx_v_sigma;
+  CYTHON_UNUSED double __pyx_v_alpha;
+  double __pyx_v_omega;
+  double __pyx_v_pomega;
+  double __pyx_v_ro2;
+  double __pyx_v_ro2inv;
+  double __pyx_v_deltainv;
+  double __pyx_v_pomega2;
+  CYTHON_UNUSED double __pyx_v_omega2;
+  <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
+  <span class='refnanny'>__Pyx_RefNannySetupContext</span>("calculate_inverse_metric", 0);
+/* … */
+  /* function exit code */
+  <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
+}
+</pre><pre class="cython line score-0">&#xA0;<span class="">058</span>:         <span class="n">double</span> <span class="n">a</span><span class="p">,</span> <span class="n">double</span> <span class="p">[:,:]</span> <span class="n">kerr_metric</span><span class="p">):</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">059</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">060</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">r2</span> <span class="o">=</span> <span class="n">r</span><span class="o">*</span><span class="n">r</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_r2 = (__pyx_v_r * __pyx_v_r);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">061</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">a2</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">a</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_a2 = (__pyx_v_a * __pyx_v_a);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">062</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">sintheta2</span> <span class="o">=</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_sintheta2 = (sin(__pyx_v_theta) * sin(__pyx_v_theta));
+</pre><pre class="cython line score-0">&#xA0;<span class="">063</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">064</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">ro</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">r2</span> <span class="o">+</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_ro = sqrt((__pyx_v_r2 + (__pyx_v_a2 * pow(cos(__pyx_v_theta), 2.0))));
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">065</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">delta</span> <span class="o">=</span> <span class="n">r2</span> <span class="o">-</span> <span class="mf">2</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="n">a2</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_delta = ((__pyx_v_r2 - (2.0 * __pyx_v_r)) + __pyx_v_a2);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">066</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">sigma</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">r2</span> <span class="o">+</span> <span class="n">a2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">r2</span> <span class="o">+</span> <span class="n">a2</span><span class="p">)</span> <span class="o">-</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">sintheta2</span><span class="p">)</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_sigma = sqrt((((__pyx_v_r2 + __pyx_v_a2) * (__pyx_v_r2 + __pyx_v_a2)) - ((__pyx_v_a2 * __pyx_v_delta) * __pyx_v_sintheta2)));
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">067</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">alpha</span> <span class="o">=</span> <span class="n">ro</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_alpha = ((__pyx_v_ro * sqrt(__pyx_v_delta)) / __pyx_v_sigma);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">068</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">omega</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">r</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">)</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_omega = (((2.0 * __pyx_v_a) * __pyx_v_r) / (__pyx_v_sigma * __pyx_v_sigma));
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">069</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">pomega</span> <span class="o">=</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">/</span> <span class="n">ro</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_pomega = ((__pyx_v_sigma * sin(__pyx_v_theta)) / __pyx_v_ro);
+</pre><pre class="cython line score-0">&#xA0;<span class="">070</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">071</span>:     <span class="c"># Compute auxiliar products</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">072</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">073</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">ro2</span> <span class="o">=</span> <span class="n">ro</span> <span class="o">*</span> <span class="n">ro</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_ro2 = (__pyx_v_ro * __pyx_v_ro);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">074</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">ro2inv</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">ro2</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_ro2inv = (1.0 / __pyx_v_ro2);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">075</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">deltainv</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">delta</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_deltainv = (1.0 / __pyx_v_delta);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">076</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">pomega2</span> <span class="o">=</span> <span class="n">pomega</span><span class="o">*</span><span class="n">pomega</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_pomega2 = (__pyx_v_pomega * __pyx_v_pomega);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">077</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">omega2</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">omega</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_omega2 = (__pyx_v_omega * __pyx_v_omega);
+</pre><pre class="cython line score-0">&#xA0;<span class="">078</span>:     <span class="c"># Construct the nonzero components of the metric</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">079</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">080</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">deltainv</span> <span class="o">*</span> <span class="p">(</span> <span class="n">r2</span> <span class="o">+</span> <span class="n">a2</span> <span class="o">+</span> <span class="n">a</span> <span class="o">*</span> <span class="n">pomega2</span> <span class="o">*</span> <span class="n">omega</span><span class="p">)</span></pre>
+<pre class='cython code score-0 '>  __pyx_t_1 = 0;
+  __pyx_t_2 = 0;
+  if (__pyx_t_1 &lt; 0) __pyx_t_1 += __pyx_v_kerr_metric.shape[0];
+  if (__pyx_t_2 &lt; 0) __pyx_t_2 += __pyx_v_kerr_metric.shape[1];
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_1 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_2 * __pyx_v_kerr_metric.strides[1]) )) = ((-__pyx_v_deltainv) * ((__pyx_v_r2 + __pyx_v_a2) + ((__pyx_v_a * __pyx_v_pomega2) * __pyx_v_omega)));
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">081</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">ro2inv</span></pre>
+<pre class='cython code score-0 '>  __pyx_t_3 = 1;
+  __pyx_t_4 = 1;
+  if (__pyx_t_3 &lt; 0) __pyx_t_3 += __pyx_v_kerr_metric.shape[0];
+  if (__pyx_t_4 &lt; 0) __pyx_t_4 += __pyx_v_kerr_metric.shape[1];
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_3 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_4 * __pyx_v_kerr_metric.strides[1]) )) = (__pyx_v_delta * __pyx_v_ro2inv);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">082</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">2</span><span class="p">,</span><span class="mf">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">ro2inv</span></pre>
+<pre class='cython code score-0 '>  __pyx_t_5 = 2;
+  __pyx_t_6 = 2;
+  if (__pyx_t_5 &lt; 0) __pyx_t_5 += __pyx_v_kerr_metric.shape[0];
+  if (__pyx_t_6 &lt; 0) __pyx_t_6 += __pyx_v_kerr_metric.shape[1];
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_5 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_6 * __pyx_v_kerr_metric.strides[1]) )) = __pyx_v_ro2inv;
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">083</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">3</span><span class="p">,</span><span class="mf">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span> <span class="n">delta</span> <span class="o">/</span> <span class="n">sintheta2</span> <span class="o">-</span> <span class="n">a2</span>  <span class="p">)</span> <span class="o">*</span> <span class="n">ro2inv</span> <span class="o">*</span> <span class="n">deltainv</span></pre>
+<pre class='cython code score-0 '>  __pyx_t_7 = 3;
+  __pyx_t_8 = 3;
+  if (__pyx_t_7 &lt; 0) __pyx_t_7 += __pyx_v_kerr_metric.shape[0];
+  if (__pyx_t_8 &lt; 0) __pyx_t_8 += __pyx_v_kerr_metric.shape[1];
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_7 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_8 * __pyx_v_kerr_metric.strides[1]) )) = ((((__pyx_v_delta / __pyx_v_sintheta2) - __pyx_v_a2) * __pyx_v_ro2inv) * __pyx_v_deltainv);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">084</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="n">ro2inv</span> <span class="o">*</span> <span class="n">deltainv</span></pre>
+<pre class='cython code score-0 '>  __pyx_t_9 = 0;
+  __pyx_t_10 = 3;
+  if (__pyx_t_9 &lt; 0) __pyx_t_9 += __pyx_v_kerr_metric.shape[0];
+  if (__pyx_t_10 &lt; 0) __pyx_t_10 += __pyx_v_kerr_metric.shape[1];
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_9 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_10 * __pyx_v_kerr_metric.strides[1]) )) = ((((-2.0 * __pyx_v_a) * __pyx_v_r) * __pyx_v_ro2inv) * __pyx_v_deltainv);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">085</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">3</span><span class="p">,</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">3</span><span class="p">]</span></pre>
+<pre class='cython code score-0 '>  __pyx_t_11 = 0;
+  __pyx_t_12 = 3;
+  if (__pyx_t_11 &lt; 0) __pyx_t_11 += __pyx_v_kerr_metric.shape[0];
+  if (__pyx_t_12 &lt; 0) __pyx_t_12 += __pyx_v_kerr_metric.shape[1];
+  __pyx_t_13 = 3;
+  __pyx_t_14 = 0;
+  if (__pyx_t_13 &lt; 0) __pyx_t_13 += __pyx_v_kerr_metric.shape[0];
+  if (__pyx_t_14 &lt; 0) __pyx_t_14 += __pyx_v_kerr_metric.shape[1];
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_13 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_14 * __pyx_v_kerr_metric.strides[1]) )) = (*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_11 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_12 * __pyx_v_kerr_metric.strides[1]) )));
+</pre><pre class="cython line score-0">&#xA0;<span class="">086</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">087</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">088</span>: <span class="k">cdef</span> <span class="kt">void</span> <span class="nf">calculate_metric</span><span class="p">(</span><span class="n">double</span> <span class="n">r</span><span class="p">,</span> <span class="n">double</span> <span class="n">theta</span><span class="p">,</span></pre>
+<pre class='cython code score-0 '>static void __pyx_f_6metric_calculate_metric(double __pyx_v_r, double __pyx_v_theta, double __pyx_v_a, __Pyx_memviewslice __pyx_v_kerr_metric) {
   double __pyx_v_r2;
   double __pyx_v_a2;
   double __pyx_v_ro;
@@ -548,69 +978,69 @@ static PyObject *__pyx_pf_6metric_metric(CYTHON_UNUSED PyObject *__pyx_self, dou
   /* function exit code */
   <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
 }
-</pre><pre class="cython line score-0">&#xA0;<span class="">46</span>:         double phi, double a, double [:,:] kerr_metric):</pre>
-<pre class="cython line score-0">&#xA0;<span class="">47</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">48</span>:     # Calculate metric quantities</pre>
-<pre class="cython line score-0">&#xA0;<span class="">49</span>: </pre>
-<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">50</span>:     cdef double r2 = r*r</pre>
+</pre><pre class="cython line score-0">&#xA0;<span class="">089</span>:         <span class="n">double</span> <span class="n">a</span><span class="p">,</span> <span class="n">double</span> <span class="p">[:,:]</span> <span class="n">kerr_metric</span><span class="p">):</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">090</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">091</span>:     <span class="c"># Calculate metric quantities </span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">092</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">093</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">r2</span> <span class="o">=</span> <span class="n">r</span><span class="o">*</span><span class="n">r</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_r2 = (__pyx_v_r * __pyx_v_r);
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">51</span>:     cdef double a2 = a*a</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">094</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">a2</span> <span class="o">=</span> <span class="n">a</span><span class="o">*</span><span class="n">a</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_a2 = (__pyx_v_a * __pyx_v_a);
-</pre><pre class="cython line score-0">&#xA0;<span class="">52</span>: </pre>
-<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">53</span>:     cdef double ro = sqrt(r2 + a2 * cos(theta)**2)</pre>
+</pre><pre class="cython line score-0">&#xA0;<span class="">095</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">096</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">ro</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">r2</span> <span class="o">+</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="mf">2</span><span class="p">)</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_ro = sqrt((__pyx_v_r2 + (__pyx_v_a2 * pow(cos(__pyx_v_theta), 2.0))));
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">54</span>:     cdef double delta = r2 - 2*r + a2</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">097</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">delta</span> <span class="o">=</span> <span class="n">r2</span> <span class="o">-</span> <span class="mf">2</span><span class="o">*</span><span class="n">r</span> <span class="o">+</span> <span class="n">a2</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_delta = ((__pyx_v_r2 - (2.0 * __pyx_v_r)) + __pyx_v_a2);
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">55</span>:     cdef double sigma = sqrt( (r2 + a2) * (r2 + a2) - a2 * delta * sin(theta)*sin(theta))</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">098</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">sigma</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">r2</span> <span class="o">+</span> <span class="n">a2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">r2</span> <span class="o">+</span> <span class="n">a2</span><span class="p">)</span> <span class="o">-</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_sigma = sqrt((((__pyx_v_r2 + __pyx_v_a2) * (__pyx_v_r2 + __pyx_v_a2)) - (((__pyx_v_a2 * __pyx_v_delta) * sin(__pyx_v_theta)) * sin(__pyx_v_theta))));
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">56</span>:     cdef double alpha = ro * sqrt(delta) / sigma</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">099</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">alpha</span> <span class="o">=</span> <span class="n">ro</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_alpha = ((__pyx_v_ro * sqrt(__pyx_v_delta)) / __pyx_v_sigma);
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">57</span>:     cdef double omega = 2.0 * a * r / (sigma * sigma)</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">100</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">omega</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">r</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">)</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_omega = (((2.0 * __pyx_v_a) * __pyx_v_r) / (__pyx_v_sigma * __pyx_v_sigma));
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">58</span>:     cdef double pomega = sigma * sin(theta) / ro</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">101</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">pomega</span> <span class="o">=</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="o">/</span> <span class="n">ro</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_pomega = ((__pyx_v_sigma * sin(__pyx_v_theta)) / __pyx_v_ro);
-</pre><pre class="cython line score-0">&#xA0;<span class="">59</span>: </pre>
-<pre class="cython line score-0">&#xA0;<span class="">60</span>:     # Compute auxiliar products</pre>
-<pre class="cython line score-0">&#xA0;<span class="">61</span>: </pre>
-<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">62</span>:     cdef double ro2 = ro * ro</pre>
+</pre><pre class="cython line score-0">&#xA0;<span class="">102</span>: </pre>
+<pre class="cython line score-0">&#xA0;<span class="">103</span>:     <span class="c"># Compute auxiliar products</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">104</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">105</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">ro2</span> <span class="o">=</span> <span class="n">ro</span> <span class="o">*</span> <span class="n">ro</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_ro2 = (__pyx_v_ro * __pyx_v_ro);
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">63</span>:     cdef double pomega2 = pomega*pomega</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">106</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">pomega2</span> <span class="o">=</span> <span class="n">pomega</span><span class="o">*</span><span class="n">pomega</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_pomega2 = (__pyx_v_pomega * __pyx_v_pomega);
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">64</span>:     cdef double omega2 = omega * omega</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">107</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">omega2</span> <span class="o">=</span> <span class="n">omega</span> <span class="o">*</span> <span class="n">omega</span></pre>
 <pre class='cython code score-0 '>  __pyx_v_omega2 = (__pyx_v_omega * __pyx_v_omega);
-</pre><pre class="cython line score-0">&#xA0;<span class="">65</span>:     # Construct the nonzero components of the metric</pre>
-<pre class="cython line score-0">&#xA0;<span class="">66</span>: </pre>
-<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">67</span>:     kerr_metric[0,0] = - alpha * alpha + pomega2 * omega2</pre>
+</pre><pre class="cython line score-0">&#xA0;<span class="">108</span>:     <span class="c"># Construct the nonzero components of the metric</span></pre>
+<pre class="cython line score-0">&#xA0;<span class="">109</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">110</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">alpha</span> <span class="o">+</span> <span class="n">pomega2</span> <span class="o">*</span> <span class="n">omega2</span></pre>
 <pre class='cython code score-0 '>  __pyx_t_1 = 0;
   __pyx_t_2 = 0;
   if (__pyx_t_1 &lt; 0) __pyx_t_1 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_2 &lt; 0) __pyx_t_2 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_1 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_2 * __pyx_v_kerr_metric.strides[1]) )) = (((-__pyx_v_alpha) * __pyx_v_alpha) + (__pyx_v_pomega2 * __pyx_v_omega2));
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">68</span>:     kerr_metric[1,1] = ro2 / delta</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">111</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">1</span><span class="p">,</span><span class="mf">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ro2</span> <span class="o">/</span> <span class="n">delta</span></pre>
 <pre class='cython code score-0 '>  __pyx_t_3 = 1;
   __pyx_t_4 = 1;
   if (__pyx_t_3 &lt; 0) __pyx_t_3 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_4 &lt; 0) __pyx_t_4 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_3 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_4 * __pyx_v_kerr_metric.strides[1]) )) = (__pyx_v_ro2 / __pyx_v_delta);
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">69</span>:     kerr_metric[2,2] = ro2</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">112</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">2</span><span class="p">,</span><span class="mf">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">ro2</span></pre>
 <pre class='cython code score-0 '>  __pyx_t_5 = 2;
   __pyx_t_6 = 2;
   if (__pyx_t_5 &lt; 0) __pyx_t_5 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_6 &lt; 0) __pyx_t_6 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_5 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_6 * __pyx_v_kerr_metric.strides[1]) )) = __pyx_v_ro2;
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">70</span>:     kerr_metric[3,3] = pomega2</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">113</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">3</span><span class="p">,</span><span class="mf">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">pomega2</span></pre>
 <pre class='cython code score-0 '>  __pyx_t_7 = 3;
   __pyx_t_8 = 3;
   if (__pyx_t_7 &lt; 0) __pyx_t_7 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_8 &lt; 0) __pyx_t_8 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_7 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_8 * __pyx_v_kerr_metric.strides[1]) )) = __pyx_v_pomega2;
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">71</span>:     kerr_metric[0,3] = -2 * pomega2 * omega</pre>
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">114</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">3</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span> <span class="n">pomega2</span> <span class="o">*</span> <span class="n">omega</span></pre>
 <pre class='cython code score-0 '>  __pyx_t_9 = 0;
   __pyx_t_10 = 3;
   if (__pyx_t_9 &lt; 0) __pyx_t_9 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_10 &lt; 0) __pyx_t_10 += __pyx_v_kerr_metric.shape[1];
-  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_9 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_10 * __pyx_v_kerr_metric.strides[1]) )) = ((-2.0 * __pyx_v_pomega2) * __pyx_v_omega);
-</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">72</span>:     kerr_metric[3,0] = kerr_metric[0,3]</pre>
+  *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_9 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_10 * __pyx_v_kerr_metric.strides[1]) )) = ((-__pyx_v_pomega2) * __pyx_v_omega);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">115</span>:     <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">3</span><span class="p">,</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">kerr_metric</span><span class="p">[</span><span class="mf">0</span><span class="p">,</span><span class="mf">3</span><span class="p">]</span></pre>
 <pre class='cython code score-0 '>  __pyx_t_11 = 0;
   __pyx_t_12 = 3;
   if (__pyx_t_11 &lt; 0) __pyx_t_11 += __pyx_v_kerr_metric.shape[0];
@@ -620,5 +1050,47 @@ static PyObject *__pyx_pf_6metric_metric(CYTHON_UNUSED PyObject *__pyx_self, dou
   if (__pyx_t_13 &lt; 0) __pyx_t_13 += __pyx_v_kerr_metric.shape[0];
   if (__pyx_t_14 &lt; 0) __pyx_t_14 += __pyx_v_kerr_metric.shape[1];
   *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_13 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_14 * __pyx_v_kerr_metric.strides[1]) )) = (*((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_kerr_metric.data + __pyx_t_11 * __pyx_v_kerr_metric.strides[0]) ) + __pyx_t_12 * __pyx_v_kerr_metric.strides[1]) )));
-</pre><pre class="cython line score-0">&#xA0;<span class="">73</span>: </pre>
-</div></body></html>
+</pre><pre class="cython line score-0">&#xA0;<span class="">116</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">117</span>: <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">calculate_Kretschmann</span><span class="p">(</span> <span class="n">double</span> <span class="n">r</span><span class="p">,</span> <span class="n">double</span> <span class="n">theta</span><span class="p">,</span> <span class="n">double</span> <span class="n">a</span><span class="p">):</span></pre>
+<pre class='cython code score-0 '>static double __pyx_f_6metric_calculate_Kretschmann(double __pyx_v_r, double __pyx_v_theta, double __pyx_v_a) {
+  double __pyx_v_acostheta2;
+  double __pyx_v_acostheta4;
+  double __pyx_v_acostheta6;
+  double __pyx_v_r2;
+  double __pyx_v_r4;
+  double __pyx_v_r6;
+  double __pyx_v_numerator;
+  double __pyx_v_denom;
+  double __pyx_r;
+  <span class='refnanny'>__Pyx_RefNannyDeclarations</span>
+  <span class='refnanny'>__Pyx_RefNannySetupContext</span>("calculate_Kretschmann", 0);
+/* … */
+  /* function exit code */
+  __pyx_L0:;
+  <span class='refnanny'>__Pyx_RefNannyFinishContext</span>();
+  return __pyx_r;
+}
+</pre><pre class="cython line score-0">&#xA0;<span class="">118</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">119</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">acostheta2</span> <span class="o">=</span> <span class="p">(</span> <span class="n">a</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="p">)</span> <span class="o">*</span> <span class="p">(</span> <span class="n">a</span> <span class="o">*</span> <span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span> <span class="p">)</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_acostheta2 = ((__pyx_v_a * cos(__pyx_v_theta)) * (__pyx_v_a * cos(__pyx_v_theta)));
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">120</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">acostheta4</span> <span class="o">=</span> <span class="n">acostheta2</span> <span class="o">*</span> <span class="n">acostheta2</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_acostheta4 = (__pyx_v_acostheta2 * __pyx_v_acostheta2);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">121</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">acostheta6</span> <span class="o">=</span> <span class="n">acostheta4</span> <span class="o">*</span> <span class="n">acostheta2</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_acostheta6 = (__pyx_v_acostheta4 * __pyx_v_acostheta2);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">122</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">r2</span> <span class="o">=</span> <span class="n">r</span><span class="o">*</span><span class="n">r</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_r2 = (__pyx_v_r * __pyx_v_r);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">123</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">r4</span> <span class="o">=</span> <span class="n">r2</span> <span class="o">*</span> <span class="n">r2</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_r4 = (__pyx_v_r2 * __pyx_v_r2);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">124</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">r6</span> <span class="o">=</span> <span class="n">r4</span> <span class="o">*</span> <span class="n">r2</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_r6 = (__pyx_v_r4 * __pyx_v_r2);
+</pre><pre class="cython line score-0">&#xA0;<span class="">125</span>: </pre>
+<pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">126</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">numerator</span> <span class="o">=</span>  <span class="mf">48.0</span> <span class="o">*</span> <span class="p">(</span> <span class="mf">15.0</span> <span class="o">*</span> <span class="n">acostheta4</span> <span class="o">-</span> <span class="n">acostheta6</span> <span class="o">-</span> <span class="mf">15.0</span> <span class="o">*</span> <span class="n">r4</span> <span class="o">*</span> <span class="n">acostheta2</span> <span class="o">+</span> <span class="n">r6</span><span class="p">)</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_numerator = (48.0 * ((((15.0 * __pyx_v_acostheta4) - __pyx_v_acostheta6) - ((15.0 * __pyx_v_r4) * __pyx_v_acostheta2)) + __pyx_v_r6));
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">127</span>:     <span class="k">cdef</span> <span class="kt">double</span> <span class="nf">denom</span>     <span class="o">=</span>  <span class="n">acostheta2</span> <span class="o">+</span> <span class="n">r2</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_denom = (__pyx_v_acostheta2 + __pyx_v_r2);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">128</span>:     <span class="n">denom</span>          <span class="o">=</span>  <span class="n">denom</span> <span class="o">*</span> <span class="n">denom</span> <span class="o">*</span> <span class="n">denom</span> <span class="o">*</span> <span class="n">denom</span> <span class="o">*</span> <span class="n">denom</span> <span class="o">*</span> <span class="n">denom</span></pre>
+<pre class='cython code score-0 '>  __pyx_v_denom = (((((__pyx_v_denom * __pyx_v_denom) * __pyx_v_denom) * __pyx_v_denom) * __pyx_v_denom) * __pyx_v_denom);
+</pre><pre class="cython line score-0" onclick='toggleDiv(this)'>+<span class="">129</span>:     <span class="k">return</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denom</span></pre>
+<pre class='cython code score-0 '>  __pyx_r = (__pyx_v_numerator / __pyx_v_denom);
+  goto __pyx_L0;
+</pre></div></body></html>
