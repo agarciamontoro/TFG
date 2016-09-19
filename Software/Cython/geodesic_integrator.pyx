@@ -1,3 +1,4 @@
+#cython: language_level=3, boundscheck=False,cdivision=True
 from libc.math cimport *
 from libc.string cimport memcpy
 cimport numpy as np
@@ -94,15 +95,15 @@ cpdef np.ndarray[np.float64_t, ndim=2] integrate_ray(double r, double cam_theta,
                                                      double phi_cs, double a, n_steps):
 
     # Simplify notation
-    theta = cam_theta
-    a2 = a*a
-    r2 = r*r
+    cdef double theta = cam_theta
+    cdef double a2 = a*a
+    cdef double r2 = r*r
 
     # Calculate initial vector direction
 
-    Nx = sin(theta_cs) * cos(phi_cs)
-    Ny = sin(theta_cs) * sin(phi_cs)
-    Nz = cos(theta_cs)
+    cdef double Nx = sin(theta_cs) * cos(phi_cs)
+    cdef double Ny = sin(theta_cs) * sin(phi_cs)
+    cdef double Nz = cos(theta_cs)
 
     # Convert the direction of motion to the FIDO's spherical orthonormal
     # basis. See (A.10)
@@ -111,47 +112,91 @@ cpdef np.ndarray[np.float64_t, ndim=2] integrate_ray(double r, double cam_theta,
     # IMPORTANT: This is not computed as in (A.10) because the MATHEMATICA DATA
     # has been generated without the aberration computation. Sorry for that!
 
-    nR = Nx
-    nTheta = Nz
-    nPhi = Ny
+    cdef double nR = Nx
+    cdef double nTheta = Nz
+    cdef double nPhi = Ny
 
     # Get canonical momenta
 
-    ro = sqrt(r2 + a2 * cos(theta)**2)
-    delta = r2 - 2*r + a2
-    sigma = sqrt((r2 + a2)**2 - a2 * delta * sin(theta)**2)
-    pomega = sigma * sin(theta) / ro
+    cdef double ro = sqrt(r2 + a2 * cos(theta)**2)
+    cdef double delta = r2 - 2*r + a2
+    cdef double sigma = sqrt((r2 + a2)**2 - a2 * delta * sin(theta)**2)
+    cdef double pomega = sigma * sin(theta) / ro
 
     # Compute energy as measured by the FIDO. See (A.11)
 
     # TODO: Fix this mess
     # IMPORTANT: This is not computed as in (A.11) because the MATHEMATICA DATA
     # has been generated with this quantity as 1. Sorry for that!
-    E = 1
+    cdef double E = 1
 
     # Compute the canonical momenta. See (A.11)
-    pR = E * ro * nR / sqrt(delta)
-    pTheta = E * ro * nTheta
-    pPhi = E * pomega * nPhi
+    cdef double pR = E * ro * nR / sqrt(delta)
+    cdef double pTheta = E * ro * nTheta
+    cdef double pPhi = E * pomega * nPhi
 
     # Calculate the conserved quantities b and q.
 
     # Set conserved quantities. See (A.12)
-    b = pPhi
-    q = pTheta**2 + cos(theta)**2*(b**2 / sin(theta)**2 - a2)
+    cdef double b = pPhi
+    cdef double q = pTheta**2 + cos(theta)**2*(b**2 / sin(theta)**2 - a2)
 
     # Store the initial conditions in all the pixels of the systemState array.
 
 
-    x0 = 0.0
-    xend = -30.0
-    result = np.zeros((n_steps+1,5))
-    init = np.array([r, cam_theta, cam_phi, pR, pTheta])
-    data = np.array([b,q,a])
+    cdef double x0 = 0.0
+    cdef double xend = -30.0
+    cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))
+    cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, cam_theta, cam_phi, pR, pTheta])
+    cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a])
     
     Solver(x0, xend, n_steps, init, data, result)
- 
+
     return result
+
+
+cpdef double calculate_temporal_component(double [:] four_vector,
+                                   double [:] four_position,
+                                   double a, int causality = 0):
+
+
+    cdef double r = four_position[0]
+    cdef double theta = four_position[1]
+    cdef double phi = four_position[2]
+    cdef double pr = four_vector[0]
+    cdef double ptheta = four_vector[1]
+    cdef double pphi = four_vector[2]
+    # Calculate common terms
+
+    cdef double r2 = r*r
+    cdef double a2 = a*a
+
+    cdef double ro = sqrt(r2 + a2 * cos(theta)**2)
+    cdef double delta = r2 - 2*r + a2
+    cdef double sigma = sqrt((r2 + a2)**2 - a2 * delta * sin(theta)**2)
+    cdef double pomega = sigma * sin(theta) / ro
+    cdef double omega = 2 * a * r / ( sigma * sigma )
+    cdef double alpha = ro *  sqrt(delta) / sigma
+    
+    cdef double result = 0
+    if causality == 0:
+        result =  - sqrt( pphi * pphi * ro * ro +
+                      ( ptheta * ptheta + pr * pr * delta )
+                       * pomega * pomega)
+        result *= alpha
+        result /= ro * pomega
+        result -=  pphi * omega
+
+        return result
+    else:
+        result = - sqrt( pphi * pphi * ro * ro +
+                      ( ptheta * ptheta + pr * pr * delta + ro * ro )
+                       * pomega * pomega)
+        result *= alpha
+        result /= ro * pomega
+        result -=  pphi * omega
+
+        return result
 
 ################################################
 ##                C FUNCTIONS                 ##
