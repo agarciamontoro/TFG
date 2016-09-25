@@ -890,7 +890,7 @@ struct __pyx_opt_args_19geodesic_integrator_calculate_temporal_component {
   int causality;
 };
 
-/* "geodesic_integrator.pyx":451
+/* "geodesic_integrator.pyx":468
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * @cython.cdivision(True)    # tuern off zerodivisioncheck
  * cdef int SolverRK45( double* initCond, double* globalX0, double xend,             # <<<<<<<<<<<<<<
@@ -1118,14 +1118,6 @@ static PyObject *__Pyx_GetBuiltinName(PyObject *name);
 
 /* GetModuleGlobalName.proto */
 static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name);
-
-/* PyIntBinop.proto */
-#if CYTHON_COMPILING_IN_CPYTHON
-static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, long intval, int inplace);
-#else
-#define __Pyx_PyInt_AddObjC(op1, op2, intval, inplace)\
-    (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
-#endif
 
 /* PyObjectCall.proto */
 #if CYTHON_COMPILING_IN_CPYTHON
@@ -1365,6 +1357,14 @@ static CYTHON_INLINE int __Pyx_ListComp_Append(PyObject* list, PyObject* x) {
 #define __Pyx_ListComp_Append(L,x) PyList_Append(L,x)
 #endif
 
+/* PyIntBinop.proto */
+#if CYTHON_COMPILING_IN_CPYTHON
+static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, long intval, int inplace);
+#else
+#define __Pyx_PyInt_AddObjC(op1, op2, intval, inplace)\
+    (inplace ? PyNumber_InPlaceAdd(op1, op2) : PyNumber_Add(op1, op2))
+#endif
+
 /* ListExtend.proto */
 static CYTHON_INLINE int __Pyx_PyList_Extend(PyObject* L, PyObject* v) {
 #if CYTHON_COMPILING_IN_CPYTHON
@@ -1484,6 +1484,9 @@ static int __Pyx_ValidateAndInit_memviewslice(
 static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_double(PyObject *);
 
 /* CIntToPy.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
+
+/* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value);
 
 /* None.proto */
@@ -1601,9 +1604,6 @@ __pyx_memoryview_copy_new_contig(const __Pyx_memviewslice *from_mvs,
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *);
-
-/* CIntToPy.proto */
-static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE char __Pyx_PyInt_As_char(PyObject *);
@@ -1728,7 +1728,7 @@ static PyObject *contiguous = 0;
 static PyObject *indirect_contiguous = 0;
 static int __pyx_memoryview_thread_locks_used;
 static PyThread_type_lock __pyx_memoryview_thread_locks[8];
-static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double, double, double, double, double, double, PyObject *, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double, double, double, double, double, double, double, int, int __pyx_skip_dispatch); /*proto*/
 static double __pyx_f_19geodesic_integrator_calculate_temporal_component(__Pyx_memviewslice, __Pyx_memviewslice, double, int __pyx_skip_dispatch, struct __pyx_opt_args_19geodesic_integrator_calculate_temporal_component *__pyx_optional_args); /*proto*/
 static void __pyx_f_19geodesic_integrator_Solver(double, double, int, __Pyx_memviewslice, __Pyx_memviewslice, __Pyx_memviewslice); /*proto*/
 static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *, double *, double *); /*proto*/
@@ -1944,7 +1944,7 @@ static PyObject *__pyx_kp_s_unable_to_allocate_shape_and_str;
 static PyObject *__pyx_kp_u_unknown_dtype_code_in_numpy_pxd;
 static PyObject *__pyx_n_s_unpack;
 static PyObject *__pyx_n_s_zeros;
-static PyObject *__pyx_pf_19geodesic_integrator_integrate_ray(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, double __pyx_v_cam_theta, double __pyx_v_cam_phi, double __pyx_v_theta_cs, double __pyx_v_phi_cs, double __pyx_v_a, PyObject *__pyx_v_n_steps); /* proto */
+static PyObject *__pyx_pf_19geodesic_integrator_integrate_ray(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, double __pyx_v_cam_theta, double __pyx_v_cam_phi, double __pyx_v_theta_cs, double __pyx_v_phi_cs, double __pyx_v_a, double __pyx_v_causality, int __pyx_v_n_steps); /* proto */
 static PyObject *__pyx_pf_19geodesic_integrator_2calculate_temporal_component(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_four_vector, __Pyx_memviewslice __pyx_v_four_position, double __pyx_v_a, int __pyx_v_causality); /* proto */
 static int __pyx_pf_5numpy_7ndarray___getbuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info, int __pyx_v_flags); /* proto */
 static void __pyx_pf_5numpy_7ndarray_2__releasebuffer__(PyArrayObject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
@@ -2018,11 +2018,11 @@ static PyObject *__pyx_tuple__24;
  * 
  * cpdef np.ndarray[np.float64_t, ndim=2] integrate_ray(double r, double cam_theta,             # <<<<<<<<<<<<<<
  *                                                      double cam_phi, double theta_cs,
- *                                                      double phi_cs, double a, n_steps):
+ *                                                      double phi_cs, double a, double causality, int n_steps):
  */
 
 static PyObject *__pyx_pw_19geodesic_integrator_1integrate_ray(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v_r, double __pyx_v_cam_theta, double __pyx_v_cam_phi, double __pyx_v_theta_cs, double __pyx_v_phi_cs, double __pyx_v_a, PyObject *__pyx_v_n_steps, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v_r, double __pyx_v_cam_theta, double __pyx_v_cam_phi, double __pyx_v_theta_cs, double __pyx_v_phi_cs, double __pyx_v_a, double __pyx_v_causality, int __pyx_v_n_steps, CYTHON_UNUSED int __pyx_skip_dispatch) {
   double __pyx_v_theta;
   double __pyx_v_a2;
   double __pyx_v_r2;
@@ -2066,10 +2066,9 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
   PyObject *__pyx_t_9 = NULL;
   PyArrayObject *__pyx_t_10 = NULL;
   PyArrayObject *__pyx_t_11 = NULL;
-  int __pyx_t_12;
+  __Pyx_memviewslice __pyx_t_12 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_t_13 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_memviewslice __pyx_t_14 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  __Pyx_memviewslice __pyx_t_15 = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_RefNannySetupContext("integrate_ray", 0);
   __pyx_pybuffer_result.pybuffer.buf = NULL;
   __pyx_pybuffer_result.refcount = 0;
@@ -2204,7 +2203,7 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
   /* "geodesic_integrator.pyx":131
  *     # IMPORTANT: This is not computed as in (A.11) because the MATHEMATICA DATA
  *     # has been generated with this quantity as 1. Sorry for that!
- *     cdef double E = 1             # <<<<<<<<<<<<<<
+ *     cdef double E = 1.0             # <<<<<<<<<<<<<<
  * 
  *     # Compute the canonical momenta. See (A.11)
  */
@@ -2278,14 +2277,14 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
  *     cdef double xend = -30.0
  *     cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, cam_theta, cam_phi, pR, pTheta])
- *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a])
+ *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E,causality])
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_zeros); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyInt_AddObjC(__pyx_v_n_steps, __pyx_int_1, 1, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 149, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_From_long((__pyx_v_n_steps + 1)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_t_4 = PyTuple_New(2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -2339,7 +2338,7 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
  *     cdef double xend = -30.0
  *     cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))
  *     cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, cam_theta, cam_phi, pR, pTheta])             # <<<<<<<<<<<<<<
- *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a])
+ *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E,causality])
  * 
  */
   __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
@@ -2417,7 +2416,7 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
   /* "geodesic_integrator.pyx":151
  *     cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))
  *     cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, cam_theta, cam_phi, pR, pTheta])
- *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a])             # <<<<<<<<<<<<<<
+ *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E,causality])             # <<<<<<<<<<<<<<
  * 
  *     Solver(x0, xend, n_steps, init, data, result)
  */
@@ -2432,41 +2431,51 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
   __Pyx_GOTREF(__pyx_t_9);
   __pyx_t_8 = PyFloat_FromDouble(__pyx_v_a); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_8);
-  __pyx_t_2 = PyList_New(3); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_E); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_causality); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_3 = PyList_New(5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_5);
-  PyList_SET_ITEM(__pyx_t_2, 0, __pyx_t_5);
+  PyList_SET_ITEM(__pyx_t_3, 0, __pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_9);
-  PyList_SET_ITEM(__pyx_t_2, 1, __pyx_t_9);
+  PyList_SET_ITEM(__pyx_t_3, 1, __pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_8);
-  PyList_SET_ITEM(__pyx_t_2, 2, __pyx_t_8);
+  PyList_SET_ITEM(__pyx_t_3, 2, __pyx_t_8);
+  __Pyx_GIVEREF(__pyx_t_2);
+  PyList_SET_ITEM(__pyx_t_3, 3, __pyx_t_2);
+  __Pyx_GIVEREF(__pyx_t_4);
+  PyList_SET_ITEM(__pyx_t_3, 4, __pyx_t_4);
   __pyx_t_5 = 0;
   __pyx_t_9 = 0;
   __pyx_t_8 = 0;
-  __pyx_t_8 = NULL;
+  __pyx_t_2 = 0;
+  __pyx_t_4 = 0;
+  __pyx_t_4 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_7))) {
-    __pyx_t_8 = PyMethod_GET_SELF(__pyx_t_7);
-    if (likely(__pyx_t_8)) {
+    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_7);
+    if (likely(__pyx_t_4)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_8);
+      __Pyx_INCREF(__pyx_t_4);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_7, function);
     }
   }
-  if (!__pyx_t_8) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  if (!__pyx_t_4) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
-    __pyx_t_9 = PyTuple_New(1+1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 151, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __Pyx_GIVEREF(__pyx_t_8); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_8); __pyx_t_8 = NULL;
-    __Pyx_GIVEREF(__pyx_t_2);
-    PyTuple_SET_ITEM(__pyx_t_9, 0+1, __pyx_t_2);
-    __pyx_t_2 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_9, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __pyx_t_2 = PyTuple_New(1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_4); __pyx_t_4 = NULL;
+    __Pyx_GIVEREF(__pyx_t_3);
+    PyTuple_SET_ITEM(__pyx_t_2, 0+1, __pyx_t_3);
+    __pyx_t_3 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   }
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 151, __pyx_L1_error)
@@ -2484,23 +2493,22 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
   __pyx_t_1 = 0;
 
   /* "geodesic_integrator.pyx":153
- *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a])
+ *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E,causality])
  * 
  *     Solver(x0, xend, n_steps, init, data, result)             # <<<<<<<<<<<<<<
  * 
  *     return result
  */
-  __pyx_t_12 = __Pyx_PyInt_As_int(__pyx_v_n_steps); if (unlikely((__pyx_t_12 == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 153, __pyx_L1_error)
-  __pyx_t_13 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_init));
+  __pyx_t_12 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_init));
+  if (unlikely(!__pyx_t_12.memview)) __PYX_ERR(0, 153, __pyx_L1_error)
+  __pyx_t_13 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_data));
   if (unlikely(!__pyx_t_13.memview)) __PYX_ERR(0, 153, __pyx_L1_error)
-  __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_ds_double(((PyObject *)__pyx_v_data));
+  __pyx_t_14 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(((PyObject *)__pyx_v_result));
   if (unlikely(!__pyx_t_14.memview)) __PYX_ERR(0, 153, __pyx_L1_error)
-  __pyx_t_15 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(((PyObject *)__pyx_v_result));
-  if (unlikely(!__pyx_t_15.memview)) __PYX_ERR(0, 153, __pyx_L1_error)
-  __pyx_f_19geodesic_integrator_Solver(__pyx_v_x0, __pyx_v_xend, __pyx_t_12, __pyx_t_13, __pyx_t_14, __pyx_t_15);
+  __pyx_f_19geodesic_integrator_Solver(__pyx_v_x0, __pyx_v_xend, __pyx_v_n_steps, __pyx_t_12, __pyx_t_13, __pyx_t_14);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_12, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_13, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
 
   /* "geodesic_integrator.pyx":155
  *     Solver(x0, xend, n_steps, init, data, result)
@@ -2519,7 +2527,7 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
  * 
  * cpdef np.ndarray[np.float64_t, ndim=2] integrate_ray(double r, double cam_theta,             # <<<<<<<<<<<<<<
  *                                                      double cam_phi, double theta_cs,
- *                                                      double phi_cs, double a, n_steps):
+ *                                                      double phi_cs, double a, double causality, int n_steps):
  */
 
   /* function exit code */
@@ -2532,9 +2540,9 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
   __Pyx_XDECREF(__pyx_t_7);
   __Pyx_XDECREF(__pyx_t_8);
   __Pyx_XDECREF(__pyx_t_9);
+  __PYX_XDEC_MEMVIEW(&__pyx_t_12, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_13, 1);
   __PYX_XDEC_MEMVIEW(&__pyx_t_14, 1);
-  __PYX_XDEC_MEMVIEW(&__pyx_t_15, 1);
   { PyObject *__pyx_type, *__pyx_value, *__pyx_tb;
     __Pyx_PyThreadState_declare
     __Pyx_PyThreadState_assign
@@ -2568,17 +2576,19 @@ static PyObject *__pyx_pw_19geodesic_integrator_1integrate_ray(PyObject *__pyx_s
   double __pyx_v_theta_cs;
   double __pyx_v_phi_cs;
   double __pyx_v_a;
-  PyObject *__pyx_v_n_steps = 0;
+  double __pyx_v_causality;
+  int __pyx_v_n_steps;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("integrate_ray (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_r,&__pyx_n_s_cam_theta,&__pyx_n_s_cam_phi,&__pyx_n_s_theta_cs,&__pyx_n_s_phi_cs,&__pyx_n_s_a,&__pyx_n_s_n_steps,0};
-    PyObject* values[7] = {0,0,0,0,0,0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_r,&__pyx_n_s_cam_theta,&__pyx_n_s_cam_phi,&__pyx_n_s_theta_cs,&__pyx_n_s_phi_cs,&__pyx_n_s_a,&__pyx_n_s_causality,&__pyx_n_s_n_steps,0};
+    PyObject* values[8] = {0,0,0,0,0,0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  8: values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
         case  7: values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
         case  6: values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
         case  5: values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
@@ -2597,38 +2607,43 @@ static PyObject *__pyx_pw_19geodesic_integrator_1integrate_ray(PyObject *__pyx_s
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_cam_theta)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 7, 7, 1); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 8, 8, 1); __PYX_ERR(0, 93, __pyx_L3_error)
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_cam_phi)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 7, 7, 2); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 8, 8, 2); __PYX_ERR(0, 93, __pyx_L3_error)
         }
         case  3:
         if (likely((values[3] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_theta_cs)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 7, 7, 3); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 8, 8, 3); __PYX_ERR(0, 93, __pyx_L3_error)
         }
         case  4:
         if (likely((values[4] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_phi_cs)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 7, 7, 4); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 8, 8, 4); __PYX_ERR(0, 93, __pyx_L3_error)
         }
         case  5:
         if (likely((values[5] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_a)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 7, 7, 5); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 8, 8, 5); __PYX_ERR(0, 93, __pyx_L3_error)
         }
         case  6:
-        if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_n_steps)) != 0)) kw_args--;
+        if (likely((values[6] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_causality)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 7, 7, 6); __PYX_ERR(0, 93, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 8, 8, 6); __PYX_ERR(0, 93, __pyx_L3_error)
+        }
+        case  7:
+        if (likely((values[7] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_n_steps)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 8, 8, 7); __PYX_ERR(0, 93, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "integrate_ray") < 0)) __PYX_ERR(0, 93, __pyx_L3_error)
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 7) {
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 8) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
@@ -2638,6 +2653,7 @@ static PyObject *__pyx_pw_19geodesic_integrator_1integrate_ray(PyObject *__pyx_s
       values[4] = PyTuple_GET_ITEM(__pyx_args, 4);
       values[5] = PyTuple_GET_ITEM(__pyx_args, 5);
       values[6] = PyTuple_GET_ITEM(__pyx_args, 6);
+      values[7] = PyTuple_GET_ITEM(__pyx_args, 7);
     }
     __pyx_v_r = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_r == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 93, __pyx_L3_error)
     __pyx_v_cam_theta = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_cam_theta == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 93, __pyx_L3_error)
@@ -2645,30 +2661,31 @@ static PyObject *__pyx_pw_19geodesic_integrator_1integrate_ray(PyObject *__pyx_s
     __pyx_v_theta_cs = __pyx_PyFloat_AsDouble(values[3]); if (unlikely((__pyx_v_theta_cs == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 94, __pyx_L3_error)
     __pyx_v_phi_cs = __pyx_PyFloat_AsDouble(values[4]); if (unlikely((__pyx_v_phi_cs == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 95, __pyx_L3_error)
     __pyx_v_a = __pyx_PyFloat_AsDouble(values[5]); if (unlikely((__pyx_v_a == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 95, __pyx_L3_error)
-    __pyx_v_n_steps = values[6];
+    __pyx_v_causality = __pyx_PyFloat_AsDouble(values[6]); if (unlikely((__pyx_v_causality == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 95, __pyx_L3_error)
+    __pyx_v_n_steps = __Pyx_PyInt_As_int(values[7]); if (unlikely((__pyx_v_n_steps == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 95, __pyx_L3_error)
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 7, 7, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 93, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("integrate_ray", 1, 8, 8, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 93, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("geodesic_integrator.integrate_ray", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_19geodesic_integrator_integrate_ray(__pyx_self, __pyx_v_r, __pyx_v_cam_theta, __pyx_v_cam_phi, __pyx_v_theta_cs, __pyx_v_phi_cs, __pyx_v_a, __pyx_v_n_steps);
+  __pyx_r = __pyx_pf_19geodesic_integrator_integrate_ray(__pyx_self, __pyx_v_r, __pyx_v_cam_theta, __pyx_v_cam_phi, __pyx_v_theta_cs, __pyx_v_phi_cs, __pyx_v_a, __pyx_v_causality, __pyx_v_n_steps);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_19geodesic_integrator_integrate_ray(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, double __pyx_v_cam_theta, double __pyx_v_cam_phi, double __pyx_v_theta_cs, double __pyx_v_phi_cs, double __pyx_v_a, PyObject *__pyx_v_n_steps) {
+static PyObject *__pyx_pf_19geodesic_integrator_integrate_ray(CYTHON_UNUSED PyObject *__pyx_self, double __pyx_v_r, double __pyx_v_cam_theta, double __pyx_v_cam_phi, double __pyx_v_theta_cs, double __pyx_v_phi_cs, double __pyx_v_a, double __pyx_v_causality, int __pyx_v_n_steps) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   __Pyx_RefNannySetupContext("integrate_ray", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = ((PyObject *)__pyx_f_19geodesic_integrator_integrate_ray(__pyx_v_r, __pyx_v_cam_theta, __pyx_v_cam_phi, __pyx_v_theta_cs, __pyx_v_phi_cs, __pyx_v_a, __pyx_v_n_steps, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_19geodesic_integrator_integrate_ray(__pyx_v_r, __pyx_v_cam_theta, __pyx_v_cam_phi, __pyx_v_theta_cs, __pyx_v_phi_cs, __pyx_v_a, __pyx_v_causality, __pyx_v_n_steps, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 93, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3138,7 +3155,7 @@ static void __pyx_f_19geodesic_integrator_Solver(double __pyx_v_x, double __pyx_
   int __pyx_v_current_step;
   int __pyx_v_i;
   double __pyx_v_initial_conditions[5];
-  double __pyx_v_aditional_data[3];
+  double __pyx_v_aditional_data[5];
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   Py_ssize_t __pyx_t_2;
@@ -3194,7 +3211,7 @@ static void __pyx_f_19geodesic_integrator_Solver(double __pyx_v_x, double __pyx_
   __pyx_v_step = ((__pyx_v_xend - __pyx_v_x) / ((double)__pyx_v_n_steps));
 
   /* "geodesic_integrator.pyx":262
- *     cdef double aditional_data[3]
+ *     cdef double aditional_data[5]
  * 
  *     for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
  *         initial_conditions[i] = initCond[i]
@@ -3208,7 +3225,7 @@ static void __pyx_f_19geodesic_integrator_Solver(double __pyx_v_x, double __pyx_
  *     for i in range(5): # TODO: SYSTEM_SIZE
  *         initial_conditions[i] = initCond[i]             # <<<<<<<<<<<<<<
  * 
- *     for i in range(3):
+ *     for i in range(5):
  */
     __pyx_t_2 = __pyx_v_i;
     (__pyx_v_initial_conditions[__pyx_v_i]) = (*((double *) ( /* dim=0 */ (__pyx_v_initCond.data + __pyx_t_2 * __pyx_v_initCond.strides[0]) )));
@@ -3217,16 +3234,16 @@ static void __pyx_f_19geodesic_integrator_Solver(double __pyx_v_x, double __pyx_
   /* "geodesic_integrator.pyx":265
  *         initial_conditions[i] = initCond[i]
  * 
- *     for i in range(3):             # <<<<<<<<<<<<<<
+ *     for i in range(5):             # <<<<<<<<<<<<<<
  *         aditional_data[i] = data[i]
  * 
  */
-  for (__pyx_t_1 = 0; __pyx_t_1 < 3; __pyx_t_1+=1) {
+  for (__pyx_t_1 = 0; __pyx_t_1 < 5; __pyx_t_1+=1) {
     __pyx_v_i = __pyx_t_1;
 
     /* "geodesic_integrator.pyx":266
  * 
- *     for i in range(3):
+ *     for i in range(5):
  *         aditional_data[i] = data[i]             # <<<<<<<<<<<<<<
  * 
  *     # Store initial step conditions
@@ -3399,7 +3416,8 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
   double __pyx_v_twob;
   double __pyx_v_b2;
   double __pyx_v_q;
-  double __pyx_v_bMinusA;
+  CYTHON_UNUSED double __pyx_v_bMinusA;
+  double __pyx_v_bMinusAE;
   double __pyx_v_a;
   double __pyx_v_a2;
   double __pyx_v_sinT;
@@ -3416,6 +3434,10 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
   double __pyx_v_rho2Inv;
   double __pyx_v_twoRho2Inv;
   double __pyx_v_rho4Inv;
+  double __pyx_v_mu;
+  double __pyx_v_energy;
+  double __pyx_v_energy2;
+  double __pyx_v_r2mu;
   double __pyx_v_dR;
   double __pyx_v_dZ;
   double __pyx_v_dRhoTimesRho;
@@ -3431,7 +3453,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("KerrGeodesicEquations", 0);
 
-  /* "geodesic_integrator.pyx":342
+  /* "geodesic_integrator.pyx":353
  *     # Retrieval of the input data (position of the ray, momenta and
  *     # constants).
  *     r = y[0]             # <<<<<<<<<<<<<<
@@ -3440,7 +3462,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_r = (__pyx_v_y[0]);
 
-  /* "geodesic_integrator.pyx":343
+  /* "geodesic_integrator.pyx":354
  *     # constants).
  *     r = y[0]
  *     theta = y[1]             # <<<<<<<<<<<<<<
@@ -3449,7 +3471,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_theta = (__pyx_v_y[1]);
 
-  /* "geodesic_integrator.pyx":344
+  /* "geodesic_integrator.pyx":355
  *     r = y[0]
  *     theta = y[1]
  *     pR = y[3]             # <<<<<<<<<<<<<<
@@ -3458,7 +3480,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_pR = (__pyx_v_y[3]);
 
-  /* "geodesic_integrator.pyx":345
+  /* "geodesic_integrator.pyx":356
  *     theta = y[1]
  *     pR = y[3]
  *     pTheta = y[4]             # <<<<<<<<<<<<<<
@@ -3467,7 +3489,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_pTheta = (__pyx_v_y[4]);
 
-  /* "geodesic_integrator.pyx":348
+  /* "geodesic_integrator.pyx":359
  * 
  *     # Computation of the square of r, widely used in the computations.
  *     r2 = r*r             # <<<<<<<<<<<<<<
@@ -3476,7 +3498,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_r2 = (__pyx_v_r * __pyx_v_r);
 
-  /* "geodesic_integrator.pyx":351
+  /* "geodesic_integrator.pyx":362
  * 
  *     # Sine and cosine of theta, as well as their squares and inverses.
  *     sinT = sin(theta)             # <<<<<<<<<<<<<<
@@ -3485,7 +3507,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sinT = sin(__pyx_v_theta);
 
-  /* "geodesic_integrator.pyx":352
+  /* "geodesic_integrator.pyx":363
  *     # Sine and cosine of theta, as well as their squares and inverses.
  *     sinT = sin(theta)
  *     cosT = cos(theta)             # <<<<<<<<<<<<<<
@@ -3494,7 +3516,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_cosT = cos(__pyx_v_theta);
 
-  /* "geodesic_integrator.pyx":353
+  /* "geodesic_integrator.pyx":364
  *     sinT = sin(theta)
  *     cosT = cos(theta)
  *     sinT2 = sinT*sinT             # <<<<<<<<<<<<<<
@@ -3503,7 +3525,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sinT2 = (__pyx_v_sinT * __pyx_v_sinT);
 
-  /* "geodesic_integrator.pyx":354
+  /* "geodesic_integrator.pyx":365
  *     cosT = cos(theta)
  *     sinT2 = sinT*sinT
  *     sinT2Inv = 1/sinT2             # <<<<<<<<<<<<<<
@@ -3512,7 +3534,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sinT2Inv = (1.0 / __pyx_v_sinT2);
 
-  /* "geodesic_integrator.pyx":355
+  /* "geodesic_integrator.pyx":366
  *     sinT2 = sinT*sinT
  *     sinT2Inv = 1/sinT2
  *     cosT2 = cosT*cosT             # <<<<<<<<<<<<<<
@@ -3521,7 +3543,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_cosT2 = (__pyx_v_cosT * __pyx_v_cosT);
 
-  /* "geodesic_integrator.pyx":360
+  /* "geodesic_integrator.pyx":371
  *     # the square of b and the number b - a, repeateadly used throughout the
  *     # computation
  *     b = data[0]             # <<<<<<<<<<<<<<
@@ -3530,52 +3552,97 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_b = (__pyx_v_data[0]);
 
-  /* "geodesic_integrator.pyx":361
+  /* "geodesic_integrator.pyx":372
  *     # computation
  *     b = data[0]
  *     q = data[1]             # <<<<<<<<<<<<<<
  *     a = data[2]
- *     a2 = a*a
+ *     energy = data[3]
  */
   __pyx_v_q = (__pyx_v_data[1]);
 
-  /* "geodesic_integrator.pyx":362
+  /* "geodesic_integrator.pyx":373
  *     b = data[0]
  *     q = data[1]
  *     a = data[2]             # <<<<<<<<<<<<<<
- *     a2 = a*a
- * 
+ *     energy = data[3]
+ *     energy2 = energy * energy
  */
   __pyx_v_a = (__pyx_v_data[2]);
 
-  /* "geodesic_integrator.pyx":363
+  /* "geodesic_integrator.pyx":374
  *     q = data[1]
  *     a = data[2]
+ *     energy = data[3]             # <<<<<<<<<<<<<<
+ *     energy2 = energy * energy
+ *     mu = data[4] * data[4]
+ */
+  __pyx_v_energy = (__pyx_v_data[3]);
+
+  /* "geodesic_integrator.pyx":375
+ *     a = data[2]
+ *     energy = data[3]
+ *     energy2 = energy * energy             # <<<<<<<<<<<<<<
+ *     mu = data[4] * data[4]
+ * 
+ */
+  __pyx_v_energy2 = (__pyx_v_energy * __pyx_v_energy);
+
+  /* "geodesic_integrator.pyx":376
+ *     energy = data[3]
+ *     energy2 = energy * energy
+ *     mu = data[4] * data[4]             # <<<<<<<<<<<<<<
+ * 
+ *     cdef double r2mu = r2 * mu
+ */
+  __pyx_v_mu = ((__pyx_v_data[4]) * (__pyx_v_data[4]));
+
+  /* "geodesic_integrator.pyx":378
+ *     mu = data[4] * data[4]
+ * 
+ *     cdef double r2mu = r2 * mu             # <<<<<<<<<<<<<<
+ * 
+ *     a2 = a*a
+ */
+  __pyx_v_r2mu = (__pyx_v_r2 * __pyx_v_mu);
+
+  /* "geodesic_integrator.pyx":380
+ *     cdef double r2mu = r2 * mu
+ * 
  *     a2 = a*a             # <<<<<<<<<<<<<<
  * 
  *     b2 = b*b
  */
   __pyx_v_a2 = (__pyx_v_a * __pyx_v_a);
 
-  /* "geodesic_integrator.pyx":365
+  /* "geodesic_integrator.pyx":382
  *     a2 = a*a
  * 
  *     b2 = b*b             # <<<<<<<<<<<<<<
  *     bMinusA = b - a
- * 
+ *     bMinusAE = b - a * energy
  */
   __pyx_v_b2 = (__pyx_v_b * __pyx_v_b);
 
-  /* "geodesic_integrator.pyx":366
+  /* "geodesic_integrator.pyx":383
  * 
  *     b2 = b*b
  *     bMinusA = b - a             # <<<<<<<<<<<<<<
+ *     bMinusAE = b - a * energy
  * 
- *     # Commonly used variables: R, D, Theta (that is called Z) and
  */
   __pyx_v_bMinusA = (__pyx_v_b - __pyx_v_a);
 
-  /* "geodesic_integrator.pyx":370
+  /* "geodesic_integrator.pyx":384
+ *     b2 = b*b
+ *     bMinusA = b - a
+ *     bMinusAE = b - a * energy             # <<<<<<<<<<<<<<
+ * 
+ *     # Commonly used variables: R, D, Theta (that is called Z) and
+ */
+  __pyx_v_bMinusAE = (__pyx_v_b - (__pyx_v_a * __pyx_v_energy));
+
+  /* "geodesic_integrator.pyx":388
  *     # Commonly used variables: R, D, Theta (that is called Z) and
  *     # rho (and its square and cube).
  *     D = r2 - 2*r + a2             # <<<<<<<<<<<<<<
@@ -3584,44 +3651,44 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_D = ((__pyx_v_r2 - (2.0 * __pyx_v_r)) + __pyx_v_a2);
 
-  /* "geodesic_integrator.pyx":371
+  /* "geodesic_integrator.pyx":389
  *     # rho (and its square and cube).
  *     D = r2 - 2*r + a2
  *     Dinv = 1/D             # <<<<<<<<<<<<<<
  * 
- *     P = r2 - a * bMinusA
+ *     P = ( a2 + r2 ) * energy - a * b
  */
   __pyx_v_Dinv = (1.0 / __pyx_v_D);
 
-  /* "geodesic_integrator.pyx":373
+  /* "geodesic_integrator.pyx":391
  *     Dinv = 1/D
  * 
- *     P = r2 - a * bMinusA             # <<<<<<<<<<<<<<
- *     R = P*P - D*(bMinusA*bMinusA + q)
+ *     P = ( a2 + r2 ) * energy - a * b             # <<<<<<<<<<<<<<
+ *     R = P*P - D*(bMinusAE*bMinusAE + q + r2mu)
+ *     Z = q - cosT2*(b2*sinT2Inv + a2 * (mu - energy2) )
+ */
+  __pyx_v_P = (((__pyx_v_a2 + __pyx_v_r2) * __pyx_v_energy) - (__pyx_v_a * __pyx_v_b));
+
+  /* "geodesic_integrator.pyx":392
+ * 
+ *     P = ( a2 + r2 ) * energy - a * b
+ *     R = P*P - D*(bMinusAE*bMinusAE + q + r2mu)             # <<<<<<<<<<<<<<
+ *     Z = q - cosT2*(b2*sinT2Inv + a2 * (mu - energy2) )
  * 
  */
-  __pyx_v_P = (__pyx_v_r2 - (__pyx_v_a * __pyx_v_bMinusA));
+  __pyx_v_R = ((__pyx_v_P * __pyx_v_P) - (__pyx_v_D * (((__pyx_v_bMinusAE * __pyx_v_bMinusAE) + __pyx_v_q) + __pyx_v_r2mu)));
 
-  /* "geodesic_integrator.pyx":374
- * 
- *     P = r2 - a * bMinusA
- *     R = P*P - D*(bMinusA*bMinusA + q)             # <<<<<<<<<<<<<<
- * 
- *     Z = q - cosT2*(b2*sinT2Inv - a2)
- */
-  __pyx_v_R = ((__pyx_v_P * __pyx_v_P) - (__pyx_v_D * ((__pyx_v_bMinusA * __pyx_v_bMinusA) + __pyx_v_q)));
-
-  /* "geodesic_integrator.pyx":376
- *     R = P*P - D*(bMinusA*bMinusA + q)
- * 
- *     Z = q - cosT2*(b2*sinT2Inv - a2)             # <<<<<<<<<<<<<<
+  /* "geodesic_integrator.pyx":393
+ *     P = ( a2 + r2 ) * energy - a * b
+ *     R = P*P - D*(bMinusAE*bMinusAE + q + r2mu)
+ *     Z = q - cosT2*(b2*sinT2Inv + a2 * (mu - energy2) )             # <<<<<<<<<<<<<<
  * 
  *     rho2Inv = 1/(r2 + a2*cosT2)
  */
-  __pyx_v_Z = (__pyx_v_q - (__pyx_v_cosT2 * ((__pyx_v_b2 * __pyx_v_sinT2Inv) - __pyx_v_a2)));
+  __pyx_v_Z = (__pyx_v_q - (__pyx_v_cosT2 * ((__pyx_v_b2 * __pyx_v_sinT2Inv) + (__pyx_v_a2 * (__pyx_v_mu - __pyx_v_energy2)))));
 
-  /* "geodesic_integrator.pyx":378
- *     Z = q - cosT2*(b2*sinT2Inv - a2)
+  /* "geodesic_integrator.pyx":395
+ *     Z = q - cosT2*(b2*sinT2Inv + a2 * (mu - energy2) )
  * 
  *     rho2Inv = 1/(r2 + a2*cosT2)             # <<<<<<<<<<<<<<
  *     twoRho2Inv = rho2Inv/2
@@ -3629,7 +3696,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_rho2Inv = (1.0 / (__pyx_v_r2 + (__pyx_v_a2 * __pyx_v_cosT2)));
 
-  /* "geodesic_integrator.pyx":379
+  /* "geodesic_integrator.pyx":396
  * 
  *     rho2Inv = 1/(r2 + a2*cosT2)
  *     twoRho2Inv = rho2Inv/2             # <<<<<<<<<<<<<<
@@ -3638,7 +3705,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_twoRho2Inv = (__pyx_v_rho2Inv / 2.0);
 
-  /* "geodesic_integrator.pyx":380
+  /* "geodesic_integrator.pyx":397
  *     rho2Inv = 1/(r2 + a2*cosT2)
  *     twoRho2Inv = rho2Inv/2
  *     rho4Inv = rho2Inv*rho2Inv             # <<<<<<<<<<<<<<
@@ -3647,7 +3714,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_rho4Inv = (__pyx_v_rho2Inv * __pyx_v_rho2Inv);
 
-  /* "geodesic_integrator.pyx":383
+  /* "geodesic_integrator.pyx":400
  * 
  *     # Squares of the momenta components
  *     pR2 = pR*pR             # <<<<<<<<<<<<<<
@@ -3656,7 +3723,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_pR2 = (__pyx_v_pR * __pyx_v_pR);
 
-  /* "geodesic_integrator.pyx":384
+  /* "geodesic_integrator.pyx":401
  *     # Squares of the momenta components
  *     pR2 = pR*pR
  *     pTheta2 = pTheta*pTheta             # <<<<<<<<<<<<<<
@@ -3665,7 +3732,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_pTheta2 = (__pyx_v_pTheta * __pyx_v_pTheta);
 
-  /* "geodesic_integrator.pyx":387
+  /* "geodesic_integrator.pyx":404
  * 
  *     # Double b and double r, that's it! :)
  *     twob = 2*b             # <<<<<<<<<<<<<<
@@ -3674,7 +3741,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_twob = (2.0 * __pyx_v_b);
 
-  /* "geodesic_integrator.pyx":388
+  /* "geodesic_integrator.pyx":405
  *     # Double b and double r, that's it! :)
  *     twob = 2*b
  *     twor = 2*r             # <<<<<<<<<<<<<<
@@ -3683,7 +3750,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_twor = (2.0 * __pyx_v_r);
 
-  /* "geodesic_integrator.pyx":398
+  /* "geodesic_integrator.pyx":415
  * 
  *     # *********************** EQUATION 1 *********************** //
  *     f[0] = D * pR * rho2Inv             # <<<<<<<<<<<<<<
@@ -3692,7 +3759,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   (__pyx_v_f[0]) = ((__pyx_v_D * __pyx_v_pR) * __pyx_v_rho2Inv);
 
-  /* "geodesic_integrator.pyx":401
+  /* "geodesic_integrator.pyx":418
  * 
  *     # *********************** EQUATION 2 *********************** //
  *     f[1] = pTheta * rho2Inv             # <<<<<<<<<<<<<<
@@ -3701,25 +3768,25 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   (__pyx_v_f[1]) = (__pyx_v_pTheta * __pyx_v_rho2Inv);
 
-  /* "geodesic_integrator.pyx":405
+  /* "geodesic_integrator.pyx":422
  *     # *********************** EQUATION 3 *********************** //
  *     # Derivatives with respect to b
- *     dR = 4*bMinusA*r - twob*r2             # <<<<<<<<<<<<<<
+ *     dR = -2.0 * D * bMinusAE + (-2.0) * a * P             # <<<<<<<<<<<<<<
  *     dZ = - twob * cosT2 * sinT2Inv
  * 
  */
-  __pyx_v_dR = (((4.0 * __pyx_v_bMinusA) * __pyx_v_r) - (__pyx_v_twob * __pyx_v_r2));
+  __pyx_v_dR = (((-2.0 * __pyx_v_D) * __pyx_v_bMinusAE) + ((-2.0 * __pyx_v_a) * __pyx_v_P));
 
-  /* "geodesic_integrator.pyx":406
+  /* "geodesic_integrator.pyx":423
  *     # Derivatives with respect to b
- *     dR = 4*bMinusA*r - twob*r2
+ *     dR = -2.0 * D * bMinusAE + (-2.0) * a * P
  *     dZ = - twob * cosT2 * sinT2Inv             # <<<<<<<<<<<<<<
  * 
  *     f[2] = - (dR + D*dZ)*Dinv*twoRho2Inv
  */
   __pyx_v_dZ = (((-__pyx_v_twob) * __pyx_v_cosT2) * __pyx_v_sinT2Inv);
 
-  /* "geodesic_integrator.pyx":408
+  /* "geodesic_integrator.pyx":425
  *     dZ = - twob * cosT2 * sinT2Inv
  * 
  *     f[2] = - (dR + D*dZ)*Dinv*twoRho2Inv             # <<<<<<<<<<<<<<
@@ -3728,26 +3795,26 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   (__pyx_v_f[2]) = (((-(__pyx_v_dR + (__pyx_v_D * __pyx_v_dZ))) * __pyx_v_Dinv) * __pyx_v_twoRho2Inv);
 
-  /* "geodesic_integrator.pyx":412
+  /* "geodesic_integrator.pyx":429
  *     # *********************** EQUATION 4 *********************** //
  *     # Derivatives with respect to r
  *     dD = twor - 2             # <<<<<<<<<<<<<<
- *     dR = 2*twor*(r2 - a*bMinusA) - (q + bMinusA*bMinusA)*(twor - 2)
+ *     dR = 4.0 * r * energy * P - twor * mu * D - ( q + bMinusAE * bMinusAE + r2mu ) * ( twor - 2.0 )
  * 
  */
   __pyx_v_dD = (__pyx_v_twor - 2.0);
 
-  /* "geodesic_integrator.pyx":413
+  /* "geodesic_integrator.pyx":430
  *     # Derivatives with respect to r
  *     dD = twor - 2
- *     dR = 2*twor*(r2 - a*bMinusA) - (q + bMinusA*bMinusA)*(twor - 2)             # <<<<<<<<<<<<<<
+ *     dR = 4.0 * r * energy * P - twor * mu * D - ( q + bMinusAE * bMinusAE + r2mu ) * ( twor - 2.0 )             # <<<<<<<<<<<<<<
  * 
  *     DZplusR = D*Z + R
  */
-  __pyx_v_dR = (((2.0 * __pyx_v_twor) * (__pyx_v_r2 - (__pyx_v_a * __pyx_v_bMinusA))) - ((__pyx_v_q + (__pyx_v_bMinusA * __pyx_v_bMinusA)) * (__pyx_v_twor - 2.0)));
+  __pyx_v_dR = (((((4.0 * __pyx_v_r) * __pyx_v_energy) * __pyx_v_P) - ((__pyx_v_twor * __pyx_v_mu) * __pyx_v_D)) - (((__pyx_v_q + (__pyx_v_bMinusAE * __pyx_v_bMinusAE)) + __pyx_v_r2mu) * (__pyx_v_twor - 2.0)));
 
-  /* "geodesic_integrator.pyx":415
- *     dR = 2*twor*(r2 - a*bMinusA) - (q + bMinusA*bMinusA)*(twor - 2)
+  /* "geodesic_integrator.pyx":432
+ *     dR = 4.0 * r * energy * P - twor * mu * D - ( q + bMinusAE * bMinusAE + r2mu ) * ( twor - 2.0 )
  * 
  *     DZplusR = D*Z + R             # <<<<<<<<<<<<<<
  * 
@@ -3755,7 +3822,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_DZplusR = ((__pyx_v_D * __pyx_v_Z) + __pyx_v_R);
 
-  /* "geodesic_integrator.pyx":417
+  /* "geodesic_integrator.pyx":434
  *     DZplusR = D*Z + R
  * 
  *     sum1 = + pTheta2             # <<<<<<<<<<<<<<
@@ -3764,7 +3831,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum1 = __pyx_v_pTheta2;
 
-  /* "geodesic_integrator.pyx":418
+  /* "geodesic_integrator.pyx":435
  * 
  *     sum1 = + pTheta2
  *     sum2 = + D*pR2             # <<<<<<<<<<<<<<
@@ -3773,7 +3840,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum2 = (__pyx_v_D * __pyx_v_pR2);
 
-  /* "geodesic_integrator.pyx":419
+  /* "geodesic_integrator.pyx":436
  *     sum1 = + pTheta2
  *     sum2 = + D*pR2
  *     sum3 = - (DZplusR * Dinv)             # <<<<<<<<<<<<<<
@@ -3782,7 +3849,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum3 = (-(__pyx_v_DZplusR * __pyx_v_Dinv));
 
-  /* "geodesic_integrator.pyx":420
+  /* "geodesic_integrator.pyx":437
  *     sum2 = + D*pR2
  *     sum3 = - (DZplusR * Dinv)
  *     sum4 = - (dD*pR2)             # <<<<<<<<<<<<<<
@@ -3791,7 +3858,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum4 = (-(__pyx_v_dD * __pyx_v_pR2));
 
-  /* "geodesic_integrator.pyx":421
+  /* "geodesic_integrator.pyx":438
  *     sum3 = - (DZplusR * Dinv)
  *     sum4 = - (dD*pR2)
  *     sum5 = + (dD*Z + dR) * Dinv             # <<<<<<<<<<<<<<
@@ -3800,7 +3867,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum5 = (((__pyx_v_dD * __pyx_v_Z) + __pyx_v_dR) * __pyx_v_Dinv);
 
-  /* "geodesic_integrator.pyx":422
+  /* "geodesic_integrator.pyx":439
  *     sum4 = - (dD*pR2)
  *     sum5 = + (dD*Z + dR) * Dinv
  *     sum6 = - (dD*DZplusR * Dinv * Dinv)             # <<<<<<<<<<<<<<
@@ -3809,7 +3876,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum6 = (-(((__pyx_v_dD * __pyx_v_DZplusR) * __pyx_v_Dinv) * __pyx_v_Dinv));
 
-  /* "geodesic_integrator.pyx":424
+  /* "geodesic_integrator.pyx":441
  *     sum6 = - (dD*DZplusR * Dinv * Dinv)
  * 
  *     f[3] = r*(sum1 + sum2 + sum3)*rho4Inv + (sum4 + sum5 + sum6)*twoRho2Inv             # <<<<<<<<<<<<<<
@@ -3818,7 +3885,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   (__pyx_v_f[3]) = (((__pyx_v_r * ((__pyx_v_sum1 + __pyx_v_sum2) + __pyx_v_sum3)) * __pyx_v_rho4Inv) + (((__pyx_v_sum4 + __pyx_v_sum5) + __pyx_v_sum6) * __pyx_v_twoRho2Inv));
 
-  /* "geodesic_integrator.pyx":428
+  /* "geodesic_integrator.pyx":445
  *     # *********************** EQUATION 5 *********************** //
  *     # Derivatives with respect to theta (called z here)
  *     dRhoTimesRho = - a2*cosT*sinT             # <<<<<<<<<<<<<<
@@ -3827,7 +3894,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_dRhoTimesRho = (((-__pyx_v_a2) * __pyx_v_cosT) * __pyx_v_sinT);
 
-  /* "geodesic_integrator.pyx":430
+  /* "geodesic_integrator.pyx":447
  *     dRhoTimesRho = - a2*cosT*sinT
  * 
  *     cdef double cosT3 = cosT2*cosT             # <<<<<<<<<<<<<<
@@ -3836,26 +3903,26 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_cosT3 = (__pyx_v_cosT2 * __pyx_v_cosT);
 
-  /* "geodesic_integrator.pyx":431
+  /* "geodesic_integrator.pyx":448
  * 
  *     cdef double cosT3 = cosT2*cosT
  *     cdef double sinT3 = sinT2*sinT             # <<<<<<<<<<<<<<
  * 
- *     dZ = 2*cosT*((b2*sinT2Inv) - a2)*sinT + (2*b2*cosT3)/(sinT3)
+ *     dZ = 2*cosT*((b2*sinT2Inv) + a2 * (mu - energy2)  )*sinT + (2*b2*cosT3)/(sinT3)
  */
   __pyx_v_sinT3 = (__pyx_v_sinT2 * __pyx_v_sinT);
 
-  /* "geodesic_integrator.pyx":433
+  /* "geodesic_integrator.pyx":450
  *     cdef double sinT3 = sinT2*sinT
  * 
- *     dZ = 2*cosT*((b2*sinT2Inv) - a2)*sinT + (2*b2*cosT3)/(sinT3)             # <<<<<<<<<<<<<<
+ *     dZ = 2*cosT*((b2*sinT2Inv) + a2 * (mu - energy2)  )*sinT + (2*b2*cosT3)/(sinT3)             # <<<<<<<<<<<<<<
  * 
  *     sum1 = + pTheta2
  */
-  __pyx_v_dZ = ((((2.0 * __pyx_v_cosT) * ((__pyx_v_b2 * __pyx_v_sinT2Inv) - __pyx_v_a2)) * __pyx_v_sinT) + (((2.0 * __pyx_v_b2) * __pyx_v_cosT3) / __pyx_v_sinT3));
+  __pyx_v_dZ = ((((2.0 * __pyx_v_cosT) * ((__pyx_v_b2 * __pyx_v_sinT2Inv) + (__pyx_v_a2 * (__pyx_v_mu - __pyx_v_energy2)))) * __pyx_v_sinT) + (((2.0 * __pyx_v_b2) * __pyx_v_cosT3) / __pyx_v_sinT3));
 
-  /* "geodesic_integrator.pyx":435
- *     dZ = 2*cosT*((b2*sinT2Inv) - a2)*sinT + (2*b2*cosT3)/(sinT3)
+  /* "geodesic_integrator.pyx":452
+ *     dZ = 2*cosT*((b2*sinT2Inv) + a2 * (mu - energy2)  )*sinT + (2*b2*cosT3)/(sinT3)
  * 
  *     sum1 = + pTheta2             # <<<<<<<<<<<<<<
  *     sum2 = + D*pR2
@@ -3863,7 +3930,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum1 = __pyx_v_pTheta2;
 
-  /* "geodesic_integrator.pyx":436
+  /* "geodesic_integrator.pyx":453
  * 
  *     sum1 = + pTheta2
  *     sum2 = + D*pR2             # <<<<<<<<<<<<<<
@@ -3872,7 +3939,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum2 = (__pyx_v_D * __pyx_v_pR2);
 
-  /* "geodesic_integrator.pyx":437
+  /* "geodesic_integrator.pyx":454
  *     sum1 = + pTheta2
  *     sum2 = + D*pR2
  *     sum3 = - DZplusR * Dinv             # <<<<<<<<<<<<<<
@@ -3881,7 +3948,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum3 = ((-__pyx_v_DZplusR) * __pyx_v_Dinv);
 
-  /* "geodesic_integrator.pyx":438
+  /* "geodesic_integrator.pyx":455
  *     sum2 = + D*pR2
  *     sum3 = - DZplusR * Dinv
  *     sum4 = + dZ * twoRho2Inv             # <<<<<<<<<<<<<<
@@ -3890,7 +3957,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum4 = (__pyx_v_dZ * __pyx_v_twoRho2Inv);
 
-  /* "geodesic_integrator.pyx":440
+  /* "geodesic_integrator.pyx":457
  *     sum4 = + dZ * twoRho2Inv
  * 
  *     f[4] = dRhoTimesRho*(sum1 + sum2 + sum3)*rho4Inv + sum4             # <<<<<<<<<<<<<<
@@ -3911,7 +3978,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
   __Pyx_RefNannyFinishContext();
 }
 
-/* "geodesic_integrator.pyx":451
+/* "geodesic_integrator.pyx":468
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * @cython.cdivision(True)    # tuern off zerodivisioncheck
  * cdef int SolverRK45( double* initCond, double* globalX0, double xend,             # <<<<<<<<<<<<<<
@@ -3986,17 +4053,17 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     }
   }
 
-  /* "geodesic_integrator.pyx":508
+  /* "geodesic_integrator.pyx":524
+ *     ##### Configuration vars #######
  *     ################################
- * 
  *     cdef double safeInv = 1.0 / safe             # <<<<<<<<<<<<<<
  *     cdef double fac1_inverse = 1.0 / fac1
  *     cdef double fac2_inverse = 1.0 / fac2
  */
   __pyx_v_safeInv = (1.0 / __pyx_v_safe);
 
-  /* "geodesic_integrator.pyx":509
- * 
+  /* "geodesic_integrator.pyx":525
+ *     ################################
  *     cdef double safeInv = 1.0 / safe
  *     cdef double fac1_inverse = 1.0 / fac1             # <<<<<<<<<<<<<<
  *     cdef double fac2_inverse = 1.0 / fac2
@@ -4004,7 +4071,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_fac1_inverse = (1.0 / __pyx_v_fac1);
 
-  /* "geodesic_integrator.pyx":510
+  /* "geodesic_integrator.pyx":526
  *     cdef double safeInv = 1.0 / safe
  *     cdef double fac1_inverse = 1.0 / fac1
  *     cdef double fac2_inverse = 1.0 / fac2             # <<<<<<<<<<<<<<
@@ -4013,7 +4080,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_fac2_inverse = (1.0 / __pyx_v_fac2);
 
-  /* "geodesic_integrator.pyx":526
+  /* "geodesic_integrator.pyx":542
  * 
  *     # Retrieve the value of h and the value of x0
  *     cdef double h = hOrig[0]             # <<<<<<<<<<<<<<
@@ -4022,7 +4089,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_h = (__pyx_v_hOrig[0]);
 
-  /* "geodesic_integrator.pyx":527
+  /* "geodesic_integrator.pyx":543
  *     # Retrieve the value of h and the value of x0
  *     cdef double h = hOrig[0]
  *     cdef double x0 = globalX0[0]             # <<<<<<<<<<<<<<
@@ -4031,7 +4098,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_x0 = (__pyx_v_globalX0[0]);
 
-  /* "geodesic_integrator.pyx":532
+  /* "geodesic_integrator.pyx":548
  *     # and get the absolute value of the maximum step size.
  * 
  *     cdef double integrationDirection = +1. if xend - x0 > 0. else -1.             # <<<<<<<<<<<<<<
@@ -4045,7 +4112,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
   }
   __pyx_v_integrationDirection = __pyx_t_1;
 
-  /* "geodesic_integrator.pyx":533
+  /* "geodesic_integrator.pyx":549
  * 
  *     cdef double integrationDirection = +1. if xend - x0 > 0. else -1.
  *     hmax = abs(hmax)             # <<<<<<<<<<<<<<
@@ -4054,7 +4121,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_hmax = fabs(__pyx_v_hmax);
 
-  /* "geodesic_integrator.pyx":535
+  /* "geodesic_integrator.pyx":551
  *     hmax = abs(hmax)
  * 
  *     cdef size_t sizeBytes = sizeof(double)*SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4063,7 +4130,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_sizeBytes = ((sizeof(double)) * __pyx_v_19geodesic_integrator_SYSTEM_SIZE);
 
-  /* "geodesic_integrator.pyx":556
+  /* "geodesic_integrator.pyx":572
  *     cdef float sqr                 # Scaled differences in each eq.
  *     cdef float errors[5]           # TODO: SYSTEM_SIZE Local error of each eq.
  *     cdef float err = 0             # Global error of the step             # <<<<<<<<<<<<<<
@@ -4072,7 +4139,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_err = 0.0;
 
-  /* "geodesic_integrator.pyx":564
+  /* "geodesic_integrator.pyx":580
  *     # know more about the puropose of each of these variables.
  * 
  *     cdef float facold = globalFacold[0]             # <<<<<<<<<<<<<<
@@ -4081,7 +4148,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_facold = (__pyx_v_globalFacold[0]);
 
-  /* "geodesic_integrator.pyx":565
+  /* "geodesic_integrator.pyx":581
  * 
  *     cdef float facold = globalFacold[0]
  *     cdef float expo1 = 0.2 - beta * 0.75             # <<<<<<<<<<<<<<
@@ -4090,7 +4157,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_expo1 = (0.2 - (__pyx_v_beta * 0.75));
 
-  /* "geodesic_integrator.pyx":572
+  /* "geodesic_integrator.pyx":588
  *     # estimation exceeds 1.
  * 
  *     cdef int reject = False  # TODO: Avisar a alejandro de que esto esta como double             # <<<<<<<<<<<<<<
@@ -4099,7 +4166,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_reject = 0;
 
-  /* "geodesic_integrator.pyx":574
+  /* "geodesic_integrator.pyx":590
  *     cdef int reject = False  # TODO: Avisar a alejandro de que esto esta como double
  * 
  *     cdef float horizonRadius = 2.0             # <<<<<<<<<<<<<<
@@ -4108,7 +4175,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_horizonRadius = 2.0;
 
-  /* "geodesic_integrator.pyx":575
+  /* "geodesic_integrator.pyx":591
  * 
  *     cdef float horizonRadius = 2.0
  *     cdef int last = False             # <<<<<<<<<<<<<<
@@ -4117,7 +4184,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_last = 0;
 
-  /* "geodesic_integrator.pyx":578
+  /* "geodesic_integrator.pyx":594
  * 
  * 
  *     while x0 > xend:             # <<<<<<<<<<<<<<
@@ -4128,7 +4195,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     __pyx_t_2 = ((__pyx_v_x0 > __pyx_v_xend) != 0);
     if (!__pyx_t_2) break;
 
-    /* "geodesic_integrator.pyx":584
+    /* "geodesic_integrator.pyx":600
  *         # logic, it HAS to be checked here.
  * 
  *         if (0.1 * abs(h) <= abs(x0) * uround and not last):             # <<<<<<<<<<<<<<
@@ -4146,7 +4213,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     __pyx_L6_bool_binop_done:;
     if (__pyx_t_2) {
 
-      /* "geodesic_integrator.pyx":585
+      /* "geodesic_integrator.pyx":601
  * 
  *         if (0.1 * abs(h) <= abs(x0) * uround and not last):
  *             hOrig[0] = h             # <<<<<<<<<<<<<<
@@ -4155,7 +4222,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       (__pyx_v_hOrig[0]) = __pyx_v_h;
 
-      /* "geodesic_integrator.pyx":586
+      /* "geodesic_integrator.pyx":602
  *         if (0.1 * abs(h) <= abs(x0) * uround and not last):
  *             hOrig[0] = h
  *             return -1             # <<<<<<<<<<<<<<
@@ -4165,7 +4232,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       __pyx_r = -1;
       goto __pyx_L0;
 
-      /* "geodesic_integrator.pyx":584
+      /* "geodesic_integrator.pyx":600
  *         # logic, it HAS to be checked here.
  * 
  *         if (0.1 * abs(h) <= abs(x0) * uround and not last):             # <<<<<<<<<<<<<<
@@ -4174,7 +4241,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     }
 
-    /* "geodesic_integrator.pyx":592
+    /* "geodesic_integrator.pyx":608
  *         # exceeds the end time x_{end}.
  * 
  *         if ((x0 + 1.01*h - xend) * integrationDirection > 0.0):             # <<<<<<<<<<<<<<
@@ -4184,7 +4251,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     __pyx_t_2 = (((((__pyx_v_x0 + (1.01 * __pyx_v_h)) - __pyx_v_xend) * __pyx_v_integrationDirection) > 0.0) != 0);
     if (__pyx_t_2) {
 
-      /* "geodesic_integrator.pyx":593
+      /* "geodesic_integrator.pyx":609
  * 
  *         if ((x0 + 1.01*h - xend) * integrationDirection > 0.0):
  *             h = xend - x0             # <<<<<<<<<<<<<<
@@ -4193,7 +4260,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_h = (__pyx_v_xend - __pyx_v_x0);
 
-      /* "geodesic_integrator.pyx":594
+      /* "geodesic_integrator.pyx":610
  *         if ((x0 + 1.01*h - xend) * integrationDirection > 0.0):
  *             h = xend - x0
  *             last = True             # <<<<<<<<<<<<<<
@@ -4202,7 +4269,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_last = 1;
 
-      /* "geodesic_integrator.pyx":592
+      /* "geodesic_integrator.pyx":608
  *         # exceeds the end time x_{end}.
  * 
  *         if ((x0 + 1.01*h - xend) * integrationDirection > 0.0):             # <<<<<<<<<<<<<<
@@ -4211,7 +4278,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     }
 
-    /* "geodesic_integrator.pyx":598
+    /* "geodesic_integrator.pyx":614
  * 
  *         # K1 computation
  *         KerrGeodesicEquations(initCond, k1, data)             # <<<<<<<<<<<<<<
@@ -4220,7 +4287,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_initCond, __pyx_v_k1, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":602
+    /* "geodesic_integrator.pyx":618
  *         # K2 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4230,7 +4297,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":603
+      /* "geodesic_integrator.pyx":619
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             y1[i] = initCond[i] + h * A21 * k1[i]             # <<<<<<<<<<<<<<
@@ -4240,7 +4307,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + ((__pyx_v_h * __pyx_v_19geodesic_integrator_A21) * (__pyx_v_k1[__pyx_v_i])));
     }
 
-    /* "geodesic_integrator.pyx":605
+    /* "geodesic_integrator.pyx":621
  *             y1[i] = initCond[i] + h * A21 * k1[i]
  * 
  *         KerrGeodesicEquations(y1, k2, data)             # <<<<<<<<<<<<<<
@@ -4249,7 +4316,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k2, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":609
+    /* "geodesic_integrator.pyx":625
  *         # K3 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4259,7 +4326,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":610
+      /* "geodesic_integrator.pyx":626
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *              y1[i] = initCond[i] + h*(A31 * k1[i] + A32 * k2[i])             # <<<<<<<<<<<<<<
@@ -4269,7 +4336,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + (__pyx_v_h * ((__pyx_v_19geodesic_integrator_A31 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_A32 * (__pyx_v_k2[__pyx_v_i])))));
     }
 
-    /* "geodesic_integrator.pyx":612
+    /* "geodesic_integrator.pyx":628
  *              y1[i] = initCond[i] + h*(A31 * k1[i] + A32 * k2[i])
  * 
  *         KerrGeodesicEquations(y1, k3, data)             # <<<<<<<<<<<<<<
@@ -4278,7 +4345,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k3, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":616
+    /* "geodesic_integrator.pyx":632
  *         # K4 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4288,7 +4355,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":617
+      /* "geodesic_integrator.pyx":633
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             y1[i] = initCond[i] + h*(A41 * k1[i] +             # <<<<<<<<<<<<<<
@@ -4298,7 +4365,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + (__pyx_v_h * (((__pyx_v_19geodesic_integrator_A41 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_A42 * (__pyx_v_k2[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A43 * (__pyx_v_k3[__pyx_v_i])))));
     }
 
-    /* "geodesic_integrator.pyx":621
+    /* "geodesic_integrator.pyx":637
  *                                A43 * k3[i])
  * 
  *         KerrGeodesicEquations(y1, k4, data)             # <<<<<<<<<<<<<<
@@ -4307,7 +4374,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k4, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":625
+    /* "geodesic_integrator.pyx":641
  *         # K5 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4317,7 +4384,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":626
+      /* "geodesic_integrator.pyx":642
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             y1[i] = initCond[i] + h*( A51 * k1[i] +             # <<<<<<<<<<<<<<
@@ -4327,7 +4394,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + (__pyx_v_h * ((((__pyx_v_19geodesic_integrator_A51 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_A52 * (__pyx_v_k2[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A53 * (__pyx_v_k3[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A54 * (__pyx_v_k4[__pyx_v_i])))));
     }
 
-    /* "geodesic_integrator.pyx":631
+    /* "geodesic_integrator.pyx":647
  *                                 A54 * k4[i])
  * 
  *         KerrGeodesicEquations(y1, k5, data)             # <<<<<<<<<<<<<<
@@ -4336,7 +4403,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k5, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":635
+    /* "geodesic_integrator.pyx":651
  *         # K6 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4346,7 +4413,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":636
+      /* "geodesic_integrator.pyx":652
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             y1[i] = initCond[i] + h*(A61 * k1[i] +             # <<<<<<<<<<<<<<
@@ -4356,7 +4423,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + (__pyx_v_h * (((((__pyx_v_19geodesic_integrator_A61 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_A62 * (__pyx_v_k2[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A63 * (__pyx_v_k3[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A64 * (__pyx_v_k4[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A65 * (__pyx_v_k5[__pyx_v_i])))));
     }
 
-    /* "geodesic_integrator.pyx":642
+    /* "geodesic_integrator.pyx":658
  *                                A65 * k5[i])
  * 
  *         KerrGeodesicEquations(y1, k6, data)             # <<<<<<<<<<<<<<
@@ -4365,7 +4432,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k6, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":646
+    /* "geodesic_integrator.pyx":662
  *         # K7 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4375,7 +4442,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":647
+      /* "geodesic_integrator.pyx":663
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             y1[i] = initCond[i] + h*(A71 * k1[i] +             # <<<<<<<<<<<<<<
@@ -4385,7 +4452,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + (__pyx_v_h * (((((__pyx_v_19geodesic_integrator_A71 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_A73 * (__pyx_v_k3[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A74 * (__pyx_v_k4[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A75 * (__pyx_v_k5[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A76 * (__pyx_v_k6[__pyx_v_i])))));
     }
 
-    /* "geodesic_integrator.pyx":653
+    /* "geodesic_integrator.pyx":669
  *                                A76 * k6[i])
  * 
  *         KerrGeodesicEquations(y1, k7, data)             # <<<<<<<<<<<<<<
@@ -4394,7 +4461,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k7, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":667
+    /* "geodesic_integrator.pyx":683
  *         # using them:
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4404,7 +4471,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":668
+      /* "geodesic_integrator.pyx":684
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             errors[i] = h*(E1 * k1[i] +             # <<<<<<<<<<<<<<
@@ -4414,7 +4481,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_errors[__pyx_v_i]) = (__pyx_v_h * ((((((__pyx_v_19geodesic_integrator_E1 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_E3 * (__pyx_v_k3[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_E4 * (__pyx_v_k4[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_E5 * (__pyx_v_k5[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_E6 * (__pyx_v_k6[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_E7 * (__pyx_v_k7[__pyx_v_i]))));
     }
 
-    /* "geodesic_integrator.pyx":677
+    /* "geodesic_integrator.pyx":693
  * 
  * 
  *         err = 0             # <<<<<<<<<<<<<<
@@ -4423,7 +4490,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_err = 0.0;
 
-    /* "geodesic_integrator.pyx":679
+    /* "geodesic_integrator.pyx":695
  *         err = 0
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4433,7 +4500,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":686
+      /* "geodesic_integrator.pyx":702
  *             # error computation this way we "normalize" the error and we can
  *             # compare it against 1.
  *             sk = atoli + rtoli*fmax(fabs(initCond[i]), fabs(y1[i]))             # <<<<<<<<<<<<<<
@@ -4442,7 +4509,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_sk = (__pyx_v_atoli + (__pyx_v_rtoli * fmax(fabs((__pyx_v_initCond[__pyx_v_i])), fabs((__pyx_v_y1[__pyx_v_i])))));
 
-      /* "geodesic_integrator.pyx":692
+      /* "geodesic_integrator.pyx":708
  *             # equation 4.11 ([1]): the square root of the mean of the squared
  *             # local scaled errors.
  *             sqr = (errors[i])/sk             # <<<<<<<<<<<<<<
@@ -4451,7 +4518,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_sqr = ((__pyx_v_errors[__pyx_v_i]) / __pyx_v_sk);
 
-      /* "geodesic_integrator.pyx":693
+      /* "geodesic_integrator.pyx":709
  *             # local scaled errors.
  *             sqr = (errors[i])/sk
  *             errors[i] = sqr*sqr             # <<<<<<<<<<<<<<
@@ -4460,7 +4527,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       (__pyx_v_errors[__pyx_v_i]) = (__pyx_v_sqr * __pyx_v_sqr);
 
-      /* "geodesic_integrator.pyx":694
+      /* "geodesic_integrator.pyx":710
  *             sqr = (errors[i])/sk
  *             errors[i] = sqr*sqr
  *             err += errors[i]             # <<<<<<<<<<<<<<
@@ -4470,7 +4537,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       __pyx_v_err = (__pyx_v_err + (__pyx_v_errors[__pyx_v_i]));
     }
 
-    /* "geodesic_integrator.pyx":699
+    /* "geodesic_integrator.pyx":715
  *         # global error is the square root of the mean of those local
  *         # errors: we finish here the computation and store it in err.
  *         err = sqrt(err / SYSTEM_SIZE)  # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4479,7 +4546,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_err = sqrt((__pyx_v_err / ((float)__pyx_v_19geodesic_integrator_SYSTEM_SIZE)));
 
-    /* "geodesic_integrator.pyx":713
+    /* "geodesic_integrator.pyx":729
  * 
  *         # Stabilization computations:
  *         fac11 = pow(err, expo1)             # <<<<<<<<<<<<<<
@@ -4488,7 +4555,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_fac11 = pow(__pyx_v_err, __pyx_v_expo1);
 
-    /* "geodesic_integrator.pyx":714
+    /* "geodesic_integrator.pyx":730
  *         # Stabilization computations:
  *         fac11 = pow(err, expo1)
  *         fac = fac11 / pow(facold, beta)             # <<<<<<<<<<<<<<
@@ -4497,7 +4564,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_fac = (((double)__pyx_v_fac11) / pow(__pyx_v_facold, __pyx_v_beta));
 
-    /* "geodesic_integrator.pyx":718
+    /* "geodesic_integrator.pyx":734
  *         # safe factor) to be between fac1 and fac2 i.e., we require
  *         # fac1 <= hnew/h <= fac2:
  *         fac = fmax(fac2_inverse, fmin(fac1_inverse, fac * safeInv))             # <<<<<<<<<<<<<<
@@ -4506,7 +4573,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_fac = fmax(__pyx_v_fac2_inverse, fmin(__pyx_v_fac1_inverse, (__pyx_v_fac * __pyx_v_safeInv)));
 
-    /* "geodesic_integrator.pyx":720
+    /* "geodesic_integrator.pyx":736
  *         fac = fmax(fac2_inverse, fmin(fac1_inverse, fac * safeInv))
  *         # New step final (but temporary) computation
  *         hnew = h / fac             # <<<<<<<<<<<<<<
@@ -4515,7 +4582,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_hnew = (__pyx_v_h / ((double)__pyx_v_fac));
 
-    /* "geodesic_integrator.pyx":725
+    /* "geodesic_integrator.pyx":741
  *         # REJECT STEP if err > 1.
  * 
  *         if err > 1.0:             # <<<<<<<<<<<<<<
@@ -4525,7 +4592,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     __pyx_t_2 = ((__pyx_v_err > 1.0) != 0);
     if (__pyx_t_2) {
 
-      /* "geodesic_integrator.pyx":729
+      /* "geodesic_integrator.pyx":745
  *             # Stabilization technique with the minimum and safe factors
  *             #  when the step is rejected.
  *             hnew = h / fmin(fac1_inverse, fac11 * safeInv)             # <<<<<<<<<<<<<<
@@ -4534,7 +4601,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_hnew = (__pyx_v_h / fmin(__pyx_v_fac1_inverse, (__pyx_v_fac11 * __pyx_v_safeInv)));
 
-      /* "geodesic_integrator.pyx":730
+      /* "geodesic_integrator.pyx":746
  *             #  when the step is rejected.
  *             hnew = h / fmin(fac1_inverse, fac11 * safeInv)
  *             reject = True             # <<<<<<<<<<<<<<
@@ -4543,7 +4610,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_reject = 1;
 
-      /* "geodesic_integrator.pyx":725
+      /* "geodesic_integrator.pyx":741
  *         # REJECT STEP if err > 1.
  * 
  *         if err > 1.0:             # <<<<<<<<<<<<<<
@@ -4553,7 +4620,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       goto __pyx_L25;
     }
 
-    /* "geodesic_integrator.pyx":735
+    /* "geodesic_integrator.pyx":751
  * 
  *             # Update old factor to new current error (upper bounded to 1e-4)
  *             facold = fmax(err, 1.0e-4)             # <<<<<<<<<<<<<<
@@ -4563,7 +4630,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     /*else*/ {
       __pyx_v_facold = fmax(__pyx_v_err, 1.0e-4);
 
-      /* "geodesic_integrator.pyx":738
+      /* "geodesic_integrator.pyx":754
  * 
  *             # Advance current time!
  *             x0 += h             # <<<<<<<<<<<<<<
@@ -4572,7 +4639,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_x0 = (__pyx_v_x0 + __pyx_v_h);
 
-      /* "geodesic_integrator.pyx":743
+      /* "geodesic_integrator.pyx":759
  *             # bounds.
  * 
  *             if (fabs(hnew) > hmax):             # <<<<<<<<<<<<<<
@@ -4582,7 +4649,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       __pyx_t_2 = ((fabs(__pyx_v_hnew) > __pyx_v_hmax) != 0);
       if (__pyx_t_2) {
 
-        /* "geodesic_integrator.pyx":744
+        /* "geodesic_integrator.pyx":760
  * 
  *             if (fabs(hnew) > hmax):
  *                 hnew = integrationDirection * hmax             # <<<<<<<<<<<<<<
@@ -4591,7 +4658,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
         __pyx_v_hnew = (__pyx_v_integrationDirection * __pyx_v_hmax);
 
-        /* "geodesic_integrator.pyx":743
+        /* "geodesic_integrator.pyx":759
  *             # bounds.
  * 
  *             if (fabs(hnew) > hmax):             # <<<<<<<<<<<<<<
@@ -4600,7 +4667,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       }
 
-      /* "geodesic_integrator.pyx":749
+      /* "geodesic_integrator.pyx":765
  *             # old and new step sizes
  * 
  *             if reject:             # <<<<<<<<<<<<<<
@@ -4610,7 +4677,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       __pyx_t_2 = (__pyx_v_reject != 0);
       if (__pyx_t_2) {
 
-        /* "geodesic_integrator.pyx":750
+        /* "geodesic_integrator.pyx":766
  * 
  *             if reject:
  *                 hnew = integrationDirection * fmin(fabs(hnew), fabs(h))             # <<<<<<<<<<<<<<
@@ -4619,7 +4686,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
         __pyx_v_hnew = (__pyx_v_integrationDirection * fmin(fabs(__pyx_v_hnew), fabs(__pyx_v_h)));
 
-        /* "geodesic_integrator.pyx":749
+        /* "geodesic_integrator.pyx":765
  *             # old and new step sizes
  * 
  *             if reject:             # <<<<<<<<<<<<<<
@@ -4628,7 +4695,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       }
 
-      /* "geodesic_integrator.pyx":755
+      /* "geodesic_integrator.pyx":771
  *             # the current initial condition (now the computed solution)
  * 
  *             for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4638,7 +4705,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
         __pyx_v_i = __pyx_t_4;
 
-        /* "geodesic_integrator.pyx":756
+        /* "geodesic_integrator.pyx":772
  * 
  *             for i in range(5): # TODO: SYSTEM_SIZE
  *                 initCond[i] = y1[i]             # <<<<<<<<<<<<<<
@@ -4648,7 +4715,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
         (__pyx_v_initCond[__pyx_v_i]) = (__pyx_v_y1[__pyx_v_i]);
       }
 
-      /* "geodesic_integrator.pyx":761
+      /* "geodesic_integrator.pyx":777
  *             # false. SCIENCE.
  * 
  *             reject = False             # <<<<<<<<<<<<<<
@@ -4659,7 +4726,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     }
     __pyx_L25:;
 
-    /* "geodesic_integrator.pyx":766
+    /* "geodesic_integrator.pyx":782
  *         # Final step size update!
  * 
  *         h = hnew             # <<<<<<<<<<<<<<
@@ -4669,7 +4736,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     __pyx_v_h = __pyx_v_hnew;
   }
 
-  /* "geodesic_integrator.pyx":772
+  /* "geodesic_integrator.pyx":788
  *     # Update the user's h, facold and x0
  * 
  *     hOrig[0] = h             # <<<<<<<<<<<<<<
@@ -4678,7 +4745,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   (__pyx_v_hOrig[0]) = __pyx_v_h;
 
-  /* "geodesic_integrator.pyx":773
+  /* "geodesic_integrator.pyx":789
  * 
  *     hOrig[0] = h
  *     globalFacold[0] = facold             # <<<<<<<<<<<<<<
@@ -4687,7 +4754,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   (__pyx_v_globalFacold[0]) = __pyx_v_facold;
 
-  /* "geodesic_integrator.pyx":774
+  /* "geodesic_integrator.pyx":790
  *     hOrig[0] = h
  *     globalFacold[0] = facold
  *     globalX0[0] = x0             # <<<<<<<<<<<<<<
@@ -4696,7 +4763,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   (__pyx_v_globalX0[0]) = __pyx_v_x0;
 
-  /* "geodesic_integrator.pyx":776
+  /* "geodesic_integrator.pyx":792
  *     globalX0[0] = x0
  * 
  *     return 1             # <<<<<<<<<<<<<<
@@ -4706,7 +4773,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
   __pyx_r = 1;
   goto __pyx_L0;
 
-  /* "geodesic_integrator.pyx":451
+  /* "geodesic_integrator.pyx":468
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * @cython.cdivision(True)    # tuern off zerodivisioncheck
  * cdef int SolverRK45( double* initCond, double* globalX0, double xend,             # <<<<<<<<<<<<<<
@@ -20184,104 +20251,6 @@ static CYTHON_INLINE PyObject *__Pyx_GetModuleGlobalName(PyObject *name) {
     return result;
 }
 
-/* PyIntBinop */
-  #if CYTHON_COMPILING_IN_CPYTHON
-static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED int inplace) {
-    #if PY_MAJOR_VERSION < 3
-    if (likely(PyInt_CheckExact(op1))) {
-        const long b = intval;
-        long x;
-        long a = PyInt_AS_LONG(op1);
-            x = (long)((unsigned long)a + b);
-            if (likely((x^a) >= 0 || (x^b) >= 0))
-                return PyInt_FromLong(x);
-            return PyLong_Type.tp_as_number->nb_add(op1, op2);
-    }
-    #endif
-    #if CYTHON_USE_PYLONG_INTERNALS && PY_MAJOR_VERSION >= 3
-    if (likely(PyLong_CheckExact(op1))) {
-        const long b = intval;
-        long a, x;
-        const PY_LONG_LONG llb = intval;
-        PY_LONG_LONG lla, llx;
-        const digit* digits = ((PyLongObject*)op1)->ob_digit;
-        const Py_ssize_t size = Py_SIZE(op1);
-        if (likely(__Pyx_sst_abs(size) <= 1)) {
-            a = likely(size) ? digits[0] : 0;
-            if (size == -1) a = -a;
-        } else {
-            switch (size) {
-                case -2:
-                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                        a = -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
-                        lla = -(PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-                    }
-                case 2:
-                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
-                        a = (long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
-                        lla = (PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-                    }
-                case -3:
-                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                        a = -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
-                        lla = -(PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-                    }
-                case 3:
-                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
-                        a = (long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
-                        lla = (PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-                    }
-                case -4:
-                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
-                        a = -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
-                        lla = -(PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-                    }
-                case 4:
-                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
-                        a = (long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
-                        break;
-                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
-                        lla = (PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
-                        goto long_long;
-                    }
-                default: return PyLong_Type.tp_as_number->nb_add(op1, op2);
-            }
-        }
-                x = a + b;
-            return PyLong_FromLong(x);
-        long_long:
-                llx = lla + llb;
-            return PyLong_FromLongLong(llx);
-    }
-    #endif
-    if (PyFloat_CheckExact(op1)) {
-        const long b = intval;
-        double a = PyFloat_AS_DOUBLE(op1);
-            double result;
-            PyFPE_START_PROTECT("add", return NULL)
-            result = ((double)a) + (double)b;
-            PyFPE_END_PROTECT(result)
-            return PyFloat_FromDouble(result);
-    }
-    return (inplace ? PyNumber_InPlaceAdd : PyNumber_Add)(op1, op2);
-}
-#endif
-
 /* PyObjectCall */
   #if CYTHON_COMPILING_IN_CPYTHON
 static CYTHON_INLINE PyObject* __Pyx_PyObject_Call(PyObject *func, PyObject *arg, PyObject *kw) {
@@ -21877,6 +21846,104 @@ static CYTHON_INLINE PyObject *__Pyx_GetItemInt_Fast(PyObject *o, Py_ssize_t i, 
     return __Pyx_GetItemInt_Generic(o, PyInt_FromSsize_t(i));
 }
 
+/* PyIntBinop */
+          #if CYTHON_COMPILING_IN_CPYTHON
+static PyObject* __Pyx_PyInt_AddObjC(PyObject *op1, PyObject *op2, CYTHON_UNUSED long intval, CYTHON_UNUSED int inplace) {
+    #if PY_MAJOR_VERSION < 3
+    if (likely(PyInt_CheckExact(op1))) {
+        const long b = intval;
+        long x;
+        long a = PyInt_AS_LONG(op1);
+            x = (long)((unsigned long)a + b);
+            if (likely((x^a) >= 0 || (x^b) >= 0))
+                return PyInt_FromLong(x);
+            return PyLong_Type.tp_as_number->nb_add(op1, op2);
+    }
+    #endif
+    #if CYTHON_USE_PYLONG_INTERNALS && PY_MAJOR_VERSION >= 3
+    if (likely(PyLong_CheckExact(op1))) {
+        const long b = intval;
+        long a, x;
+        const PY_LONG_LONG llb = intval;
+        PY_LONG_LONG lla, llx;
+        const digit* digits = ((PyLongObject*)op1)->ob_digit;
+        const Py_ssize_t size = Py_SIZE(op1);
+        if (likely(__Pyx_sst_abs(size) <= 1)) {
+            a = likely(size) ? digits[0] : 0;
+            if (size == -1) a = -a;
+        } else {
+            switch (size) {
+                case -2:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        a = -(long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
+                        lla = -(PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+                    }
+                case 2:
+                    if (8 * sizeof(long) - 1 > 2 * PyLong_SHIFT) {
+                        a = (long) (((((unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 2 * PyLong_SHIFT) {
+                        lla = (PY_LONG_LONG) (((((unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+                    }
+                case -3:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        a = -(long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
+                        lla = -(PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+                    }
+                case 3:
+                    if (8 * sizeof(long) - 1 > 3 * PyLong_SHIFT) {
+                        a = (long) (((((((unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 3 * PyLong_SHIFT) {
+                        lla = (PY_LONG_LONG) (((((((unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+                    }
+                case -4:
+                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                        a = -(long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
+                        lla = -(PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+                    }
+                case 4:
+                    if (8 * sizeof(long) - 1 > 4 * PyLong_SHIFT) {
+                        a = (long) (((((((((unsigned long)digits[3]) << PyLong_SHIFT) | (unsigned long)digits[2]) << PyLong_SHIFT) | (unsigned long)digits[1]) << PyLong_SHIFT) | (unsigned long)digits[0]));
+                        break;
+                    } else if (8 * sizeof(PY_LONG_LONG) - 1 > 4 * PyLong_SHIFT) {
+                        lla = (PY_LONG_LONG) (((((((((unsigned PY_LONG_LONG)digits[3]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[2]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[1]) << PyLong_SHIFT) | (unsigned PY_LONG_LONG)digits[0]));
+                        goto long_long;
+                    }
+                default: return PyLong_Type.tp_as_number->nb_add(op1, op2);
+            }
+        }
+                x = a + b;
+            return PyLong_FromLong(x);
+        long_long:
+                llx = lla + llb;
+            return PyLong_FromLongLong(llx);
+    }
+    #endif
+    if (PyFloat_CheckExact(op1)) {
+        const long b = intval;
+        double a = PyFloat_AS_DOUBLE(op1);
+            double result;
+            PyFPE_START_PROTECT("add", return NULL)
+            result = ((double)a) + (double)b;
+            PyFPE_END_PROTECT(result)
+            return PyFloat_FromDouble(result);
+    }
+    return (inplace ? PyNumber_InPlaceAdd : PyNumber_Add)(op1, op2);
+}
+#endif
+
 /* WriteUnraisableException */
           static void __Pyx_WriteUnraisable(const char *name, CYTHON_UNUSED int clineno,
                                   CYTHON_UNUSED int lineno, CYTHON_UNUSED const char *filename,
@@ -22193,6 +22260,28 @@ __pyx_capsule_create(void *p, CYTHON_UNUSED const char *sig)
     return cobj;
 }
 
+/* CIntFromPyVerify */
+          #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
+    __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 0)
+#define __PYX_VERIFY_RETURN_INT_EXC(target_type, func_type, func_value)\
+    __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 1)
+#define __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, exc)\
+    {\
+        func_type value = func_value;\
+        if (sizeof(target_type) < sizeof(func_type)) {\
+            if (unlikely(value != (func_type) (target_type) value)) {\
+                func_type zero = 0;\
+                if (exc && unlikely(value == (func_type)-1 && PyErr_Occurred()))\
+                    return (target_type) -1;\
+                if (is_unsigned && unlikely(value < zero))\
+                    goto raise_neg_overflow;\
+                else\
+                    goto raise_overflow;\
+            }\
+        }\
+        return (target_type) value;\
+    }
+
 /* TypeInfoCompare */
           static int
 __pyx_typeinfo_cmp(__Pyx_TypeInfo *a, __Pyx_TypeInfo *b)
@@ -22439,27 +22528,32 @@ __pyx_fail:
     return result;
 }
 
-/* CIntFromPyVerify */
-          #define __PYX_VERIFY_RETURN_INT(target_type, func_type, func_value)\
-    __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 0)
-#define __PYX_VERIFY_RETURN_INT_EXC(target_type, func_type, func_value)\
-    __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, 1)
-#define __PYX__VERIFY_RETURN_INT(target_type, func_type, func_value, exc)\
-    {\
-        func_type value = func_value;\
-        if (sizeof(target_type) < sizeof(func_type)) {\
-            if (unlikely(value != (func_type) (target_type) value)) {\
-                func_type zero = 0;\
-                if (exc && unlikely(value == (func_type)-1 && PyErr_Occurred()))\
-                    return (target_type) -1;\
-                if (is_unsigned && unlikely(value < zero))\
-                    goto raise_neg_overflow;\
-                else\
-                    goto raise_overflow;\
-            }\
-        }\
-        return (target_type) value;\
+/* CIntToPy */
+          static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
+    const long neg_one = (long) -1, const_zero = (long) 0;
+    const int is_unsigned = neg_one > const_zero;
+    if (is_unsigned) {
+        if (sizeof(long) < sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(unsigned long)) {
+            return PyLong_FromUnsignedLong((unsigned long) value);
+        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
+            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
+        }
+    } else {
+        if (sizeof(long) <= sizeof(long)) {
+            return PyInt_FromLong((long) value);
+        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
+            return PyLong_FromLongLong((PY_LONG_LONG) value);
+        }
     }
+    {
+        int one = 1; int little = (int)*(unsigned char *)&one;
+        unsigned char *bytes = (unsigned char *)&value;
+        return _PyLong_FromByteArray(bytes, sizeof(long),
+                                     little, !is_unsigned);
+    }
+}
 
 /* CIntToPy */
           static CYTHON_INLINE PyObject* __Pyx_PyInt_From_int(int value) {
@@ -23009,33 +23103,6 @@ raise_neg_overflow:
     PyErr_SetString(PyExc_OverflowError,
         "can't convert negative value to int");
     return (int) -1;
-}
-
-/* CIntToPy */
-          static CYTHON_INLINE PyObject* __Pyx_PyInt_From_long(long value) {
-    const long neg_one = (long) -1, const_zero = (long) 0;
-    const int is_unsigned = neg_one > const_zero;
-    if (is_unsigned) {
-        if (sizeof(long) < sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(unsigned long)) {
-            return PyLong_FromUnsignedLong((unsigned long) value);
-        } else if (sizeof(long) <= sizeof(unsigned PY_LONG_LONG)) {
-            return PyLong_FromUnsignedLongLong((unsigned PY_LONG_LONG) value);
-        }
-    } else {
-        if (sizeof(long) <= sizeof(long)) {
-            return PyInt_FromLong((long) value);
-        } else if (sizeof(long) <= sizeof(PY_LONG_LONG)) {
-            return PyLong_FromLongLong((PY_LONG_LONG) value);
-        }
-    }
-    {
-        int one = 1; int little = (int)*(unsigned char *)&one;
-        unsigned char *bytes = (unsigned char *)&value;
-        return _PyLong_FromByteArray(bytes, sizeof(long),
-                                     little, !is_unsigned);
-    }
 }
 
 /* CIntFromPy */
