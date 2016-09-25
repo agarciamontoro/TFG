@@ -148,7 +148,7 @@ cpdef np.ndarray[np.float64_t, ndim=2] integrate_ray(double r, double cam_theta,
     cdef double xend = -30.0
     cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))
     cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, cam_theta, cam_phi, pR, pTheta])
-    cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E,causality]) 
+    cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E]) 
     
     Solver(x0, xend, n_steps, init, data, result)
 
@@ -257,12 +257,12 @@ cdef void Solver(double x, double xend, int n_steps,
     # that will be called n_steps times, so the overhead is minimum with this option.
 
     cdef double initial_conditions[5]
-    cdef double aditional_data[5]
+    cdef double aditional_data[4]
 
     for i in range(5): # TODO: SYSTEM_SIZE
         initial_conditions[i] = initCond[i]
 
-    for i in range(5):
+    for i in range(4):
         aditional_data[i] = data[i]
 
     # Store initial step conditions
@@ -323,13 +323,11 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
             1 -> q ( Carter's constant)
             2 -> a ( Black Hole spin)
             3 -> e ( Energy )
-            4 -> causality ( 0 for lightlike 1 for timelike ).
     """
     # Variables to hold the position of the ray, its momenta and related
     # operations between them and the constant a, which is the spin of the
     # black hole.
     cdef double r, r2, twor, theta, pR, pR2, pTheta, pTheta2, b, twob, b2, q, bMinusA, bMinusAE,a, a2
-
     # Variables to hold the sine and cosine of theta, along with some
     # operations with them
     cdef double sinT, cosT, sinT2, sinT2Inv, cosT2
@@ -338,11 +336,7 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     # called D), Theta (which is called Z) and rho, along with some operations
     # involving these values.
     cdef double P, R, D, Dinv, Z, DZplusR, rho2Inv, twoRho2Inv, rho4Inv
-
-    # Variable for the causality character of the geodesic
-
-    cdef double mu
-
+    
     # Variable for the energy
 
     cdef double energy
@@ -373,12 +367,8 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     a = data[2]
     energy = data[3]
     energy2 = energy * energy
-    mu = data[4] * data[4]
 
-    cdef double r2mu = r2 * mu
-    
     a2 = a*a
-    
     b2 = b*b
     bMinusA = b - a
     bMinusAE = b - a * energy
@@ -389,8 +379,8 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     Dinv = 1/D
 
     P = ( a2 + r2 ) * energy - a * b
-    R = P*P - D*(bMinusAE*bMinusAE + q + r2mu)
-    Z = q - cosT2*(b2*sinT2Inv + a2 * (mu - energy2) )
+    R = P*P - D*(bMinusAE*bMinusAE + q )
+    Z = q - cosT2*(b2*sinT2Inv - energy2 *  a2)
 
     rho2Inv = 1/(r2 + a2*cosT2)
     twoRho2Inv = rho2Inv/2
@@ -427,8 +417,7 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     # *********************** EQUATION 4 *********************** //
     # Derivatives with respect to r
     dD = twor - 2
-    dR = 4.0 * r * energy * P - twor * mu * D - ( q + bMinusAE * bMinusAE + r2mu ) * ( twor - 2.0 )
-
+    dR = 4.0 * r * energy * P  - ( q + bMinusAE * bMinusAE ) * ( twor - 2.0 )
     DZplusR = D*Z + R
 
     sum1 = + pTheta2
@@ -439,7 +428,6 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     sum6 = - (dD*DZplusR * Dinv * Dinv)
 
     f[3] = r*(sum1 + sum2 + sum3)*rho4Inv + (sum4 + sum5 + sum6)*twoRho2Inv
-
     # *********************** EQUATION 5 *********************** //
     # Derivatives with respect to theta (called z here)
     dRhoTimesRho = - a2*cosT*sinT
@@ -447,7 +435,7 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     cdef double cosT3 = cosT2*cosT
     cdef double sinT3 = sinT2*sinT
 
-    dZ = 2*cosT*((b2*sinT2Inv) + a2 * (mu - energy2)  )*sinT + (2*b2*cosT3)/(sinT3)
+    dZ = - 2 * ( Z - q ) / cosT * sinT + (2*b2*cosT3)/(sinT3)
 
     sum1 = + pTheta2
     sum2 = + D*pR2

@@ -890,7 +890,7 @@ struct __pyx_opt_args_19geodesic_integrator_calculate_temporal_component {
   int causality;
 };
 
-/* "geodesic_integrator.pyx":468
+/* "geodesic_integrator.pyx":456
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * @cython.cdivision(True)    # tuern off zerodivisioncheck
  * cdef int SolverRK45( double* initCond, double* globalX0, double xend,             # <<<<<<<<<<<<<<
@@ -2022,7 +2022,7 @@ static PyObject *__pyx_tuple__24;
  */
 
 static PyObject *__pyx_pw_19geodesic_integrator_1integrate_ray(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v_r, double __pyx_v_cam_theta, double __pyx_v_cam_phi, double __pyx_v_theta_cs, double __pyx_v_phi_cs, double __pyx_v_a, double __pyx_v_causality, int __pyx_v_n_steps, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v_r, double __pyx_v_cam_theta, double __pyx_v_cam_phi, double __pyx_v_theta_cs, double __pyx_v_phi_cs, double __pyx_v_a, CYTHON_UNUSED double __pyx_v_causality, int __pyx_v_n_steps, CYTHON_UNUSED int __pyx_skip_dispatch) {
   double __pyx_v_theta;
   double __pyx_v_a2;
   double __pyx_v_r2;
@@ -2277,7 +2277,7 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
  *     cdef double xend = -30.0
  *     cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, cam_theta, cam_phi, pR, pTheta])
- *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E,causality])
+ *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E])
  */
   __pyx_t_2 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 149, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -2338,7 +2338,7 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
  *     cdef double xend = -30.0
  *     cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))
  *     cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, cam_theta, cam_phi, pR, pTheta])             # <<<<<<<<<<<<<<
- *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E,causality])
+ *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E])
  * 
  */
   __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_np); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 150, __pyx_L1_error)
@@ -2416,7 +2416,7 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
   /* "geodesic_integrator.pyx":151
  *     cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))
  *     cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, cam_theta, cam_phi, pR, pTheta])
- *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E,causality])             # <<<<<<<<<<<<<<
+ *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E])             # <<<<<<<<<<<<<<
  * 
  *     Solver(x0, xend, n_steps, init, data, result)
  */
@@ -2433,49 +2433,44 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
   __Pyx_GOTREF(__pyx_t_8);
   __pyx_t_2 = PyFloat_FromDouble(__pyx_v_E); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_4 = PyFloat_FromDouble(__pyx_v_causality); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 151, __pyx_L1_error)
+  __pyx_t_4 = PyList_New(4); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 151, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_3 = PyList_New(5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 151, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_5);
-  PyList_SET_ITEM(__pyx_t_3, 0, __pyx_t_5);
+  PyList_SET_ITEM(__pyx_t_4, 0, __pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_9);
-  PyList_SET_ITEM(__pyx_t_3, 1, __pyx_t_9);
+  PyList_SET_ITEM(__pyx_t_4, 1, __pyx_t_9);
   __Pyx_GIVEREF(__pyx_t_8);
-  PyList_SET_ITEM(__pyx_t_3, 2, __pyx_t_8);
+  PyList_SET_ITEM(__pyx_t_4, 2, __pyx_t_8);
   __Pyx_GIVEREF(__pyx_t_2);
-  PyList_SET_ITEM(__pyx_t_3, 3, __pyx_t_2);
-  __Pyx_GIVEREF(__pyx_t_4);
-  PyList_SET_ITEM(__pyx_t_3, 4, __pyx_t_4);
+  PyList_SET_ITEM(__pyx_t_4, 3, __pyx_t_2);
   __pyx_t_5 = 0;
   __pyx_t_9 = 0;
   __pyx_t_8 = 0;
   __pyx_t_2 = 0;
-  __pyx_t_4 = 0;
-  __pyx_t_4 = NULL;
+  __pyx_t_2 = NULL;
   if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_7))) {
-    __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_7);
-    if (likely(__pyx_t_4)) {
+    __pyx_t_2 = PyMethod_GET_SELF(__pyx_t_7);
+    if (likely(__pyx_t_2)) {
       PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_2);
       __Pyx_INCREF(function);
       __Pyx_DECREF_SET(__pyx_t_7, function);
     }
   }
-  if (!__pyx_t_4) {
-    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  if (!__pyx_t_2) {
+    __pyx_t_1 = __Pyx_PyObject_CallOneArg(__pyx_t_7, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_GOTREF(__pyx_t_1);
   } else {
-    __pyx_t_2 = PyTuple_New(1+1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_2);
-    __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_2, 0, __pyx_t_4); __pyx_t_4 = NULL;
-    __Pyx_GIVEREF(__pyx_t_3);
-    PyTuple_SET_ITEM(__pyx_t_2, 0+1, __pyx_t_3);
-    __pyx_t_3 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_2, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __pyx_t_8 = PyTuple_New(1+1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 151, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_2); __pyx_t_2 = NULL;
+    __Pyx_GIVEREF(__pyx_t_4);
+    PyTuple_SET_ITEM(__pyx_t_8, 0+1, __pyx_t_4);
+    __pyx_t_4 = 0;
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_7, __pyx_t_8, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
   }
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 151, __pyx_L1_error)
@@ -2493,7 +2488,7 @@ static PyArrayObject *__pyx_f_19geodesic_integrator_integrate_ray(double __pyx_v
   __pyx_t_1 = 0;
 
   /* "geodesic_integrator.pyx":153
- *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E,causality])
+ *     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E])
  * 
  *     Solver(x0, xend, n_steps, init, data, result)             # <<<<<<<<<<<<<<
  * 
@@ -3155,7 +3150,7 @@ static void __pyx_f_19geodesic_integrator_Solver(double __pyx_v_x, double __pyx_
   int __pyx_v_current_step;
   int __pyx_v_i;
   double __pyx_v_initial_conditions[5];
-  double __pyx_v_aditional_data[5];
+  double __pyx_v_aditional_data[4];
   __Pyx_RefNannyDeclarations
   int __pyx_t_1;
   Py_ssize_t __pyx_t_2;
@@ -3211,7 +3206,7 @@ static void __pyx_f_19geodesic_integrator_Solver(double __pyx_v_x, double __pyx_
   __pyx_v_step = ((__pyx_v_xend - __pyx_v_x) / ((double)__pyx_v_n_steps));
 
   /* "geodesic_integrator.pyx":262
- *     cdef double aditional_data[5]
+ *     cdef double aditional_data[4]
  * 
  *     for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
  *         initial_conditions[i] = initCond[i]
@@ -3225,7 +3220,7 @@ static void __pyx_f_19geodesic_integrator_Solver(double __pyx_v_x, double __pyx_
  *     for i in range(5): # TODO: SYSTEM_SIZE
  *         initial_conditions[i] = initCond[i]             # <<<<<<<<<<<<<<
  * 
- *     for i in range(5):
+ *     for i in range(4):
  */
     __pyx_t_2 = __pyx_v_i;
     (__pyx_v_initial_conditions[__pyx_v_i]) = (*((double *) ( /* dim=0 */ (__pyx_v_initCond.data + __pyx_t_2 * __pyx_v_initCond.strides[0]) )));
@@ -3234,16 +3229,16 @@ static void __pyx_f_19geodesic_integrator_Solver(double __pyx_v_x, double __pyx_
   /* "geodesic_integrator.pyx":265
  *         initial_conditions[i] = initCond[i]
  * 
- *     for i in range(5):             # <<<<<<<<<<<<<<
+ *     for i in range(4):             # <<<<<<<<<<<<<<
  *         aditional_data[i] = data[i]
  * 
  */
-  for (__pyx_t_1 = 0; __pyx_t_1 < 5; __pyx_t_1+=1) {
+  for (__pyx_t_1 = 0; __pyx_t_1 < 4; __pyx_t_1+=1) {
     __pyx_v_i = __pyx_t_1;
 
     /* "geodesic_integrator.pyx":266
  * 
- *     for i in range(5):
+ *     for i in range(4):
  *         aditional_data[i] = data[i]             # <<<<<<<<<<<<<<
  * 
  *     # Store initial step conditions
@@ -3434,10 +3429,8 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
   double __pyx_v_rho2Inv;
   double __pyx_v_twoRho2Inv;
   double __pyx_v_rho4Inv;
-  double __pyx_v_mu;
   double __pyx_v_energy;
   double __pyx_v_energy2;
-  double __pyx_v_r2mu;
   double __pyx_v_dR;
   double __pyx_v_dZ;
   double __pyx_v_dRhoTimesRho;
@@ -3453,7 +3446,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("KerrGeodesicEquations", 0);
 
-  /* "geodesic_integrator.pyx":353
+  /* "geodesic_integrator.pyx":347
  *     # Retrieval of the input data (position of the ray, momenta and
  *     # constants).
  *     r = y[0]             # <<<<<<<<<<<<<<
@@ -3462,7 +3455,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_r = (__pyx_v_y[0]);
 
-  /* "geodesic_integrator.pyx":354
+  /* "geodesic_integrator.pyx":348
  *     # constants).
  *     r = y[0]
  *     theta = y[1]             # <<<<<<<<<<<<<<
@@ -3471,7 +3464,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_theta = (__pyx_v_y[1]);
 
-  /* "geodesic_integrator.pyx":355
+  /* "geodesic_integrator.pyx":349
  *     r = y[0]
  *     theta = y[1]
  *     pR = y[3]             # <<<<<<<<<<<<<<
@@ -3480,7 +3473,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_pR = (__pyx_v_y[3]);
 
-  /* "geodesic_integrator.pyx":356
+  /* "geodesic_integrator.pyx":350
  *     theta = y[1]
  *     pR = y[3]
  *     pTheta = y[4]             # <<<<<<<<<<<<<<
@@ -3489,7 +3482,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_pTheta = (__pyx_v_y[4]);
 
-  /* "geodesic_integrator.pyx":359
+  /* "geodesic_integrator.pyx":353
  * 
  *     # Computation of the square of r, widely used in the computations.
  *     r2 = r*r             # <<<<<<<<<<<<<<
@@ -3498,7 +3491,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_r2 = (__pyx_v_r * __pyx_v_r);
 
-  /* "geodesic_integrator.pyx":362
+  /* "geodesic_integrator.pyx":356
  * 
  *     # Sine and cosine of theta, as well as their squares and inverses.
  *     sinT = sin(theta)             # <<<<<<<<<<<<<<
@@ -3507,7 +3500,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sinT = sin(__pyx_v_theta);
 
-  /* "geodesic_integrator.pyx":363
+  /* "geodesic_integrator.pyx":357
  *     # Sine and cosine of theta, as well as their squares and inverses.
  *     sinT = sin(theta)
  *     cosT = cos(theta)             # <<<<<<<<<<<<<<
@@ -3516,7 +3509,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_cosT = cos(__pyx_v_theta);
 
-  /* "geodesic_integrator.pyx":364
+  /* "geodesic_integrator.pyx":358
  *     sinT = sin(theta)
  *     cosT = cos(theta)
  *     sinT2 = sinT*sinT             # <<<<<<<<<<<<<<
@@ -3525,7 +3518,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sinT2 = (__pyx_v_sinT * __pyx_v_sinT);
 
-  /* "geodesic_integrator.pyx":365
+  /* "geodesic_integrator.pyx":359
  *     cosT = cos(theta)
  *     sinT2 = sinT*sinT
  *     sinT2Inv = 1/sinT2             # <<<<<<<<<<<<<<
@@ -3534,7 +3527,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sinT2Inv = (1.0 / __pyx_v_sinT2);
 
-  /* "geodesic_integrator.pyx":366
+  /* "geodesic_integrator.pyx":360
  *     sinT2 = sinT*sinT
  *     sinT2Inv = 1/sinT2
  *     cosT2 = cosT*cosT             # <<<<<<<<<<<<<<
@@ -3543,7 +3536,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_cosT2 = (__pyx_v_cosT * __pyx_v_cosT);
 
-  /* "geodesic_integrator.pyx":371
+  /* "geodesic_integrator.pyx":365
  *     # the square of b and the number b - a, repeateadly used throughout the
  *     # computation
  *     b = data[0]             # <<<<<<<<<<<<<<
@@ -3552,7 +3545,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_b = (__pyx_v_data[0]);
 
-  /* "geodesic_integrator.pyx":372
+  /* "geodesic_integrator.pyx":366
  *     # computation
  *     b = data[0]
  *     q = data[1]             # <<<<<<<<<<<<<<
@@ -3561,7 +3554,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_q = (__pyx_v_data[1]);
 
-  /* "geodesic_integrator.pyx":373
+  /* "geodesic_integrator.pyx":367
  *     b = data[0]
  *     q = data[1]
  *     a = data[2]             # <<<<<<<<<<<<<<
@@ -3570,62 +3563,44 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_a = (__pyx_v_data[2]);
 
-  /* "geodesic_integrator.pyx":374
+  /* "geodesic_integrator.pyx":368
  *     q = data[1]
  *     a = data[2]
  *     energy = data[3]             # <<<<<<<<<<<<<<
  *     energy2 = energy * energy
- *     mu = data[4] * data[4]
+ * 
  */
   __pyx_v_energy = (__pyx_v_data[3]);
 
-  /* "geodesic_integrator.pyx":375
+  /* "geodesic_integrator.pyx":369
  *     a = data[2]
  *     energy = data[3]
  *     energy2 = energy * energy             # <<<<<<<<<<<<<<
- *     mu = data[4] * data[4]
  * 
+ *     a2 = a*a
  */
   __pyx_v_energy2 = (__pyx_v_energy * __pyx_v_energy);
 
-  /* "geodesic_integrator.pyx":376
- *     energy = data[3]
+  /* "geodesic_integrator.pyx":371
  *     energy2 = energy * energy
- *     mu = data[4] * data[4]             # <<<<<<<<<<<<<<
- * 
- *     cdef double r2mu = r2 * mu
- */
-  __pyx_v_mu = ((__pyx_v_data[4]) * (__pyx_v_data[4]));
-
-  /* "geodesic_integrator.pyx":378
- *     mu = data[4] * data[4]
- * 
- *     cdef double r2mu = r2 * mu             # <<<<<<<<<<<<<<
- * 
- *     a2 = a*a
- */
-  __pyx_v_r2mu = (__pyx_v_r2 * __pyx_v_mu);
-
-  /* "geodesic_integrator.pyx":380
- *     cdef double r2mu = r2 * mu
  * 
  *     a2 = a*a             # <<<<<<<<<<<<<<
- * 
  *     b2 = b*b
+ *     bMinusA = b - a
  */
   __pyx_v_a2 = (__pyx_v_a * __pyx_v_a);
 
-  /* "geodesic_integrator.pyx":382
- *     a2 = a*a
+  /* "geodesic_integrator.pyx":372
  * 
+ *     a2 = a*a
  *     b2 = b*b             # <<<<<<<<<<<<<<
  *     bMinusA = b - a
  *     bMinusAE = b - a * energy
  */
   __pyx_v_b2 = (__pyx_v_b * __pyx_v_b);
 
-  /* "geodesic_integrator.pyx":383
- * 
+  /* "geodesic_integrator.pyx":373
+ *     a2 = a*a
  *     b2 = b*b
  *     bMinusA = b - a             # <<<<<<<<<<<<<<
  *     bMinusAE = b - a * energy
@@ -3633,7 +3608,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_bMinusA = (__pyx_v_b - __pyx_v_a);
 
-  /* "geodesic_integrator.pyx":384
+  /* "geodesic_integrator.pyx":374
  *     b2 = b*b
  *     bMinusA = b - a
  *     bMinusAE = b - a * energy             # <<<<<<<<<<<<<<
@@ -3642,7 +3617,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_bMinusAE = (__pyx_v_b - (__pyx_v_a * __pyx_v_energy));
 
-  /* "geodesic_integrator.pyx":388
+  /* "geodesic_integrator.pyx":378
  *     # Commonly used variables: R, D, Theta (that is called Z) and
  *     # rho (and its square and cube).
  *     D = r2 - 2*r + a2             # <<<<<<<<<<<<<<
@@ -3651,7 +3626,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_D = ((__pyx_v_r2 - (2.0 * __pyx_v_r)) + __pyx_v_a2);
 
-  /* "geodesic_integrator.pyx":389
+  /* "geodesic_integrator.pyx":379
  *     # rho (and its square and cube).
  *     D = r2 - 2*r + a2
  *     Dinv = 1/D             # <<<<<<<<<<<<<<
@@ -3660,35 +3635,35 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_Dinv = (1.0 / __pyx_v_D);
 
-  /* "geodesic_integrator.pyx":391
+  /* "geodesic_integrator.pyx":381
  *     Dinv = 1/D
  * 
  *     P = ( a2 + r2 ) * energy - a * b             # <<<<<<<<<<<<<<
- *     R = P*P - D*(bMinusAE*bMinusAE + q + r2mu)
- *     Z = q - cosT2*(b2*sinT2Inv + a2 * (mu - energy2) )
+ *     R = P*P - D*(bMinusAE*bMinusAE + q )
+ *     Z = q - cosT2*(b2*sinT2Inv - energy2 *  a2)
  */
   __pyx_v_P = (((__pyx_v_a2 + __pyx_v_r2) * __pyx_v_energy) - (__pyx_v_a * __pyx_v_b));
 
-  /* "geodesic_integrator.pyx":392
+  /* "geodesic_integrator.pyx":382
  * 
  *     P = ( a2 + r2 ) * energy - a * b
- *     R = P*P - D*(bMinusAE*bMinusAE + q + r2mu)             # <<<<<<<<<<<<<<
- *     Z = q - cosT2*(b2*sinT2Inv + a2 * (mu - energy2) )
+ *     R = P*P - D*(bMinusAE*bMinusAE + q )             # <<<<<<<<<<<<<<
+ *     Z = q - cosT2*(b2*sinT2Inv - energy2 *  a2)
  * 
  */
-  __pyx_v_R = ((__pyx_v_P * __pyx_v_P) - (__pyx_v_D * (((__pyx_v_bMinusAE * __pyx_v_bMinusAE) + __pyx_v_q) + __pyx_v_r2mu)));
+  __pyx_v_R = ((__pyx_v_P * __pyx_v_P) - (__pyx_v_D * ((__pyx_v_bMinusAE * __pyx_v_bMinusAE) + __pyx_v_q)));
 
-  /* "geodesic_integrator.pyx":393
+  /* "geodesic_integrator.pyx":383
  *     P = ( a2 + r2 ) * energy - a * b
- *     R = P*P - D*(bMinusAE*bMinusAE + q + r2mu)
- *     Z = q - cosT2*(b2*sinT2Inv + a2 * (mu - energy2) )             # <<<<<<<<<<<<<<
+ *     R = P*P - D*(bMinusAE*bMinusAE + q )
+ *     Z = q - cosT2*(b2*sinT2Inv - energy2 *  a2)             # <<<<<<<<<<<<<<
  * 
  *     rho2Inv = 1/(r2 + a2*cosT2)
  */
-  __pyx_v_Z = (__pyx_v_q - (__pyx_v_cosT2 * ((__pyx_v_b2 * __pyx_v_sinT2Inv) + (__pyx_v_a2 * (__pyx_v_mu - __pyx_v_energy2)))));
+  __pyx_v_Z = (__pyx_v_q - (__pyx_v_cosT2 * ((__pyx_v_b2 * __pyx_v_sinT2Inv) - (__pyx_v_energy2 * __pyx_v_a2))));
 
-  /* "geodesic_integrator.pyx":395
- *     Z = q - cosT2*(b2*sinT2Inv + a2 * (mu - energy2) )
+  /* "geodesic_integrator.pyx":385
+ *     Z = q - cosT2*(b2*sinT2Inv - energy2 *  a2)
  * 
  *     rho2Inv = 1/(r2 + a2*cosT2)             # <<<<<<<<<<<<<<
  *     twoRho2Inv = rho2Inv/2
@@ -3696,7 +3671,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_rho2Inv = (1.0 / (__pyx_v_r2 + (__pyx_v_a2 * __pyx_v_cosT2)));
 
-  /* "geodesic_integrator.pyx":396
+  /* "geodesic_integrator.pyx":386
  * 
  *     rho2Inv = 1/(r2 + a2*cosT2)
  *     twoRho2Inv = rho2Inv/2             # <<<<<<<<<<<<<<
@@ -3705,7 +3680,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_twoRho2Inv = (__pyx_v_rho2Inv / 2.0);
 
-  /* "geodesic_integrator.pyx":397
+  /* "geodesic_integrator.pyx":387
  *     rho2Inv = 1/(r2 + a2*cosT2)
  *     twoRho2Inv = rho2Inv/2
  *     rho4Inv = rho2Inv*rho2Inv             # <<<<<<<<<<<<<<
@@ -3714,7 +3689,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_rho4Inv = (__pyx_v_rho2Inv * __pyx_v_rho2Inv);
 
-  /* "geodesic_integrator.pyx":400
+  /* "geodesic_integrator.pyx":390
  * 
  *     # Squares of the momenta components
  *     pR2 = pR*pR             # <<<<<<<<<<<<<<
@@ -3723,7 +3698,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_pR2 = (__pyx_v_pR * __pyx_v_pR);
 
-  /* "geodesic_integrator.pyx":401
+  /* "geodesic_integrator.pyx":391
  *     # Squares of the momenta components
  *     pR2 = pR*pR
  *     pTheta2 = pTheta*pTheta             # <<<<<<<<<<<<<<
@@ -3732,7 +3707,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_pTheta2 = (__pyx_v_pTheta * __pyx_v_pTheta);
 
-  /* "geodesic_integrator.pyx":404
+  /* "geodesic_integrator.pyx":394
  * 
  *     # Double b and double r, that's it! :)
  *     twob = 2*b             # <<<<<<<<<<<<<<
@@ -3741,7 +3716,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_twob = (2.0 * __pyx_v_b);
 
-  /* "geodesic_integrator.pyx":405
+  /* "geodesic_integrator.pyx":395
  *     # Double b and double r, that's it! :)
  *     twob = 2*b
  *     twor = 2*r             # <<<<<<<<<<<<<<
@@ -3750,7 +3725,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_twor = (2.0 * __pyx_v_r);
 
-  /* "geodesic_integrator.pyx":415
+  /* "geodesic_integrator.pyx":405
  * 
  *     # *********************** EQUATION 1 *********************** //
  *     f[0] = D * pR * rho2Inv             # <<<<<<<<<<<<<<
@@ -3759,7 +3734,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   (__pyx_v_f[0]) = ((__pyx_v_D * __pyx_v_pR) * __pyx_v_rho2Inv);
 
-  /* "geodesic_integrator.pyx":418
+  /* "geodesic_integrator.pyx":408
  * 
  *     # *********************** EQUATION 2 *********************** //
  *     f[1] = pTheta * rho2Inv             # <<<<<<<<<<<<<<
@@ -3768,7 +3743,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   (__pyx_v_f[1]) = (__pyx_v_pTheta * __pyx_v_rho2Inv);
 
-  /* "geodesic_integrator.pyx":422
+  /* "geodesic_integrator.pyx":412
  *     # *********************** EQUATION 3 *********************** //
  *     # Derivatives with respect to b
  *     dR = -2.0 * D * bMinusAE + (-2.0) * a * P             # <<<<<<<<<<<<<<
@@ -3777,7 +3752,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_dR = (((-2.0 * __pyx_v_D) * __pyx_v_bMinusAE) + ((-2.0 * __pyx_v_a) * __pyx_v_P));
 
-  /* "geodesic_integrator.pyx":423
+  /* "geodesic_integrator.pyx":413
  *     # Derivatives with respect to b
  *     dR = -2.0 * D * bMinusAE + (-2.0) * a * P
  *     dZ = - twob * cosT2 * sinT2Inv             # <<<<<<<<<<<<<<
@@ -3786,7 +3761,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_dZ = (((-__pyx_v_twob) * __pyx_v_cosT2) * __pyx_v_sinT2Inv);
 
-  /* "geodesic_integrator.pyx":425
+  /* "geodesic_integrator.pyx":415
  *     dZ = - twob * cosT2 * sinT2Inv
  * 
  *     f[2] = - (dR + D*dZ)*Dinv*twoRho2Inv             # <<<<<<<<<<<<<<
@@ -3795,34 +3770,34 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   (__pyx_v_f[2]) = (((-(__pyx_v_dR + (__pyx_v_D * __pyx_v_dZ))) * __pyx_v_Dinv) * __pyx_v_twoRho2Inv);
 
-  /* "geodesic_integrator.pyx":429
+  /* "geodesic_integrator.pyx":419
  *     # *********************** EQUATION 4 *********************** //
  *     # Derivatives with respect to r
  *     dD = twor - 2             # <<<<<<<<<<<<<<
- *     dR = 4.0 * r * energy * P - twor * mu * D - ( q + bMinusAE * bMinusAE + r2mu ) * ( twor - 2.0 )
- * 
+ *     dR = 4.0 * r * energy * P  - ( q + bMinusAE * bMinusAE ) * ( twor - 2.0 )
+ *     DZplusR = D*Z + R
  */
   __pyx_v_dD = (__pyx_v_twor - 2.0);
 
-  /* "geodesic_integrator.pyx":430
+  /* "geodesic_integrator.pyx":420
  *     # Derivatives with respect to r
  *     dD = twor - 2
- *     dR = 4.0 * r * energy * P - twor * mu * D - ( q + bMinusAE * bMinusAE + r2mu ) * ( twor - 2.0 )             # <<<<<<<<<<<<<<
- * 
+ *     dR = 4.0 * r * energy * P  - ( q + bMinusAE * bMinusAE ) * ( twor - 2.0 )             # <<<<<<<<<<<<<<
  *     DZplusR = D*Z + R
- */
-  __pyx_v_dR = (((((4.0 * __pyx_v_r) * __pyx_v_energy) * __pyx_v_P) - ((__pyx_v_twor * __pyx_v_mu) * __pyx_v_D)) - (((__pyx_v_q + (__pyx_v_bMinusAE * __pyx_v_bMinusAE)) + __pyx_v_r2mu) * (__pyx_v_twor - 2.0)));
-
-  /* "geodesic_integrator.pyx":432
- *     dR = 4.0 * r * energy * P - twor * mu * D - ( q + bMinusAE * bMinusAE + r2mu ) * ( twor - 2.0 )
  * 
+ */
+  __pyx_v_dR = ((((4.0 * __pyx_v_r) * __pyx_v_energy) * __pyx_v_P) - ((__pyx_v_q + (__pyx_v_bMinusAE * __pyx_v_bMinusAE)) * (__pyx_v_twor - 2.0)));
+
+  /* "geodesic_integrator.pyx":421
+ *     dD = twor - 2
+ *     dR = 4.0 * r * energy * P  - ( q + bMinusAE * bMinusAE ) * ( twor - 2.0 )
  *     DZplusR = D*Z + R             # <<<<<<<<<<<<<<
  * 
  *     sum1 = + pTheta2
  */
   __pyx_v_DZplusR = ((__pyx_v_D * __pyx_v_Z) + __pyx_v_R);
 
-  /* "geodesic_integrator.pyx":434
+  /* "geodesic_integrator.pyx":423
  *     DZplusR = D*Z + R
  * 
  *     sum1 = + pTheta2             # <<<<<<<<<<<<<<
@@ -3831,7 +3806,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum1 = __pyx_v_pTheta2;
 
-  /* "geodesic_integrator.pyx":435
+  /* "geodesic_integrator.pyx":424
  * 
  *     sum1 = + pTheta2
  *     sum2 = + D*pR2             # <<<<<<<<<<<<<<
@@ -3840,7 +3815,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum2 = (__pyx_v_D * __pyx_v_pR2);
 
-  /* "geodesic_integrator.pyx":436
+  /* "geodesic_integrator.pyx":425
  *     sum1 = + pTheta2
  *     sum2 = + D*pR2
  *     sum3 = - (DZplusR * Dinv)             # <<<<<<<<<<<<<<
@@ -3849,7 +3824,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum3 = (-(__pyx_v_DZplusR * __pyx_v_Dinv));
 
-  /* "geodesic_integrator.pyx":437
+  /* "geodesic_integrator.pyx":426
  *     sum2 = + D*pR2
  *     sum3 = - (DZplusR * Dinv)
  *     sum4 = - (dD*pR2)             # <<<<<<<<<<<<<<
@@ -3858,7 +3833,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum4 = (-(__pyx_v_dD * __pyx_v_pR2));
 
-  /* "geodesic_integrator.pyx":438
+  /* "geodesic_integrator.pyx":427
  *     sum3 = - (DZplusR * Dinv)
  *     sum4 = - (dD*pR2)
  *     sum5 = + (dD*Z + dR) * Dinv             # <<<<<<<<<<<<<<
@@ -3867,7 +3842,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum5 = (((__pyx_v_dD * __pyx_v_Z) + __pyx_v_dR) * __pyx_v_Dinv);
 
-  /* "geodesic_integrator.pyx":439
+  /* "geodesic_integrator.pyx":428
  *     sum4 = - (dD*pR2)
  *     sum5 = + (dD*Z + dR) * Dinv
  *     sum6 = - (dD*DZplusR * Dinv * Dinv)             # <<<<<<<<<<<<<<
@@ -3876,16 +3851,16 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum6 = (-(((__pyx_v_dD * __pyx_v_DZplusR) * __pyx_v_Dinv) * __pyx_v_Dinv));
 
-  /* "geodesic_integrator.pyx":441
+  /* "geodesic_integrator.pyx":430
  *     sum6 = - (dD*DZplusR * Dinv * Dinv)
  * 
  *     f[3] = r*(sum1 + sum2 + sum3)*rho4Inv + (sum4 + sum5 + sum6)*twoRho2Inv             # <<<<<<<<<<<<<<
- * 
  *     # *********************** EQUATION 5 *********************** //
+ *     # Derivatives with respect to theta (called z here)
  */
   (__pyx_v_f[3]) = (((__pyx_v_r * ((__pyx_v_sum1 + __pyx_v_sum2) + __pyx_v_sum3)) * __pyx_v_rho4Inv) + (((__pyx_v_sum4 + __pyx_v_sum5) + __pyx_v_sum6) * __pyx_v_twoRho2Inv));
 
-  /* "geodesic_integrator.pyx":445
+  /* "geodesic_integrator.pyx":433
  *     # *********************** EQUATION 5 *********************** //
  *     # Derivatives with respect to theta (called z here)
  *     dRhoTimesRho = - a2*cosT*sinT             # <<<<<<<<<<<<<<
@@ -3894,7 +3869,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_dRhoTimesRho = (((-__pyx_v_a2) * __pyx_v_cosT) * __pyx_v_sinT);
 
-  /* "geodesic_integrator.pyx":447
+  /* "geodesic_integrator.pyx":435
  *     dRhoTimesRho = - a2*cosT*sinT
  * 
  *     cdef double cosT3 = cosT2*cosT             # <<<<<<<<<<<<<<
@@ -3903,26 +3878,26 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_cosT3 = (__pyx_v_cosT2 * __pyx_v_cosT);
 
-  /* "geodesic_integrator.pyx":448
+  /* "geodesic_integrator.pyx":436
  * 
  *     cdef double cosT3 = cosT2*cosT
  *     cdef double sinT3 = sinT2*sinT             # <<<<<<<<<<<<<<
  * 
- *     dZ = 2*cosT*((b2*sinT2Inv) + a2 * (mu - energy2)  )*sinT + (2*b2*cosT3)/(sinT3)
+ *     dZ = - 2 * ( Z - q ) / cosT * sinT + (2*b2*cosT3)/(sinT3)
  */
   __pyx_v_sinT3 = (__pyx_v_sinT2 * __pyx_v_sinT);
 
-  /* "geodesic_integrator.pyx":450
+  /* "geodesic_integrator.pyx":438
  *     cdef double sinT3 = sinT2*sinT
  * 
- *     dZ = 2*cosT*((b2*sinT2Inv) + a2 * (mu - energy2)  )*sinT + (2*b2*cosT3)/(sinT3)             # <<<<<<<<<<<<<<
+ *     dZ = - 2 * ( Z - q ) / cosT * sinT + (2*b2*cosT3)/(sinT3)             # <<<<<<<<<<<<<<
  * 
  *     sum1 = + pTheta2
  */
-  __pyx_v_dZ = ((((2.0 * __pyx_v_cosT) * ((__pyx_v_b2 * __pyx_v_sinT2Inv) + (__pyx_v_a2 * (__pyx_v_mu - __pyx_v_energy2)))) * __pyx_v_sinT) + (((2.0 * __pyx_v_b2) * __pyx_v_cosT3) / __pyx_v_sinT3));
+  __pyx_v_dZ = ((((-2.0 * (__pyx_v_Z - __pyx_v_q)) / __pyx_v_cosT) * __pyx_v_sinT) + (((2.0 * __pyx_v_b2) * __pyx_v_cosT3) / __pyx_v_sinT3));
 
-  /* "geodesic_integrator.pyx":452
- *     dZ = 2*cosT*((b2*sinT2Inv) + a2 * (mu - energy2)  )*sinT + (2*b2*cosT3)/(sinT3)
+  /* "geodesic_integrator.pyx":440
+ *     dZ = - 2 * ( Z - q ) / cosT * sinT + (2*b2*cosT3)/(sinT3)
  * 
  *     sum1 = + pTheta2             # <<<<<<<<<<<<<<
  *     sum2 = + D*pR2
@@ -3930,7 +3905,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum1 = __pyx_v_pTheta2;
 
-  /* "geodesic_integrator.pyx":453
+  /* "geodesic_integrator.pyx":441
  * 
  *     sum1 = + pTheta2
  *     sum2 = + D*pR2             # <<<<<<<<<<<<<<
@@ -3939,7 +3914,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum2 = (__pyx_v_D * __pyx_v_pR2);
 
-  /* "geodesic_integrator.pyx":454
+  /* "geodesic_integrator.pyx":442
  *     sum1 = + pTheta2
  *     sum2 = + D*pR2
  *     sum3 = - DZplusR * Dinv             # <<<<<<<<<<<<<<
@@ -3948,7 +3923,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum3 = ((-__pyx_v_DZplusR) * __pyx_v_Dinv);
 
-  /* "geodesic_integrator.pyx":455
+  /* "geodesic_integrator.pyx":443
  *     sum2 = + D*pR2
  *     sum3 = - DZplusR * Dinv
  *     sum4 = + dZ * twoRho2Inv             # <<<<<<<<<<<<<<
@@ -3957,7 +3932,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
  */
   __pyx_v_sum4 = (__pyx_v_dZ * __pyx_v_twoRho2Inv);
 
-  /* "geodesic_integrator.pyx":457
+  /* "geodesic_integrator.pyx":445
  *     sum4 = + dZ * twoRho2Inv
  * 
  *     f[4] = dRhoTimesRho*(sum1 + sum2 + sum3)*rho4Inv + sum4             # <<<<<<<<<<<<<<
@@ -3978,7 +3953,7 @@ static void __pyx_f_19geodesic_integrator_KerrGeodesicEquations(double *__pyx_v_
   __Pyx_RefNannyFinishContext();
 }
 
-/* "geodesic_integrator.pyx":468
+/* "geodesic_integrator.pyx":456
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * @cython.cdivision(True)    # tuern off zerodivisioncheck
  * cdef int SolverRK45( double* initCond, double* globalX0, double xend,             # <<<<<<<<<<<<<<
@@ -4053,7 +4028,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     }
   }
 
-  /* "geodesic_integrator.pyx":524
+  /* "geodesic_integrator.pyx":512
  *     ##### Configuration vars #######
  *     ################################
  *     cdef double safeInv = 1.0 / safe             # <<<<<<<<<<<<<<
@@ -4062,7 +4037,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_safeInv = (1.0 / __pyx_v_safe);
 
-  /* "geodesic_integrator.pyx":525
+  /* "geodesic_integrator.pyx":513
  *     ################################
  *     cdef double safeInv = 1.0 / safe
  *     cdef double fac1_inverse = 1.0 / fac1             # <<<<<<<<<<<<<<
@@ -4071,7 +4046,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_fac1_inverse = (1.0 / __pyx_v_fac1);
 
-  /* "geodesic_integrator.pyx":526
+  /* "geodesic_integrator.pyx":514
  *     cdef double safeInv = 1.0 / safe
  *     cdef double fac1_inverse = 1.0 / fac1
  *     cdef double fac2_inverse = 1.0 / fac2             # <<<<<<<<<<<<<<
@@ -4080,7 +4055,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_fac2_inverse = (1.0 / __pyx_v_fac2);
 
-  /* "geodesic_integrator.pyx":542
+  /* "geodesic_integrator.pyx":530
  * 
  *     # Retrieve the value of h and the value of x0
  *     cdef double h = hOrig[0]             # <<<<<<<<<<<<<<
@@ -4089,7 +4064,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_h = (__pyx_v_hOrig[0]);
 
-  /* "geodesic_integrator.pyx":543
+  /* "geodesic_integrator.pyx":531
  *     # Retrieve the value of h and the value of x0
  *     cdef double h = hOrig[0]
  *     cdef double x0 = globalX0[0]             # <<<<<<<<<<<<<<
@@ -4098,7 +4073,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_x0 = (__pyx_v_globalX0[0]);
 
-  /* "geodesic_integrator.pyx":548
+  /* "geodesic_integrator.pyx":536
  *     # and get the absolute value of the maximum step size.
  * 
  *     cdef double integrationDirection = +1. if xend - x0 > 0. else -1.             # <<<<<<<<<<<<<<
@@ -4112,7 +4087,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
   }
   __pyx_v_integrationDirection = __pyx_t_1;
 
-  /* "geodesic_integrator.pyx":549
+  /* "geodesic_integrator.pyx":537
  * 
  *     cdef double integrationDirection = +1. if xend - x0 > 0. else -1.
  *     hmax = abs(hmax)             # <<<<<<<<<<<<<<
@@ -4121,7 +4096,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_hmax = fabs(__pyx_v_hmax);
 
-  /* "geodesic_integrator.pyx":551
+  /* "geodesic_integrator.pyx":539
  *     hmax = abs(hmax)
  * 
  *     cdef size_t sizeBytes = sizeof(double)*SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4130,7 +4105,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_sizeBytes = ((sizeof(double)) * __pyx_v_19geodesic_integrator_SYSTEM_SIZE);
 
-  /* "geodesic_integrator.pyx":572
+  /* "geodesic_integrator.pyx":560
  *     cdef float sqr                 # Scaled differences in each eq.
  *     cdef float errors[5]           # TODO: SYSTEM_SIZE Local error of each eq.
  *     cdef float err = 0             # Global error of the step             # <<<<<<<<<<<<<<
@@ -4139,7 +4114,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_err = 0.0;
 
-  /* "geodesic_integrator.pyx":580
+  /* "geodesic_integrator.pyx":568
  *     # know more about the puropose of each of these variables.
  * 
  *     cdef float facold = globalFacold[0]             # <<<<<<<<<<<<<<
@@ -4148,7 +4123,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_facold = (__pyx_v_globalFacold[0]);
 
-  /* "geodesic_integrator.pyx":581
+  /* "geodesic_integrator.pyx":569
  * 
  *     cdef float facold = globalFacold[0]
  *     cdef float expo1 = 0.2 - beta * 0.75             # <<<<<<<<<<<<<<
@@ -4157,7 +4132,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_expo1 = (0.2 - (__pyx_v_beta * 0.75));
 
-  /* "geodesic_integrator.pyx":588
+  /* "geodesic_integrator.pyx":576
  *     # estimation exceeds 1.
  * 
  *     cdef int reject = False  # TODO: Avisar a alejandro de que esto esta como double             # <<<<<<<<<<<<<<
@@ -4166,7 +4141,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_reject = 0;
 
-  /* "geodesic_integrator.pyx":590
+  /* "geodesic_integrator.pyx":578
  *     cdef int reject = False  # TODO: Avisar a alejandro de que esto esta como double
  * 
  *     cdef float horizonRadius = 2.0             # <<<<<<<<<<<<<<
@@ -4175,7 +4150,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_horizonRadius = 2.0;
 
-  /* "geodesic_integrator.pyx":591
+  /* "geodesic_integrator.pyx":579
  * 
  *     cdef float horizonRadius = 2.0
  *     cdef int last = False             # <<<<<<<<<<<<<<
@@ -4184,7 +4159,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   __pyx_v_last = 0;
 
-  /* "geodesic_integrator.pyx":594
+  /* "geodesic_integrator.pyx":582
  * 
  * 
  *     while x0 > xend:             # <<<<<<<<<<<<<<
@@ -4195,7 +4170,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     __pyx_t_2 = ((__pyx_v_x0 > __pyx_v_xend) != 0);
     if (!__pyx_t_2) break;
 
-    /* "geodesic_integrator.pyx":600
+    /* "geodesic_integrator.pyx":588
  *         # logic, it HAS to be checked here.
  * 
  *         if (0.1 * abs(h) <= abs(x0) * uround and not last):             # <<<<<<<<<<<<<<
@@ -4213,7 +4188,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     __pyx_L6_bool_binop_done:;
     if (__pyx_t_2) {
 
-      /* "geodesic_integrator.pyx":601
+      /* "geodesic_integrator.pyx":589
  * 
  *         if (0.1 * abs(h) <= abs(x0) * uround and not last):
  *             hOrig[0] = h             # <<<<<<<<<<<<<<
@@ -4222,7 +4197,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       (__pyx_v_hOrig[0]) = __pyx_v_h;
 
-      /* "geodesic_integrator.pyx":602
+      /* "geodesic_integrator.pyx":590
  *         if (0.1 * abs(h) <= abs(x0) * uround and not last):
  *             hOrig[0] = h
  *             return -1             # <<<<<<<<<<<<<<
@@ -4232,7 +4207,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       __pyx_r = -1;
       goto __pyx_L0;
 
-      /* "geodesic_integrator.pyx":600
+      /* "geodesic_integrator.pyx":588
  *         # logic, it HAS to be checked here.
  * 
  *         if (0.1 * abs(h) <= abs(x0) * uround and not last):             # <<<<<<<<<<<<<<
@@ -4241,7 +4216,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     }
 
-    /* "geodesic_integrator.pyx":608
+    /* "geodesic_integrator.pyx":596
  *         # exceeds the end time x_{end}.
  * 
  *         if ((x0 + 1.01*h - xend) * integrationDirection > 0.0):             # <<<<<<<<<<<<<<
@@ -4251,7 +4226,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     __pyx_t_2 = (((((__pyx_v_x0 + (1.01 * __pyx_v_h)) - __pyx_v_xend) * __pyx_v_integrationDirection) > 0.0) != 0);
     if (__pyx_t_2) {
 
-      /* "geodesic_integrator.pyx":609
+      /* "geodesic_integrator.pyx":597
  * 
  *         if ((x0 + 1.01*h - xend) * integrationDirection > 0.0):
  *             h = xend - x0             # <<<<<<<<<<<<<<
@@ -4260,7 +4235,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_h = (__pyx_v_xend - __pyx_v_x0);
 
-      /* "geodesic_integrator.pyx":610
+      /* "geodesic_integrator.pyx":598
  *         if ((x0 + 1.01*h - xend) * integrationDirection > 0.0):
  *             h = xend - x0
  *             last = True             # <<<<<<<<<<<<<<
@@ -4269,7 +4244,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_last = 1;
 
-      /* "geodesic_integrator.pyx":608
+      /* "geodesic_integrator.pyx":596
  *         # exceeds the end time x_{end}.
  * 
  *         if ((x0 + 1.01*h - xend) * integrationDirection > 0.0):             # <<<<<<<<<<<<<<
@@ -4278,7 +4253,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     }
 
-    /* "geodesic_integrator.pyx":614
+    /* "geodesic_integrator.pyx":602
  * 
  *         # K1 computation
  *         KerrGeodesicEquations(initCond, k1, data)             # <<<<<<<<<<<<<<
@@ -4287,7 +4262,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_initCond, __pyx_v_k1, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":618
+    /* "geodesic_integrator.pyx":606
  *         # K2 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4297,7 +4272,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":619
+      /* "geodesic_integrator.pyx":607
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             y1[i] = initCond[i] + h * A21 * k1[i]             # <<<<<<<<<<<<<<
@@ -4307,7 +4282,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + ((__pyx_v_h * __pyx_v_19geodesic_integrator_A21) * (__pyx_v_k1[__pyx_v_i])));
     }
 
-    /* "geodesic_integrator.pyx":621
+    /* "geodesic_integrator.pyx":609
  *             y1[i] = initCond[i] + h * A21 * k1[i]
  * 
  *         KerrGeodesicEquations(y1, k2, data)             # <<<<<<<<<<<<<<
@@ -4316,7 +4291,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k2, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":625
+    /* "geodesic_integrator.pyx":613
  *         # K3 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4326,7 +4301,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":626
+      /* "geodesic_integrator.pyx":614
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *              y1[i] = initCond[i] + h*(A31 * k1[i] + A32 * k2[i])             # <<<<<<<<<<<<<<
@@ -4336,7 +4311,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + (__pyx_v_h * ((__pyx_v_19geodesic_integrator_A31 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_A32 * (__pyx_v_k2[__pyx_v_i])))));
     }
 
-    /* "geodesic_integrator.pyx":628
+    /* "geodesic_integrator.pyx":616
  *              y1[i] = initCond[i] + h*(A31 * k1[i] + A32 * k2[i])
  * 
  *         KerrGeodesicEquations(y1, k3, data)             # <<<<<<<<<<<<<<
@@ -4345,7 +4320,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k3, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":632
+    /* "geodesic_integrator.pyx":620
  *         # K4 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4355,7 +4330,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":633
+      /* "geodesic_integrator.pyx":621
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             y1[i] = initCond[i] + h*(A41 * k1[i] +             # <<<<<<<<<<<<<<
@@ -4365,7 +4340,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + (__pyx_v_h * (((__pyx_v_19geodesic_integrator_A41 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_A42 * (__pyx_v_k2[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A43 * (__pyx_v_k3[__pyx_v_i])))));
     }
 
-    /* "geodesic_integrator.pyx":637
+    /* "geodesic_integrator.pyx":625
  *                                A43 * k3[i])
  * 
  *         KerrGeodesicEquations(y1, k4, data)             # <<<<<<<<<<<<<<
@@ -4374,7 +4349,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k4, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":641
+    /* "geodesic_integrator.pyx":629
  *         # K5 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4384,7 +4359,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":642
+      /* "geodesic_integrator.pyx":630
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             y1[i] = initCond[i] + h*( A51 * k1[i] +             # <<<<<<<<<<<<<<
@@ -4394,7 +4369,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + (__pyx_v_h * ((((__pyx_v_19geodesic_integrator_A51 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_A52 * (__pyx_v_k2[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A53 * (__pyx_v_k3[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A54 * (__pyx_v_k4[__pyx_v_i])))));
     }
 
-    /* "geodesic_integrator.pyx":647
+    /* "geodesic_integrator.pyx":635
  *                                 A54 * k4[i])
  * 
  *         KerrGeodesicEquations(y1, k5, data)             # <<<<<<<<<<<<<<
@@ -4403,7 +4378,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k5, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":651
+    /* "geodesic_integrator.pyx":639
  *         # K6 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4413,7 +4388,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":652
+      /* "geodesic_integrator.pyx":640
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             y1[i] = initCond[i] + h*(A61 * k1[i] +             # <<<<<<<<<<<<<<
@@ -4423,7 +4398,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + (__pyx_v_h * (((((__pyx_v_19geodesic_integrator_A61 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_A62 * (__pyx_v_k2[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A63 * (__pyx_v_k3[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A64 * (__pyx_v_k4[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A65 * (__pyx_v_k5[__pyx_v_i])))));
     }
 
-    /* "geodesic_integrator.pyx":658
+    /* "geodesic_integrator.pyx":646
  *                                A65 * k5[i])
  * 
  *         KerrGeodesicEquations(y1, k6, data)             # <<<<<<<<<<<<<<
@@ -4432,7 +4407,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k6, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":662
+    /* "geodesic_integrator.pyx":650
  *         # K7 computation
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4442,7 +4417,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":663
+      /* "geodesic_integrator.pyx":651
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             y1[i] = initCond[i] + h*(A71 * k1[i] +             # <<<<<<<<<<<<<<
@@ -4452,7 +4427,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_y1[__pyx_v_i]) = ((__pyx_v_initCond[__pyx_v_i]) + (__pyx_v_h * (((((__pyx_v_19geodesic_integrator_A71 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_A73 * (__pyx_v_k3[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A74 * (__pyx_v_k4[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A75 * (__pyx_v_k5[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_A76 * (__pyx_v_k6[__pyx_v_i])))));
     }
 
-    /* "geodesic_integrator.pyx":669
+    /* "geodesic_integrator.pyx":657
  *                                A76 * k6[i])
  * 
  *         KerrGeodesicEquations(y1, k7, data)             # <<<<<<<<<<<<<<
@@ -4461,7 +4436,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_f_19geodesic_integrator_KerrGeodesicEquations(__pyx_v_y1, __pyx_v_k7, __pyx_v_data);
 
-    /* "geodesic_integrator.pyx":683
+    /* "geodesic_integrator.pyx":671
  *         # using them:
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4471,7 +4446,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":684
+      /* "geodesic_integrator.pyx":672
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE
  *             errors[i] = h*(E1 * k1[i] +             # <<<<<<<<<<<<<<
@@ -4481,7 +4456,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       (__pyx_v_errors[__pyx_v_i]) = (__pyx_v_h * ((((((__pyx_v_19geodesic_integrator_E1 * (__pyx_v_k1[__pyx_v_i])) + (__pyx_v_19geodesic_integrator_E3 * (__pyx_v_k3[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_E4 * (__pyx_v_k4[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_E5 * (__pyx_v_k5[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_E6 * (__pyx_v_k6[__pyx_v_i]))) + (__pyx_v_19geodesic_integrator_E7 * (__pyx_v_k7[__pyx_v_i]))));
     }
 
-    /* "geodesic_integrator.pyx":693
+    /* "geodesic_integrator.pyx":681
  * 
  * 
  *         err = 0             # <<<<<<<<<<<<<<
@@ -4490,7 +4465,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_err = 0.0;
 
-    /* "geodesic_integrator.pyx":695
+    /* "geodesic_integrator.pyx":683
  *         err = 0
  * 
  *         for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4500,7 +4475,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
       __pyx_v_i = __pyx_t_4;
 
-      /* "geodesic_integrator.pyx":702
+      /* "geodesic_integrator.pyx":690
  *             # error computation this way we "normalize" the error and we can
  *             # compare it against 1.
  *             sk = atoli + rtoli*fmax(fabs(initCond[i]), fabs(y1[i]))             # <<<<<<<<<<<<<<
@@ -4509,7 +4484,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_sk = (__pyx_v_atoli + (__pyx_v_rtoli * fmax(fabs((__pyx_v_initCond[__pyx_v_i])), fabs((__pyx_v_y1[__pyx_v_i])))));
 
-      /* "geodesic_integrator.pyx":708
+      /* "geodesic_integrator.pyx":696
  *             # equation 4.11 ([1]): the square root of the mean of the squared
  *             # local scaled errors.
  *             sqr = (errors[i])/sk             # <<<<<<<<<<<<<<
@@ -4518,7 +4493,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_sqr = ((__pyx_v_errors[__pyx_v_i]) / __pyx_v_sk);
 
-      /* "geodesic_integrator.pyx":709
+      /* "geodesic_integrator.pyx":697
  *             # local scaled errors.
  *             sqr = (errors[i])/sk
  *             errors[i] = sqr*sqr             # <<<<<<<<<<<<<<
@@ -4527,7 +4502,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       (__pyx_v_errors[__pyx_v_i]) = (__pyx_v_sqr * __pyx_v_sqr);
 
-      /* "geodesic_integrator.pyx":710
+      /* "geodesic_integrator.pyx":698
  *             sqr = (errors[i])/sk
  *             errors[i] = sqr*sqr
  *             err += errors[i]             # <<<<<<<<<<<<<<
@@ -4537,7 +4512,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       __pyx_v_err = (__pyx_v_err + (__pyx_v_errors[__pyx_v_i]));
     }
 
-    /* "geodesic_integrator.pyx":715
+    /* "geodesic_integrator.pyx":703
  *         # global error is the square root of the mean of those local
  *         # errors: we finish here the computation and store it in err.
  *         err = sqrt(err / SYSTEM_SIZE)  # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4546,7 +4521,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_err = sqrt((__pyx_v_err / ((float)__pyx_v_19geodesic_integrator_SYSTEM_SIZE)));
 
-    /* "geodesic_integrator.pyx":729
+    /* "geodesic_integrator.pyx":717
  * 
  *         # Stabilization computations:
  *         fac11 = pow(err, expo1)             # <<<<<<<<<<<<<<
@@ -4555,7 +4530,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_fac11 = pow(__pyx_v_err, __pyx_v_expo1);
 
-    /* "geodesic_integrator.pyx":730
+    /* "geodesic_integrator.pyx":718
  *         # Stabilization computations:
  *         fac11 = pow(err, expo1)
  *         fac = fac11 / pow(facold, beta)             # <<<<<<<<<<<<<<
@@ -4564,7 +4539,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_fac = (((double)__pyx_v_fac11) / pow(__pyx_v_facold, __pyx_v_beta));
 
-    /* "geodesic_integrator.pyx":734
+    /* "geodesic_integrator.pyx":722
  *         # safe factor) to be between fac1 and fac2 i.e., we require
  *         # fac1 <= hnew/h <= fac2:
  *         fac = fmax(fac2_inverse, fmin(fac1_inverse, fac * safeInv))             # <<<<<<<<<<<<<<
@@ -4573,7 +4548,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_fac = fmax(__pyx_v_fac2_inverse, fmin(__pyx_v_fac1_inverse, (__pyx_v_fac * __pyx_v_safeInv)));
 
-    /* "geodesic_integrator.pyx":736
+    /* "geodesic_integrator.pyx":724
  *         fac = fmax(fac2_inverse, fmin(fac1_inverse, fac * safeInv))
  *         # New step final (but temporary) computation
  *         hnew = h / fac             # <<<<<<<<<<<<<<
@@ -4582,7 +4557,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
     __pyx_v_hnew = (__pyx_v_h / ((double)__pyx_v_fac));
 
-    /* "geodesic_integrator.pyx":741
+    /* "geodesic_integrator.pyx":729
  *         # REJECT STEP if err > 1.
  * 
  *         if err > 1.0:             # <<<<<<<<<<<<<<
@@ -4592,7 +4567,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     __pyx_t_2 = ((__pyx_v_err > 1.0) != 0);
     if (__pyx_t_2) {
 
-      /* "geodesic_integrator.pyx":745
+      /* "geodesic_integrator.pyx":733
  *             # Stabilization technique with the minimum and safe factors
  *             #  when the step is rejected.
  *             hnew = h / fmin(fac1_inverse, fac11 * safeInv)             # <<<<<<<<<<<<<<
@@ -4601,7 +4576,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_hnew = (__pyx_v_h / fmin(__pyx_v_fac1_inverse, (__pyx_v_fac11 * __pyx_v_safeInv)));
 
-      /* "geodesic_integrator.pyx":746
+      /* "geodesic_integrator.pyx":734
  *             #  when the step is rejected.
  *             hnew = h / fmin(fac1_inverse, fac11 * safeInv)
  *             reject = True             # <<<<<<<<<<<<<<
@@ -4610,7 +4585,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_reject = 1;
 
-      /* "geodesic_integrator.pyx":741
+      /* "geodesic_integrator.pyx":729
  *         # REJECT STEP if err > 1.
  * 
  *         if err > 1.0:             # <<<<<<<<<<<<<<
@@ -4620,7 +4595,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       goto __pyx_L25;
     }
 
-    /* "geodesic_integrator.pyx":751
+    /* "geodesic_integrator.pyx":739
  * 
  *             # Update old factor to new current error (upper bounded to 1e-4)
  *             facold = fmax(err, 1.0e-4)             # <<<<<<<<<<<<<<
@@ -4630,7 +4605,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     /*else*/ {
       __pyx_v_facold = fmax(__pyx_v_err, 1.0e-4);
 
-      /* "geodesic_integrator.pyx":754
+      /* "geodesic_integrator.pyx":742
  * 
  *             # Advance current time!
  *             x0 += h             # <<<<<<<<<<<<<<
@@ -4639,7 +4614,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       __pyx_v_x0 = (__pyx_v_x0 + __pyx_v_h);
 
-      /* "geodesic_integrator.pyx":759
+      /* "geodesic_integrator.pyx":747
  *             # bounds.
  * 
  *             if (fabs(hnew) > hmax):             # <<<<<<<<<<<<<<
@@ -4649,7 +4624,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       __pyx_t_2 = ((fabs(__pyx_v_hnew) > __pyx_v_hmax) != 0);
       if (__pyx_t_2) {
 
-        /* "geodesic_integrator.pyx":760
+        /* "geodesic_integrator.pyx":748
  * 
  *             if (fabs(hnew) > hmax):
  *                 hnew = integrationDirection * hmax             # <<<<<<<<<<<<<<
@@ -4658,7 +4633,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
         __pyx_v_hnew = (__pyx_v_integrationDirection * __pyx_v_hmax);
 
-        /* "geodesic_integrator.pyx":759
+        /* "geodesic_integrator.pyx":747
  *             # bounds.
  * 
  *             if (fabs(hnew) > hmax):             # <<<<<<<<<<<<<<
@@ -4667,7 +4642,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       }
 
-      /* "geodesic_integrator.pyx":765
+      /* "geodesic_integrator.pyx":753
  *             # old and new step sizes
  * 
  *             if reject:             # <<<<<<<<<<<<<<
@@ -4677,7 +4652,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       __pyx_t_2 = (__pyx_v_reject != 0);
       if (__pyx_t_2) {
 
-        /* "geodesic_integrator.pyx":766
+        /* "geodesic_integrator.pyx":754
  * 
  *             if reject:
  *                 hnew = integrationDirection * fmin(fabs(hnew), fabs(h))             # <<<<<<<<<<<<<<
@@ -4686,7 +4661,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
         __pyx_v_hnew = (__pyx_v_integrationDirection * fmin(fabs(__pyx_v_hnew), fabs(__pyx_v_h)));
 
-        /* "geodesic_integrator.pyx":765
+        /* "geodesic_integrator.pyx":753
  *             # old and new step sizes
  * 
  *             if reject:             # <<<<<<<<<<<<<<
@@ -4695,7 +4670,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
       }
 
-      /* "geodesic_integrator.pyx":771
+      /* "geodesic_integrator.pyx":759
  *             # the current initial condition (now the computed solution)
  * 
  *             for i in range(5): # TODO: SYSTEM_SIZE             # <<<<<<<<<<<<<<
@@ -4705,7 +4680,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
       for (__pyx_t_4 = 0; __pyx_t_4 < 5; __pyx_t_4+=1) {
         __pyx_v_i = __pyx_t_4;
 
-        /* "geodesic_integrator.pyx":772
+        /* "geodesic_integrator.pyx":760
  * 
  *             for i in range(5): # TODO: SYSTEM_SIZE
  *                 initCond[i] = y1[i]             # <<<<<<<<<<<<<<
@@ -4715,7 +4690,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
         (__pyx_v_initCond[__pyx_v_i]) = (__pyx_v_y1[__pyx_v_i]);
       }
 
-      /* "geodesic_integrator.pyx":777
+      /* "geodesic_integrator.pyx":765
  *             # false. SCIENCE.
  * 
  *             reject = False             # <<<<<<<<<<<<<<
@@ -4726,7 +4701,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     }
     __pyx_L25:;
 
-    /* "geodesic_integrator.pyx":782
+    /* "geodesic_integrator.pyx":770
  *         # Final step size update!
  * 
  *         h = hnew             # <<<<<<<<<<<<<<
@@ -4736,7 +4711,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
     __pyx_v_h = __pyx_v_hnew;
   }
 
-  /* "geodesic_integrator.pyx":788
+  /* "geodesic_integrator.pyx":776
  *     # Update the user's h, facold and x0
  * 
  *     hOrig[0] = h             # <<<<<<<<<<<<<<
@@ -4745,7 +4720,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   (__pyx_v_hOrig[0]) = __pyx_v_h;
 
-  /* "geodesic_integrator.pyx":789
+  /* "geodesic_integrator.pyx":777
  * 
  *     hOrig[0] = h
  *     globalFacold[0] = facold             # <<<<<<<<<<<<<<
@@ -4754,7 +4729,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   (__pyx_v_globalFacold[0]) = __pyx_v_facold;
 
-  /* "geodesic_integrator.pyx":790
+  /* "geodesic_integrator.pyx":778
  *     hOrig[0] = h
  *     globalFacold[0] = facold
  *     globalX0[0] = x0             # <<<<<<<<<<<<<<
@@ -4763,7 +4738,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
  */
   (__pyx_v_globalX0[0]) = __pyx_v_x0;
 
-  /* "geodesic_integrator.pyx":792
+  /* "geodesic_integrator.pyx":780
  *     globalX0[0] = x0
  * 
  *     return 1             # <<<<<<<<<<<<<<
@@ -4773,7 +4748,7 @@ static int __pyx_f_19geodesic_integrator_SolverRK45(double *__pyx_v_initCond, do
   __pyx_r = 1;
   goto __pyx_L0;
 
-  /* "geodesic_integrator.pyx":468
+  /* "geodesic_integrator.pyx":456
  * @cython.wraparound(False)  # turn off negative index wrapping for entire function
  * @cython.cdivision(True)    # tuern off zerodivisioncheck
  * cdef int SolverRK45( double* initCond, double* globalX0, double xend,             # <<<<<<<<<<<<<<
