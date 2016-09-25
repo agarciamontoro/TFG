@@ -33,7 +33,7 @@ class Test_Solver(unittest.TestCase):
 
         cython_data = geodesic_integrator.integrate_ray(r = 10.0, cam_theta = 1.415, cam_phi = 0,
                                          theta_cs = 1.445, phi_cs = -0.659734, a= 0.8,
-                                         n_steps = 300)
+                                         causality = 0, n_steps = 300)
 
         current_file_path = os.path.dirname(os.path.realpath(__file__))
         mathematica_data = np.genfromtxt(os.path.join(current_file_path,

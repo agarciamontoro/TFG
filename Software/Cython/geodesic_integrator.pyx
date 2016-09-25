@@ -1,3 +1,4 @@
+#cython: language_level=3, boundscheck=False,cdivision=True
 from libc.math cimport *
 from libc.string cimport memcpy
 cimport numpy as np
@@ -91,18 +92,18 @@ cdef int SYSTEM_SIZE = 5
 
 cpdef np.ndarray[np.float64_t, ndim=2] integrate_ray(double r, double cam_theta,
                                                      double cam_phi, double theta_cs,
-                                                     double phi_cs, double a, n_steps):
+                                                     double phi_cs, double a, double causality, int n_steps):
 
     # Simplify notation
-    theta = cam_theta
-    a2 = a*a
-    r2 = r*r
+    cdef double theta = cam_theta
+    cdef double a2 = a*a
+    cdef double r2 = r*r
 
     # Calculate initial vector direction
 
-    Nx = sin(theta_cs) * cos(phi_cs)
-    Ny = sin(theta_cs) * sin(phi_cs)
-    Nz = cos(theta_cs)
+    cdef double Nx = sin(theta_cs) * cos(phi_cs)
+    cdef double Ny = sin(theta_cs) * sin(phi_cs)
+    cdef double Nz = cos(theta_cs)
 
     # Convert the direction of motion to the FIDO's spherical orthonormal
     # basis. See (A.10)
@@ -111,47 +112,91 @@ cpdef np.ndarray[np.float64_t, ndim=2] integrate_ray(double r, double cam_theta,
     # IMPORTANT: This is not computed as in (A.10) because the MATHEMATICA DATA
     # has been generated without the aberration computation. Sorry for that!
 
-    nR = Nx
-    nTheta = Nz
-    nPhi = Ny
+    cdef double nR = Nx
+    cdef double nTheta = Nz
+    cdef double nPhi = Ny
 
     # Get canonical momenta
 
-    ro = sqrt(r2 + a2 * cos(theta)**2)
-    delta = r2 - 2*r + a2
-    sigma = sqrt((r2 + a2)**2 - a2 * delta * sin(theta)**2)
-    pomega = sigma * sin(theta) / ro
+    cdef double ro = sqrt(r2 + a2 * cos(theta)**2)
+    cdef double delta = r2 - 2*r + a2
+    cdef double sigma = sqrt((r2 + a2)**2 - a2 * delta * sin(theta)**2)
+    cdef double pomega = sigma * sin(theta) / ro
 
     # Compute energy as measured by the FIDO. See (A.11)
 
     # TODO: Fix this mess
     # IMPORTANT: This is not computed as in (A.11) because the MATHEMATICA DATA
     # has been generated with this quantity as 1. Sorry for that!
-    E = 1
+    cdef double E = 1.0
 
     # Compute the canonical momenta. See (A.11)
-    pR = E * ro * nR / sqrt(delta)
-    pTheta = E * ro * nTheta
-    pPhi = E * pomega * nPhi
+    cdef double pR = E * ro * nR / sqrt(delta)
+    cdef double pTheta = E * ro * nTheta
+    cdef double pPhi = E * pomega * nPhi
 
     # Calculate the conserved quantities b and q.
 
     # Set conserved quantities. See (A.12)
-    b = pPhi
-    q = pTheta**2 + cos(theta)**2*(b**2 / sin(theta)**2 - a2)
+    cdef double b = pPhi
+    cdef double q = pTheta**2 + cos(theta)**2*(b**2 / sin(theta)**2 - a2)
 
     # Store the initial conditions in all the pixels of the systemState array.
 
 
-    x0 = 0.0
-    xend = -30.0
-    result = np.zeros((n_steps+1,5))
-    init = np.array([r, cam_theta, cam_phi, pR, pTheta])
-    data = np.array([b,q,a])
+    cdef double x0 = 0.0
+    cdef double xend = -30.0
+    cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))
+    cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, cam_theta, cam_phi, pR, pTheta])
+    cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E,causality]) 
     
     Solver(x0, xend, n_steps, init, data, result)
- 
+
     return result
+
+
+cpdef double calculate_temporal_component(double [:] four_vector,
+                                   double [:] four_position,
+                                   double a, int causality = 0):
+
+
+    cdef double r = four_position[0]
+    cdef double theta = four_position[1]
+    cdef double phi = four_position[2]
+    cdef double pr = four_vector[0]
+    cdef double ptheta = four_vector[1]
+    cdef double pphi = four_vector[2]
+    # Calculate common terms
+
+    cdef double r2 = r*r
+    cdef double a2 = a*a
+
+    cdef double ro = sqrt(r2 + a2 * cos(theta)**2)
+    cdef double delta = r2 - 2*r + a2
+    cdef double sigma = sqrt((r2 + a2)**2 - a2 * delta * sin(theta)**2)
+    cdef double pomega = sigma * sin(theta) / ro
+    cdef double omega = 2 * a * r / ( sigma * sigma )
+    cdef double alpha = ro *  sqrt(delta) / sigma
+    
+    cdef double result = 0
+    if causality == 0:
+        result =  - sqrt( pphi * pphi * ro * ro +
+                      ( ptheta * ptheta + pr * pr * delta )
+                       * pomega * pomega)
+        result *= alpha
+        result /= ro * pomega
+        result -=  pphi * omega
+
+        return result
+    else:
+        result = - sqrt( pphi * pphi * ro * ro +
+                      ( ptheta * ptheta + pr * pr * delta + ro * ro )
+                       * pomega * pomega)
+        result *= alpha
+        result /= ro * pomega
+        result -=  pphi * omega
+
+        return result
 
 ################################################
 ##                C FUNCTIONS                 ##
@@ -212,12 +257,12 @@ cdef void Solver(double x, double xend, int n_steps,
     # that will be called n_steps times, so the overhead is minimum with this option.
 
     cdef double initial_conditions[5]
-    cdef double aditional_data[3]
+    cdef double aditional_data[5]
 
     for i in range(5): # TODO: SYSTEM_SIZE
         initial_conditions[i] = initCond[i]
 
-    for i in range(3):
+    for i in range(5):
         aditional_data[i] = data[i]
 
     # Store initial step conditions
@@ -277,11 +322,13 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
             0 -> b ( Angular momentum)
             1 -> q ( Carter's constant)
             2 -> a ( Black Hole spin)
+            3 -> e ( Energy )
+            4 -> causality ( 0 for lightlike 1 for timelike ).
     """
     # Variables to hold the position of the ray, its momenta and related
     # operations between them and the constant a, which is the spin of the
     # black hole.
-    cdef double r, r2, twor, theta, pR, pR2, pTheta, pTheta2, b, twob, b2, q, bMinusA,a, a2
+    cdef double r, r2, twor, theta, pR, pR2, pTheta, pTheta2, b, twob, b2, q, bMinusA, bMinusAE,a, a2
 
     # Variables to hold the sine and cosine of theta, along with some
     # operations with them
@@ -291,6 +338,15 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     # called D), Theta (which is called Z) and rho, along with some operations
     # involving these values.
     cdef double P, R, D, Dinv, Z, DZplusR, rho2Inv, twoRho2Inv, rho4Inv
+
+    # Variable for the causality character of the geodesic
+
+    cdef double mu
+
+    # Variable for the energy
+
+    cdef double energy
+    cdef double energy2
 
     # Retrieval of the input data (position of the ray, momenta and
     # constants).
@@ -315,20 +371,26 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     b = data[0]
     q = data[1]
     a = data[2]
+    energy = data[3]
+    energy2 = energy * energy
+    mu = data[4] * data[4]
+
+    cdef double r2mu = r2 * mu
+    
     a2 = a*a
     
     b2 = b*b
     bMinusA = b - a
+    bMinusAE = b - a * energy
 
     # Commonly used variables: R, D, Theta (that is called Z) and
     # rho (and its square and cube).
     D = r2 - 2*r + a2
     Dinv = 1/D
 
-    P = r2 - a * bMinusA
-    R = P*P - D*(bMinusA*bMinusA + q)
-
-    Z = q - cosT2*(b2*sinT2Inv - a2)
+    P = ( a2 + r2 ) * energy - a * b
+    R = P*P - D*(bMinusAE*bMinusAE + q + r2mu)
+    Z = q - cosT2*(b2*sinT2Inv + a2 * (mu - energy2) )
 
     rho2Inv = 1/(r2 + a2*cosT2)
     twoRho2Inv = rho2Inv/2
@@ -357,7 +419,7 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
 
     # *********************** EQUATION 3 *********************** //
     # Derivatives with respect to b
-    dR = 4*bMinusA*r - twob*r2
+    dR = -2.0 * D * bMinusAE + (-2.0) * a * P
     dZ = - twob * cosT2 * sinT2Inv
 
     f[2] = - (dR + D*dZ)*Dinv*twoRho2Inv
@@ -365,7 +427,7 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     # *********************** EQUATION 4 *********************** //
     # Derivatives with respect to r
     dD = twor - 2
-    dR = 2*twor*(r2 - a*bMinusA) - (q + bMinusA*bMinusA)*(twor - 2)
+    dR = 4.0 * r * energy * P - twor * mu * D - ( q + bMinusAE * bMinusAE + r2mu ) * ( twor - 2.0 )
 
     DZplusR = D*Z + R
 
@@ -385,7 +447,7 @@ cdef void KerrGeodesicEquations(double* y, double* f,double* data):
     cdef double cosT3 = cosT2*cosT
     cdef double sinT3 = sinT2*sinT
 
-    dZ = 2*cosT*((b2*sinT2Inv) - a2)*sinT + (2*b2*cosT3)/(sinT3)
+    dZ = 2*cosT*((b2*sinT2Inv) + a2 * (mu - energy2)  )*sinT + (2*b2*cosT3)/(sinT3)
 
     sum1 = + pTheta2
     sum2 = + D*pR2
@@ -459,7 +521,6 @@ cdef int SolverRK45( double* initCond, double* globalX0, double xend,
     ################################
     ##### Configuration vars #######
     ################################
-
     cdef double safeInv = 1.0 / safe
     cdef double fac1_inverse = 1.0 / fac1
     cdef double fac2_inverse = 1.0 / fac2
