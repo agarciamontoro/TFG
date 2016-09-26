@@ -15,9 +15,9 @@ This chapter covers some basic tools needed in the further development of this w
     that is linear in each of its components; \ie, that verifies the following conditions:
     \begin{enumerate}
         \item $\begin{aligned}[t]
-	        T(x_1, \dots, x_i+x_i', \dots, x_r) = &T(x_1, \dots, x_i, \dots, x_r) + \\&T(x_1, \dots, x_i', \dots, x_r).
+	        T(x_1, \dots, x_i+x_i', \dots, x_r) = &T(x_1, \dots, x_i, \dots, x_r) + \\&T(x_1, \dots, x_i', \dots, x_r),
         \end{aligned}$
-        \item $T(x_1, \dots, a x_i, \dots, x_r) = aT(x_1, \dots, x_i, \dots, x_r)$.
+        \item $T(x_1, \dots, a x_i, \dots, x_r) = aT(x_1, \dots, x_i, \dots, x_r)$,
     \end{enumerate}
     for every $i \in \{1, 2, \dots, r\}$, where $x_j$ is an arbitrary vector in $V_j$ and $a \in K$.
 \end{definition}
@@ -85,13 +85,13 @@ Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear t
 	\begin{itemize}
 		\item $\begin{aligned}[t]
 			(T+T') (\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) \defeq &T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) +\\
-			&T'(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s).
+			&T'(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s),
 		\end{aligned}$
-		\item $(a T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) \defeq a T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)$.
+		\item $(a T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) \defeq a T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)$,
 	\end{itemize}
 	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r\}$ and $v_j \in V$ for all $j \in \{1,\dots,s\}$.
 	
-	The set $\tensors_{r,s}(V)$ with the preceding addition and product by scalar is a vector space.
+	The set $\tensors_{r,s}(V)$ with the preceding operations is a vector space.
 \end{theorem}
 
 \begin{proof}
@@ -103,7 +103,7 @@ Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear t
 		\item For each $T\in\tensors_{r,s}(V)$ there exists an \emph{opposite tensor} $-T$ defined as \[(-T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = - T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)\] that satisfies $T + (-T) = -T + T = 0$.
 		\item $T + T' = T' + T$.
 	\end{enumerate}
-	This provides abelian group structure to the $\tensors_{r,s}(V)$. The following properties finally show that $\tensors_{r,s}(V)$ is a vector space:
+	This provides abelian group structure to $\tensors_{r,s}(V)$. The following properties finally show that $\tensors_{r,s}(V)$ is a vector space:
 	\begin{enumerate}
 		\item $a(T+T') = aT+ aT', \;\;\forall a \in K, \;\forall T,T' \in \tensors_{r,s}(V)$.
 		\item $(a+b)T = aT + bT, \;\;\forall a,b \in K, \;\forall T \in \tensors_{r,s}(V)$.
@@ -130,7 +130,7 @@ Furthermore, we can see that, given $T \in \tensors_{r,s}(V)$, $T' \in \tensors_
 	(T \otimes T') \otimes T'' &\in \tensors_{r+r'+r'', s+s'+s''}(V),\\
 	T \otimes (T' \otimes T'') &\in \tensors_{r+r'+r'', s+s'+s''}(V)
 \end{align*}
-and the following equality holds:
+and that the following equality holds:
 \[
 	(T \otimes T') \otimes T'' = T \otimes (T' \otimes T'').
 \]
@@ -216,10 +216,10 @@ We want now to study how the coordinates of a tensor change when we change the b
 
 First of all, we must remember the relationship between the change of basis on a vector space $V$ and the corresponding change of basis in its dual space, $V^*$.
 
-Let $B = (v_1, \dots, v_n)$ and $B' = (v_1', \dots, v_n')$ be two bases of $V(K)$, and suppose that\change{Exchange a and b roles}
+Let $B = (v_1, \dots, v_n)$ and $B' = (v_1', \dots, v_n')$ be two bases of $V(K)$, and suppose that
 \begin{equation}
 	\label{eq:changeV}
-	v_j' = \sum_{i=1}^n b_j^i v_i \textrm{, where } a_j^i \in K.
+	v_j' = \sum_{i=1}^n b_j^i v_i \textrm{, where } b_j^i \in K.
 \end{equation}
 
 It is known that ---see \cite[p. 162]{romero86}---, if $B^* = (\varphi^1, \dots, \varphi^n)$ and $B'^* = (\varphi'^1, \dots, \varphi'^n)$ are the dual bases of the two preceding ones, the elements of the bases are related in the \emph{opposite} way as before:
@@ -227,14 +227,14 @@ It is known that ---see \cite[p. 162]{romero86}---, if $B^* = (\varphi^1, \dots,
 	\varphi^i = \sum_{j=1}^n b_j^i \varphi'^j.
 \]
 
-Furthermore, we can see that\change{Exchange a and b roles}
+Furthermore, we can see that
 \begin{equation}
 	\label{eq:changeV*}
 	\varphi'^i = \sum_{l=1}^n a_l^i \varphi'^l,
 \end{equation}
 where $a_l^i$ is the element placed on the $i$-th row, $l$-th column of  the inverse matrix of $(b^i_j)$.
 
-This change of bases in $V$ a nd $V^*$  is key to understand \autoref{pro:changeT}, which tells us how  the coordinates of a tensor change when the basis of $\tensors_{r,s}(V)$.
+This change of bases in $V$ and $V^*$  is key to understand \autoref{pro:changeT}, which tells us how  the coordinates of a tensor change when the basis of $\tensors_{r,s}(V)$.
 
 \begin{proposition}
 	\label{pro:changeT}
@@ -249,7 +249,7 @@ This change of bases in $V$ a nd $V^*$  is key to understand \autoref{pro:change
 		&\textrm{independently from $1$ to $n$}  \}.
 	\end{align*}
 	
-	Then, the analytic expression of the change of coordinates of a tensor $T \in \tensors_{r,s}(V)$ is the following:\change{Exchange a and b roles}
+	Then, the analytic expression of the change of coordinates of a tensor $T \in \tensors_{r,s}(V)$ is the following:
 	\begin{align*}
 		t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} = \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r}
 	\end{align*}
@@ -268,7 +268,7 @@ This change of bases in $V$ a nd $V^*$  is key to understand \autoref{pro:change
 
 We can study now the particular examples of tensors of order 2.
 
-For $r = s = 1$, the expression of the change of coordinates is\change{Exchange a and b roles}
+For $r = s = 1$, the expression of the change of coordinates is
 \[
 	t'^k_{\phantom{'}l} = \sum_{i,j = 1}^n a^k_i b_l^j  t^i_j \quad \forall k,l \in \{1,2,\dots,n\}.
 \]
@@ -278,7 +278,7 @@ This expression can be written using matrix notation as follows:
 	\label{eq:tensors11}
 	(t'^k_{\phantom{'}l}) = \mathbf{A} (t^i_j) \mathbf{A}^{-1}
 \end{equation}
-where $\mathbf{A}$ is the matrix $\left(a_j^i\right)$ whose elements are the ones defined in \autoref{eq:changeV}.
+where $\mathbf{A}$ is the matrix $\left(a_j^i\right)$ whose elements are the ones defined in \autoref{eq:changeV*}.
 
 This last expression is very interesting, as it tells us that the \emph{matrices} of the coordinates of $T$ in both bases of $\tensors_{r,s}(V)$ are similar.
 
@@ -314,7 +314,7 @@ These expressions can also be written with matrix notation, where $\mathbf{A} = 
 	\left(t'_{kl}\right) &= \mathbf{A}^{-t} t_{ij} \mathbf{A}^{-1}
 \end{align*}
 
-\subsection{Physics definition of tensor}
+\subsection{Alternative definition of tensor: the physics approach}
 
 
 
