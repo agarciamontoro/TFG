@@ -218,23 +218,24 @@ First of all, we must remember the relationship between the change of basis on a
 
 Let $B = (v_1, \dots, v_n)$ and $B' = (v_1', \dots, v_n')$ be two bases of $V(K)$, and suppose that
 \begin{equation}
-	\label{eq:changeV}
-	v_j' = \sum_{i=1}^n b_j^i v_i \textrm{, where } b_j^i \in K.
+	\label{eq:changeV*}
+	\varphi'^i = \sum_{j=1}^n a_j^i \varphi^j \textrm{, where } a_j^i \in K.
 \end{equation}
 
 It is known that ---see \cite[p. 162]{romero86}---, if $B^* = (\varphi^1, \dots, \varphi^n)$ and $B'^* = (\varphi'^1, \dots, \varphi'^n)$ are the dual bases of the two preceding ones, the elements of the bases are related in the \emph{opposite} way as before:
 \[
-	\varphi^i = \sum_{j=1}^n b_j^i \varphi'^j.
+	v_j = \sum_{i=1}^n a_j^i v'_i.
 \]
 
 Furthermore, we can see that
 \begin{equation}
-	\label{eq:changeV*}
-	\varphi'^i = \sum_{l=1}^n a_l^i \varphi'^l,
+	\label{eq:changeV}
+	v_j' = \sum_{j=1}^n b_j^i v_j,
 \end{equation}
-where $a_l^i$ is the element placed on the $i$-th row, $l$-th column of  the inverse matrix of $(b^i_j)$.
 
-This change of bases in $V$ and $V^*$  is key to understand \autoref{pro:changeT}, which tells us how  the coordinates of a tensor change when the basis of $\tensors_{r,s}(V)$.
+where $b_j^i$ is the element placed on the $i$-th row, $j$-th column of  the inverse matrix of $(a^i_j)$.
+
+This change of bases in $V$ and $V^*$  is key to understand \autoref{pro:changeT}, which tells us how  the coordinates of a tensor change when we change the basis of $\tensors_{r,s}(V)$.
 
 \begin{proposition}
 	\label{pro:changeT}
@@ -266,21 +267,79 @@ This change of bases in $V$ and $V^*$  is key to understand \autoref{pro:changeT
 	\end{align*}
 \end{proof}
 
-We can study now the particular examples of tensors of order 2.
+\subsubsection*{Tensors of order 2}
 
-For $r = s = 1$, the expression of the change of coordinates is
+We can study now the particular examples of tensors of order 2. From now on, let $V$ be an $n$-dimensional vector space, $V^*$ its dual space and $\mathcal{B} = (v_1, \dots, v_n)$ and $\mathcal{B^*} = (\varphi^1, \dots, \varphi^n)$ their respective bases.
+
+Let us first consider $\tensors_{(2,0)}$, which is a vector space of dimension $n^2$. Let
+\[
+	\mathcal{B}_T = \{v_i \otimes v_j \textrm{, where } i,j \in \{1,\dots,n\}\}
+\]
+be one of its bases. We can now write a generic tensor $T\in\tensors_{2,0}$ as follows:
+\[
+	T = \sum_{i,j=1}^n t^{ij} v_i \otimes v_j,
+\]
+where $t^{ij} = T(\varphi^i, \varphi^j)$.
+
+Let $\mathcal{B}' = (v_1', \dots, v_n')$ and $\mathcal{B}'^* = (\varphi'^1, \dots, \varphi'^n)$ be two new bases of $V$ and $V^*$.
+
+Following \autoref{pro:changeT}, we know that $T = \sum_{i,j=1}^n t^{ij} v_i \otimes v_j = \sum_{k,l=1}^n t'^{kl} v_k' \otimes v_l'$, where
+\[
+	t'^{kl} = \sum_{i,j=1}^n a^k_i a^l_j t^{ij}.
+\]
+
+This expression can be written with matrix notation:
+\begin{equation}
+	\label{eq:tensors20}
+	\left( t'^{kl} \right) = \mathbf{A} \left( t^{ij} \right) \mathbf{A}^t,
+\end{equation}
+where $\mathbf{A} \defeq \left(a_j^i\right)$ is the matrix whose elements are the ones defined in \autoref{eq:changeV*}; that is, the change of basis matrix in the dual space:
+\[
+	\mathbf{A} = M(1_v, \mathcal{B}'^*, \mathcal{B}^*)
+\]
+
+We can follow a similar reasoning for $\tensors_{(0,2)}$, considering 
+\[
+\mathcal{B}_T = \{\varphi^i \otimes \varphi^j \textrm{, where } i,j \in \{1,\dots,n\}\}
+\]
+one of its bases. A generic tensor $T\in\tensors_{0,2}$ can be written in a similar way:
+\[
+T = \sum_{i,j=1}^n t_{ij} \varphi^i \otimes \varphi^j,
+\]
+where $t_{ij} = T(v_i, v_j)$.
+
+The expression of the change of coordinates is now
+\[
+	t'_{kl} = \sum_{i,j=1}^n b_k^i b_l^j t_{ij},
+\]
+where $\mathbf{B} \defeq \left( b^i_j \right)$ is the inverse matrix of $\mathbf{A}$, as shown in \autoref{eq:changeV}. This expression, written in matrix notation, is similar to \autoref{eq:tensors20}:
+\begin{equation}
+	\label{eq:tensors02}
+	\left( t'_{kl} \right) = \mathbf{B} \left( t_{ij} \right) \mathbf{B}^t.
+\end{equation}
+
+For $r = s = 1$, the study is even more interesting. Considering
+\[
+	\mathcal{B}_T = \{v_i \otimes \varphi^j \textrm{, where } i,j \in \{1,\dots,n\}\}
+\]
+a generic tensor $T\in\tensors_{1,1}$ is written as follows:
+\[
+T = \sum_{i,j=1}^n t^i_j v_i \otimes \varphi^j,
+\]
+where $t^i_j = T(\varphi^i, v_j)$.
+
+The expression of the change of coordinates is again similar to the previous ones:
 \[
 	t'^k_{\phantom{'}l} = \sum_{i,j = 1}^n a^k_i b_l^j  t^i_j \quad \forall k,l \in \{1,2,\dots,n\}.
 \]
 
-This expression can be written using matrix notation as follows:
+The matrix notation is now somewhat different:
 \begin{equation}
 	\label{eq:tensors11}
-	(t'^k_{\phantom{'}l}) = \mathbf{A} (t^i_j) \mathbf{A}^{-1}
+	(t'^k_{\phantom{'}l}) = \mathbf{A} (t^i_j) \mathbf{A}^{-1}.
 \end{equation}
-where $\mathbf{A}$ is the matrix $\left(a_j^i\right)$ whose elements are the ones defined in \autoref{eq:changeV*}.
 
-This last expression is very interesting, as it tells us that the \emph{matrices} of the coordinates of $T$ in both bases of $\tensors_{r,s}(V)$ are similar.
+This last expression is very interesting, as it tells us that the \emph{matrices} of the coordinates of $T$ in both bases of $\tensors_{1,1}(V)$ are similar, not congruent as in \autoref{eq:tensors20} or \autoref{eq:tensors02}.
 
 Remember now the third item in \autoref{ex:tensors}: it established a relationship between $\tensors_{1,1}(V)$ and $\End_K V$, that is now clear again: we see that \autoref{eq:tensors11} is not only the change of coordinates of a tensor, but also the expression of the change of basis matrix of the corresponding endomorphism.
 
@@ -299,26 +358,31 @@ This is not surprising as both spaces are isomorphic, with a \emph{natural} isom
 	Suppose now that $T_f = T_0$; \ie, $\varphi(f(v)) = 0 \; \forall \varphi \in V^* \; \forall v \in V$. This implies immediately that $f(v) = 0 \; \forall v \in V$, as it is known that if $\psi(w) = 0$ for every $\psi \in V$, then $w = 0$. This shows that $f$ is the zero mapping, which proves that the map is one-to-one.
 \end{proof}
 
-Similarly, we can study tensors of type $(2,0)$ and $(0,2)$. For tensors of type $(2,0)$, the expression is
-\[
-	t'^{kl} = \sum_{i,j=1}^n a_i^k a_j^l t^{ij},
-\]
-whereas for tensors of type $(0,2)$, the change of coordinates is given by
-\[
-	t'_{kl} = \sum_{i,j=1}^n b_k^i b_l^j t_{ij}.
-\]
+Note that whereas all the three vector spaces studied ---$\tensors_{2,0}$, $\tensors_{0,2}$ and $\tensors_{1,1}$--- are isomorphic between them ---they all have the same dimension: 2---, the natural isomorphism with $\End_K(V)$ is only found with $\tensors_{1,1}$.
 
-These expressions can also be written with matrix notation, where $\mathbf{A} = \left(a^i_j\right)$ is the matrix defined above and where we note $\mathbf{A}^{-t}$ to be the transpose of the inverse of $\mathbf{A}$:
-\begin{align*}
-	\left(t'^{kl}\right) &= \mathbf{A} t^{ij} \mathbf{A}^t \\
-	\left(t'_{kl}\right) &= \mathbf{A}^{-t} t_{ij} \mathbf{A}^{-1}
-\end{align*}
+\begin{remark}
+	This natural identification between tensors in $\tensors_{1,1}$ and operators is key in the physics literature, as one can talk either about operators over a vector space or about tensors $(1,1)$.
+	
+	But how can we identify a tensor and its corresponding operator in practice? Let us see it: consider $f \in \End_K(V)$ defined, using a basis $\mathcal{B} = (v_1, \dots, v_n)$ of $V$, as
+	\[
+		f(v_j) = \sum_{i=1}^n a^i_j v_i
+	\]
+	and its corresponding tensor defined as
+	\[
+		T_f = \sum_{i,j=1}^n t^i_j v_i \otimes \varphi^j.
+	\]
+	
+	A really quick proof shows that both coordinates $a^i_j$ and $t^i_j$ are exactly the same!
+	\[
+		t^i_j = T_f(\varphi^i, v_j) = \varphi^i(f(v_j)) = a^i_j.
+	\]
+\end{remark}
 
 \subsection{Alternative definition of tensor: the physics approach}
 
+%Tensor: aplicación que hace corresponder a cada base ordenada una multimatriz de orden (r,s) y orden n.
 
-
-
+%Vector de R^n: aplicación que hace corresponder a cada base ordenada  n numeritos :)
 
 
 
