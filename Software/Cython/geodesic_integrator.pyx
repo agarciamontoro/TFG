@@ -86,11 +86,87 @@ cdef int SYSTEM_SIZE = 5
 # python objects will be constructed and unpacked each time the function is summoned.
 
 ### Integrate ray ###
+cpdef np.ndarray[np.float64_t, ndim=2] integrate_ray(double [:] three_position,
+                                                     double [:] three_momenta  ,
+                                                     int   causality, double a,
+                                                     double x0, double xend, int n_steps):
+    """
+    Integrate a geodesic in Kerr spacetime provided the initial data.
+
+    :param three_position: np.array[:]
+        A numpy array representing the initial position of the geodesic in a time slice of
+        the spacetime.
+
+        It must be given in the form
+
+        three_position = [r, theta, phi]
+
+        where {r,theta,phi} are the Boyer-Lindquist coordinates.
+
+    :param thee_momenta: np.array[:]
+        A numpy array representing the initial momenta ( covariant tangent vector) of the
+        geodesic in a time slice of the spacetime.
+
+        It must be given in the form
+
+        three_momenta = [pr, ptheta, pphi]
+
+        where {pr, ptheta, pphi} are the covariant components of the tangent three-vector in
+        Boyer-Lindquist coordinates.
+
+    :param causality: int
+        The causal character of the geodesic tangent vector.
+
+            - (-1) for timelike geodesics.
+            -   0  for spacelike geodesics.
+        
+        Its only effect is the calculus of the energy (the temporal component of the momenta).
+
+    :param a: double
+        The spin of the Kerr Black hole as it appear in the metric.
+
+    :param x0: double
+        The initial value of the proper time.
+    :param xend: double
+        The ending value of the proper time
+    :param n_steps: int
+        The number of points to sample along the geodesic.
+
+        Note: This does NOT include the initial point.
+    """
+    cdef double r = three_position[0]
+    cdef double theta = three_position[1]
+    cdef double phi = three_position[2]
+    cdef double pR = three_momenta[0]
+    cdef double pTheta = three_momenta[1]
+    cdef double pPhi = three_momenta[2]
+
+
+    # Calculate the temporal component of the momenta ( the energy )
+
+    cdef double energy = calculate_temporal_component(three_momenta,three_position,
+                                          a, causality)
+    # Set conserved quantities. See (A.12)
+
+    cdef double b = pPhi
+    cdef double q = pTheta**2 + cos(theta)**2*(b**2 / sin(theta)**2 - a * a)
+    # Store the initial conditions in all the pixels of the systemState array.
+
+    cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))
+    cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, theta, phi, pR, pTheta])
+    cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,energy]) 
+   
+    Solver(x0, xend, n_steps, init, data, result)
+
+    return result
+
+
+### Integrate Camera ray ###
 
 # This functions constructs the initial conditions for a null geodesic and integrate
 # this light ray. Its here mainly for testing the integrator against Mathematica's NDSOLVE.
 
-cpdef np.ndarray[np.float64_t, ndim=2] integrate_ray(double r, double cam_theta,
+cpdef np.ndarray[np.float64_t, ndim=2] test_integrate_camera_ray(double r, double cam_theta,
                                                      double cam_phi, double theta_cs,
                                                      double phi_cs, double a, double causality, int n_steps):
 
@@ -149,23 +225,52 @@ cpdef np.ndarray[np.float64_t, ndim=2] integrate_ray(double r, double cam_theta,
     cdef np.ndarray[np.float64_t, ndim=2] result = np.zeros((n_steps+1,5))
     cdef np.ndarray[np.float64_t, ndim=1] init = np.array([r, cam_theta, cam_phi, pR, pTheta])
     cdef np.ndarray[np.float64_t, ndim=1] data = np.array([b,q,a,E]) 
-    
     Solver(x0, xend, n_steps, init, data, result)
 
     return result
 
 
-cpdef double calculate_temporal_component(double [:] four_vector,
-                                   double [:] four_position,
-                                   double a, int causality = 0):
+cpdef double calculate_temporal_component(double [:] three_momenta,
+                                   double [:] three_position,
+                                   double a, int causality ):
+    """
+    Calculate the temporal component of the momenta given the value of the three-momenta and
+    its position in the spacetime.
 
+    :param three_position: np.array[:]
+        A numpy array representing the initial position of the geodesic in a time slice of
+        the spacetime.
 
-    cdef double r = four_position[0]
-    cdef double theta = four_position[1]
-    cdef double phi = four_position[2]
-    cdef double pr = four_vector[0]
-    cdef double ptheta = four_vector[1]
-    cdef double pphi = four_vector[2]
+        It must be given in the form
+
+        three_position = [r, theta, phi]
+
+        where {r,theta,phi} are the Boyer-Lindquist coordinates.
+
+    :param thee_momenta: np.array[:]
+        A numpy array representing the initial momenta ( covariant tangent vector) of the
+        geodesic in a time slice of the spacetime.
+
+        It must be given in the form
+
+        three_momenta = [pr, ptheta, pphi]
+
+        where {pr, ptheta, pphi} are the covariant components of the tangent three-vector in
+        Boyer-Lindquist coordinates.
+
+    :param causality: int
+        The causal character of the geodesic tangent vector.
+
+            - (-1) for timelike geodesics.
+            -   0  for spacelike geodesics.
+    """
+
+    cdef double r = three_position[0]
+    cdef double theta = three_position[1]
+    cdef double phi = three_position[2]
+    cdef double pr = three_momenta[0]
+    cdef double ptheta = three_momenta[1]
+    cdef double pphi = three_momenta[2]
     # Calculate common terms
 
     cdef double r2 = r*r
