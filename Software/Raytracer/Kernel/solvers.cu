@@ -316,6 +316,131 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
     return iter;
 }
 
+__device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
+    // Auxiliary variables used to compute the errors at each step.
+    float sqr;                            // Scaled differences in each eq.
+    float errors[SYSTEM_SIZE]; // Local error of each eq.
+    float err = 0;                            // Global error of the step
+    float sk; // Scale based on the tolerances
+
+    int i;
+
+    // Auxiliar arrays to store the intermediate K1, ..., K7 computations
+    Real k1[SYSTEM_SIZE],
+         k2[SYSTEM_SIZE],
+         k3[SYSTEM_SIZE],
+         k4[SYSTEM_SIZE],
+         k5[SYSTEM_SIZE],
+         k6[SYSTEM_SIZE],
+         k7[SYSTEM_SIZE];
+
+    // K1 computation
+    computeComponent(y0, k1, data);
+
+    // K2 computation
+    for(i = 0; i < SYSTEM_SIZE; i++){
+        y1[i] = y0[i] + h * A21 * k1[i];
+    }
+    computeComponent(y1, k2, data);
+
+    // K3 computation
+    for(i = 0; i < SYSTEM_SIZE; i++){
+        y1[i] = y0[i] + h*(A31 * k1[i] +
+                           A32 * k2[i]);
+    }
+    computeComponent(y1, k3, data);
+
+    // K4 computation
+    for(i = 0; i < SYSTEM_SIZE; i++){
+        y1[i] = y0[i] + h*(A41 * k1[i] +
+                           A42 * k2[i] +
+                           A43 * k3[i]);
+    }
+    computeComponent(y1, k4, data);
+
+    // K5 computation
+    for(i = 0; i < SYSTEM_SIZE; i++){
+        y1[i] = y0[i] + h*( A51 * k1[i] +
+                            A52 * k2[i] +
+                            A53 * k3[i] +
+                            A54 * k4[i]);
+    }
+    computeComponent(y1, k5, data);
+
+    // K6 computation
+    for(i = 0; i < SYSTEM_SIZE; i++){
+        y1[i] = y0[i] + h*(A61 * k1[i] +
+                           A62 * k2[i] +
+                           A63 * k3[i] +
+                           A64 * k4[i] +
+                           A65 * k5[i]);
+    }
+    computeComponent(y1, k6, data);
+
+    // K7 computation.
+    for(i = 0; i < SYSTEM_SIZE; i++){
+        y1[i] = y0[i] + h*(A71 * k1[i] +
+                           A73 * k3[i] +
+                           A74 * k4[i] +
+                           A75 * k5[i] +
+                           A76 * k6[i]);
+    }
+    computeComponent(y1, k7, data);
+
+    // The Butcher's table (Table 5.2, [1]), shows that the estimated
+    // solution has exactly the same coefficients as the ones used to
+    // compute K7. Then, the solution is the last computed y1!
+
+    // The local error of each equation is computed as the difference
+    // between the solution y and the higher order solution \hat{y}, as
+    // specified in the last two rows of the Butcher's table (Table
+    // 5.2, [1]). Instead of computing \hat{y} and then substract it
+    // from y, the differences between the coefficientes of each
+    // solution have been computed and the error is directly obtained
+    // using them:
+    for(i = 0; i < SYSTEM_SIZE; i++){
+        errors[i] = h*(E1 * k1[i] +
+                       E3 * k3[i] +
+                       E4 * k4[i] +
+                       E5 * k5[i] +
+                       E6 * k6[i] +
+                       E7 * k7[i]);
+    }
+
+
+    #ifdef DEBUG
+        printf("ThreadId %d - K 1-7: K1:%.30f, K2:%.30f, K3:%.30f, K4:%.30f, K5:%.30f, K6:%.30f, K7:%.30f\n", threadId, k1[threadId], k2[threadId], k3[threadId], k4[threadId], k5[threadId], k6[threadId], k7[threadId]);
+        printf("ThreadId %d - Local: sol: %.30f, error: %.30f\n", threadId, solution[threadId], errors[threadId]);
+    #endif
+
+    err = 0;
+    for(i = 0; i < SYSTEM_SIZE; i++){
+        // The local estimated error has to satisfy the following
+        // condition: |err[i]| < Atol[i] + Rtol*max(|y_0[i]|, |y_j[i]|)
+        // (see equation (4.10), [1]). The variable sk stores the right
+        // hand size of this inequality to use it as a scale in the local
+        // error computation; this way we "normalize" the error and we can
+        // compare it against 1.
+        sk = atoli + rtoli*fmax(fabs(y0[i]), fabs(y1[i]));
+
+        // Compute the square of the local estimated error (scaled with the
+        // previous factor), as the global error will be computed as in
+        // equation 4.11 ([1]): the square root of the mean of the squared
+        // local scaled errors.
+        sqr = (errors[i])/sk;
+        errors[i] = sqr*sqr;
+
+        err += errors[i];
+    }
+
+    // The sum of the local squared errors in now in errors[0], but the
+    // global error is the square root of the mean of those local
+    // errors: we finish here the computation and store it in err.
+    err = sqrt(err / SYSTEM_SIZE);
+
+    return err;
+}
+
 /**
  * Applies the DOPRI5 algorithm over the system defined in the computeComponent
  * function, using the initial conditions specified in devX0 and devInitCond,
@@ -387,15 +512,6 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
     // associated to its own equation:
     Real y0[SYSTEM_SIZE];
     memcpy(y0, initCond, sizeBytes);
-
-    // Auxiliar arrays to store the intermediate K1, ..., K7 computations
-    Real k1[SYSTEM_SIZE],
-         k2[SYSTEM_SIZE],
-         k3[SYSTEM_SIZE],
-         k4[SYSTEM_SIZE],
-         k5[SYSTEM_SIZE],
-         k6[SYSTEM_SIZE],
-         k7[SYSTEM_SIZE];
 
     // Auxiliar array to store the intermediate calls to the
     // computeComponent function
@@ -478,110 +594,7 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
 
         // PHASE 1. Compute the K1, ..., K7 components and the estimated
         // solution, using the Butcher's table described in Table 5.2 ([1])
-
-        // K1 computation
-        computeComponent(y0, k1, data);
-
-        // K2 computation
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h * A21 * k1[i];
-        }
-        computeComponent(y1, k2, data);
-
-        // K3 computation
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h*(A31 * k1[i] +
-                               A32 * k2[i]);
-        }
-        computeComponent(y1, k3, data);
-
-        // K4 computation
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h*(A41 * k1[i] +
-                               A42 * k2[i] +
-                               A43 * k3[i]);
-        }
-        computeComponent(y1, k4, data);
-
-        // K5 computation
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h*( A51 * k1[i] +
-                                A52 * k2[i] +
-                                A53 * k3[i] +
-                                A54 * k4[i]);
-        }
-        computeComponent(y1, k5, data);
-
-        // K6 computation
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h*(A61 * k1[i] +
-                               A62 * k2[i] +
-                               A63 * k3[i] +
-                               A64 * k4[i] +
-                               A65 * k5[i]);
-        }
-        computeComponent(y1, k6, data);
-
-        // K7 computation.
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            y1[i] = y0[i] + h*(A71 * k1[i] +
-                               A73 * k3[i] +
-                               A74 * k4[i] +
-                               A75 * k5[i] +
-                               A76 * k6[i]);
-        }
-        computeComponent(y1, k7, data);
-
-        // The Butcher's table (Table 5.2, [1]), shows that the estimated
-        // solution has exactly the same coefficients as the ones used to
-        // compute K7. Then, the solution is the last computed y1!
-
-        // The local error of each equation is computed as the difference
-        // between the solution y and the higher order solution \hat{y}, as
-        // specified in the last two rows of the Butcher's table (Table
-        // 5.2, [1]). Instead of computing \hat{y} and then substract it
-        // from y, the differences between the coefficientes of each
-        // solution have been computed and the error is directly obtained
-        // using them:
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            errors[i] = h*(E1 * k1[i] +
-                           E3 * k3[i] +
-                           E4 * k4[i] +
-                           E5 * k5[i] +
-                           E6 * k6[i] +
-                           E7 * k7[i]);
-        }
-
-
-        #ifdef DEBUG
-            printf("ThreadId %d - K 1-7: K1:%.30f, K2:%.30f, K3:%.30f, K4:%.30f, K5:%.30f, K6:%.30f, K7:%.30f\n", threadId, k1[threadId], k2[threadId], k3[threadId], k4[threadId], k5[threadId], k6[threadId], k7[threadId]);
-            printf("ThreadId %d - Local: sol: %.30f, error: %.30f\n", threadId, solution[threadId], errors[threadId]);
-        #endif
-
-        err = 0;
-        for(i = 0; i < SYSTEM_SIZE; i++){
-            // The local estimated error has to satisfy the following
-            // condition: |err[i]| < Atol[i] + Rtol*max(|y_0[i]|, |y_j[i]|)
-            // (see equation (4.10), [1]). The variable sk stores the right
-            // hand size of this inequality to use it as a scale in the local
-            // error computation; this way we "normalize" the error and we can
-            // compare it against 1.
-            sk = atoli + rtoli*fmax(fabs(y0[i]), fabs(y1[i]));
-
-            // Compute the square of the local estimated error (scaled with the
-            // previous factor), as the global error will be computed as in
-            // equation 4.11 ([1]): the square root of the mean of the squared
-            // local scaled errors.
-            sqr = (errors[i])/sk;
-            errors[i] = sqr*sqr;
-
-            err += errors[i];
-        }
-
-        // The sum of the local squared errors in now in errors[0], but the
-        // global error is the square root of the mean of those local
-        // errors: we finish here the computation and store it in err.
-        err = sqrt(err / SYSTEM_SIZE);
+        err = advance(y0, h, y1, data);
 
         // For full information about the step size computation, please see
         // equation (4.13) and its surroundings in [1] and the notes in
