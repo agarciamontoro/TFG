@@ -241,81 +241,6 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
 }
 
 
-/**
- * This function receives the current state of a ray that has just crossed the equatorial plane (theta = pi/2) and makes a binary search of the exact (with a tolerance of BISECT_TOL) point in which the ray crossed it. This code expects the following:
- * 		- In time = x, the ray is at one side of the equatorial plane.
- * 		- In time = x-step, the ray was at the opposite side of the equatorial
- * 		plane.
- * @param[in,out]   Real* yOriginal     Pointer to the array where the ray
- *                        state is stored, following the usual order used
- *                        throughout this code: r, theta, phi, pR and pTheta.
- * @param[in]       Real* data          Device pointer to a serialized matrix
- *                        of additional data to be passed to computeComonent;
- *                        currently, this is used to pass the constants b and q
- *                        of each ray to the computeComponent method.
- * @param[in]       Real  step          x-step was the last time in which the
- *                        ray was found in the opposite side of the equatorial
- *                        plane it is in the current time; i.e., at time = x.
- * @param[in]       Real  x             Current time.
- * @return          int                 Number of iterations used in the binary
- *                        search.
- */
-__device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
-    // It is necessary to maintain the previous theta to know the direction
-    // change; we'll store it centered in zero, and not in pi/2 in order to
-    // removes some useless substractions in the main loop.
-    Real prevThetaCentered, currentThetaCentered;
-    prevThetaCentered = yOriginal[1] - HALF_PI;
-
-    // The first step shall be to the other side and half of its length.
-    step = - step * 0.5;
-
-    // Loop variables, to control that the iterations does not exceed a maximum
-    // number
-    int iter = 0;
-
-    // Step passed to the RK4 solver (currently not used)
-    Real h = -step*0.01;
-
-    // Variable to control the success or failure of the solver
-    SolverStatus solverStatus;
-
-    // This loop implements the main behaviour of the algorithm; basically,
-    // this is how it works:
-    //      1. It advance the point one single step with the RK4 algorithm.
-    //      2. If theta has crossed pi/2, it changes the direction of the
-    //      new step. The magnitude of the new step is always half of the
-    //      magnitude of the previous one.
-    //      3. It repeats 1 and 2 until the current theta is very near of Pi/2
-    //      ("very near" is defined by BISECT_TOL) or until the number of
-    //      iterations exceeds a maximum number previously defined.
-    while(fabs(prevThetaCentered) > BISECT_TOL && iter < BISECT_MAX_ITER){
-        // 1. Advance the ray one step.
-        solverStatus = SolverRK4(x, x + step, yOriginal, &h, step, data);
-        x += step;
-
-        // Safety guard in case the solver fails.
-        if(solverStatus == SOLVER_FAILURE){
-            return -1;
-        }
-
-        // Compute the current theta, centered in zero
-        currentThetaCentered = yOriginal[1] - HALF_PI;
-
-        // 2. Change the step direction whenever theta crosses the target,
-        // pi/2, and make it half of the previous one.
-        step = step * sign(currentThetaCentered)*sign(prevThetaCentered) * 0.5;
-
-        // Update the previous theta, centered in zero, with the current one
-        prevThetaCentered = currentThetaCentered;
-
-        iter++;
-    } // 3. End of while
-
-    // Return the number of iterations spent in the loop
-    return iter;
-}
-
 __device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
     // Auxiliary variables used to compute the errors at each step.
     float sqr;                            // Scaled differences in each eq.
@@ -441,6 +366,80 @@ __device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
     return err;
 }
 
+
+/**
+ * This function receives the current state of a ray that has just crossed the equatorial plane (theta = pi/2) and makes a binary search of the exact (with a tolerance of BISECT_TOL) point in which the ray crossed it. This code expects the following:
+ * 		- In time = x, the ray is at one side of the equatorial plane.
+ * 		- In time = x-step, the ray was at the opposite side of the equatorial
+ * 		plane.
+ * @param[in,out]   Real* yOriginal     Pointer to the array where the ray
+ *                        state is stored, following the usual order used
+ *                        throughout this code: r, theta, phi, pR and pTheta.
+ * @param[in]       Real* data          Device pointer to a serialized matrix
+ *                        of additional data to be passed to computeComonent;
+ *                        currently, this is used to pass the constants b and q
+ *                        of each ray to the computeComponent method.
+ * @param[in]       Real  step          x-step was the last time in which the
+ *                        ray was found in the opposite side of the equatorial
+ *                        plane it is in the current time; i.e., at time = x.
+ * @param[in]       Real  x             Current time.
+ * @return          int                 Number of iterations used in the binary
+ *                        search.
+ */
+__device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
+    // It is necessary to maintain the previous theta to know the direction
+    // change; we'll store it centered in zero, and not in pi/2 in order to
+    // removes some useless substractions in the main loop.
+    Real prevThetaCentered, currentThetaCentered;
+    prevThetaCentered = yOriginal[1] - HALF_PI;
+
+    // The first step shall be to the other side and half of its length.
+    step = - step * 0.5;
+
+    // Loop variables, to control that the iterations does not exceed a maximum
+    // number
+    int iter = 0;
+
+    // Step passed to the RK4 solver (currently not used)
+    Real h = -step*0.01;
+
+    // Variable to control the success or failure of the solver
+    SolverStatus solverStatus;
+
+    Real y1[SYSTEM_SIZE];
+
+    // This loop implements the main behaviour of the algorithm; basically,
+    // this is how it works:
+    //      1. It advance the point one single step with the RK4 algorithm.
+    //      2. If theta has crossed pi/2, it changes the direction of the
+    //      new step. The magnitude of the new step is always half of the
+    //      magnitude of the previous one.
+    //      3. It repeats 1 and 2 until the current theta is very near of Pi/2
+    //      ("very near" is defined by BISECT_TOL) or until the number of
+    //      iterations exceeds a maximum number previously defined.
+    while(fabs(prevThetaCentered) > BISECT_TOL && iter < BISECT_MAX_ITER){
+        // 1. Advance the ray one step.
+        advance(yOriginal, step, y1, data);
+        memcpy(yOriginal, y1, sizeof(Real)*SYSTEM_SIZE);
+        x += step;
+
+        // Compute the current theta, centered in zero
+        currentThetaCentered = yOriginal[1] - HALF_PI;
+
+        // 2. Change the step direction whenever theta crosses the target,
+        // pi/2, and make it half of the previous one.
+        step = step * sign(currentThetaCentered)*sign(prevThetaCentered) * 0.5;
+
+        // Update the previous theta, centered in zero, with the current one
+        prevThetaCentered = currentThetaCentered;
+
+        iter++;
+    } // 3. End of while
+
+    // Return the number of iterations spent in the loop
+    return iter;
+}
+
 /**
  * Applies the DOPRI5 algorithm over the system defined in the computeComponent
  * function, using the initial conditions specified in devX0 and devInitCond,
@@ -481,7 +480,7 @@ __device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
  *                        final value of facold.
  */
  __device__ int SolverRK45(Real* globalX0, Real xend, Real* initCond,
-                          Real* hOrig, Real hmax, Real* data, int* iterations, float* globalFacold){
+                          Real* hOrig, Real hmax, Real* data, int* iterations){
     #ifdef DEBUG
         printf("ThreadId %d - INITS: x0=%.30f, xend=%.30f, y0=(%.30f, %.30f)\n", threadId, x0, xend, ((Real*)initCond)[0], ((Real*)initCond)[1]);
     #endif
@@ -527,7 +526,7 @@ __device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
     // They are basically factors to maintain the new step size in known
     // bounds, but you can see the corresponding chunk of code far below to
     // know more about the puropose of each of these variables.
-    float facold = *globalFacold;
+    float facold = 1.0e-4;
     float expo1 = 0.2 - beta * 0.75;
     float fac11, fac;
 
@@ -644,38 +643,38 @@ __device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
             // Advance current time!
             x0 += h;
 
-                // PHASE 2.1: Check if theta has crossed pi/2
-                // Update current theta
-                currentThetaSign = sign(y1[1] - HALF_PI);
+            // PHASE 2.1: Check if theta has crossed pi/2
+            // Update current theta
+            currentThetaSign = sign(y1[1] - HALF_PI);
 
-                // Check whether the ray has crossed theta = pi/2
-                if(prevThetaSign != currentThetaSign){
-                    // Copy the current ray state to the auxiliar array
-                    memcpy(copyData, y1, sizeof(Real)*SYSTEM_SIZE);
+            // Check whether the ray has crossed theta = pi/2
+            if(prevThetaSign != currentThetaSign){
+                // Copy the current ray state to the auxiliar array
+                memcpy(copyData, y1, sizeof(Real)*SYSTEM_SIZE);
 
-                    // Call bisect in order to find the exact spot where theta
-                    // = pi/2
-                    bisectIter = bisect(copyData, data, h, x0);
+                // Call bisect in order to find the exact spot where theta
+                // = pi/2
+                bisectIter = bisect(copyData, data, h, x0);
 
-                    // Safe guard: if bisect failed, put the status to HORIZON
-                    if(bisectIter == -1){
-                        return HORIZON;
-                    }
-
-                    // Retrieve the current r
-                    currentR = copyData[0];
-
-                    // Finally, check whether the current r is inside the disk,
-                    // updating the status and copying back the data in the
-                    // case it is
-                    if(innerDiskRadius<currentR && currentR<outerDiskRadius){
-                        memcpy(y1, copyData, sizeof(Real)*SYSTEM_SIZE);
-                        return DISK;
-                    }
+                // Safe guard: if bisect failed, put the status to HORIZON
+                if(bisectIter == -1){
+                    return HORIZON;
                 }
 
-                // Update the previous variables for the next step computation
-                prevThetaSign = currentThetaSign;
+                // Retrieve the current r
+                currentR = copyData[0];
+
+                // Finally, check whether the current r is inside the disk,
+                // updating the status and copying back the data in the
+                // case it is
+                if(innerDiskRadius<currentR && currentR<outerDiskRadius){
+                    memcpy(y1, copyData, sizeof(Real)*SYSTEM_SIZE);
+                    return DISK;
+                }
+            }
+
+            // Update the previous variables for the next step computation
+            prevThetaSign = currentThetaSign;
 
             // Assure the new step size does not exceeds the provided
             // bounds.
@@ -697,19 +696,7 @@ __device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
         }
 
         // Final step size update!
-        // if(!last)
         h = hnew;
-
-        #ifdef DEBUG
-            if(threadId == 0){
-                if(err > 1.){
-                    printf("\n###### CHANGE: err: %.30f, h: %.30f\n\n", err, h);
-                }
-                else{
-                    printf("\n###### ======:  err: %.30f, h: %.30f\n\n", err, h);
-                }
-            }
-        #endif
     }while(x0 > xend);
 
     // Aaaaand that's all, folks! Update system value (each thread its
@@ -718,9 +705,7 @@ __device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
 
     // Update the user's h, facold and x0
     *hOrig = h;
-    *globalFacold = facold;
     *globalX0 = x0;
-
 
     // Finally, let the user know everything's gonna be alright
     return SPHERE;
