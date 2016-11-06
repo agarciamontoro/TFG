@@ -348,7 +348,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
             //          the status of the ray to HORIZON.
             // PHASE 1: Advance time an amount of `resolution`. The solver
             // itself updates the current time x with the final time reached
-            status = SolverRK45(&x, xend, initCond, &h, xend - x, data,
+            status = SolverRK45(&x, xend, initCond, h, xend - x, data,
                                 &iterations);
 
             // Once the loop is finished (the ray has been computed until the

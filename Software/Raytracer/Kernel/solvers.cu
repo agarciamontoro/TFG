@@ -243,11 +243,12 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
 
 __device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
     // Auxiliary variables used to compute the errors at each step.
-    float sqr;                            // Scaled differences in each eq.
-    float errors[SYSTEM_SIZE]; // Local error of each eq.
-    float err = 0;                            // Global error of the step
-    float sk; // Scale based on the tolerances
+    float sqr;                  // Scaled differences in each eq.
+    float errors[SYSTEM_SIZE];  // Local error of each eq.
+    float err = 0;              // Global error of the step
+    float sk;                   // Scale based on the tolerances
 
+    // Loop index
     int i;
 
     // Auxiliar arrays to store the intermediate K1, ..., K7 computations
@@ -258,6 +259,9 @@ __device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
          k5[SYSTEM_SIZE],
          k6[SYSTEM_SIZE],
          k7[SYSTEM_SIZE];
+
+    // Compute the K1, ..., K7 components and the estimated solution, using
+    // the Butcher's table described in Table 5.2 ([1])
 
     // K1 computation
     computeComponent(y0, k1, data);
@@ -331,12 +335,6 @@ __device__ Real advance(Real* y0, Real h, Real* y1, Real* data){
                        E6 * k6[i] +
                        E7 * k7[i]);
     }
-
-
-    #ifdef DEBUG
-        printf("ThreadId %d - K 1-7: K1:%.30f, K2:%.30f, K3:%.30f, K4:%.30f, K5:%.30f, K6:%.30f, K7:%.30f\n", threadId, k1[threadId], k2[threadId], k3[threadId], k4[threadId], k5[threadId], k6[threadId], k7[threadId]);
-        printf("ThreadId %d - Local: sol: %.30f, error: %.30f\n", threadId, solution[threadId], errors[threadId]);
-    #endif
 
     err = 0;
     for(i = 0; i < SYSTEM_SIZE; i++){
@@ -480,24 +478,13 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
  *                        final value of facold.
  */
  __device__ int SolverRK45(Real* globalX0, Real xend, Real* initCond,
-                          Real* hOrig, Real hmax, Real* data, int* iterations){
-    #ifdef DEBUG
-        printf("ThreadId %d - INITS: x0=%.30f, xend=%.30f, y0=(%.30f, %.30f)\n", threadId, x0, xend, ((Real*)initCond)[0], ((Real*)initCond)[1]);
-    #endif
-
-    // Each equation to solve has a thread that compute its solution. Although
-    // in an ideal situation the number of threads is exactly the same as the
-    // number of equations, it is usual that the former is greater than the
-    // latter. The reason is that the number of threads has to be a power of 2
-    // (see reduction technique in the only loop you will find in this function
-    // code to know why): then, we can give some rest to the threads that exceeds the number of equations :)
-
+                           Real hOrig, Real hmax, Real* data, int* iterations){
     // Loop variable to manage the automatic step size detection.
-    // TODO: Implement the hinit method
     Real hnew;
 
     // Retrieve the value of h and the value of x0
-    Real h = *hOrig;
+    // TODO: Implement the hinit method
+    Real h = hOrig;
     Real x0 = *globalX0;
 
     // Check the direction of the integration: to the future or to the past
@@ -505,6 +492,7 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
     Real integrationDirection = xend - x0 > 0. ? +1. : -1.;
     hmax = abs(hmax);
 
+    // Precompute size of the ray's state in bytes
     size_t sizeBytes = sizeof(Real)*SYSTEM_SIZE;
 
     // Each thread of each block has to know only the initial condition
@@ -517,10 +505,7 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
     Real y1[SYSTEM_SIZE];
 
     // Auxiliary variables used to compute the errors at each step.
-    float sqr;                            // Scaled differences in each eq.
-    float errors[SYSTEM_SIZE]; // Local error of each eq.
     float err = 0;                            // Global error of the step
-    float sk; // Scale based on the tolerances
 
     // Initial values for the step size automatic prediction variables.
     // They are basically factors to maintain the new step size in known
@@ -547,19 +532,12 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
     // Initialize previous theta to the initial conditions
     prevThetaSign = sign(y0[1] - HALF_PI);
 
-    // Auxiliar array used to pass a copy of the data to bisect.
-    // Bisect changes the data it receives, and we want to change them only
-    // when the result of the bisect tells us the ray has collided with the
-    // disk.
-    // Hence: if we have to call bisect, we put a copy of the current data
-    // into dataCopy, which we pass to bisect; then, only if the ray has
-    // collided with the disk, we transfer again the data from copyData to
-    // initCond.
-    Real copyData[SYSTEM_SIZE];
-
     // Local variable to know how many iterations spent the bisect in the
     // current step.
     int bisectIter;
+
+    // Initial status of the ray: SPHERE
+    int status = SPHERE;
 
     // Main loop. Each iteration computes a single step of the DOPRI5 algorithm, that roughly comprises the next phases:
     //  0. Check if this step has to be the last one.
@@ -577,11 +555,9 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
         // not too near. Although the last condition belongs to the raytracer
         // logic, it HAS to be checked here.
         if (0.1 * abs(h) <= abs(x0) * uround || (y0[0] - horizonRadius <= 1e-3)){
-            // Let the user knwo the final step
-            *hOrig = h;
-
             // Let the user know the computation stopped before xEnd
-            return HORIZON;
+            status = HORIZON;
+            break;
         }
 
         // PHASE 0. Check if the current time x_0 plus the current step
@@ -616,11 +592,6 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
         // New step final (but temporary) computation
         hnew = h / fac;
 
-        #ifdef DEBUG
-            printf("ThreadId %d - H aux: expo1: %.30f, err: %.30f, fac11: %.30f, facold: %.30f, fac: %.30f\n", threadId, expo1, err, fac11, facold, fac);
-            printf("ThreadId %d - H new: prevH: %.30f, newH: %.30f\n", threadId, hnew);
-        #endif
-
         // Check whether the normalized error, err, is below or over 1.:
         // REJECT STEP if err > 1.
         if( err > 1.){
@@ -643,39 +614,6 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
             // Advance current time!
             x0 += h;
 
-            // PHASE 2.1: Check if theta has crossed pi/2
-            // Update current theta
-            currentThetaSign = sign(y1[1] - HALF_PI);
-
-            // Check whether the ray has crossed theta = pi/2
-            if(prevThetaSign != currentThetaSign){
-                // Copy the current ray state to the auxiliar array
-                memcpy(copyData, y1, sizeof(Real)*SYSTEM_SIZE);
-
-                // Call bisect in order to find the exact spot where theta
-                // = pi/2
-                bisectIter = bisect(copyData, data, h, x0);
-
-                // Safe guard: if bisect failed, put the status to HORIZON
-                if(bisectIter == -1){
-                    return HORIZON;
-                }
-
-                // Retrieve the current r
-                currentR = copyData[0];
-
-                // Finally, check whether the current r is inside the disk,
-                // updating the status and copying back the data in the
-                // case it is
-                if(innerDiskRadius<currentR && currentR<outerDiskRadius){
-                    memcpy(y1, copyData, sizeof(Real)*SYSTEM_SIZE);
-                    return DISK;
-                }
-            }
-
-            // Update the previous variables for the next step computation
-            prevThetaSign = currentThetaSign;
-
             // Assure the new step size does not exceeds the provided
             // bounds.
             if (fabs(hnew) > hmax)
@@ -686,13 +624,39 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
             if (reject)
                 hnew = integrationDirection * fmin(fabs(hnew), fabs(h));
 
+            // This step was accepted, so it was not rejected, so reject is
+            // false. SCIENCE.
+            reject = false;
+
+            // PHASE 2.1: Check if theta has crossed pi/2
+            // Update current theta
+            currentThetaSign = sign(y1[1] - HALF_PI);
+
             // Necessary update for next steps: the local y0 variable holds
             // the current initial condition (now the computed solution)
             memcpy(y0, y1, sizeBytes);
 
-            // This step was accepted, so it was not rejected, so reject is
-            // false. SCIENCE.
-            reject = false;
+            // Check whether the ray has crossed theta = pi/2
+            if(prevThetaSign != currentThetaSign){
+                // Call bisect in order to find the exact spot where theta
+                // = pi/2
+                bisectIter = bisect(y1, data, h, x0);
+
+                // Retrieve the current r
+                currentR = y1[0];
+
+                // Finally, check whether the current r is inside the disk,
+                // updating the status and copying back the data in the
+                // case it is
+                if(innerDiskRadius<currentR && currentR<outerDiskRadius){
+                    memcpy(y0, y1, sizeof(Real)*SYSTEM_SIZE);
+                    status = DISK;
+                    break;
+                }
+            }
+
+            // Update the previous variables for the next step computation
+            prevThetaSign = currentThetaSign;
         }
 
         // Final step size update!
@@ -703,10 +667,9 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
     // result) in the global memory :)
     memcpy(initCond, y0, sizeBytes);
 
-    // Update the user's h, facold and x0
-    *hOrig = h;
+    // Update the user's x0
     *globalX0 = x0;
 
     // Finally, let the user know everything's gonna be alright
-    return SPHERE;
+    return status;
 }
