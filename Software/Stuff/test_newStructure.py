@@ -25,7 +25,7 @@ HORIZON = 2
 
 if __name__ == '__main__':
     import logging
-    logging.basicConfig(level=logging.DEBUG)
+    # logging.basicConfig(level=logging.DEBUG)
 
     # Black hole constants
     spin = 0.999
@@ -52,16 +52,18 @@ if __name__ == '__main__':
     # Set camera's speed (it needs the kerr metric constants)
     camera.setSpeed(kerr, blackHole)
 
-    # Create the raytracer!
-    rayTracer = RayTracer(camera, kerr, blackHole)
 
-    # Draw the image
-    rayTracer.rayTrace(-128, kernelCalls=1)
-    print(rayTracer.totalTime)
-    rayTracer.synchronise()
-    # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
-    rayTracer.plotImage()
+    for _ in range(10):
+        # Create the raytracer!
+        rayTracer = RayTracer(camera, kerr, blackHole)
 
-    # # Generate the 3D scene
-    # rayTracer.generate3Dscene(-70, 500)
-    # rayTracer.plotScene()
+        # Draw the image
+        rayTracer.rayTrace(-128, kernelCalls=1)
+        print("Time: ", rayTracer.totalTime)
+        rayTracer.synchronise()
+        # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
+        # rayTracer.plotImage()
+
+        # # Generate the 3D scene
+        # rayTracer.generate3Dscene(-70, 500)
+        # rayTracer.plotScene()
