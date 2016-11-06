@@ -231,9 +231,7 @@ static inline __device__ Real getStepSize(Real* pos, Real* vel, Real hmax){
 
     // Aaaaand that's all, folks! Update system value (each thread its
     // result) in the global memory :)
-    for(int i = 0; i < SYSTEM_SIZE; i++){
-        initCond[i] = y0[i];
-    }
+    memcpy(initCond, y0, sizeof(Real)*SYSTEM_SIZE);
 
     // Update the user's h
     *hOrig = h;

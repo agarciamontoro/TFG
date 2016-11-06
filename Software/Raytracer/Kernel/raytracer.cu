@@ -360,12 +360,10 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         //          DISK if the ray collided with the horizon).
         //          2.2. If the answer to the 2. test is negative: update the
         //          status of the ray to HORIZON.
-        while(status == SPHERE && x > xend){
             // PHASE 1: Advance time an amount of `resolution`. The solver
             // itself updates the current time x with the final time reached
             status = SolverRK45(&x, xend, initCond, &h,
                                       resolution, data, &iterations, &facold);
-        } // While globalStatus == SPHERE and x > xend
 
         // Once the loop is finished (the ray has been computed until the final
         // time or it has collided with the disk/horizon), update the global
