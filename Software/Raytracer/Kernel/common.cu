@@ -15,9 +15,9 @@
 
 // Declaration of the image parameters: number of rows and columns, as well as
 // the total amount of pixels.
-#define IMG_ROWS 10
-#define IMG_COLS 10
-#define NUM_PIXELS 100
+#define IMG_ROWS 1000
+#define IMG_COLS 1000
+#define NUM_PIXELS 1000000
 
 
 // Bisect's constants
@@ -68,26 +68,26 @@
 #define E7 (- 1./40.)
 
 // Black hole's spin and its square
-#define __a  0.8
-#define __a2 0.6400000000000001
+#define __a  0.999
+#define __a2 0.998001
 
 // Camera constants
 #define __d 3
-#define __camR 10
-#define __camTheta 1.415
+#define __camR 30
+#define __camTheta 1.511
 #define __camPhi 0
 #define __camBeta 0
 
 // Black hole constants
-#define __b1 -6.66249720273
-#define __b2 3.23729783669
+#define __b1 -6.99833323454
+#define __b2 2.07812987106
 
 // Kerr constants
-#define __ro 10.0007704262
-#define __delta 80.64
-#define __pomega 9.91659256656
-#define __alpha 0.89458296259
-#define __omega 0.00158760988111
+#define __ro 30.0000594033
+#define __delta 840.998001
+#define __pomega 29.9640833095
+#define __alpha 0.966094458274
+#define __omega 7.39123018269e-05
 
 // SolverRK45 parameters
 #define rtoli 1e-06
@@ -113,9 +113,9 @@
 #define SPHERE 0
 
 // Black hole parameters: horizon radius and disk definition
-#define horizonRadius 1.6
-#define innerDiskRadius 1
-#define outerDiskRadius 1
+#define horizonRadius 1.04471017781
+#define innerDiskRadius 9
+#define outerDiskRadius 20
 
 // Definition of the data type
 typedef double Real;

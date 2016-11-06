@@ -28,7 +28,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
     # Black hole constants
-    spin = 0.0000000001
+    spin = 0.999
     innerDiskRadius = 9
     outerDiskRadius = 20
 
@@ -56,7 +56,7 @@ if __name__ == '__main__':
     rayTracer = RayTracer(camera, kerr, blackHole)
 
     # Draw the image
-    rayTracer.rayTrace(-90, kernelCalls=1)
+    rayTracer.rayTrace(-128, kernelCalls=1)
     print(rayTracer.totalTime)
     rayTracer.synchronise()
     # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
