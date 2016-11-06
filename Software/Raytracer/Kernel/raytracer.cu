@@ -363,51 +363,8 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         while(status == SPHERE && x > xend){
             // PHASE 1: Advance time an amount of `resolution`. The solver
             // itself updates the current time x with the final time reached
-            solverStatus = SolverRK45(&x, x + resolution, initCond, &h,
+            status = SolverRK45(&x, xend, initCond, &h,
                                       resolution, data, &iterations, &facold);
-
-            // PHASE 2: Check whether the ray has collided with the horizon
-            if(solverStatus == SOLVER_SUCCESS){
-                // PHASE 2.1: Check if theta has crossed pi/2
-
-                // Update current theta
-                currentThetaSign = sign(initCond[1] - HALF_PI);
-
-                // Check whether the ray has crossed theta = pi/2
-                if(prevThetaSign != currentThetaSign){
-                    // Copy the current ray state to the auxiliar array
-                    memcpy(copyData, initCond, sizeof(Real)*SYSTEM_SIZE);
-
-                    // Call bisect in order to find the exact spot where theta
-                    // = pi/2
-                    bisectIter = bisect(copyData, data, resolution, x);
-
-                    // Safe guard: if bisect failed, put the status to HORIZON
-                    if(bisectIter == -1){
-                        status = HORIZON;
-                        break;
-                    }
-
-                    // Retrieve the current r
-                    currentR = copyData[0];
-
-                    // Finally, check whether the current r is inside the disk,
-                    // updating the status and copying back the data in the
-                    // case it is
-                    if(innerDiskRadius<currentR && currentR<outerDiskRadius){
-                        status = DISK;
-                        memcpy(initCond, copyData, sizeof(Real)*SYSTEM_SIZE);
-                    }
-                }
-            }
-            else{
-                // PHASE 2.2: The ray has collided with the horizon
-                status = HORIZON;
-            }
-
-            // Update the previous variables for the next step computation
-            prevThetaSign = currentThetaSign;
-
         } // While globalStatus == SPHERE and x > xend
 
         // Once the loop is finished (the ray has been computed until the final
