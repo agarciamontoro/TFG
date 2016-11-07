@@ -274,13 +274,15 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         // Compute pixel unique identifier for this thread
         int pixel = row*IMG_COLS + col;
 
-        // Array of status flags: at the output, the (x,y)-th element will be 0
-        // if any error ocurred (namely, the step size was made too small) and
-        // 1 if the computation succeded
+        // Array of status flags: at the output, the (x,y)-th element will be
+        // set to SPHERE, HORIZON or disk, showing the final state of the ray.
         int* globalStatus = (int*) devStatus;
         globalStatus += pixel;
         int status = *globalStatus;
 
+        // Integrate the ray only if it's still in the sphere. If it has
+        // collided either with the disk or within the horizon, it is not
+        // necessary to integrate it anymore.
         if(status == SPHERE){
             // Retrieve the position where the initial conditions this block
             // will work with are.
@@ -304,56 +306,34 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
             memcpy(initCond, globalInitCond, sizeof(Real)*SYSTEM_SIZE);
             memcpy(data, globalData, sizeof(Real)*DATA_SIZE);
 
-            // Variables to keep track of the current r and the previous and
-            // current theta
-            Real currentR;
-            int prevThetaSign, currentThetaSign;
-
-            // Initialize previous theta to the initial conditions
-            prevThetaSign = sign(initCond[1] - HALF_PI);
-
             // Current time
             Real x = x0;
 
             // Local variable to know the status of the ray
             SolverStatus solverStatus;
 
-            // Auxiliar array used to pass a copy of the data to bisect.
-            // Bisect changes the data it receives, and we want to change them
-            // only when the result of the bisect tells us the ray has
-            // collided with the disk.
-            // Hence: if we have to call bisect, we put a copy of the current
-            // data into dataCopy, which we pass to bisect; then, only if the
-            // ray has collided with the disk, we transfer again the data from
-            // copyData to initCond.
-            Real copyData[SYSTEM_SIZE];
-
             // Local variable to know how many iterations spent the solver in
             // the current step.
             int iterations = 0;
 
-            // MAIN LOOP. Each iteration has the following phases:
+            // MAIN ROUTINE. Integrate the ray from x to xend, checking disk
+            // collisions on the go with the following algorithm:
             //   -> 0. Check that the ray has not collided with the disk or
             //   with the horizon and that the current time has not exceeded
             //   the final time.
-            //   -> 1. Advance the ray a time of `resolution`, calling the main
-            //      RK45 solver.
+            //   -> 1. Advance the ray a step, calling the main RK45 solver.
             //   -> 2. Test whether the ray has collided with the horizon.
-            //          2.1 If the answer to the 2. test is positive: test
+            //          2.1 If the answer to the 2. test is negative: test
             //          whether the current theta has crossed theta = pi/2,
             //          and call bisect in case it did, updating its status
             //          accordingly (set it to DISK if the ray collided with
             //          the horizon).
-            //          2.2. If the answer to the 2. test is negative: update
+            //          2.2. If the answer to the 2. test is positive: update
             //          the status of the ray to HORIZON.
-            // PHASE 1: Advance time an amount of `resolution`. The solver
-            // itself updates the current time x with the final time reached
             status = SolverRK45(&x, xend, initCond, h, xend - x, data,
                                 &iterations);
 
-            // Once the loop is finished (the ray has been computed until the
-            // final time or it has collided with the disk/horizon), update
-            // the global status variable
+            // Update the global status variable with the new computed status
             *globalStatus = status;
 
             // And, finally, update the current ray state in global memory :)
