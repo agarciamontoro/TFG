@@ -309,9 +309,6 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
             // Current time
             Real x = x0;
 
-            // Local variable to know the status of the ray
-            SolverStatus solverStatus;
-
             // Local variable to know how many iterations spent the solver in
             // the current step.
             int iterations = 0;
