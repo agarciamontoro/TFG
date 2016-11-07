@@ -3,8 +3,7 @@
 GIT_ROOT=`git rev-parse --show-toplevel`
 GIT_LAST_COMMIT=`git log master -1 --oneline`
 
-cd $GIT_ROOT
-if git checkout gh-pages || git checkout --orphan gh-pages ;
+if cd $GIT_ROOT && (git checkout gh-pages || git checkout --orphan gh-pages) ;
 then
     rm -rf *
     git checkout master *
