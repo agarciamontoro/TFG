@@ -26,6 +26,8 @@ GIT_LAST_COMMIT=`git log master -1 --oneline`
 #     git stash drop
 # fi
 
+
+cd $GIT_ROOT
 if git checkout gh-pages || git checkout --orphan gh-pages ;
 then
     rm -rf *
