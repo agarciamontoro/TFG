@@ -274,149 +274,68 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
         // Compute pixel unique identifier for this thread
         int pixel = row*IMG_COLS + col;
 
-        // Array of status flags: at the output, the (x,y)-th element will be 0
-        // if any error ocurred (namely, the step size was made too small) and
-        // 1 if the computation succeded
+        // Array of status flags: at the output, the (x,y)-th element will be
+        // set to SPHERE, HORIZON or disk, showing the final state of the ray.
         int* globalStatus = (int*) devStatus;
         globalStatus += pixel;
         int status = *globalStatus;
 
-        // Retrieve the position where the initial conditions this block will
-        // work with are.
-        // Each block, absolutely identified in the grid by blockId, works with
-        // only one initial condition (that has N elements, as N equations are
-        // in the system). Then, the position of where these initial conditions
-        // are stored in the serialized vector can be computed as blockId * N.
-        Real* globalInitCond = (Real*) devInitCond;
-        globalInitCond += pixel * SYSTEM_SIZE;
+        // Integrate the ray only if it's still in the sphere. If it has
+        // collided either with the disk or within the horizon, it is not
+        // necessary to integrate it anymore.
+        if(status == SPHERE){
+            // Retrieve the position where the initial conditions this block
+            // will work with are.
+            // Each block, absolutely identified in the grid by blockId, works
+            // with only one initial condition (that has N elements, as N
+            // equations are in the system). Then, the position of where these
+            // initial conditions are stored in the serialized vector can be
+            // computed as blockId * N.
+            Real* globalInitCond = (Real*) devInitCond;
+            globalInitCond += pixel * SYSTEM_SIZE;
 
-        // Pointer to the additional data array used by computeComponent
-        Real* globalData = (Real*) devData;
-        globalData += pixel * DATA_SIZE;
+            // Pointer to the additional data array used by computeComponent
+            Real* globalData = (Real*) devData;
+            globalData += pixel * DATA_SIZE;
 
-        // Local arrays to store the initial conditions and the additional
-        // data
-        Real initCond[SYSTEM_SIZE], data[DATA_SIZE];
+            // Local arrays to store the initial conditions and the additional
+            // data
+            Real initCond[SYSTEM_SIZE], data[DATA_SIZE];
 
-        // Retrieve the data from global to local memory :)
-        memcpy(initCond, globalInitCond, sizeof(Real)*SYSTEM_SIZE);
-        memcpy(data, globalData, sizeof(Real)*DATA_SIZE);
+            // Retrieve the data from global to local memory :)
+            memcpy(initCond, globalInitCond, sizeof(Real)*SYSTEM_SIZE);
+            memcpy(data, globalData, sizeof(Real)*DATA_SIZE);
 
-        // Variables to keep track of the current r and the previous and
-        // current theta
-        Real currentR;
-        int prevThetaSign, currentThetaSign;
+            // Current time
+            Real x = x0;
 
-        // Initialize previous theta to the initial conditions
-        prevThetaSign = sign(initCond[1] - HALF_PI);
+            // Local variable to know how many iterations spent the solver in
+            // the current step.
+            int iterations = 0;
 
-        // Current time
-        Real x = x0;
+            // MAIN ROUTINE. Integrate the ray from x to xend, checking disk
+            // collisions on the go with the following algorithm:
+            //   -> 0. Check that the ray has not collided with the disk or
+            //   with the horizon and that the current time has not exceeded
+            //   the final time.
+            //   -> 1. Advance the ray a step, calling the main RK45 solver.
+            //   -> 2. Test whether the ray has collided with the horizon.
+            //          2.1 If the answer to the 2. test is negative: test
+            //          whether the current theta has crossed theta = pi/2,
+            //          and call bisect in case it did, updating its status
+            //          accordingly (set it to DISK if the ray collided with
+            //          the horizon).
+            //          2.2. If the answer to the 2. test is positive: update
+            //          the status of the ray to HORIZON.
+            status = SolverRK45(&x, xend, initCond, h, xend - x, data,
+                                &iterations);
 
-        // Local variable to know the status of the ray
-        SolverStatus solverStatus;
+            // Update the global status variable with the new computed status
+            *globalStatus = status;
 
-        // Auxiliar array used to pass a copy of the data to bisect.
-        // Bisect changes the data it receives, and we want to change them only
-        // when the result of the bisect tells us the ray has collided with the
-        // disk.
-        // Hence: if we have to call bisect, we put a copy of the current data
-        // into dataCopy, which we pass to bisect; then, only if the ray has
-        // collided with the disk, we transfer again the data from copyData to
-        // initCond.
-        Real copyData[SYSTEM_SIZE];
-
-        // Local variable to know how many iterations spent the solver in the
-        // current step.
-        int iterations = 0;
-
-        // Local variable to know how many iterations spent the bisect in the
-        // current step.
-        int bisectIter;
-
-        // This variable belongs to the solver logic, not the raytracer logic.
-        // It is used inside the solver to automatically compute the steps
-        // size. Without keeping track of this variable here, the solver would
-        // reset it each time the method is called. As we want the solver to
-        // think it is continuosly computing the evolution of the ray (the
-        // resolution variable is invisible to the solver), it is mandatory to
-        // manage the facold variable from here.
-        float facold = 1.0e-4;
-
-        // Size of the interval in whose extrems we will check whether the ray
-        // has crossed theta = pi/2
-        Real resolution = -0.1;
-
-        // MAIN LOOP. Each iteration has the following phases:
-        //   -> 0. Check that the ray has not collided with the disk or with
-        //      the horizon and that the current time has not exceeded the
-        //      final time.
-        //   -> 1. Advance the ray a time of `resolution`, calling the main
-        //      RK45 solver.
-        //   -> 2. Test whether the ray has collided with the horizon.
-        //          2.1 If the answer to the 2. test is positive: test whether
-        //          the current theta has crossed theta = pi/2, and call bisect
-        //          in case it did, updating its status accordingly (set it to
-        //          DISK if the ray collided with the horizon).
-        //          2.2. If the answer to the 2. test is negative: update the
-        //          status of the ray to HORIZON.
-        while(status == SPHERE && x > xend){
-            // PHASE 1: Advance time an amount of `resolution`. The solver
-            // itself updates the current time x with the final time reached
-            solverStatus = SolverRK45(&x, x + resolution, initCond, &h,
-                                      resolution, data, &iterations, &facold);
-
-            // PHASE 2: Check whether the ray has collided with the horizon
-            if(solverStatus == SOLVER_SUCCESS){
-                // PHASE 2.1: Check if theta has crossed pi/2
-
-                // Update current theta
-                currentThetaSign = sign(initCond[1] - HALF_PI);
-
-                // Check whether the ray has crossed theta = pi/2
-                if(prevThetaSign != currentThetaSign){
-                    // Copy the current ray state to the auxiliar array
-                    memcpy(copyData, initCond, sizeof(Real)*SYSTEM_SIZE);
-
-                    // Call bisect in order to find the exact spot where theta
-                    // = pi/2
-                    bisectIter = bisect(copyData, data, resolution, x);
-
-                    // Safe guard: if bisect failed, put the status to HORIZON
-                    if(bisectIter == -1){
-                        status = HORIZON;
-                        break;
-                    }
-
-                    // Retrieve the current r
-                    currentR = copyData[0];
-
-                    // Finally, check whether the current r is inside the disk,
-                    // updating the status and copying back the data in the
-                    // case it is
-                    if(innerDiskRadius<currentR && currentR<outerDiskRadius){
-                        status = DISK;
-                        memcpy(initCond, copyData, sizeof(Real)*SYSTEM_SIZE);
-                    }
-                }
-            }
-            else{
-                // PHASE 2.2: The ray has collided with the horizon
-                status = HORIZON;
-            }
-
-            // Update the previous variables for the next step computation
-            prevThetaSign = currentThetaSign;
-
-        } // While globalStatus == SPHERE and x > xend
-
-        // Once the loop is finished (the ray has been computed until the final
-        // time or it has collided with the disk/horizon), update the global
-        // status variable
-        *globalStatus = status;
-
-        // And, finally, update the current ray state in global memory :)
-        memcpy(globalInitCond, initCond, sizeof(Real)*SYSTEM_SIZE);
+            // And, finally, update the current ray state in global memory :)
+            memcpy(globalInitCond, initCond, sizeof(Real)*SYSTEM_SIZE);
+        } // If status == SPHERE
 
     } // If row < IMG_ROWS and col < IMG_COLS
 }

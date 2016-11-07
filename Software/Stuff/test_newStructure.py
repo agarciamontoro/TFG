@@ -52,8 +52,7 @@ if __name__ == '__main__':
     # Set camera's speed (it needs the kerr metric constants)
     camera.setSpeed(kerr, blackHole)
 
-
-    for _ in range(10):
+    for _ in range(1):
         # Create the raytracer!
         rayTracer = RayTracer(camera, kerr, blackHole)
 
@@ -62,7 +61,7 @@ if __name__ == '__main__':
         print("Time: ", rayTracer.totalTime)
         rayTracer.synchronise()
         # # np.savetxt("data.csv", rayTracer.systemState[20, 20, :])
-        # rayTracer.plotImage()
+        rayTracer.plotImage()
 
         # # Generate the 3D scene
         # rayTracer.generate3Dscene(-70, 500)
