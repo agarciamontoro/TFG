@@ -10,7 +10,7 @@ then
     if cd Documentation/Sphinx && make html ;
     then
         cd $GIT_ROOT
-        mv -f Documentation/Sphinx/build/html/* ./
+        mv -vf Documentation/Sphinx/build/html/* ./
         rm -rf Documentation/ Software/
     fi
     git add -A && git commit -am "Pushing to gh-pages: $GIT_LAST_COMMIT" && git push origin gh-pages
