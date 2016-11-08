@@ -10,6 +10,7 @@ then
     if cd Documentation/Sphinx && make html ;
     then
         cd $GIT_ROOT
+        ls -R Documentation/Sphinx/build/html/_static
         mv -vf Documentation/Sphinx/build/html/* ./
         rm -rf Documentation/ Software/
     fi
