@@ -1,0 +1,6 @@
+makeindex -s myDoc.ist -o myDoc.gls myDoc.glo
+
+
+OPCION II
+
+makeglossaries DOC
