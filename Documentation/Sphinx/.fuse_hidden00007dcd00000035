@@ -8,7 +8,7 @@ then
     pwd
     ls -laR | less
     sudo rm -rf *
-    git checkout master Documentation/Sphinx Software/Raytracer
+    git checkout master Documentation/Sphinx Software/{Raytracer,RK4,Utils}
     ls -R
     if cd Documentation/Sphinx && make html ;
     then
