@@ -13,6 +13,7 @@ then
         ls -R Documentation/Sphinx/build/html/_static
         mv -vf Documentation/Sphinx/build/html/* ./
         rm -rf Documentation/ Software/
+        ls -R ./_static
     fi
     git add -A && git commit -am "Pushing to gh-pages: $GIT_LAST_COMMIT" && git push origin gh-pages
     git checkout master
