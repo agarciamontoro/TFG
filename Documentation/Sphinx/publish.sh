@@ -5,11 +5,8 @@ GIT_LAST_COMMIT=`git log master -1 --oneline`
 
 if cd $GIT_ROOT && (git checkout gh-pages || git checkout --orphan gh-pages) ;
 then
-    pwd
-    ls -laR | less
-    sudo rm -rf *
+    rm -rf *
     git checkout master Documentation/Sphinx Software/{Raytracer,RK4,Utils}
-    ls -R
     if cd Documentation/Sphinx && make html ;
     then
         cd $GIT_ROOT
