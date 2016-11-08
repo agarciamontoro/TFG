@@ -6,14 +6,12 @@ GIT_LAST_COMMIT=`git log master -1 --oneline`
 if cd $GIT_ROOT && (git checkout gh-pages || git checkout --orphan gh-pages) ;
 then
     rm -rf *
-    git checkout master Documentation Software
+    git checkout master Documentation Software .gitignore
     if cd Documentation/Sphinx && make html ;
     then
         cd $GIT_ROOT
-        ls -R Documentation/Sphinx/build/html/_static
-        mv -vf Documentation/Sphinx/build/html/* ./
+        mv -f Documentation/Sphinx/build/html/* ./
         rm -rf Documentation/ Software/
-        ls -R ./_static
     fi
     git add -A && git commit -am "Pushing to gh-pages: $GIT_LAST_COMMIT" && git push origin gh-pages
     git checkout master
