@@ -6,7 +6,7 @@ GIT_LAST_COMMIT=`git log master -1 --oneline`
 if cd $GIT_ROOT && (git checkout gh-pages || git checkout --orphan gh-pages) ;
 then
     rm -rf *
-    git checkout master Documentation Software/{Raytracer,RK4,Utils}
+    git checkout master Documentation Software
     if cd Documentation/Sphinx && make html ;
     then
         cd $GIT_ROOT
