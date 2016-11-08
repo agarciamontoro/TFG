@@ -55,14 +55,14 @@ With the concepts of multilinear maps and dual spaces we can now build the defin
 		T \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r copies}} \times \underbrace{V \times \cdots \times V}_{\text{s copies}} \longrightarrow K.
 	\]
 	Tensors of type $(0,s)$ are said to be \emph{covariant}, whereas tensors of type $(r,0)$ are called \emph{contravariant}.
-	
+
 	The \emph{order} of the tensor is defined as the sum $r+s$.
 \end{definition}
 
 \begin{example}
 	\label{ex:tensors}
 	The following examples show how interesting the notion of tensor is, as it can include a vast selection of mathematical objects under the same concept; for example, we will see that both vectors and one-forms are tensors.
-	
+
 	Let $V$ be an $n$-dimensional vector space and $V^*$ its dual space.
 	\begin{enumerate}
 		\item Let $\varphi \in V^*$; \ie,  $\varphi \colon V \to K$ is a one-form. From \autoref{def:tensor} it is clear that $\varphi$ is a tensor of type $(0,1)$ over $V$.
@@ -90,7 +90,7 @@ Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear t
 		\item $(a T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) \defeq a T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)$,
 	\end{itemize}
 	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r\}$ and $v_j \in V$ for all $j \in \{1,\dots,s\}$.
-	
+
 	The set $\tensors_{r,s}(V)$ with the preceding operations is a vector space.
 \end{theorem}
 
@@ -171,13 +171,13 @@ Upon this concept, and using the known properties of the dual vector space and i
 		T(\psi^1, \dots, \psi^r, w_1, \dots, w_s) = \sum_{\substack{i_1,\dots,i_s\\j_1,\dots,j_r}} a_{i_1}^1 \cdots a_{i_r}^r b^{j_1}_1 \dots b^{j_s}_s t_{j_1, \dots, j_s}^{i_1, \dots, i_r},
 	\]
 	where $t_{j_1, \dots, j_s}^{i_1, \dots, i_r} \defeq T(\varphi^{i_1}, \dots, \varphi^{i_r}, v_{j_1}, \dots, v_{j_s})$.
-	
+
 	Following this reasoning ---see \cite{romero86} for the details---, we can finally write
 	\[
 		T = \sum_{\substack{i_1,\dots,i_s\\j_1,\dots,j_r}} t_{j_1, \dots, j_s}^{i_1, \dots, i_r} \left( v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s} \right),
 	\]
 	which proves that $\mathcal{B}_T$ spans $\tensors_{r,s}(V)$.
-	
+
 	To prove that $\mathcal{B}_T$ is linearly independent, consider a linear combination of the elements in $\mathcal{B}_T$ that equals the null tensor,
 	\begin{equation}
 		\label{eq:nullcomb}
@@ -249,7 +249,7 @@ This change of bases in $V$ and $V^*$  is key to understand \autoref{pro:changeT
 		\mathcal{B}'_T = \{v'_{i_1} \otimes \dots \otimes v'_{i_r} \otimes \varphi'^{j_1} \otimes \dots \otimes \varphi'^{j_s} \textrm{ , } &\textrm{where every index moves} \\
 		&\textrm{independently from $1$ to $n$}  \}.
 	\end{align*}
-	
+
 	Then, the analytic expression of the change of coordinates of a tensor $T \in \tensors_{r,s}(V)$ is the following:
 	\begin{align*}
 		t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} = \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r}
@@ -298,7 +298,7 @@ where $\mathbf{A} \defeq \left(a_j^i\right)$ is the matrix whose elements are th
 	\mathbf{A} = M(1_v, \mathcal{B}'^*, \mathcal{B}^*)
 \]
 
-We can follow a similar reasoning for $\tensors_{(0,2)}$, considering 
+We can follow a similar reasoning for $\tensors_{(0,2)}$, considering
 \[
 \mathcal{B}_T = \{\varphi^i \otimes \varphi^j \textrm{, where } i,j \in \{1,\dots,n\}\}
 \]
@@ -354,7 +354,7 @@ This is not surprising as both spaces are isomorphic, with a \emph{natural} isom
 \end{theorem}
 \begin{proof}
 	It is obvious to see that $T_{f+f'} = T_f +T_{f'}$ and that $T_{af} = aT_f$, which tells us that the map is linear.
-	
+
 	Suppose now that $T_f = T_0$; \ie, $\varphi(f(v)) = 0 \; \forall \varphi \in V^* \; \forall v \in V$. This implies immediately that $f(v) = 0 \; \forall v \in V$, as it is known that if $\psi(w) = 0$ for every $\psi \in V$, then $w = 0$. This shows that $f$ is the zero mapping, which proves that the map is one-to-one.
 \end{proof}
 
@@ -362,7 +362,7 @@ Note that whereas all the three vector spaces studied ---$\tensors_{2,0}$, $\ten
 
 \begin{remark}
 	This natural identification between tensors in $\tensors_{1,1}$ and operators is key in the physics literature, as one can talk either about operators over a vector space or about tensors $(1,1)$.
-	
+
 	But how can we identify a tensor and its corresponding operator in practice? Let us see it: consider $f \in \End_K(V)$ defined, using a basis $\mathcal{B} = (v_1, \dots, v_n)$ of $V$, as
 	\[
 		f(v_j) = \sum_{i=1}^n a^i_j v_i
@@ -371,7 +371,7 @@ Note that whereas all the three vector spaces studied ---$\tensors_{2,0}$, $\ten
 	\[
 		T_f = \sum_{i,j=1}^n t^i_j v_i \otimes \varphi^j.
 	\]
-	
+
 	A really quick proof shows that both coordinates $a^i_j$ and $t^i_j$ are exactly the same!
 	\[
 		t^i_j = T_f(\varphi^i, v_j) = \varphi^i(f(v_j)) = a^i_j.
@@ -383,7 +383,3 @@ Note that whereas all the three vector spaces studied ---$\tensors_{2,0}$, $\ten
 %Tensor: aplicación que hace corresponder a cada base ordenada una multimatriz de orden (r,s) y orden n.
 
 %Vector de R^n: aplicación que hace corresponder a cada base ordenada  n numeritos :)
-
-
-
-

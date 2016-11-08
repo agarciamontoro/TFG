@@ -18,6 +18,7 @@ I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
 	@echo "  html       to make standalone HTML files"
+	@echo "  gh-pages   to make standalone HTML files and publish to gh-pages"
 	@echo "  dirhtml    to make HTML files named index.html in directories"
 	@echo "  singlehtml to make a single large HTML file"
 	@echo "  pickle     to make pickle files"
@@ -223,3 +224,12 @@ dummy:
 	$(SPHINXBUILD) -b dummy $(ALLSPHINXOPTS) $(BUILDDIR)/dummy
 	@echo
 	@echo "Build finished. Dummy builder generates no files."
+
+
+
+GIT_ROOT=$(shell git rev-parse --show-toplevel)
+GIT_LAST_COMMIT=$(shell git log master -1 --oneline)
+
+gh-pages:
+	@./publish.sh
+	@echo "Build and deploy finished."

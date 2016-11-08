@@ -278,3 +278,6 @@ TSWLatexianTemp*
 
 # KBibTeX
 *~[0-9]*
+
+# All fuse_hidden
+.fuse_hidden*
