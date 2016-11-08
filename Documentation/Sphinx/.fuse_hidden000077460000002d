@@ -8,7 +8,8 @@ then
     pwd
     ls -laR | less
     sudo rm -rf *
-    git checkout master *
+    git checkout master Documentation Software
+    ls -R
     if cd Documentation/Sphinx && make html ;
     then
         cd $GIT_ROOT
