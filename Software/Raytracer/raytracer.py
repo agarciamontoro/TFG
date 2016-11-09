@@ -20,10 +20,6 @@ __logmodule__ = True
 # the apropiate tools in the pycuda module.
 import pycuda.autoinit
 
-# Import the solver
-sys.path.append('../RK4')
-from rk4 import RK4Solver
-
 # Set directories for correct handling of paths
 selfDir = os.path.dirname(os.path.abspath(__file__))
 softwareDir = os.path.abspath(os.path.join(selfDir, os.pardir))
