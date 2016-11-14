@@ -555,20 +555,20 @@ Going back to the beginning of this section, we will see now how we could build 
 	\label{pro:musicalcoord}
 	Let $B = (v_1, \dots, v_n)$ be an ordered basis of $(V,g)$ and let $B^* = (\varphi^1, \dots, \varphi^n)$ be its dual basis. Consider a tensor $T\in\tensors_{(0,2)}(V)$ that is defined as follows:
 	\[
-		T = \sum_{i,j}^{n} t^{ij} v_i \otimes v_j
+		T = \sum_{i,j}^{n} t_{ij} \varphi^i \otimes \varphi^j
 	\]
 	
 	Then, if the tensors $T'$ and $T''$ from \autoref{theo:tensoriso} have the coordinates
 	\[
 		T' = \sum_{i,j}^{n} t'^i_j v_i \otimes \varphi^j
 		\quad \textrm{and} \quad
-		T'' = \sum_{i,j}^{n} t''_{ij} \varphi^i \otimes \varphi^j,
+		T'' = \sum_{i,j}^{n} t''^{ij} v_i \otimes v_j,
 	\]
 	the expressions that relate the tensors are given as
 	\[
 		t'^i_j = \sum_{k=1}^n g^*(\varphi^k, \varphi^i) t_{kj}
 		\quad \textrm{and} \quad
-		t''_{ij} = \sum_{k,l = 1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) t_{kl}.
+		t''^{ij} = \sum_{k,l = 1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) t_{kl}.
 	\]
 \end{proposition}
 
@@ -585,7 +585,7 @@ Going back to the beginning of this section, we will see now how we could build 
 
 	The second one is very similar:
 	\begin{align*}
-		t''_{ij} &= T''(\varphi^i, \varphi^j) = T((\varphi^i)^\sharp, (\varphi^j)^\sharp) = \\
+		t''^{ij} &= T''(\varphi^i, \varphi^j) = T((\varphi^i)^\sharp, (\varphi^j)^\sharp) = \\
 		&= T(\sum_k g^*(\varphi^k, \varphi^i) v_k, \sum_l g^*(\varphi^l, \varphi^j) v_l) = \\
 		&= \sum_{k,l=1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) T(v_k, v_l) = \\
 		&= \sum_{k,l=1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) t_{kl}
@@ -612,28 +612,30 @@ Going back to the beginning of this section, we will see now how we could build 
 	
 	We can obtain the inverted version of the second expression in a similar way, now multiplying by $g_{im} g_{jp}$ and summing over $i$ and $j$:
 	\begin{align*}
-		t''_{ij} &= \sum_{k,l = 1}^n g^{ki} g^{lj} t_{kl} \\
-		\sum_{i,j=1}^n g_{im} g_{jp} t''_{ij} &= \sum_{i,j,k,l = 1}^n \left( g_{im} g^{ki} \right) \left( g_{jp} g^{lj} \right) t_{kl} \\
-		\sum_{i,j=1}^n g_{im} g_{jp} t''_{ij} &= \sum_{k,l = 1}^n \delta_m^k \delta_p^l t_{kl} \\
-		\sum_{i,j=1}^n g_{im} g_{jp} t''_{ij} &= t_{mp} \\
+		t''^{ij} &= \sum_{k,l = 1}^n g^{ki} g^{lj} t_{kl} \\
+		\sum_{i,j=1}^n g_{im} g_{jp} t''^{ij} &= \sum_{i,j,k,l = 1}^n \left( g_{im} g^{ki} \right) \left( g_{jp} g^{lj} \right) t_{kl} \\
+		\sum_{i,j=1}^n g_{im} g_{jp} t''^{ij} &= \sum_{k,l = 1}^n \delta_m^k \delta_p^l t_{kl} \\
+		\sum_{i,j=1}^n g_{im} g_{jp} t''{ij} &= t_{mp} \\
 	\end{align*}
 
-	Fixing the indices to look nicer, we have the final expressions for both changes:
+	Fixing the indices to look nicer and leaving out the primes ---which is somehow an abuse of the notation, but that cannot lead to any errors--- we have the final expressions for both changes:
 	\[
-		t_{ij} = \sum_{k=1}^n g_{ki} t'^k_j
+		t_{ij} = \sum_{k=1}^n g_{ki} t^k_j
 		\quad \textrm{and} \quad
-		t_{ij} = \sum_{k,l=1}^n g_{ki} g_{lj} t''_{kl}
+		t_{ij} = \sum_{k,l=1}^n g_{ki} g_{lj} t^{kl}
 	\]
 \end{remark}
 
-\autoref{pro:musicalcoord} gives us a great tool to identify tensors of the same order ---although we have seen the proposition for tensors of order 2, it is easily generalized to any other order---; in fact, the operation of multiplying by the metric and obtaining the same tensor with a different type, as shown in \autoref{rem:raiselower}, is known as \emph{raising and lowering indices}. This operation, whose background is in  but what happens when we work with orthonormal basis?
+Although we have seen \autoref{pro:musicalcoord} for tensors of order 2, the result is easily generalized to tensors of any other order. This provides us with a great tool to identify tensors of the same order through the musical isomorphisms.
 
-Let us consider again the example of tensors of order 2, but now with $B$ an orthonormal basis; we know from previous discussions that, in this case, $B^*$ is also orthonormal; \ie, the metric on the elements of the basis is
+This whole identification, which is in practice a technique consisting of multiplying by the metric in order to obtain the same tensor with a different type ---as shown in \autoref{rem:raiselower}--- is a well-known operation known as \emph{raise and lower indices}. This operation will become extremely important on the differential geometry discussion, which will be key to this work.
+
+But before going ahead, let us ease even more the identification between tensors. Let us consider again the example of tensors of order 2, but now with $B$ an orthonormal basis; we know from previous discussions that, in this case, $B^*$ is also orthonormal; \ie, the metric on the elements of the basis is
 \[
-	g^*(\varphi^i, \varphi^j) = \delta_{ij}.
+	g^{ij} = \delta^i_j.
 \]
 
-Then, the expressions for the change of coordinates, following the notation of \autoref{pro:musicalcoord}, are even easier:
+Then, the expressions for the change of coordinates, following the notation of \autoref{rem:raiselower}, are even easier:
 \[
-	t'^i_j = t_{ij} = t''_{ij}
+	t^i_j = t_{ij} = t^{ij}
 \]
