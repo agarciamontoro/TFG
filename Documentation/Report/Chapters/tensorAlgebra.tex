@@ -38,13 +38,14 @@ First of all, it is known that if $V$ is finite-dimensional, the dimensions of $
 \]
 
 Furthermore, the reflexiveness theorem \change{Reflexiveness theorem is the worst translation ever} tells us that there exists a natural isomorphism between $V$ and its double dual space, $V^{**}$, when $V$ is finite-dimensional. This isomorphism assigns, to every vector $v \in V$, a function that maps every one-form into its evaluation on $v$:
-\begin{align*}
+\begin{align}
+	\label{eq:naturaliso}
 	\psi \colon V &\longrightarrow V^{**} \\
 	v &\longmapsto \psi_v \colon \begin{aligned}[t]
 		V^* &\longrightarrow K \\
 		\varphi &\longmapsto \varphi(v).
-	\end{aligned}
-\end{align*}
+	\end{aligned} \nonumber
+\end{align}
 
 With the concepts of multilinear maps and dual spaces we can now build the definition of tensor, core concept of this section.
 
@@ -447,7 +448,192 @@ The study on tensors of order 2 on page \pageref{sub:order2} becomes clearer wit
 	\end{pmatrix},
 \]
 such that for every pair of different bases, the coordinate matrices are similar.
-	
-%Tensor: aplicación que hace corresponder a cada base ordenada una multimatriz de orden (r,s) y orden n.
 
-%Vector de R^n: aplicación que hace corresponder a cada base ordenada  n numeritos :)
+What is a vector, then, in this new language? It is nothing else ---remember that we can identify vectors and tensors $(1,0)$--- than an application that maps ordered bases onto ordered collections of $n$ numbers ---given that $n$ is the dimension of the vector space---; what we always called coordinates of the vector are now seen as the result of applying a map ---the vector itself--- to a basis. Same exact concept, brand new vision.
+	
+\subsection{Musical isomorphisms}
+
+In physics, the usage of tensors of order 2 over $\R^3$ is made without explicitly saying nothing about its covariance or contravariance. This can be made only on those vector spaces that are adorned with a metric, which gives us the possibility to build isomorphisms between dual spaces and induce them between tensor spaces.
+
+From now on, let us consider the metric vector space $(V, g)$, where $V$ is an $n$-dimensional vector space over $\R$ and $g \colon V \times V \to \R$ is a nondegenerate metric; i.e., $g$ is a nondegenerate symmetric $(0,2)$-tensor.
+
+This addition to the naked vector space we have had until now will let us to find an isomorphism between $V$ and its dual, $V^*$ without using bases; however, this is not a \emph{natural} isomorphism as the one seen on \autoref{eq:naturaliso}, as long as we need for the existence of the metric to build it.
+
+\begin{proposition}
+	\label{pro:musical}
+	Let $v \in V$ and $\varphi \in V^*$ be a vector and a one-form.
+	
+	Consider now the one-form $v^\flat \colon V \to \R$ defined by $v^\flat(w) = g(v, w)$ and the vector $\varphi^\sharp \in V$ implicitly defined by $g(\varphi^\sharp, w) = \varphi(w) \;\forall w \in V$. Then:
+	\begin{enumerate}
+		\item $v^\flat \in V^*$ and $\varphi^\sharp \in V$.
+		\item $\begin{aligned}[t]
+			\flat \colon &V \to V^* \\
+			&v \mapsto v^\flat
+		\end{aligned}$ and $\begin{aligned}[t]
+			\sharp \colon &V^* \to V \\
+			&\varphi \mapsto \sharp^\flat
+		\end{aligned}$ are linear.
+		\item $\flat \circ \sharp = 1_{V^*}$ and $\sharp \circ \flat = 1_V$.
+	\end{enumerate}	
+\end{proposition}
+
+This proposition, whose trivial proof can be found on \cite[Proposition 9.30]{romero86}, let us define the so-called musical isomorphisms, that gives us the possibility to completely identify $V$ and $V^*$ ---this identification depends on the metric $g$---:
+
+\begin{definition}[Musical isomorphisms]
+	The isomorphisms $\flat \colon V \to V^*$ and $\sharp \colon V^* \to V$, defined on \autoref{pro:musical}, are called \emph{musical isomorphisms induced by g}. We call $\flat$ \emph{flat} and $\sharp$ \emph{sharp}.
+\end{definition}
+
+These isomorphisms also allow us to translate geometrical objects from $V$ to $V^*$; particularly, we can see the induced metric $g^*$ on $V^*$:
+
+\begin{proposition}
+	The application $g^*$ that maps every $\varphi, \psi \in V^*$ on $g^*(\varphi,\psi) = g(\varphi^\sharp, \psi^\sharp)$ is a metric on $V^*$. Furthermore, $g^*$ is the only metric that allows $\flat$ and $\sharp$ to be isometries\change{Esto no parece que esté muy bien}.
+\end{proposition}
+
+\begin{proof}
+	Let us see that $g^*$ is a metric; \ie that it is bilinear and symmetric: the fact that $g^*$ is bilinear comes from the facts that $g$ is bilinear and $\sharp$ is linear; using that $g$ is symmetric, we can write $g^*(\varphi, \psi) = g(\varphi^\sharp, \psi^\sharp) = g(\psi^\sharp, \varphi^\sharp) = g^*(\psi, \varphi)$, which proves that $g^*$ is symmetric.
+	
+	$\flat$ is an isometry ---and such is $\sharp$--- given that
+	\begin{equation}
+		\label{proof:isometry}
+		g^*(v^\flat, w^\flat) = g\left(\left(v^\flat\right)^\sharp, \left(w^\flat\right)^\sharp\right) = g(v, w).
+	\end{equation}
+
+	If $g'$ is another metric that allows $\flat$ to be an isometry\change{Esto no parece que esté muy bien}, then \[g'(v^\flat, w^\flat) = g(v, w).\] But using \autoref{proof:isometry} we see that $g^*(v^\flat, w^\flat) = g'(v^\flat, w^\flat)$. Given that $\flat$ is one\nobreakdash-to\nobreakdash-one we conclude that $g' = g^*$.
+\end{proof}
+
+The metrics $g$ and $g^*$ allow us to establish a connection between the coordinates of $v$ and $v^\flat$ and between the coordinates of $\varphi$ and $\varphi^\sharp$.
+
+Let us consider $B = (v_1, \dots, v_n)$ and $B^* = (\varphi^1, \dots, \varphi^n)$ ordered bases of $V$ and its dual.
+
+Let $(a^1, \dots, a^n)$ be the coordinates of $v \in V$ in $B$ and let $(b_1, \dots, b_n)$ be the coordinates of $v^\flat \in V^*$ in $B^*$. It is easy to see that
+\begin{equation}
+	\label{eq:coordV}
+	b_j = \sum_{k=1}^n g(v_j, v_k) a^k \;\; \forall j \in \{1,2,\dots,n\}.
+\end{equation}
+
+Similary, if $(c_1, \dots, c_n)$ are the coordinates of $\varphi \in V^*$ in $B^*$ and $(d^1, \dots, d^n)$ are the coordinates of $\varphi^\sharp \in V$ in B, then we can write
+\begin{equation}
+	\label{eq:coordV*}
+	d^j = \sum_{k=1}^n g^*(\varphi^j, \varphi^k) c_k \;\; \forall j \in \{1,2,\dots,n\}.
+\end{equation}
+
+From this equations we can easily see that
+\[
+	M_{B^*}(g^*) = M_B(g)^{-1},
+\]
+where $M_B(g)$ is the matrix associated to the bilinear form $g$ on the basis $B$.
+
+Finally, we can see that if $B$ is an orthonormal basis of $(V,g)$, then $B^*$ is an orthonormal basis of $(V,g^*)$ and the previous expressions are even easier: $b_j = a^j$ and $d^j = c_j$.
+
+Going back to the beginning of this section, we will see now how we could build isomorphisms between all tensors of order 2. \autoref{theo:tensoriso} can be, of course, generalized in oder to find isomorphisms between all tensors of order $p \in \N$.
+
+\begin{theorem}
+	\label{theo:tensoriso}
+	Let $T\in\tensors_{(0,2)}(V)$ be a $(0,2)$-tensor. If we consider $T'$ and $T''$, defined as
+	\[	
+	\begin{aligned}
+	T' \colon V^* \times V &\to \R \\
+	(\varphi, v) &\mapsto T(\varphi^\sharp, v)
+	\end{aligned} \;\;\;\textrm{ and }\;\;
+	\begin{aligned}
+	T'' \colon V^* \times V^* &\to \R \\
+	(\varphi, \psi) &\mapsto T(\varphi^\sharp, \psi^\sharp)
+	\end{aligned}
+	\]
+	then:
+	\begin{enumerate}
+		\item $T'\in\tensors_{(1,1)}(V)$ and $T''\in\tensors_{(2,0)}(V)$.
+		\item The application that maps $T \mapsto T'$ ---resp. $T \mapsto T''$--- is an isomorphism between $\tensors_{(0,2)}(V)$ and $\tensors_{(1,1)}(V)$ ---resp. between $\tensors_{(0,2)}(V)$ and $\tensors_{(2,0)}(V)$---.
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	\fixme{DO IT}
+\end{proof}
+
+\begin{proposition}
+	\label{pro:musicalcoord}
+	Let $B = (v_1, \dots, v_n)$ be an ordered basis of $(V,g)$ and let $B^* = (\varphi^1, \dots, \varphi^n)$ be its dual basis. Consider a tensor $T\in\tensors_{(0,2)}(V)$ that is defined as follows:
+	\[
+		T = \sum_{i,j}^{n} t^{ij} v_i \otimes v_j
+	\]
+	
+	Then, if the tensors $T'$ and $T''$ from \autoref{theo:tensoriso} have the coordinates
+	\[
+		T' = \sum_{i,j}^{n} t'^i_j v_i \otimes \varphi^j
+		\quad \textrm{and} \quad
+		T'' = \sum_{i,j}^{n} t''_{ij} \varphi^i \otimes \varphi^j,
+	\]
+	the expressions that relate the tensors are given as
+	\[
+		t'^i_j = \sum_{k=1}^n g^*(\varphi^k, \varphi^i) t_{kj}
+		\quad \textrm{and} \quad
+		t''_{ij} = \sum_{k,l = 1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) t_{kl}.
+	\]
+\end{proposition}
+
+\begin{proof}
+	Given that
+	\[
+		(\varphi^i)^\sharp = \sum_k d^k v_k = \sum_k (\sum_l g^*(\varphi^k, \varphi^l) c_l) v_k = \sum_k g^*(\varphi^k, \varphi^i) v_k,
+	\]
+	it is easy to conclude the first expression:
+	\begin{align*}
+		t'^i_j &= T'(\varphi^i, v_j) = T((\varphi^i)^\sharp, v_j) = T(\sum_k g^*(\varphi^k, \varphi^i) v_k, v_j) = \\
+		&= \sum_{k=1}^n g^*(\varphi^k, \varphi^i) T(v_k, v_j) = \sum_k g^*(\varphi^k, \varphi^i) t_{kj}
+	\end{align*}
+
+	The second one is very similar:
+	\begin{align*}
+		t''_{ij} &= T''(\varphi^i, \varphi^j) = T((\varphi^i)^\sharp, (\varphi^j)^\sharp) = \\
+		&= T(\sum_k g^*(\varphi^k, \varphi^i) v_k, \sum_l g^*(\varphi^l, \varphi^j) v_l) = \\
+		&= \sum_{k,l=1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) T(v_k, v_l) = \\
+		&= \sum_{k,l=1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) t_{kl}
+	\end{align*}
+\end{proof}
+
+\begin{remark}
+	From now on, in order to ease the notation, we will write the value of the metric in the elements of the basis as follows:
+	\begin{align*}
+		g_{ij} &\defeq g(v_i, v_j) \\
+		g^{ij} &\defeq g^*(\varphi^i, \varphi^j)
+	\end{align*}
+\end{remark}
+
+\begin{remark}
+	\label{rem:raiselower}
+	Of course, these two expressions can be \emph{inverted}, in order to obtain the coordinates of a $(0,2)$-tensor from the coordinates of tensors of type $(1,1)$ or $(2,0)$. Multiplying conveniently by the metric we obtain the inverted expressions. Consider the first expression, $t'^i_j = \sum_{k=1}^n g^*(\varphi^k, \varphi^i) t_{kj}$, multiply by $g_{il}$ and sum over $i$:
+	\begin{align*}
+		t'^i_j &= \sum_{k=1}^n g^{ki} t_{kj} \\
+		\sum_{i=1}^n g_{il} t'^i_j &= \sum_{k=1}^n \left(\sum_{i=1}^n g_{il} g^{ki}\right) t_{kj} \\
+		\sum_{i=1}^n g_{il} t'^i_j &= \sum_{k=1}^n \delta^k_l t_{kj} \\
+		\sum_{i=1}^n g_{il} t'^i_j &= t_{lj}
+	\end{align*}
+	
+	We can obtain the inverted version of the second expression in a similar way, now multiplying by $g_{im} g_{jp}$ and summing over $i$ and $j$:
+	\begin{align*}
+		t''_{ij} &= \sum_{k,l = 1}^n g^{ki} g^{lj} t_{kl} \\
+		\sum_{i,j=1}^n g_{im} g_{jp} t''_{ij} &= \sum_{i,j,k,l = 1}^n \left( g_{im} g^{ki} \right) \left( g_{jp} g^{lj} \right) t_{kl} \\
+		\sum_{i,j=1}^n g_{im} g_{jp} t''_{ij} &= \sum_{k,l = 1}^n \delta_m^k \delta_p^l t_{kl} \\
+		\sum_{i,j=1}^n g_{im} g_{jp} t''_{ij} &= t_{mp} \\
+	\end{align*}
+
+	Fixing the indices to look nicer, we have the final expressions for both changes:
+	\[
+		t_{ij} = \sum_{k=1}^n g_{ki} t'^k_j
+		\quad \textrm{and} \quad
+		t_{ij} = \sum_{k,l=1}^n g_{ki} g_{lj} t''_{kl}
+	\]
+\end{remark}
+
+\autoref{pro:musicalcoord} gives us a great tool to identify tensors of the same order ---although we have seen the proposition for tensors of order 2, it is easily generalized to any other order---; in fact, the operation of multiplying by the metric and obtaining the same tensor with a different type, as shown in \autoref{rem:raiselower}, is known as \emph{raising and lowering indices}. This operation, whose background is in  but what happens when we work with orthonormal basis?
+
+Let us consider again the example of tensors of order 2, but now with $B$ an orthonormal basis; we know from previous discussions that, in this case, $B^*$ is also orthonormal; \ie, the metric on the elements of the basis is
+\[
+	g^*(\varphi^i, \varphi^j) = \delta_{ij}.
+\]
+
+Then, the expressions for the change of coordinates, following the notation of \autoref{pro:musicalcoord}, are even easier:
+\[
+	t'^i_j = t_{ij} = t''_{ij}
+\]
