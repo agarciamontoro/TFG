@@ -4,6 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
+DOXYBUILD     = doxygen
 PAPER         =
 BUILDDIR      = build
 
@@ -50,7 +51,7 @@ clean:
 	rm -rf $(BUILDDIR)/*
 
 .PHONY: html
-html:
+html: doxy
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -225,6 +226,11 @@ dummy:
 	@echo
 	@echo "Build finished. Dummy builder generates no files."
 
+.PHONY: doxy
+doxy:
+	$(DOXYBUILD)
+	@echo
+	@echo "Doxygen build finished."
 
 
 GIT_ROOT=$(shell git rev-parse --show-toplevel)

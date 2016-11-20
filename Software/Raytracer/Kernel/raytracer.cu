@@ -15,16 +15,16 @@
  * Note that the computation of this quantities depends on the constants
  * __camBeta (speed of the camera) and __ro, __alpha, __omega, __pomega and
  * __ro  (Kerr metric constants), that are defined in the common.cu template.
- * @param[in]       Real  rayTheta      Polar angle, or inclination, of the
- *                        ray's incoming direction on the camera's local sky.
- * @param[in]       Real  rayPhi        Azimuthal angle, or azimuth, of the
- *                        ray's incoming direction on the camera's local sky.
- * @param[out]      Real* pR            Computed covariant coordinate r of the
- *                        ray's 4-momentum.
- * @param[out]      Real* pTheta        Computed covariant coordinate theta of
- *                        the ray's 4-momentum.
- * @param[out]      Real* pPhi          Computed covariant coordinate phi of
- *                        the ray's 4-momentum.
+ * @param[in]       rayTheta      Polar angle, or inclination, of the
+ *                  ray's incoming direction on the camera's local sky.
+ * @param[in]       rayPhi        Azimuthal angle, or azimuth, of the
+ *                  ray's incoming direction on the camera's local sky.
+ * @param[out]      pR            Computed covariant coordinate r of the
+ *                  ray's 4-momentum.
+ * @param[out]      pTheta        Computed covariant coordinate theta of
+ *                  the ray's 4-momentum.
+ * @param[out]      pPhi          Computed covariant coordinate phi of
+ *                  the ray's 4-momentum.
  */
 __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
                                     Real* pTheta, Real* pPhi){
@@ -73,12 +73,12 @@ __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
  * Note that the computation of this quantities depends on the constant
  * __camTheta, which is the inclination of the camera with respect to the black
  * hole, and that is defined in the common.cu template
- * @param[in]       Real  pTheta        Covariant coordinate theta of the ray's
- *                        4-momentum.
- * @param[in]       Real  pPhi          Covariant coordinate phi of the ray's
- *                        4-momentum.
- * @param[out]      Real* b             Computed axial angular momentum.
- * @param[out]      Real* q             Computed Carter constant.
+ * @param[in]       pTheta        Covariant coordinate theta of the ray's
+ *                  4-momentum.
+ * @param[in]       pPhi          Covariant coordinate phi of the ray's
+ *                  4-momentum.
+ * @param[out]      b             Computed axial angular momentum.
+ * @param[out]      q             Computed Carter constant.
  */
 __device__ void getConservedQuantities(Real pTheta, Real pPhi, Real* b,
                                        Real* q){
@@ -128,27 +128,27 @@ __device__ void getConservedQuantities(Real pTheta, Real pPhi, Real* b,
  * 		6. Fill the pixel's corresponding entry in the global array pointed by
  * 		devConstants with the computed constants: b and q.
  *
- * @param[out]     void* devInitCond  Device pointer to a serialized 2D matrix
- *                       where each entry corresponds to a single pixel in the
- *                       camera sensor. If the sensor has R rows and C columns,
- *                       the vector pointed by devInitCond contains R*C
- *                       entries, where each entry is a 5-tuple prepared to
- *                       receive the initial conditions of a ray: (r, theta,
- *                       phi, pR, pPhi). At the end of this kernel, the array
- *                       pointed by devInitCond is filled with the initial
- *                       conditions of every ray.
- * @param[out]     void* devConstants  Device pointer to a serialized 2D matrix
- *                       where each entry corresponds to a single pixel in the
- *                       camera sensor. If the sensor has R rows and C columns,
- *                       the vector pointed by devConstants contains R*C
- *                       entries, where each entry is a 2-tuple prepared to
- *                       receive the constants of a ray: (b, q). At the end of
- *                       this kernel, the array pointed by devConstants is
- *                       filled with the computed constants of every ray.
- * @param[in]      Real  pixelWidth   Width, in physical units, of the camera's
- *                       pixels.
- * @param[in]      Real  pixelHeight  Height, in physical units, of the
- *                       camera's pixels.
+ * @param[out]     devInitCond  Device pointer to a serialized 2D matrix
+ *                 where each entry corresponds to a single pixel in the
+ *                 camera sensor. If the sensor has R rows and C columns,
+ *                 the vector pointed by devInitCond contains R*C
+ *                 entries, where each entry is a 5-tuple prepared to
+ *                 receive the initial conditions of a ray: (r, theta,
+ *                 phi, pR, pPhi). At the end of this kernel, the array
+ *                 pointed by devInitCond is filled with the initial
+ *                 conditions of every ray.
+ * @param[out]     devConstants  Device pointer to a serialized 2D matrix
+ *                 where each entry corresponds to a single pixel in the
+ *                 camera sensor. If the sensor has R rows and C columns,
+ *                 the vector pointed by devConstants contains R*C
+ *                 entries, where each entry is a 2-tuple prepared to
+ *                 receive the constants of a ray: (b, q). At the end of
+ *                 this kernel, the array pointed by devConstants is
+ *                 filled with the computed constants of every ray.
+ * @param[in]      pixelWidth   Width, in physical units, of the camera's
+ *                 pixels.
+ * @param[in]      pixelHeight  Height, in physical units, of the
+ *                 camera's pixels.
  */
 __global__ void setInitialConditions(void* devInitCond,void* devConstants,
                                      Real pixelWidth, Real pixelHeight){
@@ -225,42 +225,42 @@ __global__ void setInitialConditions(void* devInitCond,void* devConstants,
  * 		Fill the ray's final status (no collision, collision with the disk or
  * 		collision with the horizon) in the devStatus array.
  *
- * @param[in]       Real  x0             Start of the integration interval
- *                        [x_0, x_{end}]. It is usually zero.
- * @param[in]       Real  xend           End of the integration interval
- *                        [x_0, x_{end}].
- * @param[in,out]   void* devInitCond    Device pointer to a serialized 2D
- *                        Real matrix where each entry corresponds to a single
- *                        pixel in the camera sensor; i.e., to a single ray. If
- *                        the sensor has R rows and C columns, the vector
- *                        pointed by  devInitCond contains R*C entries, where
- *                        each entry is a 5-tuple filled with the initial
- *                        conditions of the corresponding ray: (r, theta, phi,
- *                        pR, pPhi). At the end of this kernel, the array
- *                        pointed by devInitCond is overwritten with the final
- *                        state of each ray.
- * @param[in]       Real  h              Step size for the Runge-Kutta solver.
- * @param[in]       Real  hmax           Value of the maximum step size allowed
- *                        in the Runge-Kutta solver.
- * @param[in]       void* devData        Device pointer to a serialized 2D
- *                        Real matrix where each entry corresponds to a single
- *                        pixel in the camera sensor; i.e., to a single ray. If
- *                        the sensor has R rows and C columns, the vector
- *                        pointed by devData contains R*C entries, where each
- *                        entry is a 2-tuple filled with the constants of the
- *                        corresponding ray: (b, q).
- * @param[out]      void* devStatus      Device pointer to a serialized 2D
- *                        Int matrix where each entry corresponds to a single
- *                        pixel in the camera sensor; i.e., to a single ray. If
- *                        the sensor has R rows and C columns, the vector
- *                        pointed by devData contains R*C entries, where each
- *                        entry is an integer that will store the ray's status
- *                        at the end of the kernel
- * @param[in]       Real  resolutionOrig Amount of time in which the ray will
- *                        be integrated without checking collisions. The lower
- *                        this number is (in absolute value, as it should
- *                        always be negative), the more resolution you'll get
- *                        in the disk edges.
+ * @param[in]       x0             Start of the integration interval
+ *                  [x_0, x_{end}]. It is usually zero.
+ * @param[in]       xend           End of the integration interval
+ *                  [x_0, x_{end}].
+ * @param[in,out]   devInitCond    Device pointer to a serialized 2D
+ *                  Real matrix where each entry corresponds to a single
+ *                  pixel in the camera sensor; i.e., to a single ray. If
+ *                  the sensor has R rows and C columns, the vector
+ *                  pointed by  devInitCond contains R*C entries, where
+ *                  each entry is a 5-tuple filled with the initial
+ *                  conditions of the corresponding ray: (r, theta, phi,
+ *                  pR, pPhi). At the end of this kernel, the array
+ *                  pointed by devInitCond is overwritten with the final
+ *                  state of each ray.
+ * @param[in]       h              Step size for the Runge-Kutta solver.
+ * @param[in]       hmax           Value of the maximum step size allowed
+ *                  in the Runge-Kutta solver.
+ * @param[in]       devData        Device pointer to a serialized 2D
+ *                  Real matrix where each entry corresponds to a single
+ *                  pixel in the camera sensor; i.e., to a single ray. If
+ *                  the sensor has R rows and C columns, the vector
+ *                  pointed by devData contains R*C entries, where each
+ *                  entry is a 2-tuple filled with the constants of the
+ *                  corresponding ray: (b, q).
+ * @param[out]      devStatus      Device pointer to a serialized 2D
+ *                  Int matrix where each entry corresponds to a single
+ *                  pixel in the camera sensor; i.e., to a single ray. If
+ *                  the sensor has R rows and C columns, the vector
+ *                  pointed by devData contains R*C entries, where each
+ *                  entry is an integer that will store the ray's status
+ *                  at the end of the kernel
+ * @param[in]       resolutionOrig Amount of time in which the ray will
+ *                  be integrated without checking collisions. The lower
+ *                  this number is (in absolute value, as it should
+ *                  always be negative), the more resolution you'll get
+ *                  in the disk edges.
  */
 __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
                        Real hmax, void* devData, void* devStatus,

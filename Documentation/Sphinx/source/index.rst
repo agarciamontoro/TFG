@@ -48,4 +48,14 @@ This is a test to know whether the figure automatic numbering really works. See 
    case, the legend consists of this paragraph and the following
    table.
 
+Doxygen testing
+===============
+
+.. doxygenfile:: solvers.cu
+
+.. doxygenfunction:: advanceStep
+
+Bibliography
+============
+
 .. bibliography:: ../../Report/Bibliography.bib

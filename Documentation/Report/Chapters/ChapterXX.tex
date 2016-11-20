@@ -44,7 +44,7 @@ Let $M = \R \cup p$ be the union of the real line and a point $p \notin \R$. Def
     \label{fig:2origin}
 \end{figure}
 
-The last property of the definition will prove to be key in our study, as it will let us define metrics on the manifold.
+The last property of the definition will be proven key in our study, as it will let us define metrics on the manifold.
 
 \subsection{Charts}
 
@@ -84,34 +84,9 @@ The concept of manifold is quite general and includes a vast set of examples. We
 
 This section introduces the concept of differentiable structure, whose definition is key in the later description of differentiable manifolds, the core concept of this chapter.
 
-The first question in this study is the following: a chart describe perfectly a single piece of the manifold, but what happens when the domains of a pair of charts overlap? The following two definitions precise the concepts involved in this question.
+The first question in this study is the following: a chart describe perfectly a single piece of the manifold, but what happens when the domains of a pair of charts overlap? The following two definitions specify the concepts involved in this question.
 
 % TODO: Add the usual conmutative diagram for the transition maps
-
-\begin{tikzpicture}
-%Hole
-\begin{scope}[scale=0.8]
-\path[rounded corners=24pt] (-.9,0)--(0,.6)--(.9,0) (-.9,0)--(0,-.56)--    (.9,0);
-\draw[rounded corners=28pt] (-1.1,.1)--(0,-.6)--(1.1,.1);
-\draw[rounded corners=24pt] (-.9,0)--(0,.6)--(.9,0);
-\end{scope}
-%Cut 2
-\begin{scope}[scale=1.5]
-\draw (1.0605,0.5656) arc (45:315:1.5 and 0.8);
-\draw (1.0605,0.5656) to[out=-28.1,in=200] (3,.6);
-\draw (1.0605,-0.5656) to[out=28.1,in=160] (3,-.5);
-\begin{scope}[xscale=-1,xshift=-120]
-    \draw[Maroon] (1.0605,0.5656) arc (45:315:1.5 and 0.8);
-\end{scope}
-\end{scope}
-% \node at (0.19,-0.79) {$\textbf{.}$};
-% \node at (0.4,-1) {$x_0$};
-% \node at (-0.4,1) {$\textcolor{blue}{\gamma_1}$};
-% \node at (-0.4,-0.5) {$\textcolor{red}{\gamma_2}$};
-%Cut 3
-% \draw[] (3,-0.5) arc (270:90:.2 and 0.550);
-% \draw[] (3,-0.5) arc (-90:90:.2 and .550);
-\end{tikzpicture}
 
 \begin{definition}[Transition map]
     Let $M^n$ be a manifold and $(U, \phi)$, $(V, \psi)$ a pair of coordinate charts in $M^n$ with overlapping domains, that is:
@@ -136,7 +111,7 @@ The description of two charts that overlap smoothly can be naturally extended to
     An atlas $A$ is said to be smooth if every pair of charts in $A$ overlap smoothly.
 \end{definition}
 
-But what happens if we define two different atlases in the manifold? Will the calculus depend on this choice? Fortunately we can find, for each manifold, one particular atlas that contain every other atlas defined there. It is formally described in the following definition and its uniqueness is proved in Proposition \autoref{prop:max-atlas-uniq}.
+But what happens if we define two different atlases in the manifold? Will the calculus depend on this choice? Fortunately we can find, for each manifold, one particular atlas that contain every other atlas defined there. It is formally described in the following definition and its uniqueness is proved in \autoref{prop:max-atlas-uniq}.
 
 \begin{definition}[Complete atlas]
     A \emph{complete atlas} ---or \emph{maximal atlas}--- on $M^n$ is a smooth atlas that contains each coordinate chart in $M^n$ that overlaps smoothly with every coordinate chart in $M^n$.
@@ -152,16 +127,19 @@ But what happens if we define two different atlases in the manifold? Will the ca
     \label{prop:max-atlas-uniq}
 \end{proposition}
 
-\newenvironment{test}{\paragraph{Proof:}}{\hfill$\blacksquare$\vs}
 
 \begin{proof}
 
 \end{proof}
 
-\begin{definition}[Differentiable structure]
+\begin{definition}[Differentiable manifold]
+	A \emph{differentiable manifold} is a pair $(M, A)$, where $M$ is a topological manifold and $A$ is a complete atlas.
 \end{definition}
 
-\begin{definition}[Differentiable manifold]
-\end{definition}
+The concept of manifold is, probably, the most important idea throughout all this work. Hence, we are going to show some examples in order to better understand the space we will going to work with.
+
+\begin{example}
+	
+\end{example}
 
 % TODO: Add some examples. Are the surfaces seen in CyS smooth manifolds?

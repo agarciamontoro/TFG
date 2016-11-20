@@ -42,7 +42,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'sphinxcontrib.bibtex'
+    'sphinxcontrib.bibtex',
+    'breathe'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -369,3 +370,11 @@ autodoc_default_flags = ['members', 'special-members']
 # Activate the theme.
 html_theme = 'bootstrap'
 html_theme_path = sphinx_bootstrap_theme.get_html_theme_path()
+
+# -- Doxygen configuration ------------------------------------------------
+
+breathe_projects = {
+    "TFG": "../build/doxygen/xml/",
+}
+
+breathe_default_project = "TFG"
