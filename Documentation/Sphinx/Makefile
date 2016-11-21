@@ -232,10 +232,8 @@ doxy:
 	@echo
 	@echo "Doxygen build finished."
 
-
-GIT_ROOT=$(shell git rev-parse --show-toplevel)
-GIT_LAST_COMMIT=$(shell git log master -1 --oneline)
-
+.PHONY: gh-pages
 gh-pages:
 	@./publish.sh
+	@echo
 	@echo "Build and deploy finished."

@@ -48,13 +48,11 @@ The last property of the definition will be proven key in our study, as it will 
 
 \subsection{Charts}
 
-%TODO:0 Proofread this introduction. Particularly: ressemblance, Plato's world of Ideas, lowering, grasp.
+The main characteristic of the manifolds, its ressemblance\unsure{Is this word ok?} to the Euclidean space, have to be exploited in order to understand the nature of the mathematical object.
 
-The main characteristic of the manifolds, its ressemblance to the Euclidean space, have to be exploited in order to understand the nature of the mathematical object.
+The conceptual space where the manifolds live can be thought as the Plato's world of Ideas\unsure{Maybe too much}, where everything is pure but cannot be understood without studying particular examples.
 
-The conceptual space where the manifolds live can be thought as the Plato's world of Ideas, where everything is pure but cannot be understood without studying particular examples.
-
-The idea of the manifold will be understood, then, taking pieces of the manifold and lowering them to the real word; \ie, the Euclidean space, where we will be able to \emph{physically} touch the manifold.
+The idea of the manifold will be understood, then, taking pieces of the manifold and lowering\unsure{Mmm... not sure about the vern.} them to the real word; \ie, the Euclidean space, where we will be able to \emph{physically} touch the manifold.
 
 The essential tool to make this happen will be the coordinate charts. These tools are like prisms to see the manifold from the Euclidean perspective, and they will let us grasp the nature of the ideal concept of a manifold.
 
@@ -129,17 +127,35 @@ But what happens if we define two different atlases in the manifold? Will the ca
 
 
 \begin{proof}
-
+	\fixme{Add proof.}
 \end{proof}
 
 \begin{definition}[Differentiable manifold]
 	A \emph{differentiable manifold} is a pair $(M, A)$, where $M$ is a topological manifold and $A$ is a complete atlas.
 \end{definition}
 
-The concept of manifold is, probably, the most important idea throughout all this work. Hence, we are going to show some examples in order to better understand the space we will going to work with.
-
 \begin{example}
+	The concept of differentiable manifold is, probably, the most important idea throughout all this work. Let us see then some examples in order to better understand that these spaces we will going to work with are not that abstract ---although they can be---.
 	
+	\begin{enumerate}
+		\item The Euclidean space $\R^n$ is a differentiable manifold considering the identity map as its atlas.
+		\item Every \emph{smooth surface}\footnote{We consider the definition of smooth surface seen in a basic course of curves and surfaces: a subset of $\R^3$ such that every point is covered by the image of a differentiable map whose restriction to an open subset containing the point is an homeomorphism and whose differential is a monomorphism.} of $\R^3$ is an example of a differentiable manifold. As a subset of $\R^3$, the local homeomorphism, the Hausdorff property and the countable basis are trivial. Furthermore, the definition of smooth surface gives us for free the complete atlas.
+		\item The sphere $S^n$ is an $n$-dimensional differentiable manifold. As an atlas we can consider the union of the two stereographic projections onto $\R^n$ from the north and south poles.
+	\end{enumerate}
 \end{example}
 
-% TODO: Add some examples. Are the surfaces seen in CyS smooth manifolds?
+\subsection{Differentiable maps on manifolds}
+
+The concept of differentiable maps on manifolds is the first one in which we are going to generalize concepts from the Euclidean space using the local homeomorphism.
+
+The idea is simple: we know how to build differentiable maps between open sets of $\R^n$, so we are going to define differentiability between manifolds going through the images of the coordinate neighbourhoods of the points.
+
+As the differentiability is a local concept, the property that the manifolds are locally Euclidean is enough to generalize it.
+
+\begin{definition}
+	Let $F \colon M \to N$ a map between two differentiable manifolds: $M$ and $N$. F is said to be \emph{differentiable} or \emph{smooth} if the following conditions are satisfied:
+	\begin{enumerate}
+		\item There is a chart $(U, \varphi)$ for every point $p \in M$ and another one, $(V, \psi)$ for its image, $F(p) \in N$, such that $p \in U$, $F(p) \in V$ and $F(U) \subset V$.
+		\item The map $\psi \circ F \circ \varphi^{-1} : \varphi(U) \to \psi(V)$ is differentiable in the usual sense.
+	\end{enumerate}
+\end{definition}
