@@ -52,7 +52,7 @@ The main characteristic of the manifolds, its ressemblance\unsure{Is this word o
 
 The conceptual space where the manifolds live can be thought as the Plato's world of Ideas\unsure{Maybe too much}, where everything is pure but cannot be understood without studying particular examples.
 
-The idea of the manifold will be understood, then, taking pieces of the manifold and lowering\unsure{Mmm... not sure about the vern.} them to the real word; \ie, the Euclidean space, where we will be able to \emph{physically} touch the manifold.
+The idea of the manifold will be understood, then, taking pieces of the manifold and lowering\unsure{Mmm... not sure about the word.} them to the real word; \ie, the Euclidean space, where we will be able to \emph{physically} touch the manifold.
 
 The essential tool to make this happen will be the coordinate charts. These tools are like prisms to see the manifold from the Euclidean perspective, and they will let us grasp the nature of the ideal concept of a manifold.
 
@@ -116,18 +116,20 @@ But what happens if we define two different atlases in the manifold? Will the ca
 \end{definition}
 
 \begin{proposition}[Complete atlas uniqueness]
-    Let $M$ be a topological manifold.
+    Let $M^n$ be a topological manifold.
 
     \begin{itemize}
-        \item Every smooth atlas on $M$ is contained in a complete atlas.
-        \item Two smooth atlas on $M$ determine the same complete atlas if and only if its union is a smooth atlas.
+        \item Every smooth atlas on $M^n$ is contained in a complete atlas.
+        \item Two smooth atlas on $M^n$ determine the same complete atlas if and only if its union is a smooth atlas.
     \end{itemize}
     \label{prop:max-atlas-uniq}
 \end{proposition}
 
 
 \begin{proof}
-	\fixme{Add proof.}
+ 	Let $A$ be a smooth atlas on $M^n$ and define $A'$ as the set of all $n$-dimensional coordinate charts that overlaps smoothly with every chart on $A$. We are going to see that $A'$ is a complete atlas.
+ 	
+ 	It is trivial to see that $A'$ is an atlas, since $A \subset A'$ and $A$ is an atlas. The smoothness of the atlas is a consequence of the fact that smoothness is a local property \fixme{Finish.}
 \end{proof}
 
 \begin{definition}[Differentiable manifold]
@@ -150,12 +152,69 @@ The concept of differentiable maps on manifolds is the first one in which we are
 
 The idea is simple: we know how to build differentiable maps between open sets of $\R^n$, so we are going to define differentiability between manifolds going through the images of the coordinate neighbourhoods of the points.
 
-As the differentiability is a local concept, the property that the manifolds are locally Euclidean is enough to generalize it.
+As the differentiability is a local concept, being the manifolds locally Euclidean is enough to generalize it.
 
 \begin{definition}
-	Let $F \colon M \to N$ a map between two differentiable manifolds: $M$ and $N$. F is said to be \emph{differentiable} or \emph{smooth} if the following conditions are satisfied:
+	Let $F \colon M \to N$ be a map between two differentiable manifolds: $M$ and $N$. F is said to be \emph{differentiable} or \emph{smooth} if the following conditions are satisfied:
 	\begin{enumerate}
 		\item There is a chart $(U, \varphi)$ for every point $p \in M$ and another one, $(V, \psi)$ for its image, $F(p) \in N$, such that $p \in U$, $F(p) \in V$ and $F(U) \subset V$.
 		\item The map $\psi \circ F \circ \varphi^{-1} : \varphi(U) \to \psi(V)$ is differentiable in the usual sense.
 	\end{enumerate}
 \end{definition}
+
+This definition includes also the case in which $M$, $N$ or even both of them are the euclidean spaces $\R^m$ and $\R^n$. There is no ambiguity between this and the euclidean definition of smoothness, as one can take the identity map as coordinate chart when one of the manifolds is an euclidean space and the usual definition will be found.
+
+From this definition it is trivial to prove that, if a family of smooth maps cover a manifold with the maps being equal where their images overlap, a unique smooth function that is equal to each individual map on its image can be built.
+
+Furthermore, it is easy to see that the identity of a manifold, the coordinate charts and the composition of smooth functions are smooth. Smoothness also implies continuity.
+
+As well as the definition of smoothness, the definition of diffeomorphism can be generalized to manifolds, being \autoref{def:diffeo} its formal expression.
+
+\begin{definition}[Diffeomorphism]
+	\label{def:diffeo}
+	A function $f \colon M \to N$ between two manifolds is said to be a \emph{diffeomorphism} if it is a smooth bijective map with its inverse being also smooth.
+	
+	When there exists such map, $M$ and $N$ are said to be diffeomorphic.
+\end{definition}
+
+\subsection{Tangent space}
+
+Once we know what a differentiable function is, the next step we need to take in order to set up a proper place to do calculus is to define its differential.
+
+first, let us remember some concepts about regular surfaces on $\R^3$. Let $S, S'$ be two regular surfaces on $\R^3$ and let $f \colon S \to S'$ be a differentiable map between them. The differential of $f$ on $p \in S$ was defined as a function that transforms tangent vectors to the first surface into tangent vectors to the second,
+\[
+	(df)_p \colon T_p S \to T_{f(p)} S'.
+\]
+
+What can we learn from this? Our goal is to define the differential of a differentiable map between \emph{manifolds}. It would be ideal that it generalizes the notion we already have about differentials on surfaces, so it is mandatory to first generalize the concept of tangent plane.
+
+The tangent plane to a regular surface on one of its points $p$ is, as we know, the vector subspace of all the tangent vectors to the point. This vector space was shown to be isomorphic to the space of directional derivatives on $p$. Instead of trying to generalize the concept of tangent vector, the idea we will follow is to extend the notion of directional derivatives, building the new \emph{tangent plane}-like space from these.
+
+Basically, a directional derivative is a linear map that satisfies the Leibniz rule, so we are going to define a tangent vector to a manifold as such.
+
+From now on, $\mathcal{F}(M)$ will note the set of all the smooth real-valued functions on a manifold $M$:
+\[
+	\mathcal{F}(M) \defeq \{f \colon M \to \R / \textrm{f is smooth} \}
+\]
+
+\begin{definition}[Tangent vector to a manifold]
+	Let $M$ be a manifold and $p \in M$ one of its points. A \emph{tangent vector to M on p} is a linear application that maps smooth functions on $M$ to real values and that satisfies the Leibniz rule; \ie, a function
+	\[
+		v \colon \mathcal{F}(M) \to \R
+	\]
+	that
+	\begin{enumerate}
+		\item is linear: $v(af + bg)\bigr|_p = av(f)\bigr|_p + bv(g)\bigr|_p$ and
+		\item satisfies the Leibniz rule: $v(fg) = v(f)\bigr|_p g(p) + f(p)v(g)\bigr|_p$.
+	\end{enumerate}
+\end{definition}
+
+It is trivial to see that the directional derivative is a tangent vector to the well-known manifold $\R^n$. Having this duality \emph{directional derivative --- vector} clear, it is now natural to arrive to \autoref{def:tangentspace}
+
+\begin{definition}[Tangent space]
+	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{tangent space to $M$ at $p$}, noted as $T_p(M)$, is the set of all tangent vectors to $M$ on $p$.
+\end{definition}
+
+\begin{remark}
+	$T_p(M)$ is a vector space with the usual definitions of function addition and product by a scalar.
+\end{remark}
