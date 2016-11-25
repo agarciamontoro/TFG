@@ -181,7 +181,7 @@ As well as the definition of smoothness, the definition of diffeomorphism can be
 
 Once we know what a differentiable function is, the next step we need to take in order to set up a proper place to do calculus is to define its differential.
 
-first, let us remember some concepts about regular surfaces on $\R^3$. Let $S, S'$ be two regular surfaces on $\R^3$ and let $f \colon S \to S'$ be a differentiable map between them. The differential of $f$ on $p \in S$ was defined as a function that transforms tangent vectors to the first surface into tangent vectors to the second,
+First, let us remember some concepts about regular surfaces on $\R^3$. Let $S, S'$ be two regular surfaces on $\R^3$ and let $f \colon S \to S'$ be a differentiable map between them. The differential of $f$ on $p \in S$ was defined as a function that transforms tangent vectors to the first surface into tangent vectors to the second,
 \[
 	(df)_p \colon T_p S \to T_{f(p)} S'.
 \]
@@ -190,76 +190,203 @@ What can we learn from this? Our goal is to define the differential of a differe
 
 The tangent plane to a regular surface on one of its points $p$ is, as we know, the vector subspace of all the tangent vectors to the point. This vector space was shown to be isomorphic to the space of directional derivatives on $p$. Instead of trying to generalize the concept of tangent vector, the idea we will follow is to extend the notion of directional derivatives, building the new \emph{tangent plane}-like space from these.
 
-Basically, a directional derivative is a linear map that satisfies the Leibniz rule, so we are going to define a tangent vector to a manifold as such.
+Basically, a directional derivative is a linear map that satisfies the Leibniz rule, so we are going to define a tangent vector to a manifold as a generalization of this concept: the derivation.
 
-From now on, $\mathcal{F}(M)$ will note the set of all the smooth real-valued functions on a manifold $M$:
+From now on, we will note the set of all the smooth real-valued functions on a manifold $M$ as $\mathcal{F}(M)$:
 \[
-	\mathcal{F}(M) \defeq \{f \colon M \to \R / \textrm{f is smooth} \}
+\mathcal{F}(M) \defeq \{f \colon M \to \R / \textrm{f is smooth} \}
 \]
 
-\begin{definition}[Tangent vector]
-	Let $M$ be a manifold and $p \in M$ one of its points. A \emph{tangent vector to M on p} is a linear application that maps smooth functions on $M$ to real values and that satisfies the Leibniz rule; \ie, a function
+\begin{definition}[Derivation]
+	Let $p$ be a point on a manifold $M$. A \emph{derivation} at $p$ is a map
 	\[
-		v \colon \mathcal{F}(M) \to \R
+		D_p \colon \mathcal{F}(M) \to \R
 	\]
-	that
+	that is linear and leibnizian; \ie, that satisfies the following properties:
 	\begin{enumerate}
-		\item is linear: $v(af + bg)\bigr|_p = av(f)\bigr|_p + bv(g)\bigr|_p$ and
-		\item satisfies the Leibniz rule: $v(fg) = v(f)\bigr|_p g(p) + f(p)v(g)\bigr|_p$.
+		\item $D_p(af + bg) = aD_p(f) + bD_p(g)$, where $a,b \in \R$ and $f,g \in \mathcal{F}(M)$.
+		\item $D_p(fg) = D_p(f)g(p) + f(p)D_p(g)$, where $f,g \in \mathcal{F}(M)$.
 	\end{enumerate}
 \end{definition}
 
-It is trivial to see that the directional derivative is a tangent vector to the well-known manifold $\R^n$. Being this \emph{directional derivative --- vector} duality clear, it is now natural to arrive to \autoref{def:tangentspace}.
+Taking into account the one-to-one correspondence between tangent vectors and derivations on the euclidean case ---the directional derivative is actually a derivation---, the idea of the generalization of tangent vector on \autoref{def:tangentvector} is more clear now.
+
+\begin{definition}[Tangent vector]
+	\label{def:tangentvector}
+	Let $M$ be a manifold and $p \in M$ one of its points. A \emph{tangent vector to M on p} is a derivation at p.
+\end{definition}
+
+It is trivial to see that the directional derivative is a tangent vector to the well-known manifold $\R^n$. Being this \emph{derivation --- tangent vector} duality clear, it is now natural to arrive to \autoref{def:tangentspace}.
 
 \begin{definition}[Tangent space]
 	\label{def:tangentspace}
-	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{tangent space to $M$ at $p$}, noted as $T_p(M)$, is the set of all tangent vectors to $M$ on $p$.
+	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{tangent space to $M$ at $p$}, noted as $T_p M$, is the set of all tangent vectors to $M$ on $p$; \ie the family of derivations at $p$.
 \end{definition}
 
 \begin{remark}
-	$T_p(M)$ is a vector space with the usual definitions of function addition and product by a scalar.
+	$T_p(M)$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x \colon U \to M$ is a chart that covers $p$, $\{ \left(\frac{\delta}{\delta x_1}\right)\bigr|_p, \dots, \left(\frac{\delta}{\delta x_n}\right)\bigr|_p\}$ is its associated basis on $T_p M$. See \cite[p. 8]{docarmo79} for details.
 \end{remark}
 
+The extension of the idea of differential is now straightforward: we have just to remember how the differential on the euclidean case can be defined from derivations and repeat the nearly exact same definition on manifolds.
+
 \begin{definition}[Pushforward]
-	% Roldan, 15
-	\fixme{Do it.}
+	Let $M$ and $N$ be two manifolds and let $F \colon M \to N$ be a smooth map.
+	
+	Consider, for each $p \in M$, the function
+	\begin{align*}
+		F_* \colon T_p M &\to T_{F(p)} M \\
+		X &\mapsto F_*X,
+	\end{align*}
+	that maps each tangent vector to $p$ on $M$, $X$, to a tangent vector to $F(p)$ on $M$, $F_*X$, defined as follows:
+	\begin{align*}
+		F_*X \colon \mathcal{F}(M) &\to \R \\
+		f &\mapsto X(f \circ F).					
+	\end{align*}
+
+	The function $F_*$ is called the \emph{pushforward} of $p$ by $F$.
+		   																	
 \end{definition}
+
+On the $\R^3$ surfaces scenario, it is not odd to define tangent vectors using their close relation with the curves on the surface. In order to obtain a better understanding of the manifolds tangent space, let us see what a curve on a manifold is and how a tangent vector on a point can be identified with them.
 
 \begin{definition}[Curve on a manifold]
 	% Roldan, 21
-	\fixme{Do it.}
+	Let $M$ be a manifold and $I \subset R$ an open set on $\R$. A \emph{curve on $M$} is a continuous map
+	\[
+		\gamma \colon I \to M.
+	\]
 \end{definition}
+
+Every smooth curve is differentiable in the manifold sense, and having understood the duality between derivations and tangent vectors, we can naturally obtain the tangent vector to a curve on an instant $t_0\in I$ by applying the definition we just saw.
+
+\begin{proposition}[Tangent vector to a curve]
+	\label{pro:tangcurve}
+	The tangent vector to a curve $\gamma \colon I \to M$ on an instant $t_0 \in I$, noted as $\gamma'(t_0) \in T_{\gamma(t_0)} M$ is the pushforward of $t$ by $\gamma$; \ie, the tangent vector to $M$ defined as
+	\begin{align*}
+		\gamma'(t_0) \colon \mathcal{F}(M) &\to \R \\
+		f &\mapsto \frac{d}{dt} \left( f \circ \gamma \right) (t_0)
+	\end{align*}
+\end{proposition}
+
+\autoref{pro:tangcurve} tells us how to assign a vector from the tangent space of a manifold $M$ to every curve $\gamma$ on it, but is there a curve that could be assigned to every tangent vector on $M$?; \ie, is every element of the tangent space to $M$ the tangent vector of a curve? The following result answers this question.
 
 \begin{theorem}[Every tangent vector is tangent to a curve in the manifold]
 	% Roldan, 22
-	\fixme{Do it.}
+	Let $p$ be a point on a manifold $M$. There exists, for every $X \in T_p M$, a smooth curve on $M$ whose tangent vector is $X$.
 \end{theorem}
+
+\begin{proof}
+	If $\varphi$ is the manifold chart that covers $p$ and $X = (X^1, \dots, X^n)$ are the coordinates of an element of the tangent space, then we can define
+	\[
+		\gamma(t) = \varphi^{-1}(tX^1, \dots, tX^n)
+	\]
+	in such a way that it is smooth on $\gamma(0) = p$ and that its tangent vector is $\gamma'(0) = X$.
+\end{proof}
 
 \section{Connections on manifolds}\fixme{Do it.}
 
-\begin{definition}[Affine connection]
-	% doCarmo, 41
+As in the euclidean sense, we can define a \emph{vector field} on a manifold $M$ as a correspondence $X$ that maps every point $p$ on the manifold to a vector $X(p)$ in the tangent space $T_p M$.
+
+To formalize this concept, we should first define the set of the tangent spaces at every point of the manifold, which is the target set of the map we just described.
+
+\begin{definition}[Tangent bundle]
+	Let $M$ be a smooth manifold and let $A = \{(U_\alpha, h_\alpha)\}$ a smooth atlas on $M$.
+	
+	Consider now the set
+	\[
+		TM = \{(p,v) \textrm{such that }p \in M, v \in T_p M\},
+	\]	
+	furnished with the atlas $A' = \{(U_\alpha \times \R^n, y_\alpha)\}$, where $y_\alpha$ defines the coordinates of every point $(p,v) \in TM$ as the union of the coordinates of $p$ in $U_\alpha$ with the coordintaes of $v$ in the associated basis of $T_p M$.
+	
+	$TM$ is called the tangent bundle of $M$.
 \end{definition}
+
+It can be proved ---see \cite[Example 2.1]{docarmo79}--- that $A'$ is, indeed, an atlas and that the tangent bundle of every smooth manifold of dimension $n$ is in turn a smooth manifold of dimension $2n$.
+
+This recently defined space is the target set of what we describes as a vector field. We con now formalize this loose description.
+
+\begin{definition}[Vector field]
+	A \emph{vector field} $X$ in a smooth manifold $M$ is a map
+	\[
+		X \colon M \mapsto TM
+	\]
+	that maps every point $p$ on the manifold to a vector $X(p) \in T_p M$.
+\end{definition}
+
+Another interesting way to look at the vector fields, thoroughly shown on \cite[Definition 5.1]{docarmo79} is considering again the idea of the vectors as directional derivatives: a vector field $X$ is then a map from the smooth functions on $M$ to the functions on $M$ as follows:
+\[
+	(Xf)(p) = \sum_i a_i(p)\frac{\delta f}{\delta x_i}(p),
+\]
+where $f$ is a smooth function on $M$ and $a_i$ are real-valued functions on the coordinate neighbourhood of $p$. 
+
+From now on, we will note the set of smooth vector fields on $M$ as $\mathcal{X}(M)$.
+
+The following definitions and results are extracted from \cite[Section 2]{docarmo79} and \cite[pp. 59-67]{oneill83}.
+
+\begin{definition}[Affine connection]
+	\label{def:affineconnection}
+	% doCarmo, 41
+	An affine connection $\nabla$ on a smooth manifold $M$ is a map
+	\[
+		\nabla \colon \mathcal{X}(M) \times \mathcal{X}(M) \to \mathcal{X}(M),
+	\]
+	noted as $(X, Y) \xrightarrow{\nabla}\nabla_X Y$, that satisfies the following properties:
+	\begin{enumerate}
+		\item $\nabla_{fX + gY} Z = f\nabla_X Z + g\nabla_Y Z$,
+		\item $\nabla_X(Y+Z) = \nabla_X Y + \nabla_X Z$,
+		\item $\nabla_X (fY) = f\nabla_XY + X(f)Y$,
+	\end{enumerate}
+	where $X,Y,Z \in \mathcal{X}(M)$ and $f,g \in \mathcal{F}(M)$.
+\end{definition}
+
+This definition is not clear enough on the geometric nature of the connection, but the following proposition, and the definition it includes, helps us to understand this concept.
 
 \begin{proposition}[Covariant derivative]
 	% doCarmo, 42
+	Let $M$ be a smooth manifold with an affine connection $\nabla$ and let $c \colon I \to M$ be a smooth curve. Then there is unique function that maps vector field $V$ along $c$ onto another vector field $\frac{DV}{dt}$ along $c$, called \emph{covariant derivative of $V$ along $c$}, that satisfies the following properties:
+	\begin{enumerate}
+		\item $\frac{D}{dt}(V+W) = \frac{DV}{dt} + \frac{DW}{dt}$.
+		\item $\frac{D}{dt}(fV) = \frac{df}{dt}V + f\frac{DV}{dt}$.
+		\item If $V$ is described as $V(t) = Y(c(t))$, where $Y \in \mathcal{X}(M)$, then \[\frac{DV}{dt} = \nabla_{\frac{dc}{dt}} Y.\]
+	\end{enumerate}
 \end{proposition}
 
-\begin{remark}
-	% doCarmo, 42
-\end{remark}
+On \cite[Remark 2.3]{docarmo79} we can see how the last property of \autoref{def:affineconnection} let us show that the affine connection is a local concept. Consider a coordinate system $(x_1, \dots, x_n)$ around $p$ and describe the vector fields $X, Y$ as follows:
+\[
+	X = \sum_i x_i X_i, \qquad Y = \sum_j y_j X_j,
+\]
+where $X_i = \frac{\delta}{\delta x_i}$. Then, we can write
+\[
+	\nabla_x Y = \sum_i x_i \nabla_{x_i}\left(\sum_j y_j X_j \right) = \sum_{ij} x_i y_j \nabla_{x_i} X_j + \sum_{ij} x_i X_i (y_j) X_j.
+\]
+
+Writing $\nabla_{x_i} X_j = \sum_k \Gamma^k_{ij} X_k$ it is easy to conclude that the functions $\Gamma^k_{ij}$ are differentiable and we can finally write
+\[
+	\nabla_x Y = \sum_k \left( \sum_{ij} x_i y_j \Gamma^k_{ij} + X(y_k) \right) X_k.
+\]
+
+This shows that $\nabla_x Y(p)$ depends on $x_i(p)$, $y_k(p)$ and the derivatives $X(y_k)(p)$.
 
 \begin{definition}[Parallel vector field]
 	% doCarmo, 44
 	% oNeill, 66
+	Let $M$ be a smooth manifold furnished with an affine connection $\nabla$. A vector field $V$ along a curve $c \colon I \to M$ is called \emph{parallel} whenever $\frac{DV}{dt} = 0$ for every $t \in I$.
 \end{definition}
 
 \begin{proposition}[Parallel transport]
 	% doCarmo, 44
 	% oNeill, 66
+	Let $M$ be a smooth manifold furnished with an affine connection $\nabla$. Let $c \colon I \to M$ be a smooth curve on $M$ and $v_o$ be a tangent vector to $M$ on $c(t_0)$; \ie, $v_0 \in T_{c(t_0)} M$.
+	
+	Then, there exists a unique vector field $V$ along $c$ such that $V(t_0) = v_0$. We call $V$ the \emph{parallel transport of $V(t_0)$ along $c$}.
 \end{proposition}
 
-\begin{definition}[Connection compatible with metric]
+\begin{proof}
+	\unsure{Write it if there's time}
+	See \cite[Proposition 2.6]{docarmo79}
+\end{proof}
+
+\begin{definition}[Metric compatible connection]
 	% doCarmo, 45
 \end{definition}
 
@@ -305,4 +432,4 @@ It is trivial to see that the directional derivative is a tangent vector to the 
 
 \subsection{Geodesic minimizing properties}
 
-% doCarmo, 58-65
+% doCarmo, 58-65	
