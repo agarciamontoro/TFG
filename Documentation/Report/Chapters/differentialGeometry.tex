@@ -179,7 +179,7 @@ As well as the definition of smoothness, the definition of diffeomorphism can be
 
 \subsection{Tangent space}
 
-Once we know what a differentiable function is, the next step we need to take in order to set up a proper place to do calculus is to define its differential.
+Once we know what a differentiable function is, the next step we need to take in order to set up a proper place to do calculus on manifolds is to define the differential.
 
 First, let us remember some concepts about regular surfaces on $\R^3$. Let $S, S'$ be two regular surfaces on $\R^3$ and let $f \colon S \to S'$ be a differentiable map between them. The differential of $f$ on $p \in S$ was defined as a function that transforms tangent vectors to the first surface into tangent vectors to the second,
 \[
@@ -190,7 +190,7 @@ What can we learn from this? Our goal is to define the differential of a differe
 
 The tangent plane to a regular surface on one of its points $p$ is, as we know, the vector subspace of all the tangent vectors to the point. This vector space was shown to be isomorphic to the space of directional derivatives on $p$. Instead of trying to generalize the concept of tangent vector, the idea we will follow is to extend the notion of directional derivatives, building the new \emph{tangent plane}-like space from these.
 
-Basically, a directional derivative is a linear map that satisfies the Leibniz rule, so we are going to define a tangent vector to a manifold as a generalization of this concept: the derivation.
+The usual directional derivative is a linear map that satisfies the Leibniz rule, so we are going to define a tangent vector to a manifold as a generalization of this concept: the derivation.
 
 From now on, we will note the set of all the smooth real-valued functions on a manifold $M$ as $\mathcal{F}(M)$:
 \[
@@ -220,11 +220,11 @@ It is trivial to see that the directional derivative is a tangent vector to the 
 
 \begin{definition}[Tangent space]
 	\label{def:tangentspace}
-	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{tangent space to $M$ at $p$}, noted as $T_p M$, is the set of all tangent vectors to $M$ on $p$; \ie the family of derivations at $p$.
+	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{tangent space to $M$ at $p$}, noted as $T_p M$, is the set of all tangent vectors to $M$ on $p$; \ie, the family of derivations at $p$.
 \end{definition}
 
 \begin{remark}
-	$T_p(M)$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x \colon U \to M$ is a chart that covers $p$, $\{ \left(\frac{\delta}{\delta x_1}\right)\bigr|_p, \dots, \left(\frac{\delta}{\delta x_n}\right)\bigr|_p\}$ is its associated basis on $T_p M$. See \cite[p. 8]{docarmo79} for details.
+	$T_p M$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x \colon U \to M$ is a chart that covers $p$, $\{ \left(\frac{\delta}{\delta x_1}\right)\bigr|_p, \dots, \left(\frac{\delta}{\delta x_n}\right)\bigr|_p\}$ is its associated basis on $T_p M$. See \cite[p. 8]{docarmo79} for details.
 \end{remark}
 
 The extension of the idea of differential is now straightforward: we have just to remember how the differential on the euclidean case can be defined from derivations and repeat the nearly exact same definition on manifolds.
@@ -237,7 +237,7 @@ The extension of the idea of differential is now straightforward: we have just t
 		F_* \colon T_p M &\to T_{F(p)} M \\
 		X &\mapsto F_*X,
 	\end{align*}
-	that maps each tangent vector to $p$ on $M$, $X$, to a tangent vector to $F(p)$ on $M$, $F_*X$, defined as follows:
+	that maps each tangent vector to $M$ at $p$, $X$, to a tangent vector to $N$ at $F(p)$, $F_*X$, defined as follows:
 	\begin{align*}
 		F_*X \colon \mathcal{F}(M) &\to \R \\
 		f &\mapsto X(f \circ F).					
@@ -283,9 +283,17 @@ Every smooth curve is differentiable in the manifold sense, and having understoo
 	in such a way that it is smooth on $\gamma(0) = p$ and that its tangent vector is $\gamma'(0) = X$.
 \end{proof}
 
-\section{Connections on manifolds}\fixme{Do it.}
+\section{Connections on manifolds}
 
-As in the euclidean sense, we can define a \emph{vector field} on a manifold $M$ as a correspondence $X$ that maps every point $p$ on the manifold to a vector $X(p)$ in the tangent space $T_p M$.
+In our journey to understand geometry on manifolds, one key step is to generalize what we called directional derivative in the euclidean spaces. The directional derivative of a function on a point gives us information on how the function changes when moving in the given direction; the concept of geodesic will need of this idea, but first we have to set up some definitions and technical results.
+
+In this section we will define a connection on a manifold, which in turn will give us the tools to generalize the concept of directional derivative and arrive to the definition of covariant derivative.
+
+Finally, when adding a metric to the smooth manifold, an interesting connection will appear naturally: the Levi-Civita connection, whose interest on the study of the geodesic will be shown.
+
+\subsection{Affine connections}
+
+Let us start, then, by generalizing the concept of vector field to manifolds. As in the euclidean sense, we can define a \emph{vector field} on a manifold $M$ as a correspondence $X$ that maps every point $p$ on the manifold to a vector $X(p)$ in the tangent space $T_p M$.
 
 To formalize this concept, we should first define the set of the tangent spaces at every point of the manifold, which is the target set of the map we just described.
 
@@ -294,18 +302,19 @@ To formalize this concept, we should first define the set of the tangent spaces 
 	
 	Consider now the set
 	\[
-		TM = \{(p,v) \textrm{such that }p \in M, v \in T_p M\},
+		TM = \{(p,v) \textrm{ such that } p \in M, v \in T_p M\}
 	\]	
-	furnished with the atlas $A' = \{(U_\alpha \times \R^n, y_\alpha)\}$, where $y_\alpha$ defines the coordinates of every point $(p,v) \in TM$ as the union of the coordinates of $p$ in $U_\alpha$ with the coordintaes of $v$ in the associated basis of $T_p M$.
+	furnished with the atlas $A' = \{(U_\alpha \times \R^n, y_\alpha)\}$, where $y_\alpha$ defines the coordinates of every point $(p,v) \in TM$ as the union of the coordinates of $p$ in $U_\alpha$ with the coordinators of $v$ in the associated basis of $T_p M$.
 	
 	$TM$ is called the tangent bundle of $M$.
 \end{definition}
 
 It can be proved ---see \cite[Example 2.1]{docarmo79}--- that $A'$ is, indeed, an atlas and that the tangent bundle of every smooth manifold of dimension $n$ is in turn a smooth manifold of dimension $2n$.
 
-This recently defined space is the target set of what we describes as a vector field. We con now formalize this loose description.
+This recently defined space is the target set of what we described as a vector field. \autoref{def:vectorfield} formalize this idea.
 
 \begin{definition}[Vector field]
+	\label{def:vectorfield}
 	A \emph{vector field} $X$ in a smooth manifold $M$ is a map
 	\[
 		X \colon M \mapsto TM
@@ -313,22 +322,46 @@ This recently defined space is the target set of what we describes as a vector f
 	that maps every point $p$ on the manifold to a vector $X(p) \in T_p M$.
 \end{definition}
 
-Another interesting way to look at the vector fields, thoroughly shown on \cite[Definition 5.1]{docarmo79} is considering again the idea of the vectors as directional derivatives: a vector field $X$ is then a map from the smooth functions on $M$ to the functions on $M$ as follows:
+Another interesting way to look at the vector fields, thoroughly shown on \cite[Definition 5.1, p. 23s]{docarmo79} is considering again the idea of the vectors as directional derivatives: a vector field $X$ on $p$ is then a map that receives a smooth function $f$ on $M$ and gives us another function on $M$, defined as follows:
 \[
 	(Xf)(p) = \sum_i a_i(p)\frac{\delta f}{\delta x_i}(p),
 \]
-where $f$ is a smooth function on $M$ and $a_i$ are real-valued functions on the coordinate neighbourhood of $p$. 
+where $a_i$ are real-valued functions on the coordinate neighbourhood of $p$.
 
-From now on, we will note the set of smooth vector fields on $M$ as $\mathcal{X}(M)$.
+One can define an interesting operation on vector fields considering them as derivations: the bracket operation.
 
-The following definitions and results are extracted from \cite[Section 2]{docarmo79} and \cite[pp. 59-67]{oneill83}.
+\begin{definition}[Bracket operation]
+	Let $V$ and $W$ be vector fields on $M$.
+	
+	The bracket operation on $V$ and $W$, noted as $[V, W]$ is the vector field defined as
+	\[
+		[V, W] = VW - WV,
+	\]
+	which is an application that maps every $f \in \mathcal{F}(M)$ to the function $V(Wf) - W(Vf)$.
+\end{definition}
+
+The proof that $[V,W]$ is indeed a vector field can be found at \cite[p. 24]{docarmo79}.
+
+Going ahead with the generalization of eucliden concepts to the manifolds, we can define what a vector field along a curve is:
+
+\begin{definition}[Vector field along a curve]
+	Let $c \colon I \to M$ be a curve on a manifold defined on the open subset $I \subset \R$. A \emph{vector field along the curve $c$}, $V$, is a function
+	\[
+	V \colon I \mapsto TM
+	\]
+	that maps every instant $t \in I$ to a vector $X(c(t)) \in T_{c(t)} M$.
+\end{definition}
+
+From now on, we will note the set of smooth vector fields on $M$ as $\mathfrak{X}(M)$.
+
+The following definitions and results are extracted from \cite[Section 2.2]{docarmo79} and \cite[pp. 59-67]{oneill83}.
 
 \begin{definition}[Affine connection]
 	\label{def:affineconnection}
 	% doCarmo, 41
 	An affine connection $\nabla$ on a smooth manifold $M$ is a map
 	\[
-		\nabla \colon \mathcal{X}(M) \times \mathcal{X}(M) \to \mathcal{X}(M),
+		\nabla \colon \mathfrak{X}(M) \times \mathfrak{X}(M) \to \mathfrak{X}(M),
 	\]
 	noted as $(X, Y) \xrightarrow{\nabla}\nabla_X Y$, that satisfies the following properties:
 	\begin{enumerate}
@@ -336,22 +369,24 @@ The following definitions and results are extracted from \cite[Section 2]{docarm
 		\item $\nabla_X(Y+Z) = \nabla_X Y + \nabla_X Z$,
 		\item $\nabla_X (fY) = f\nabla_XY + X(f)Y$,
 	\end{enumerate}
-	where $X,Y,Z \in \mathcal{X}(M)$ and $f,g \in \mathcal{F}(M)$.
+	where $X,Y,Z \in \mathfrak{X}(M)$ and $f,g \in \mathcal{F}(M)$.
 \end{definition}
 
-This definition is not clear enough on the geometric nature of the connection, but the following proposition, and the definition it includes, helps us to understand this concept.
+This is a somewhat technical definition, but as shown in \autoref{pro:covariantderivative}, it provides us with the concept of covariant derivative, which will be shown to be a generalization of the directional derivative on $\R^n$.
 
 \begin{proposition}[Covariant derivative]
+	\label{pro:covariantderivative}
 	% doCarmo, 42
 	Let $M$ be a smooth manifold with an affine connection $\nabla$ and let $c \colon I \to M$ be a smooth curve. Then there is unique function that maps vector field $V$ along $c$ onto another vector field $\frac{DV}{dt}$ along $c$, called \emph{covariant derivative of $V$ along $c$}, that satisfies the following properties:
 	\begin{enumerate}
 		\item $\frac{D}{dt}(V+W) = \frac{DV}{dt} + \frac{DW}{dt}$.
 		\item $\frac{D}{dt}(fV) = \frac{df}{dt}V + f\frac{DV}{dt}$.
-		\item If $V$ is described as $V(t) = Y(c(t))$, where $Y \in \mathcal{X}(M)$, then \[\frac{DV}{dt} = \nabla_{\frac{dc}{dt}} Y.\]
+		\item If $V$ is described as $V(t) = Y(c(t))$, where $Y \in \mathfrak{X}(M)$, then \[\frac{DV}{dt} = \nabla_{\frac{dc}{dt}} Y.\]
 	\end{enumerate}
+	where $W$ is another vector field along $C$ and $f \in \mathcal{F}(M)$.
 \end{proposition}
 
-On \cite[Remark 2.3]{docarmo79} we can see how the last property of \autoref{def:affineconnection} let us show that the affine connection is a local concept. Consider a coordinate system $(x_1, \dots, x_n)$ around $p$ and describe the vector fields $X, Y$ as follows:
+On \cite[Chapter 2, Remark 2.3]{docarmo79} we can see how the last property of \autoref{def:affineconnection} let us show that the affine connection is a local concept. Consider a coordinate system $(x_1, \dots, x_n)$ around $p$ and describe the vector fields $X, Y$ as follows:
 \[
 	X = \sum_i x_i X_i, \qquad Y = \sum_j y_j X_j,
 \]
@@ -367,6 +402,23 @@ Writing $\nabla_{x_i} X_j = \sum_k \Gamma^k_{ij} X_k$ it is easy to conclude tha
 
 This shows that $\nabla_x Y(p)$ depends on $x_i(p)$, $y_k(p)$ and the derivatives $X(y_k)(p)$.
 
+\autoref{pro:covariantderivative} gives us an actual derivation on vector fields along smooth curves. The concept of connection, whose definition may appear artificial at first, shows now its interest: it provides us with a way of derivating vectors along curves; \ie, we have now the possibility to consider the concept of \emph{acceleration} on curves on manifolds.
+
+\begin{proof}[Proof of \autoref{pro:covariantderivative}]
+	Assuming the existence of such a map considering the local coordinates of $V$ and using the properties that define the covariant derivative, one can prove that it is unique.
+	
+	Let $x \colon U \subset \R^n \to M$ be a coordinate chart that assigns the local expression $(x_1(t), \dots, x_n(t)$ to the curve $c$. If we note the coordinates of the tangent vector $X_i = \frac{\delta}{\delta x_i}$ and write the field $V$ locally as $V = \sum_j v^j X_j$, applying all three properties of the covariant derivative we conclude that
+	\begin{equation}
+	\label{eq:covariantderivative}
+		\frac{DV}{dt} = \sum_j \frac{d v^j}{dt} X_j + \sum_{i,j} \frac{d x_i}{dt} v^j \nabla_{X_i} X_j,
+	\end{equation}
+	that is, the covariant derivative is unique.
+	
+	On the other hand, defining the covariant derivative as in \autoref{eq:covariantderivative}, its existence and the satisfaction of the defined properties is straightforward.
+\end{proof}
+
+The remaining technical details of the previous reasoning can be found on \cite[p. 43]{docarmo79}, from where this proof was taken.
+
 \begin{definition}[Parallel vector field]
 	% doCarmo, 44
 	% oNeill, 66
@@ -376,35 +428,91 @@ This shows that $\nabla_x Y(p)$ depends on $x_i(p)$, $y_k(p)$ and the derivative
 \begin{proposition}[Parallel transport]
 	% doCarmo, 44
 	% oNeill, 66
-	Let $M$ be a smooth manifold furnished with an affine connection $\nabla$. Let $c \colon I \to M$ be a smooth curve on $M$ and $v_o$ be a tangent vector to $M$ on $c(t_0)$; \ie, $v_0 \in T_{c(t_0)} M$.
+	Let $M$ be a smooth manifold furnished with an affine connection $\nabla$. Let $c \colon I \to M$ be a smooth curve on $M$ and $V_0$ a tangent vector to $M$ on $c(t_0)$; \ie, $V_0 \in T_{c(t_0)} M$.
 	
-	Then, there exists a unique vector field $V$ along $c$ such that $V(t_0) = v_0$. We call $V$ the \emph{parallel transport of $V(t_0)$ along $c$}.
+	Then, there exists a unique parallel vector field $V$ along $c$ such that $V(t_0) = V_0$. We call $V$ the \emph{parallel transport of $V(t_0)$ along $c$}.
 \end{proposition}
 
 \begin{proof}
 	\unsure{Write it if there's time}
-	See \cite[Proposition 2.6]{docarmo79}
+	See \cite[Proposition 2.6 on section 2.2]{docarmo79}
 \end{proof}
+
+\subsection{Semi-Riemannian connections}
+
+The section follows the line of reasoning on \cite[Section 2.3]{docarmo79}.
+
+Until now, the geometry of \fixme{Introduction stating that a metric is now needed.}
 
 \begin{definition}[Metric compatible connection]
 	% doCarmo, 45
+	Let $M$ be a smooth manifold furnished with an affine connection $\nabla$ and a semi-Riemannian metric $g$.
+	
+	The connection is said to be compatible with the metric when, for every smooth curve $c$ and for every pair of vector fields $P, P'$ along $c$, the product of the vector fields is constant:
+	\[
+		g(P, P') = constant
+	\]
 \end{definition}
+
+This definition will let us compute the derivative of the vector fields product using the Leibniz rule, as shown in the following proposition.
 
 \begin{proposition}[Derivative of the metric on vector fields]
 	% doCarmo, 45
+	\label{pro:compatibleleibniz}
+	Let $M$ be a semi-Riemannian manifold furnished with a connection $\nabla$ compatible with the metric $g$. Let $c \colon I \to M$ be a smooth curve and $V$ and $W$ two vector fields along $c$. Then, the Leibniz rule is satisfied when computing the derivative of the vector fields product; that is:
+	\[
+		\frac{d}{dt}g(V,W) = g(\frac{DV}{dt}, W) + g(V, \frac{DW}{dt}), t \in I.
+	\]
 \end{proposition}
+
+In fact, we can redefine what a connection compatible with a metric is using \autoref{pro:compatibleleibniz}, as the other implication is also true.
 
 \begin{corollary}[Compatible connection redefinition]
 	% doCarmo, 46
+	An affine connection on a semi-Riemannian manifold $m$ is compatible with a metric $g$ if and only if
+	\[
+		X(g(Y,Z)) = g(\nabla_X Y, Z) + g(Y, \nabla_X Z), \quad X, Y, Z \in \mathfrak{X}(M).
+	\]
 \end{corollary}
+
+\begin{proof}
+	The first implication is straightforward, let us see the other one.
+
+	Consider that $\nabla$ is compatible with the metric. Let $p \in M$ and define $c \colon I \subset \R \to M$ to be a smooth curve satisfying
+	\[
+		c(t_0) = p, \quad t_0 \in I \quad \textrm{and} \quad \frac{dc}{dt} \Bigr|_{t = t_0} = X(p).
+	\]
+	
+	Then,
+	\[
+		X(p)\left(g(Y,Z)\right) = \frac{d}{dt}g(Y,Z)\Bigr|_{t=t_0} = g(\nabla_{X(p)} Y, Z)_p + g(Y, \nabla_{X(p)} Z)_p,
+	\]
+	which proves the result, as $p$ is an arbitrary point.
+\end{proof}
 
 \begin{definition}[Symmetric connection]
 	% doCarmo, 46
+	An affine connection $\nabla$ on a smooth manifold $M$ is said to be symmetric if
+	\[
+		\nabla_X Y - \nabla_Y X = [X, Y] \quad \forall X,Y \in \mathfrak{X}(M)
+	\]\fixme{Define square brackets (see doCarmo p.25)}
 \end{definition}
 
 \begin{theorem}[Levi-Civita connection]
+	\label{theo:levicivita}
 	% doCarmo, 47
+	There exists, for every semi-Riemannian manifold $M$, a unique affine connection $\nabla$ satisfying the following properties:
+	\begin{enumerate}
+		\item $\nabla$ is symmetric.
+		\item $\nabla$ is compatible with the semi-Riemannian metric.
+	\end{enumerate}
 \end{theorem}
+
+\begin{proof}
+	\unsure{Add it if there's time: doCarmo p 47}
+\end{proof}
+
+The affine connection described in \autoref{theo:levicivita} is known as the \emph{Levi-Civita connection}.
 
 \begin{remark}[Christoffel symbols, covariant and usual derivatives]
 	% doCarmo, 48
