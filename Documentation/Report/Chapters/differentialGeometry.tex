@@ -80,7 +80,7 @@ One single chart may not cover the whole manifold. In order to completely unders
 
 The concept of manifold is quite general and includes a vast set of examples. We can impose, however, some properties on the smoothness of the manifold to restrict the objects we will work with.
 
-This section introduces the concept of differentiable structure, whose definition is key in the later description of differentiable manifolds, the core concept of this chapter.
+This section introduces the notion of differentiable structure, whose definition is key in the later description of differentiable manifolds, the core concept of this chapter.
 
 The first question in this study is the following: a chart describe perfectly a single piece of the manifold, but what happens when the domains of a pair of charts overlap? The following two definitions specify the concepts involved in this question.
 
@@ -190,7 +190,7 @@ What can we learn from this? Our goal is to define the differential of a differe
 
 The tangent plane to a regular surface on one of its points $p$ is, as we know, the vector subspace of all the tangent vectors to the point. This vector space was shown to be isomorphic to the space of directional derivatives on $p$. Instead of trying to generalize the concept of tangent vector, the idea we will follow is to extend the notion of directional derivatives, building the new \emph{tangent plane}-like space from these.
 
-The usual directional derivative is a linear map that satisfies the Leibniz rule, so we are going to define a tangent vector to a manifold as a generalization of this concept: the derivation.
+The usual directional derivative is a linear map that satisfies the Leibniz rule, so we are going to define a tangent vector to a manifold as an axiomatization of this concept: the derivation.
 
 From now on, we will note the set of all the smooth real-valued functions on a manifold $M$ as $\mathcal{F}(M)$:
 \[
@@ -224,26 +224,26 @@ It is trivial to see that the directional derivative is a tangent vector to the 
 \end{definition}
 
 \begin{remark}
-	$T_p M$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x \colon U \to M$ is a chart that covers $p$, $\{ \left(\frac{\delta}{\delta x_1}\right)\bigr|_p, \dots, \left(\frac{\delta}{\delta x_n}\right)\bigr|_p\}$ is its associated basis on $T_p M$. See \cite[p. 8]{docarmo79} for details.
+	$T_p M$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x \colon U \to M$ is a chart that covers $p$, $\{ \frac{\partial}{\partial x^1}\bigr|_p, \dots, \frac{\partial}{\partial xn}\bigr|_p\}$\footnote{We note by $\frac{\partial}{\partial xi}\bigr|_p \colon \mathcal{F}(M) \to \R$ the function that maps every smooth function $f$ to the value of its derivative with respect to the $i$-th coordinate evaluated at $p$.} is its associated basis on $T_p M$. See \cite[p. 8]{docarmo79} for details.
 \end{remark}
 
 The extension of the idea of differential is now straightforward: we have just to remember how the differential on the euclidean case can be defined from derivations and repeat the nearly exact same definition on manifolds.
 
-\begin{definition}[Pushforward]
+\begin{definition}[Differential or pushforward]
 	Let $M$ and $N$ be two manifolds and let $F \colon M \to N$ be a smooth map.
 	
 	Consider, for each $p \in M$, the function
 	\begin{align*}
-		F_* \colon T_p M &\to T_{F(p)} M \\
-		X &\mapsto F_*X,
+		dF \colon T_p M &\to T_{F(p)} M \\
+		X &\mapsto dF(X),
 	\end{align*}
 	that maps each tangent vector to $M$ at $p$, $X$, to a tangent vector to $N$ at $F(p)$, $F_*X$, defined as follows:
 	\begin{align*}
-		F_*X \colon \mathcal{F}(M) &\to \R \\
+		dF(X) \colon \mathcal{F}(M) &\to \R \\
 		f &\mapsto X(f \circ F).					
 	\end{align*}
 
-	The function $F_*$ is called the \emph{pushforward} of $p$ by $F$.
+	The function $dF$ is the differental of $F$ at $p$, which is also known as the \emph{pushforward} of $p$ by $F$.
 		   																	
 \end{definition}
 
@@ -270,7 +270,7 @@ Every smooth curve is differentiable in the manifold sense, and having understoo
 
 \autoref{pro:tangcurve} tells us how to assign a vector from the tangent space of a manifold $M$ to every curve $\gamma$ on it, but is there a curve that could be assigned to every tangent vector on $M$?; \ie, is every element of the tangent space to $M$ the tangent vector of a curve? The following result answers this question.
 
-\begin{theorem}[Every tangent vector is tangent to a curve in the manifold]
+\begin{theorem}
 	% Roldan, 22
 	Let $p$ be a point on a manifold $M$. There exists, for every $X \in T_p M$, a smooth curve on $M$ whose tangent vector is $X$.
 \end{theorem}
@@ -287,7 +287,7 @@ Every smooth curve is differentiable in the manifold sense, and having understoo
 
 In our journey to understand geometry on manifolds, one key step is to generalize what we called directional derivative in the euclidean spaces. The directional derivative of a function on a point gives us information on how the function changes when moving in the given direction; the concept of geodesic will need of this idea, but first we have to set up some definitions and technical results.
 
-In this section we will define a connection on a manifold, which in turn will give us the tools to generalize the concept of directional derivative and arrive to the definition of covariant derivative.
+In this section we will define a connection on a manifold, which in turn will give us the tools to generalize the concept of directional derivative arriving to the definition of covariant derivative.
 
 Finally, when adding a metric to the smooth manifold, an interesting connection will appear naturally: the Levi-Civita connection, whose interest on the study of the geodesic will be shown.
 
@@ -295,21 +295,27 @@ Finally, when adding a metric to the smooth manifold, an interesting connection 
 
 Let us start, then, by generalizing the concept of vector field to manifolds. As in the euclidean sense, we can define a \emph{vector field} on a manifold $M$ as a correspondence $X$ that maps every point $p$ on the manifold to a vector $X(p)$ in the tangent space $T_p M$.
 
-To formalize this concept, we should first define the set of the tangent spaces at every point of the manifold, which is the target set of the map we just described.
+To formalize this concept, we should first define the set of the tangent spaces at every point of the manifold, which is the target set of the map we just described. This definition can be found on \cite[p. 26]{oneill83} and \cite[p. 13]{docarmo79}
 
 \begin{definition}[Tangent bundle]
-	Let $M$ be a smooth manifold and let $A = \{(U_\alpha, h_\alpha)\}$ a smooth atlas on $M$.
+	Let $M$ be a smooth manifold and let $A = \{(U_\alpha, h_\alpha)\}$ be a smooth atlas on $M$.
 	
 	Consider now the set
 	\[
-		TM = \{(p,v) \textrm{ such that } p \in M, v \in T_p M\}
-	\]	
-	furnished with the atlas $A' = \{(U_\alpha \times \R^n, y_\alpha)\}$, where $y_\alpha$ defines the coordinates of every point $(p,v) \in TM$ as the union of the coordinates of $p$ in $U_\alpha$ with the coordinators of $v$ in the associated basis of $T_p M$.
+		TM = \bigcup_{p \in M} T_p M,
+	\]
+	where the projection $\pi \colon TM \to M$ maps every tangent vector $v$ to $p$, the manifold point such that $v \in T_p M$.
+
+	We can furnish $TM$ with the atlas $A' = \{(\pi^{-1}(U_\alpha), h'_\alpha)\}$, where $h'_\alpha$ defines the coordinates of every point $v \in TM$, as the union of the coordinates of $p (= \pi(v))$ in $U_\alpha$ with the coordinates of $v$ in the associated basis of $T_p M$; \ie, if $(x^1, \dots, x^n)$ are the coordinate functions that assigns every point $p \in M$ to its coordinates on $\R^n$, the coordinates of the elements of $TM$ are
+	\[
+		(x^1 \circ \pi, \dots, x^n \circ \pi, \frac{\partial}{\partial {x^1}}, \dots, \frac{\partial}{\partial {x^n}}),
+	\]
+	where $\frac{\partial}{\partial {x^i}} \colon \pi^{-1}(U_\alpha) \to \R$ are the coordinate functions of the tangent space, given by $\frac{\partial v}{\partial {x^i}} = v(x^i)$.
 	
 	$TM$ is called the tangent bundle of $M$.
 \end{definition}
 
-It can be proved ---see \cite[Example 2.1]{docarmo79}--- that $A'$ is, indeed, an atlas and that the tangent bundle of every smooth manifold of dimension $n$ is in turn a smooth manifold of dimension $2n$.
+It can be proved ---see \cite[Example 2.1]{docarmo79} or \cite[pp. 26, 27]{oneill83}--- that $A'$ is, indeed, an atlas and, therefore, that the tangent bundle of every smooth manifold of dimension $n$ is in turn a smooth manifold of dimension $2n$.
 
 This recently defined space is the target set of what we described as a vector field. \autoref{def:vectorfield} formalize this idea.
 
@@ -319,14 +325,15 @@ This recently defined space is the target set of what we described as a vector f
 	\[
 		X \colon M \mapsto TM
 	\]
-	that maps every point $p$ on the manifold to a vector $X(p) \in T_p M$.
+	that maps every point $p$ on the manifold to a vector $X(p) \in T_p M$, often noted as $X_p$.
 \end{definition}
 
-Another interesting way to look at the vector fields, thoroughly shown on \cite[Definition 5.1, p. 23s]{docarmo79} is considering again the idea of the vectors as directional derivatives: a vector field $X$ on $p$ is then a map that receives a smooth function $f$ on $M$ and gives us another function on $M$, defined as follows:
+From now on, we will note the set of smooth vector fields on $M$ as $\mathfrak{X}(M)$.
+
+Another interesting way to look at the vector fields, shown on \cite[p. 23]{docarmo79}, consists on considering again the idea of the vectors as directional derivatives: a vector field $X$ on $p$ is then a map that receives a smooth function $f$ on $M$ and gives us another function on $M$, noted as $Xf$ and defined as follows:
 \[
-	(Xf)(p) = \sum_i a_i(p)\frac{\delta f}{\delta x_i}(p),
+	(Xf)(p) = X_p(f).
 \]
-where $a_i$ are real-valued functions on the coordinate neighbourhood of $p$.
 
 One can define an interesting operation on vector fields considering them as derivations: the bracket operation.
 
@@ -349,12 +356,19 @@ Going ahead with the generalization of eucliden concepts to the manifolds, we ca
 	\[
 	V \colon I \mapsto TM
 	\]
-	that maps every instant $t \in I$ to a vector $X(c(t)) \in T_{c(t)} M$.
+	that maps every instant $t \in I$ to a vector $X(c(t)) \in T_{c(t)} M$, where $X$ is a vector field.
 \end{definition}
 
-From now on, we will note the set of smooth vector fields on $M$ as $\mathfrak{X}(M)$.
+\begin{example}
+	One of the most interesting examples of vector fields along a curve is the velocity of the curve itself. Let $\gamma \colon I \to \M$ be a smooth curve on $M$. The application that maps every instant to the tangent vector to the curve at that instant,
+	\begin{align*}
+		\gamma' \colon I &\to TM \\
+		t &\mapsto \gamma'(t),
+	\end{align*}
+	where $\gamma'(t)$ is defined on \autoref{pro:tangcurve}, is a vector field along $\gamma$.
+\end{example}
 
-The following definitions and results are extracted from \cite[Section 2.2]{docarmo79} and \cite[pp. 59-67]{oneill83}.
+The following definitions and results can be found at \cite[Ch. 2, Section 2]{docarmo79} and \cite[pp. 59-67]{oneill83}.
 
 \begin{definition}[Affine connection]
 	\label{def:affineconnection}
@@ -367,50 +381,50 @@ The following definitions and results are extracted from \cite[Section 2.2]{doca
 	\begin{enumerate}
 		\item $\nabla_{fX + gY} Z = f\nabla_X Z + g\nabla_Y Z$,
 		\item $\nabla_X(Y+Z) = \nabla_X Y + \nabla_X Z$,
-		\item $\nabla_X (fY) = f\nabla_XY + X(f)Y$,
+		\item $\nabla_X (fY) = f\nabla_XY + (Xf) Y$,
 	\end{enumerate}
 	where $X,Y,Z \in \mathfrak{X}(M)$ and $f,g \in \mathcal{F}(M)$.
 \end{definition}
+
+On \cite[Chapter 2, Remark 2.3]{docarmo79} we can see how the last property of \autoref{def:affineconnection} let us show that the affine connection is a local concept. Consider a coordinate system $(x^1, \dots, x^n)$ around $p$ and describe the vector fields $X, Y$ as follows:
+\[
+X = \sum_i x^i X_i, \qquad Y = \sum_j y^j X_j,
+\]
+where $X_i = \frac{\partial}{\partial x^i}$. Then, we can write
+\[
+\nabla_x Y = \sum_i x^i \nabla_{x^i}\left(\sum_j y^j X_j \right) = \sum_{ij} x^i y^j \nabla_{x^i} X_j + \sum_{ij} x^i (X_i y^j) X_j.
+\]
+
+Writing $\nabla_{x^i} X_j = \sum_k \Gamma^k_{ij} X_k$ \unsure{Where does this comes from? Is it just the vector field $\nabla_{x^i}X_j$ expressed in a basis of $\mathfrak{X}(M)$?} it is easy to conclude that the functions $\Gamma^k_{ij}$ are differentiable and we can finally write
+\[
+\nabla_x Y = \sum_k \left( \sum_{ij} x^i y^j \Gamma^k_{ij} + X(y^k) \right) X_k.
+\]
+
+This shows that $\nabla_x Y(p)$ depends on $x^i(p)$, $y^k(p)$ and the derivatives $X(y^k)(p)$.
 
 This is a somewhat technical definition, but as shown in \autoref{pro:covariantderivative}, it provides us with the concept of covariant derivative, which will be shown to be a generalization of the directional derivative on $\R^n$.
 
 \begin{proposition}[Covariant derivative]
 	\label{pro:covariantderivative}
 	% doCarmo, 42
-	Let $M$ be a smooth manifold with an affine connection $\nabla$ and let $c \colon I \to M$ be a smooth curve. Then there is unique function that maps vector field $V$ along $c$ onto another vector field $\frac{DV}{dt}$ along $c$, called \emph{covariant derivative of $V$ along $c$}, that satisfies the following properties:
+	Let $M$ be a smooth manifold with an affine connection $\nabla$ and let $c \colon I \to M$ be a smooth curve. Then there is a unique function that maps each vector field $V$ along $c$ onto another vector field along $c$, called \emph{covariant derivative of $V$ along $c$}, and noted as $\frac{DV}{dt}$, that satisfies the following properties:
 	\begin{enumerate}
 		\item $\frac{D}{dt}(V+W) = \frac{DV}{dt} + \frac{DW}{dt}$.
 		\item $\frac{D}{dt}(fV) = \frac{df}{dt}V + f\frac{DV}{dt}$.
-		\item If $V$ is described as $V(t) = Y(c(t))$, where $Y \in \mathfrak{X}(M)$, then \[\frac{DV}{dt} = \nabla_{\frac{dc}{dt}} Y.\]
+		\item If $V$ is described as $V(t) = X(c(t))$, where $X \in \mathfrak{X}(M)$, then \[\frac{DV}{dt} = \nabla_{\frac{dc}{dt}} X.\]
 	\end{enumerate}
 	where $W$ is another vector field along $C$ and $f \in \mathcal{F}(M)$.
 \end{proposition}
 
-On \cite[Chapter 2, Remark 2.3]{docarmo79} we can see how the last property of \autoref{def:affineconnection} let us show that the affine connection is a local concept. Consider a coordinate system $(x_1, \dots, x_n)$ around $p$ and describe the vector fields $X, Y$ as follows:
-\[
-	X = \sum_i x_i X_i, \qquad Y = \sum_j y_j X_j,
-\]
-where $X_i = \frac{\delta}{\delta x_i}$. Then, we can write
-\[
-	\nabla_x Y = \sum_i x_i \nabla_{x_i}\left(\sum_j y_j X_j \right) = \sum_{ij} x_i y_j \nabla_{x_i} X_j + \sum_{ij} x_i X_i (y_j) X_j.
-\]
-
-Writing $\nabla_{x_i} X_j = \sum_k \Gamma^k_{ij} X_k$ it is easy to conclude that the functions $\Gamma^k_{ij}$ are differentiable and we can finally write
-\[
-	\nabla_x Y = \sum_k \left( \sum_{ij} x_i y_j \Gamma^k_{ij} + X(y_k) \right) X_k.
-\]
-
-This shows that $\nabla_x Y(p)$ depends on $x_i(p)$, $y_k(p)$ and the derivatives $X(y_k)(p)$.
-
 \autoref{pro:covariantderivative} gives us an actual derivation on vector fields along smooth curves. The concept of connection, whose definition may appear artificial at first, shows now its interest: it provides us with a way of derivating vectors along curves; \ie, we have now the possibility to consider the concept of \emph{acceleration} on curves on manifolds.
 
 \begin{proof}[Proof of \autoref{pro:covariantderivative}]
-	Assuming the existence of such a map considering the local coordinates of $V$ and using the properties that define the covariant derivative, one can prove that it is unique.
+	Assuming the existence of such a map, considering the local coordinates of $V$ and using the properties that define the covariant derivative, one can prove that it is unique.
 	
-	Let $x \colon U \subset \R^n \to M$ be a coordinate chart that assigns the local expression $(x_1(t), \dots, x_n(t)$ to the curve $c$. If we note the coordinates of the tangent vector $X_i = \frac{\delta}{\delta x_i}$ and write the field $V$ locally as $V = \sum_j v^j X_j$, applying all three properties of the covariant derivative we conclude that
+	Let $x \colon U \subset \R^n \to M$ be a coordinate chart that assigns the local expression $(x^1(t), \dots, x^n(t))$ to the curve $c$. If we note $X_i = \pd{}{x^i}$ and write the field $V$ locally as $V = \sum_j v^j X_j$, applying all three properties of the covariant derivative we conclude that
 	\begin{equation}
 	\label{eq:covariantderivative}
-		\frac{DV}{dt} = \sum_j \frac{d v^j}{dt} X_j + \sum_{i,j} \frac{d x_i}{dt} v^j \nabla_{X_i} X_j,
+		\frac{DV}{dt} = \sum_j \frac{d v^j}{dt} X_j + \sum_{i,j} \frac{d x^i}{dt} v^j \nabla_{X_i} X_j,
 	\end{equation}
 	that is, the covariant derivative is unique.
 	
@@ -440,7 +454,7 @@ The remaining technical details of the previous reasoning can be found on \cite[
 
 \subsection{Semi-Riemannian connections}
 
-The section follows the line of reasoning on \cite[Section 2.3]{docarmo79}.
+This section follows the line of reasoning on \cite[Ch. 2, Section 3]{docarmo79}.
 
 Until now, the geometry of \fixme{Introduction stating that a metric is now needed.}
 
@@ -465,11 +479,15 @@ This definition will let us compute the derivative of the vector fields product 
 	\]
 \end{proposition}
 
-In fact, we can redefine what a connection compatible with a metric is using \autoref{pro:compatibleleibniz}, as the other implication is also true.
+\begin{proof}
+	See \cite[Ch. 2, Section 3, Proposition 3.2]{docarmo79}.\unsure{Write if time}
+\end{proof}
+
+In fact, we can redefine what a connection compatible with a metric is using \autoref{pro:compatibleleibniz}.
 
 \begin{corollary}[Compatible connection redefinition]
 	% doCarmo, 46
-	An affine connection on a semi-Riemannian manifold $m$ is compatible with a metric $g$ if and only if
+	An affine connection on a semi-Riemannian manifold $M$ is compatible with a metric $g$ if and only if
 	\[
 		X(g(Y,Z)) = g(\nabla_X Y, Z) + g(Y, \nabla_X Z), \quad X, Y, Z \in \mathfrak{X}(M).
 	\]
@@ -494,9 +512,20 @@ In fact, we can redefine what a connection compatible with a metric is using \au
 	% doCarmo, 46
 	An affine connection $\nabla$ on a smooth manifold $M$ is said to be symmetric if
 	\[
-		\nabla_X Y - \nabla_Y X = [X, Y] \quad \forall X,Y \in \mathfrak{X}(M)
-	\]\fixme{Define square brackets (see doCarmo p.25)}
+		\nabla_X Y - \nabla_Y X = [X, Y] \quad \forall X,Y \in \mathfrak{X}(M).
+	\]
 \end{definition}
+
+The name chosen for this property may not be clear at first sight, but it is not in vain: if we consider a coordinate system $(U,x)$, the symmetric connections satisfy
+\[
+	\nabla_{X_i} X_j - \nabla_{X_j} X_i = [X_i, X_j] = 0,
+\]
+which is equivalent to the symmetric expression
+\[
+	\Gamma^k_{ij} = \Gamma^k_{ji}.
+\]
+
+We can now state the main theorem for this section, which, paraphrasing Barret O'Neill \cite[p. 60]{oneill83}, it is said to be the miracle of semi-Riemannian geometry.
 
 \begin{theorem}[Levi-Civita connection]
 	\label{theo:levicivita}
@@ -506,36 +535,107 @@ In fact, we can redefine what a connection compatible with a metric is using \au
 		\item $\nabla$ is symmetric.
 		\item $\nabla$ is compatible with the semi-Riemannian metric.
 	\end{enumerate}
+
+	The connection $\nabla$ is known as the \emph{Levi-Civita connection}.
 \end{theorem}
 
 \begin{proof}
-	\unsure{Add it if there's time: doCarmo p 47}
+	Assume that such  connection exists; then, if $g$ is the metric on $M$, the following equalities hold:
+	\begin{align}
+		\label{eq:leviX}
+		X g(Y,Z) &= g(\nabla_X Y, Z) + g(Y, \nabla_X Z) \\
+		\label{eq:leviY}
+		Y g(Z,X) &= g(\nabla_Y Z, X) + g(Z, \nabla_Y X) \\
+		\label{eq:leviZ}
+		Z g(X,Y) &= g(\nabla_Z X, Y) + g(X, \nabla_Z Y) \\
+	\end{align}
+
+	Summing equalities \ref{eq:leviX} and \ref{eq:leviY}, substracting \ref{eq:leviZ} and using the symmetry of $\nabla$:
+	\begin{align*}
+		&X g(Y,Z) + Y g(Z,X) - Z g(X,Y) = \\
+		= &g([X,Z], Y) + g([Y,Z], X) + g([X,Y], Z) + 2g(Z, \nabla_Y X)
+	\end{align*}
+
+	Therefore, we can extract an equality that proves that $\nabla$ is uniquely determined by the metric:
+	\begin{align}
+		\label{eq:leviexpression}
+		g(\nabla_Y X, Z) = -\frac{1}{2} \big(&X g(Y,Z) + Y g(Z,X) - Zg(X,Y) - \\
+		\nonumber
+		&- g([X,Z], Y) - g([Y,Z], X) - g([X,Y],Z) \big).
+	\end{align}
+
+	The proof of its existence is straightforward when defining the connection with \autoref{eq:leviexpression}.
 \end{proof}
 
-The affine connection described in \autoref{theo:levicivita} is known as the \emph{Levi-Civita connection}.
 
 \begin{remark}[Christoffel symbols, covariant and usual derivatives]
 	% doCarmo, 48
+	When considering a coordinate system $(U,x)$, the functions $\Gamma^k_{ij}$ defined before with the expression $\nabla_{x^i}X_j = \sum_k \Gamma^k_{ij} X_k$ are known as the \emph{coefficients of the connection} $\nabla$ on $U$ or, more commonly, as the \emph{Christoffel symbols of the connection}.
+	
+	From \autoref{eq:leviexpression} we can write
+	\[
+		\sum_l \Gamma^l_{ij}g_{lk} = \frac{1}{2} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right).
+	\]
+	
+	Taking into account the fact that $g_{km}$ has an inverse, namely $g^{km}$, and using the Einstein summation convention, we obtain the classic expression of the Christoffel symbols of the Levi-Civita connection:
+	\begin{equation}
+		\label{eq:christoffel}
+		\Gamma^m_{ij} = \frac{1}{2} g^{km} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right)
+	\end{equation}
+	
+	We can reformulate \autoref{eq:covariantderivative} in terms of the Christoffel symbols, obtaining the covariant derivative classical expression using again the Einstein notation:
+	\begin{equation}
+		\label{eq:finalcovder}
+		\frac{DV}{dt} = X_k \left( \frac{dv^k}{dt} + \Gamma^k_{ij} v^j \frac{d x^i}{dt} \right).
+	\end{equation}
 \end{remark}
 
-\section{Geodesics}\fixme{Do it.}
+There is still one question left: is the covariant derivative an actual generalization of the directional derivative on the euclidean space $\R^n$? If we inspect \autoref{eq:finalcovder} we realize that the only difference between directional and covariant derivatives is the term where the Christoffel symbols appear. But it is straightforward to see that these terms vanishes when the metric $g$ is euclidean; from \autoref{eq:christoffel}, and using that $g^{ij} = \delta^i_j$ for every $i,j \in \{1, \dots, n\}$:
+\begin{align*}
+	\Gamma^m_{ij} &= \frac{1}{2} g^{km} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right) = \\
+	&= \frac{1}{2} \sum_k g^{km} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right) = \\
+	&= \frac{1}{2} \sum_k \delta^k_m \left( \pd{}{x^i} \delta^j_k + \pd{}{^_j} \delta^k_i - \pd{}{x^k} \delta^i_j \right) = \\
+	&= 0
+\end{align*}
+
+We can conclude what we state at the beginning of this section: when restricted to the euclidean spaces, the covariant derivative and the directional derivative agree.
+
+\section{Geodesics}
+
+From now on, let $M$ be a semi-Riemannian manifold.
 
 \subsection{Basic definition}
 
 \begin{definition}[Geodesic]
 	% doCarmo, 52
+	Let $\gamma \colon I \to M$ be a curve on $M$. $\gamma$ is said to be a \emph{geodesic on $M$} when
+	\[
+		\frac{D}{dt}\left(\frac{d\gamma}{dt}\right) = 0 \quad \forall t \in I,
+	\]
+	that is, the vector field $\gamma'$ is parallel.
 \end{definition}
+
+It is a common abuse of notation, using that the covariant derivative is an actual derivation, to write that a curve $\gamma$ on $M$ is a geodesic when $\gamma'' = 0$.
+
+One milestone on the development of this work is to obtain the equations that characterise geodesics: these kind of equations will let us apply a numerical algorithm in order to obtain positions of particles on manifolds. We will see later that a spacetime can be modelled as a 4-dimensional manifold where the geodesics will tell us the path light follows.
+
+As our primary objective is to study the movement of light, this first small step in understanding what a geodesic is and what equation it satisfies is very important.
 
 \begin{remark}[Differential equations satisfied by a geodesic]
 	% doCarmo, 53
-\end{remark}
-
-\begin{definition}[Tangent bundle]
-	% doCarmo, 53
-\end{definition}
-
-\begin{remark}[First order system]
-	% doCarmo, 53
+	Therefore, let us see the local equations satisfied by a geodesic $\gamma$ on on a coordinate system $(U,x)$ around $\gamma(t_0)$, $t_0 \in I$.
+	
+	Let $\gamma(t) = (x^1(t), \dots, x^n(t)$ be the coordinates of the curve on $U$. Using the expression of the covariant derivative and assuming $\gamma$ is a geodesic; \ie, that its velocity vector field is parallel, we can write:
+	\[
+		0 = \pd{}{x^k} \left( \frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} \right).
+	\]
+	
+	We conclude that the differential equations system of order 2 given by
+	\begin{equation}
+	\label{eq:geodesic}
+		\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0 \quad k = 1, \dots, n
+	\end{equation}
+	describes a necessary condition for the curves on $M$ to be geodesics.
 \end{remark}
 
 \subsection{Geodesic minimizing properties}
