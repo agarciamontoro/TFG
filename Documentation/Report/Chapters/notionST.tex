@@ -10,7 +10,7 @@ A \emph{Lorentzian metric} on an $n(\geq 2)$-dimensional manifold $M$\footnote{U
 \vspace{2mm}
 
 
-It should be noticed that if a manifold $M$ admits a symmetric 2-covariant tensor field $g$ such that $g_p$ is non-degenerate for all $p\in M$, then $g$ has a Levi-Civita connection $\nabla$. This assertion follows from the classical Koszul formula (see Section 5) which defines $\nabla$ just from the non-degeneracy property (equivalently, note also that the Christofell symbols $\Gamma_{i\,j}^k$ may be defined using only the non-degeneration property). Therefore, from the connectedness of $M$, for each two points $p_0,p_1\in M$ there exists a piece-wise smooth curve
+It should be noticed that if a manifold $M$ admits a symmetric 2-covariant tensor field $g$ such that $g_p$ is non-degenerate for all $p\in M$, then $g$ has a Levi-Civita connection $\nabla$. This assertion follows from the classical Koszul formula (see Section 5) which defines $\nabla$ just from the non-degeneracy property (equivalently, note also that the Christofell symbols $\Gamma_{i\,j}^k$ may be defined using only the non-degeneration property). Therefore, from the connectedness of $M$, for each two points $p_0,p_1\in M$ there exists a piece-wise smooth curve\fixme{Add definition of piece-wise smooth curve somewhere}
 \[
 \gamma : [a,b] \longrightarrow M,
 \]
@@ -115,7 +115,7 @@ A Lorentzian manifold $(M,g)$ is time orientable if and only if there exists $Y\
 \hyphenation{orien-ta-bi-li-ty}
 
 
-The following result gives a geometric characterization of time orientability \cite[p. 255]{S-W}
+The following result gives a geometric characterization of time orientability \cite[p. 255]{S-W} \fixme{Lost reference!}
 
 
 \begin{corollary}\label{parallel_transport}
@@ -135,7 +135,7 @@ The following result gives a geometric characterization of time orientability \c
     \[
         f(t)= g(X_{\gamma(t)},Y(t))
     \]
-    which is continuous and never vanishes because $X_{\gamma(t)}$ and $Y(t)(=P_{a,t}^{\gamma}(v))$ are timelike. Therefore $f(t)<0$ for all $t\in [a,b]$ and, in particular, $f(b)<0$. This means, taking into account Lemma \ref{time_cone}, that $Y(b)$ and $X_{\gamma(b)}$ lie in the same time cone.
+    which is continuous and never vanishes because $X_{\gamma(t)}$ and $Y(t)(=P_{a,t}^{\gamma}(v))$ are timelike. Therefore $f(t)<0$ for all $t\in [a,b]$ and, in particular, $f(b)<0$. This means, taking into account \autoref{lem:timecone}, that $Y(b)$ and $X_{\gamma(b)}$ lie in the same time cone.
 
     Conversely, let us consider, for two arbitrary points $p$ and $q$ of $M$, two piece-wise smooth curves $\alpha$ and $\beta$ from $p$ to $q$. We want to show that for any $v\in \mathcal{T}(T_pM,g_p)$ the parallel transported vectors $P^{\alpha}(v)$, $P^{\beta}(v)$ lie in the same time cone of $(T_qM,g_q)$.
 
@@ -146,7 +146,7 @@ The following result gives a geometric characterization of time orientability \c
     \[
         h(t)=g(X_{\alpha(t)},P_{a,t}^{\alpha}(v))
     \]
-    which is continuous and never vanishes. Therefore $h(t)<0$ for all $t\in [a,b]$ and, in particular, $h(b)<0$. This means, taking into account Lemma \ref{time_cone}, that $X_q$ and $P_{a,b}^{\alpha}(v)$ lie in the same time cone of $(T_qM,g_q)$ and thus $X_q \in \tau(q)$ for all $q \in U$.
+    which is continuous and never vanishes. Therefore $h(t)<0$ for all $t\in [a,b]$ and, in particular, $h(b)<0$. This means, taking into account \autoref{lem:timecone}, that $X_q$ and $P_{a,b}^{\alpha}(v)$ lie in the same time cone of $(T_qM,g_q)$ and thus $X_q \in \tau(q)$ for all $q \in U$.
 \end{proof}
 
 Now assume each closed piece-wise smooth curve is null homotopic by means of a piecewise smooth homotopy.
@@ -158,7 +158,7 @@ In this case, Corollary \ref{parallel_transport} says that $(M,g)$ must be time 
 \end{corollary}
 
 
-A well-known non time orientable Lorentzian manifold is the following Lorentzian cylinder \cite[Example 1.2.3]{S-W}
+A well-known non time orientable Lorentzian manifold is the following Lorentzian cylinder \cite[Example 1.2.3]{S-W}\fixme{Lost reference!}
 
 \hyphenation{ma-ni-fold}
 

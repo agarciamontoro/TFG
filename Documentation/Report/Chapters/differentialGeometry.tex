@@ -558,13 +558,13 @@ We can now state the main theorem for this section, which, paraphrasing Barret O
 
 	Therefore, we can extract an equality that proves that $\nabla$ is uniquely determined by the metric:
 	\begin{align}
-		\label{eq:leviexpression}
+		\label{eq:koszul}
 		g(\nabla_Y X, Z) = -\frac{1}{2} \big(&X g(Y,Z) + Y g(Z,X) - Zg(X,Y) - \\
 		\nonumber
 		&- g([X,Z], Y) - g([Y,Z], X) - g([X,Y],Z) \big).
 	\end{align}
 
-	The proof of its existence is straightforward when defining the connection with \autoref{eq:leviexpression}.
+	The proof of its existence is straightforward when defining the connection with \autoref{eq:koszul}, commonly known as the \emph{Koszul formula}.
 \end{proof}
 
 
@@ -572,7 +572,7 @@ We can now state the main theorem for this section, which, paraphrasing Barret O
 	% doCarmo, 48
 	When considering a coordinate system $(U,x)$, the functions $\Gamma^k_{ij}$ defined before with the expression $\nabla_{x^i}X_j = \sum_k \Gamma^k_{ij} X_k$ are known as the \emph{coefficients of the connection} $\nabla$ on $U$ or, more commonly, as the \emph{Christoffel symbols of the connection}.
 	
-	From \autoref{eq:leviexpression} we can write
+	From \autoref{eq:koszul} we can write
 	\[
 		\sum_l \Gamma^l_{ij}g_{lk} = \frac{1}{2} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right).
 	\]
