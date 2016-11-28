@@ -224,7 +224,14 @@ The answer is the well-known result \cite{greub72}
     g_R\big(P(u),v\big)=g(u,v)
     \]
 
-    for all $v \in T_pM$, $p \in M$. Clearly, $P$ is $g_R$-selfadjoint and, therefore, at any point $p \in M$, there exists a $g_R$-orthonormal basis of $T_pM$ consisting of eigenvectors of $P$. Observe that none of the eigenvalues is zero, $n-1$ are positive and one is negative. Put $\mathcal{D}_p$ the eigenspace associated to the negative eigenvalue of $P$ at $p$, then $\mathfrak{D}$ defines a $1$-dimensional distribution (or line field) on $M$. It should be noted that $\mathfrak{D}$ clearly depends on the arbitrary Riemannian metric $g_R$.
+    for all $v \in T_pM$, $p \in M$. Clearly, $P$ is $g_R$-selfadjoint and, therefore, at any point $p \in M$, there exists a $g_R$-orthonormal basis of $T_pM$ consisting of eigenvectors of $P$. Observe that none of the eigenvalues is zero, $n-1$ are positive and one is negative.
+    
+    Now, making use of $P$ we will define a 1-dimensional distribution on $M$ \cite{kobnom63}; \ie, an assignment to each $p \in M$ of a 1-dimensional subspace $\mathfrak{D}_p$ of $T_p M$ such that each $p\in M$ has an open neighbourhood $U$ and a vector field $X \in \mathfrak{X}(U)$ such that 
+    \[
+		\mathfrak{D}_p = \texrm{Span}\{X_q\} \quad \forall q \in U.
+    \]
+    
+    Put $\mathcal{D}_p$ the eigenspace associated to the negative eigenvalue of $P$ at $p$, then $\mathfrak{D}$ defines a $1$-dimensional distribution (or line field) on $M$. It should be noted that $\mathfrak{D}$ clearly depends on the arbitrary Riemannian metric $g_R$.
 
     Conversely, if a $1$-dimensional distribution $\mathfrak{D}$ on $M$ is given, fix an arbitrary Riemannian metric $g_R$ on $M$. We know that there exist an open covering $\{U_{\alpha}\}$ of $M$ and vector fields $X_\alpha \in \mathfrak{X}(U_\alpha)$ such that, locally,
 
@@ -250,23 +257,6 @@ The answer is the well-known result \cite{greub72}
 \end{remark}
 
 Proposition \ref{line_fields} can be generalized to obtain \cite{greub72}
-
-\begin{proposition}\label{distributions}
-    An $n$-dimensional manifold $M$ admits an indefinite Riemannian metric of index $s$, $0<s<n$, if and only if it admits a $s$-dimensional distribution.
-\end{proposition}
-
-\hyphenation{ha-ving}
-
-As an application, any parallelizable manifold (in particular any Lie group) admits an indefinite Riemannian metric of any index.
-
-\begin{remark}
-    In Propositions \ref{line_fields}, \ref{distributions} the usual notion of manifold which assume the existence of a countable basis in its topology has been considered.
-
-    In the more general terminology of \cite{kobnom63} i.e. without the assumption of having a countable basis in its topology, it can be shown \cite{marathe72} that if a manifold admits a Lorentzian metric, then it must be paracompact.
-
-    More generally, the same conclusion holds \cite[Cor. 25]{spivak79} if one assumes the existence of an affine connection (therefore, paracompactness is also derived from the assumption of the existence of an indefinite Riemannian metric.
-\end{remark}
-
 
 Any non-compact manifold admits a non-vanishing vector field. In fact, it can be taken as the gradient, with respect to any Riemannian metric, of a smooth function with no critical points.
 

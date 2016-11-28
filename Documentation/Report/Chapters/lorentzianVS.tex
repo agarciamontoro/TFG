@@ -17,7 +17,7 @@ Before going down that road we need to know what a Lorentzian vector space is an
 	\begin{enumerate}
 		\item $g$ is symmetric: $g(u, v) = g(v, u)$.
 		\item $g$ is non-degenerate: if $g(u, v) = 0 \;\; \forall v \in V$, then $\Rightarrow u = 0$.
-		\item $g$ has index 1: the maximum dimension of a subspace $W$ in which $g(u,u) \leq 0 \; \forall u,u \in W$ ---where equality holds if and only if $u = 0$--- is 1.
+		\item $g$ has index 1: the maximum dimension of a subspace $W$ in which $g(u,u) \leq 0 \; \forall u \in W$ ---where equality holds if and only if $u = 0$--- is 1.
 	\end{enumerate}
 
 	The vector space $V$ furnished with such a Lorentzian product is called a \emph{Lorentzian vector space}.
@@ -234,7 +234,7 @@ Although the classical orientations on $V$ does not depend on $g$, it is importa
 
 However, a time orientation does not change if we replace $g$ by a conformally related Lorentzian product $ag$, with $a\in \R$, $a>0$.
 
-\section{Topological remarks}\unsure{Is this section really necessary?}
+\section{Topological remarks}
 
 We end this section explaining some topological remarks. If $V$ is an $n$-dimensional vector space and $B$ is a basis of $V$, then we have a linear isomorphism $$b_B : V \longrightarrow \R^n,$$ defined by $b_B(v)=(a_1,..,a_n)$, where $(a_1,..,a_n)$ are the coordinates of $v$ in $B$. By using $b_B$ a topology $\mathfrak{T}_B$ can be defined in $V$ in such a way that the $\mathfrak{T}_B$-open subsets of $V$ are $b_B^{-1}(O)$, where $O$ is an open subset of $\R^n$. It is not difficult to see that $\mathfrak{T}_B = \mathfrak{T}_{B'}$ for any basis $B,B'$ of $V$. Endowed with this topology, the function $V \longrightarrow \R$, given by $v \mapsto g(v,v)$ is continuous. Hence $\mathcal{T}(V,g)$ is an open subset of $V$ and each time cone is also an open subset of $V$. Moreover, the set of nonzero spacelike vectors $\{v\in V \, : \, g(v,v)>0 \}$ is an open subset of $V$ and the light cone with the zero vector $\{v\in V \, : \, g(v,v)=0 \}$ is a closed subset of $V$. Finally, every null vector can be obtained as the limit of a sequence of timelike vectors as well of spacelike vectors (or both types of vectors). Thus, $\{v\in V \, : \, g(v,v)<0 \} \cup \{v\in V \, : \, g(v,v)>0 \}$
 is a dense subset of $V$.
