@@ -392,15 +392,19 @@ X = \sum_i x^i X_i, \qquad Y = \sum_j y^j X_j,
 \]
 where $X_i = \frac{\partial}{\partial x^i}$. Then, we can write
 \[
-\nabla_x Y = \sum_i x^i \nabla_{x^i}\left(\sum_j y^j X_j \right) = \sum_{ij} x^i y^j \nabla_{x^i} X_j + \sum_{ij} x^i (X_i y^j) X_j.
+\nabla_x Y = \sum_i x^i \nabla_{X^i}\left(\sum_j y^j X_j \right) = \sum_{ij} x^i y^j \nabla_{X^i} X_j + \sum_{ij} x^i (X_i y^j) X_j.
 \]
 
-Writing $\nabla_{x^i} X_j = \sum_k \Gamma^k_{ij} X_k$ \unsure{Where does this comes from? Is it just the vector field $\nabla_{x^i}X_j$ expressed in a basis of $\mathfrak{X}(M)$?} it is easy to conclude that the functions $\Gamma^k_{ij}$ are differentiable and we can finally write
+As $(\nabla_{X^i} X_j)_p \in T_p M$, and using that $\{X_1(p), \dots, X_n(p)\}$ is a basis of $T_p M$, we can write the coordinate expression of $\nabla_{X^i} X_j$ as follows:
 \[
-\nabla_x Y = \sum_k \left( \sum_{ij} x^i y^j \Gamma^k_{ij} + X(y^k) \right) X_k.
+	\nabla_{X^i} X_j = \sum_k \Gamma^k_{ij} X_k,
+\]
+where the functions $\Gamma^k_{ij}$ are necessarily differentiable. Finally, we can write
+\[
+\nabla_X Y = \sum_k \left( \sum_{ij} x^i y^j \Gamma^k_{ij} + X(y^k) \right) X_k.
 \]
 
-This shows that $\nabla_x Y(p)$ depends on $x^i(p)$, $y^k(p)$ and the derivatives $X(y^k)(p)$.
+This shows that $\nabla_X Y(p)$ depends on $x^i(p)$, $y^k(p)$ and the derivatives $X(y^k)(p)$.
 
 This is a somewhat technical definition, but as shown in \autoref{pro:covariantderivative}, it provides us with the concept of covariant derivative, which will be shown to be a generalization of the directional derivative on $\R^n$.
 
@@ -524,6 +528,8 @@ which is equivalent to the symmetric expression
 \[
 	\Gamma^k_{ij} = \Gamma^k_{ji}.
 \]
+
+Note that $\Gamma^k_{ij}$ and $\Gamma^k_{ji}$ are not equal in general. This happens only when $X_i = \pd{}{x^i}$ as we assume here. In this case, the Schwarz lemma shows us that $[X_i, X_j] = 0$; \ie, that $\frac{\partial^2 f}{\partial x^i \partial x^j} = \frac{\partial^2 f}{\partial x^j \partial x^i}$.
 
 We can now state the main theorem for this section, which, paraphrasing Barret O'Neill \cite[p. 60]{oneill83}, it is said to be the miracle of semi-Riemannian geometry.
 

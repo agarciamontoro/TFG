@@ -92,7 +92,7 @@ A Lorentzian manifold $(M,g)$ is time orientable if and only if there exists $Y\
     \vspace{2mm}
 
     \noindent (2) Let $\S_1^n$ be the $n$-dimensional De Sitter space; i.e. $\S_1^n =\{p \in \L^{n+1} \, :\, g(p,p)=1 \}$, where $g$ denotes the Lorentzian metric of $\L^{n+1}$. For each $p \in \S_1^n$, we have $T_p\S_1^n=\{v \in \L^{n+1} \, : \, g(p,v)=0\}$
-    and denote by $g_p$ the restriction of $g$ to $T_p\S_1^n$, which is Lorentzian because $\L^{n+1}=T_p\S_1^n \oplus \mathrm{Span}\{p\}$, the direct sum is also $g$-orthogonal and $p$ is spacelike. Observe that a vector field on $\S_1^n$ can be contemplated as a smooth map
+    and denote by $g_p$ the restriction of $g$ to $T_p\S_1^n$, which is Lorentzian because $\L^{n+1}=T_p\S_1^n \oplus \langle p \rangle$, the direct sum is also $g$-orthogonal and $p$ is spacelike. Observe that a vector field on $\S_1^n$ can be contemplated as a smooth map
     \[
         X : \S_1^n \longrightarrow \L^{n+1}
     \]
@@ -101,7 +101,7 @@ A Lorentzian manifold $(M,g)$ is time orientable if and only if there exists $Y\
     \vspace{2mm}
 
     \noindent (3) Let $\H_1^n$ be the $n$-dimensional anti De Sitter space; i.e. $\H_1^n =\{p \in \R^{n+1} \, :\, g'(p,p)=-1 \}$, where $g'=dx_1^2+...+dx_{n-1}^2-dx_n^2-dx_{n+1}^2$ and $(x_1,..,x_n,x_{n+1})$ is the usual coordinate system of $\R^{n+1}$. The semi-Riemannian metric $g'$ on $\R^{n+1}$ has index 2 and
-    $\R^{n+1}_2$ will denote $(\R^{n+1},g')$. For each $p \in \H_1^n$, we have $T_p\H_1^n=\{v \in \R^{n+1} \, : \, g'(p,v)=0\}$ and denote by $g'_p$ the restriction of $g'$ to $T_p\H_1^n$, which is Lorentzian because $\R^{n+1}_2=T_p\H_1^n \oplus \mathrm{Span}\{p\}$,
+    $\R^{n+1}_2$ will denote $(\R^{n+1},g')$. For each $p \in \H_1^n$, we have $T_p\H_1^n=\{v \in \R^{n+1} \, : \, g'(p,v)=0\}$ and denote by $g'_p$ the restriction of $g'$ to $T_p\H_1^n$, which is Lorentzian because $\R^{n+1}_2=T_p\H_1^n \oplus \langle p \rangle$,
     the direct sum is also $g'$-orthogonal and $p$ satisfies $g'(p,p)=-1$. The vector field
     \[
         X : \H_1^n \longrightarrow \R^{n+1}_2
@@ -115,7 +115,7 @@ A Lorentzian manifold $(M,g)$ is time orientable if and only if there exists $Y\
 \hyphenation{orien-ta-bi-li-ty}
 
 
-The following result gives a geometric characterization of time orientability \cite[p. 255]{S-W} \fixme{Lost reference!}
+The following result gives a geometric characterization of time orientability \cite[p. 255]{sachs77}
 
 
 \begin{corollary}\label{parallel_transport}
@@ -158,7 +158,7 @@ In this case, Corollary \ref{parallel_transport} says that $(M,g)$ must be time 
 \end{corollary}
 
 
-A well-known non time orientable Lorentzian manifold is the following Lorentzian cylinder \cite[Example 1.2.3]{S-W}\fixme{Lost reference!}
+A well-known non time orientable Lorentzian manifold is the following Lorentzian cylinder \cite[Example 1.2.3]{sachs77}
 
 \hyphenation{ma-ni-fold}
 
@@ -228,7 +228,7 @@ The answer is the well-known result \cite{greub72}
     
     Now, making use of $P$ we will define a 1-dimensional distribution on $M$ \cite{kobnom63}; \ie, an assignment to each $p \in M$ of a 1-dimensional subspace $\mathfrak{D}_p$ of $T_p M$ such that each $p\in M$ has an open neighbourhood $U$ and a vector field $X \in \mathfrak{X}(U)$ such that 
     \[
-		\mathfrak{D}_p = \texrm{Span}\{X_q\} \quad \forall q \in U.
+		\mathfrak{D}_p = \langle X_q \rangle \quad \forall q \in U.
     \]
     
     Put $\mathcal{D}_p$ the eigenspace associated to the negative eigenvalue of $P$ at $p$, then $\mathfrak{D}$ defines a $1$-dimensional distribution (or line field) on $M$. It should be noted that $\mathfrak{D}$ clearly depends on the arbitrary Riemannian metric $g_R$.
@@ -236,7 +236,7 @@ The answer is the well-known result \cite{greub72}
     Conversely, if a $1$-dimensional distribution $\mathfrak{D}$ on $M$ is given, fix an arbitrary Riemannian metric $g_R$ on $M$. We know that there exist an open covering $\{U_{\alpha}\}$ of $M$ and vector fields $X_\alpha \in \mathfrak{X}(U_\alpha)$ such that, locally,
 
     \[
-    \mathfrak{D}=\mathrm {Span}\{X_{\alpha}\}, \quad \mathrm{with} \quad
+    \mathfrak{D}=\langle X_{\alpha} \rangle, \quad \mathrm{with} \quad
     g_R(X_{\alpha},X_{\alpha})=1.
     \]
 
@@ -275,12 +275,36 @@ The existence of a $1$-dimensional distribution on a manifold is closely related
 
 On a simply connected manifold (compact or not), every $1$-dimensional distribution on $M$ arises from a global non-vanishing vector field $X\in \mathfrak{X}(M)$. However, a $1$-dimensional distribution cannot be lifted in general to a global non-vanishing vector field as the following example shows \cite{greub72}.
 
-\vspace{2mm}
+\begin{remark}[Lie groups]
+	Let us remember that a \emph{Lie group} is a group $G$ that is also a differentiable manifold, and such that the map
+	\begin{align*}
+		G \times G &\to G \\
+		(a,b) &\mapsto ab^{-1}
+	\end{align*}
+	is differentiable---see \cite[p. 38]{kobnom63}\unsure{Review this reference}.
+	
+	We denote by $L_a$ (resp. $R_a$) the left (resp. right) translation of $G$ by the element $a\in G$, that is:
+	\begin{align*}
+		L_a \colon G \to G \\
+		x &\mapsto ax
+	\end{align*}
+	and
+	\begin{align*}
+		R_a \colon G \to G \\
+		x &\mapsto xa.
+	\end{align*}
 
-\hyphenation{pa-ral-le-li-za-ble}
+	Both $L_a$ and $R_a$ are diffeomorphisms on $G$.
+	
+	A vector field $X$ on $G$ is called left invariant (resp. right invariant) if $(dL_a)_b X_b = X_{L_a(b)}$ (resp. $(dR_a)_b X_b = X_{R_a(b)}$) for all $a,b \in G$.
+	
+	Given $v \in T_e G$ there exists a unique left invariant vector field $X$ on $G$ such that $X_e = v$. In fact, $X_a \defeq (dL_a)_e(a) \; \forall a \in G$ (analogously for a right invariant vector field). Note that $v \neq 0$ implies $X_a \neq 0$ for all $a \in G$. Even more, if $\{v_1, \dots, v_n\}$ is a basis of $T_e G$, then there exists a set of left invariant vector fields $\{X_1, \dots, X_n\}$ such that $X_i(w) = v_i, 1 \leq i \leq n$, and  $\{X_1(a), \dots, X_n(a)\}$ is a basis of $T_a G$ for all $a \in G$.
+	
+	Therefore, $G$ admits a global basis of $\mathfrak{X}(G)$. In this case, $G$ is said to be \emph{parallelizable} \cite[Ch. 1, Sec. 4]{kobnom63}\unsure{Review this reference}.
+\end{remark}
 
-Consider the special orthogonal group of order 3, $SO(3)$, and put $M=\S^{1}\times SO(3)$.
+Consider the special orthogonal group of order 3, $SO(3)$, and put $M=\S^{1}\times SO(3)$. Both $\S^1$ and $SO(3)$ are Lie groups.
 
-$M$ is a 4-dimensional compact manifold. Moreover it is parallelizable, and therefore every vector field $X\in\mathfrak{X}(M)$ can be contemplated as a smooth map $$X:M\rightarrow \R^{4}$$ and, by fixing a diffeomorphism $\psi:\R P^{3}\rightarrow SO(3)$, a $1$-dimensional distribution $\mathfrak{D}$ can be seen as a smooth map $$\mathfrak{D}:M\rightarrow SO(3).$$
+$M$ is a 4-dimensional compact Lie group. Moreover it is parallelizable, and therefore every vector field $X\in\mathfrak{X}(M)$ can be contemplated as a smooth map $$X:M\rightarrow \R^{4}$$ and, by fixing a diffeomorphism $\psi:\R P^{3}\rightarrow SO(3)$, a $1$-dimensional distribution $\mathfrak{D}$ can be seen as a smooth map $$\mathfrak{D}:M\rightarrow SO(3).$$
 
 In particular, the canonical projection on the second factor $\mathfrak{D}_2$ defines a natural $1$-dimensional distribution on $M=\S^{1}\times SO(3)$. If we assume that $\mathfrak{D}_2$ lifts to a vector field $X$ without any zero, then, taking into accountthat $\R^{4}-\{0\}$ is simply connected, one easily shows that $SO(3)$ would be also simply connected, which is not true. Hence $\mathfrak{D}_2$ cannot be lifted to a global vector field on $\S^{1}\times SO(3)$.
