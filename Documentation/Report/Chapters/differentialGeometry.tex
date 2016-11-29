@@ -283,15 +283,9 @@ Every smooth curve is differentiable in the manifold sense, and having understoo
 	in such a way that it is smooth on $\gamma(0) = p$ and that its tangent vector is $\gamma'(0) = X$.
 \end{proof}
 
-\section{Connections on manifolds}
+\section{Vector fields}
 
 In our journey to understand geometry on manifolds, one key step is to generalize what we called directional derivative in the euclidean spaces. The directional derivative of a function on a point gives us information on how the function changes when moving in the given direction; the concept of geodesic will need of this idea, but first we have to set up some definitions and technical results.
-
-In this section we will define a connection on a manifold, which in turn will give us the tools to generalize the concept of directional derivative arriving to the definition of covariant derivative.
-
-Finally, when adding a metric to the smooth manifold, an interesting connection will appear naturally: the Levi-Civita connection, whose interest on the study of the geodesic will be shown.
-
-\subsection{Affine connections}
 
 Let us start, then, by generalizing the concept of vector field to manifolds. As in the euclidean sense, we can define a \emph{vector field} on a manifold $M$ as a correspondence $X$ that maps every point $p$ on the manifold to a vector $X(p)$ in the tangent space $T_p M$.
 
@@ -367,6 +361,33 @@ Going ahead with the generalization of eucliden concepts to the manifolds, we ca
 	\end{align*}
 	where $\gamma'(t)$ is defined on \autoref{pro:tangcurve}, is a vector field along $\gamma$.
 \end{example}
+
+\section{Partitions of Unity}
+\label{sec:partitionunity}
+
+A collection $\mathcal{L}$ of subsets of a space $S$ is locally finite provided each point of $S$ has a neighbourhood that meets only finitely many elements of $\mathcal{L}$. Let $\{f_\alpha \colon \alpha \in A\}$ be a collection of smooth functions on a manifold $M$ such that $\{\operatorname{supp} f_\alpha \colon \alpha \in A\}$ is locally finite. Then the sum $\sum_\alpha f_\alpha$ is a well-defined smooth function on $M$ , since on some neighbourhood of each point all but a finite number of $f_\alpha$ are identically zero.
+
+\begin{definition}[Smooth partition of unity]
+	A \emph{smooth partition of unity} on a manifold $M$ is a collection $\{f_\alpha \colon \alpha \in A\}$ of functions $f_\alpha \in \mathfrak{F}(M)$ such that
+	\begin{enumerate}
+		\item $0 \leq f_\alpha \leq 1 \quad \forall \alpha \in A$.
+		\item $\{\operatorname{supp} f_\alpha \colon \alpha \in A\}$ is locally finite.
+		\item $\sum_\alpha f_\alpha = 1$.
+	\end{enumerate}
+
+	The partition is said to be \emph{subordinate} to an open covering $\mathfrak{C}$ of $M$ provided each set $\operatorname{supp} f_\alpha$ is contained in some element of $\mathfrak{C}$.
+\end{definition}
+
+Partitions of unity are an indispensable tool for assembling locally defined  objects into a global object (or decomposing a global object into a sum of local objects). For such purposes  partitions of unity with "small" supports are needed.
+
+
+\section{Connections on Manifolds}
+
+In this section we will define a connection on a manifold, which in turn will give us the tools to generalize the concept of directional derivative arriving to the definition of covariant derivative.
+
+Finally, when adding a metric to the smooth manifold, an interesting connection will appear naturally: the Levi-Civita connection, whose interest on the study of the geodesic will be shown.
+
+\subsection{Affine connections}
 
 The following definitions and results can be found at \cite[Ch. 2, Section 2]{docarmo79} and \cite[pp. 59-67]{oneill83}.
 

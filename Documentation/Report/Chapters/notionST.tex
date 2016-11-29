@@ -7,10 +7,7 @@ In this section we will follow \cite{romero10}
 A \emph{Lorentzian metric} on an $n(\geq 2)$-dimensional manifold $M$\footnote{Unless otherwise is specified, a manifold will be assumed to be of class $C^{\infty}$, connected and with a countable basis in its topology.} is a symmetric 2-covariant tensor field $g$ such that $$g_p : T_pM\times T_pM \longrightarrow \R$$ is a Lorentzian product for all $p\in M$. A \emph{Lorentzian manifold} is a pair $(M,g)$ consisting of an $n(\geq 2)$-dimensional manifold $M$ and a Lorentzian metric $g$ on $M$.
 
 
-\vspace{2mm}
-
-
-It should be noticed that if a manifold $M$ admits a symmetric 2-covariant tensor field $g$ such that $g_p$ is non-degenerate for all $p\in M$, then $g$ has a Levi-Civita connection $\nabla$. This assertion follows from the classical Koszul formula (see Section 5) which defines $\nabla$ just from the non-degeneracy property (equivalently, note also that the Christofell symbols $\Gamma_{i\,j}^k$ may be defined using only the non-degeneration property). Therefore, from the connectedness of $M$, for each two points $p_0,p_1\in M$ there exists a piece-wise smooth curve\fixme{Add definition of piece-wise smooth curve somewhere}
+It should be noticed that if a manifold $M$ admits a symmetric 2-covariant tensor field $g$ such that $g_p$ is non-degenerate for all $p\in M$, then $g$ has a Levi-Civita connection $\nabla$. This assertion follows from the classical Koszul formula (see Section 5) which defines $\nabla$ just from the non-degeneracy property (equivalently, note also that the Christofell symbols $\Gamma_{i\,j}^k$ may be defined using only the non-degeneration property). Therefore, from the connectedness of $M$, for each two points $p_0,p_1\in M$ there exists a piecewise smooth curve\fixme{Add definition of piecewise smooth curve somewhere}
 \[
 \gamma : [a,b] \longrightarrow M,
 \]
@@ -73,7 +70,7 @@ A Lorentzian manifold $(M,g)$ is time orientable if and only if there exists $Y\
 \begin{proof}
     If such a vector field exists, then we can choose $\tau(p)$ as the time cone of $(T_pM,g_p)$ such that $Y_p\in \tau(p)$ for all $p\in M$. Conversely, let $\tau$ be a time orientation on $(M,g)$. For each $p_0 \in M$ there exist a neighborhood $U^{p_{_0}}$ and $X_U\in \mathfrak{X}(U^{p_{_0}})$ such that $(X_U)_p \in \tau(p)$ for all $p\in U^{p_{_0}}$.
 
-    Let $\{f_{\alpha}\}$ be a smooth partition of unity subordinate to the open covering $\{U^p\, : \, p\in M\}$; i.e. $\{\mathrm{supp}(f_{\alpha)}\}$ is locally finite, $f_{\alpha}\geq 0$, $\sum_{\alpha} f_{\alpha}=1$ and $\mathrm{supp}(f_{\alpha}) \subset U_{\alpha}$ for some $U_{\alpha}$ of the covering of $M$.
+    Let $\{f_{\alpha}\}$ be a smooth partition of unity subordinate to the open covering $\{U^p\, : \, p\in M\}$; i.e. $\{\mathrm{supp}(f_{\alpha)}\}$ is locally finite, $f_{\alpha}\geq 0$, $\sum_{\alpha} f_{\alpha}=1$ and $\mathrm{supp}(f_{\alpha}) \subset U_{\alpha}$ for some $U_{\alpha}$ of the covering of $M$ (see \autoref{sec:partitionunity}).
 
     The vector field $$Y:=\sum f_{\alpha}\, X_{U_{\alpha}}$$ is then well-defined and for each $p\in M$ there exists an open neighborhood $V(p)$ such that $V \cap \mathrm{supp}(f_{\alpha}) = \emptyset$ for all $\alpha \neq i_1,..,i_k$; therefore
     \[
@@ -120,7 +117,7 @@ The following result gives a geometric characterization of time orientability \c
 
 \begin{corollary}\label{parallel_transport}
 
-    A Lorentzian manifold $(M,g)$ is time orientable if and only if for any piece-wise smooth curve $\gamma : [a,b] \longrightarrow M$ such that $\gamma(a)=\gamma(b)=p$, we have
+    A Lorentzian manifold $(M,g)$ is time orientable if and only if for any piecewise smooth curve $\gamma : [a,b] \longrightarrow M$ such that $\gamma(a)=\gamma(b)=p$, we have
     \[
     g(P_{a,b}^{\gamma}(v),v)<0
     \]
@@ -137,11 +134,11 @@ The following result gives a geometric characterization of time orientability \c
     \]
     which is continuous and never vanishes because $X_{\gamma(t)}$ and $Y(t)(=P_{a,t}^{\gamma}(v))$ are timelike. Therefore $f(t)<0$ for all $t\in [a,b]$ and, in particular, $f(b)<0$. This means, taking into account \autoref{lem:timecone}, that $Y(b)$ and $X_{\gamma(b)}$ lie in the same time cone.
 
-    Conversely, let us consider, for two arbitrary points $p$ and $q$ of $M$, two piece-wise smooth curves $\alpha$ and $\beta$ from $p$ to $q$. We want to show that for any $v\in \mathcal{T}(T_pM,g_p)$ the parallel transported vectors $P^{\alpha}(v)$, $P^{\beta}(v)$ lie in the same time cone of $(T_qM,g_q)$.
+    Conversely, let us consider, for two arbitrary points $p$ and $q$ of $M$, two piecewise smooth curves $\alpha$ and $\beta$ from $p$ to $q$. We want to show that for any $v\in \mathcal{T}(T_pM,g_p)$ the parallel transported vectors $P^{\alpha}(v)$, $P^{\beta}(v)$ lie in the same time cone of $(T_qM,g_q)$.
 
-    In order to achieve this conclusion we construct a piece-wise smooth curve $\gamma : [a,b] \longrightarrow M$ from $\alpha$ and $\beta$ in a standard way such that $\gamma(a)=\gamma(b)=p$. Note that $$g(P^{\alpha}(v),P^{\beta}(v))=g((P^{\beta})^{-1}P^{\alpha}(v),v)=g(P_{a,b}^{\gamma}(v),v)<0,$$ which means that $P^{\alpha}(v)$ and $P^{\beta}(v)$ lie in the same time cone of $(T_qM,g_q)$.
+    In order to achieve this conclusion we construct a piecewise smooth curve $\gamma : [a,b] \longrightarrow M$ from $\alpha$ and $\beta$ in a standard way such that $\gamma(a)=\gamma(b)=p$. Note that $$g(P^{\alpha}(v),P^{\beta}(v))=g((P^{\beta})^{-1}P^{\alpha}(v),v)=g(P_{a,b}^{\gamma}(v),v)<0,$$ which means that $P^{\alpha}(v)$ and $P^{\beta}(v)$ lie in the same time cone of $(T_qM,g_q)$.
 
-    Therefore, we have a well-defined way to chose a time cone $\tau(p)$ at any $p \in M$. Finally, we will to show the smoothness. Given $p_0 \in M$ and the time cone $\tau(p_0)$ consider $v \in \tau(p_0)$. Let $X$ be a vector field which extends $v$; i.e. such that $X_{p_{0}}=v$. Note that $X$ remains timelike in some (connected) open neighborhood $U$ of $p_0$. For each $q \in U$ we construct a piece-wise smooth curve $\alpha : [a,b] \longrightarrow U$ satisfying $\alpha(a)=p_0$,
+    Therefore, we have a well-defined way to chose a time cone $\tau(p)$ at any $p \in M$. Finally, we will to show the smoothness. Given $p_0 \in M$ and the time cone $\tau(p_0)$ consider $v \in \tau(p_0)$. Let $X$ be a vector field which extends $v$; i.e. such that $X_{p_{0}}=v$. Note that $X$ remains timelike in some (connected) open neighborhood $U$ of $p_0$. For each $q \in U$ we construct a piecewise smooth curve $\alpha : [a,b] \longrightarrow U$ satisfying $\alpha(a)=p_0$,
     $\alpha(b)=q$ and consider the function $h : [a,b] \longrightarrow \R$ given by
     \[
         h(t)=g(X_{\alpha(t)},P_{a,t}^{\alpha}(v))
@@ -149,7 +146,7 @@ The following result gives a geometric characterization of time orientability \c
     which is continuous and never vanishes. Therefore $h(t)<0$ for all $t\in [a,b]$ and, in particular, $h(b)<0$. This means, taking into account \autoref{lem:timecone}, that $X_q$ and $P_{a,b}^{\alpha}(v)$ lie in the same time cone of $(T_qM,g_q)$ and thus $X_q \in \tau(q)$ for all $q \in U$.
 \end{proof}
 
-Now assume each closed piece-wise smooth curve is null homotopic by means of a piecewise smooth homotopy.
+Now assume each closed piecewise smooth curve is null homotopic by means of a piecewise smooth homotopy.
 
 In this case, Corollary \ref{parallel_transport} says that $(M,g)$ must be time orientable. But it is known that this fact holds true whenever $M$ is assumed to be simply connected. Therefore, we have
 
