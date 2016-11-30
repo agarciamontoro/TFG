@@ -666,5 +666,31 @@ As our primary objective is to study the movement of light, this first small ste
 \end{remark}
 
 \subsection{Geodesic minimizing properties}
+\fixme{Do it!}
+% doCarmo, 58-65
 
-% doCarmo, 58-65	
+\section{Curvature}
+
+\begin{lemma}
+	Let $M$ be a semi-Riemannian manifold with Levi-civita connection $\nabla$. The function
+	\begin{align*}
+		R \colon \mathfrak{X}(M) \times \mathfrak{X}(M) \times \mathfrak{X}(M) &\to \mathfrak{X}(M) \\
+		(X, Y, Z) &\mapsto R(X,Y)Z,
+	\end{align*}
+	where
+	\[
+		R(X,Y)Z = \nabla_X \nabla_Y Z - \nabla_Y \nabla_X Z - \nabla_{[X,Y]} Z,
+	\]
+	is a $(1,3)$ tensor field on $M$ called the \emph{Riemannian curvature of M}.
+\end{lemma}
+
+\begin{proof}
+	To see the curvature $R$ as a $(1,3)$ tensor consider the function defined as
+		\begin{align*}
+		\tilde{R} \colon \mathfrak{X}(M)^* \times \mathfrak{X}(M) \times \mathfrak{X}(M) \times \mathfrak{X}(M) &\to \mathfrak{X}(M) \\
+		(\Omega, X, Y, Z) &\mapsto \Omega\left(R(X,Y)Z\right)
+	\end{align*}
+	It is straightforward to see that $\tilde{R}$, that will be denoted also as $R$, is multilinear and can factor out its scalars.
+\end{proof}
+
+The Riemannian curvature can be considered as an $\R$-multilinear function working on individual tangent vectors \fixme{View O'Neill page 38}.
