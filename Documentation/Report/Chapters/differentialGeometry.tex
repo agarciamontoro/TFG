@@ -679,7 +679,7 @@ As our primary objective is to study the movement of light, this first small ste
 		R \colon \mathfrak{X}(M) \times \mathfrak{X}(M) \times \mathfrak{X}(M) &\to \mathfrak{X}(M) \\
 		(X, Y, Z) &\mapsto R(X,Y)Z,
 	\end{align*}
-	where
+	defined as
 	\[
 		R(X,Y)Z = \nabla_X \nabla_Y Z - \nabla_Y \nabla_X Z - \nabla_{[X,Y]} Z,
 	\]
@@ -698,9 +698,9 @@ As our primary objective is to study the movement of light, this first small ste
 The Riemannian curvature can be considered as an $\R$-multilinear function ay any $p\in M$ working on individual tangent vectors.
 
 \begin{remark}[Curvature tensor on tangent vectors]	
-	If $u,v,w \in T_pM$ and $U,V,W \in \mathfrak{X}(\Omega)$, where $\Omega$ is some open neighbourhood of $P$ such that
+	If $u,v,w \in T_pM$ and $U,V,W \in \mathfrak{X}(\Omega)$, where $\Omega$ is some open neighbourhood of $p$ such that
 	\[
-		U_p = u, \qquad V_p = v, \qquad W_p = w
+		U_p = u, \qquad V_p = v, \qquad W_p = w,
 	\]
 	then $\left( R(U,V)W \right) _p$ does not depend on the local extensions of the tangent vectors at $p\in M$ \cite[p. 38]{oneill83}, and therefore we can define
 	\begin{align*}
@@ -711,8 +711,41 @@ The Riemannian curvature can be considered as an $\R$-multilinear function ay an
 	\[
 	R(u,v) \colon T_p M  \to T_p M \\
 	\]
-	sending each $w\in T_pM$ to $R(u,v)w \in T_p M$, which is called the \emph{curvature operator defined by $u,v\in T_p M$}.
+	sending each $w\in T_pM$ to $R(u,v)w \in T_p M$, which is called the \emph{curvature operator} defined by $u,v\in T_p M$.
 \end{remark}
+
+Let us compute the expression of the curvature tensor components. Consider that its coordinate expression is:
+\begin{equation}
+\label{eq:curvaturecomponents}
+R\left( \pd{}{x^i}, \pd{}{x^j} \right)\pd{}{x^k} = \sum_l R^l_{ijk} \pd{}{x^l}.
+\end{equation}
+
+Using the curvature tensor definition and the Schwarz lemma, that tells us that $[\pd{}{x^i}, \pd{}{x^j}] = 0$, the tensor has the expression
+\[
+R\left( \pd{}{x^i}, \pd{}{x^j} \right)\pd{}{x^k} = \nabla_{\pd{}{x^i}} \nabla_{\pd{}{x^j}} \pd{}{x^k} - \nabla_{\pd{}{x^j}} \nabla_{\pd{}{x^i}} \pd{}{x^k}.
+\]
+
+Let us compute the first term in details; the second one will have the same expression with swapped indices $i$ and $j$. Using the Christoffel symbols, we have
+\[
+\nabla_{\pd{}{x^j}} \pd{}{x^k} = \sum_h \Gamma^h_{jk} \pd{}{x^h},
+\]
+from where we can write
+\begin{align*}
+\nabla_{\pd{}{x^i}} \left( \nabla_{\pd{}{x^j}} \pd{}{x^k} \right) &= \sum_h \nabla_{\pd{}{x^i}} \Gamma^h_{jk} \pd{}{x^h} = \\
+&= \sum_h \pd{}{x^i} \Gamma^h_{jk} \pd{}{x^h} + \sum_h \Gamma^h_{jk} \nabla_{\pd{}{x^i}} \pd{}{x^h} =\\
+&= \sum_h \pd{}{x^i} \left( \Gamma^h_{jk} \right) \pd{}{x^h} + \sum_{h,p} \Gamma^h_{jk} \Gamma^p_{ih} \pd{}{x^p}.
+\end{align*}
+
+If we swap the indices $h$ and $p$ on the last addend, the expression of this one term is somewhat more clear:
+\begin{equation}
+\label{eq:curvatureexpression}
+\nabla_{\pd{}{x^i}}\nabla_{\pd{}{x^j}} \pd{}{x^k} = \sum_h\left( \pd{}{x^i} \Gamma^h_{jk} + \sum_p \Gamma^p_{jk} \Gamma^h_{ip} \right) \pd{}{x^h}
+\end{equation}
+
+From \autoref{eq:curvaturecomponents}, using \autoref{eq:curvatureexpression} and its analogous with $i$ and $j$ indices swapped, we can finally write the expression of the curvature tensor components:
+\[
+R^l_{ijk} = \pd{}{x^i} \Gamma^l_{jk} - \pd{}{x^j} \Gamma^l_{ik} + \sum_p \left( \Gamma^p_{jk} \Gamma^l_{ip} - \Gamma^p_{ik} \Gamma^l_{jp} \right)
+\]
 
 The following identities are the symmetries of $R$:
 
@@ -721,51 +754,52 @@ The following identities are the symmetries of $R$:
 	\begin{enumerate}
 		\item $R(u,v) = -R(v,u)$ as operators on $T_p M$.
 		\item $g(R(u,v)w, z) = -g(R(u,v)z, w)$.
-		\item $R(u,v)w +R(v,w)u + R(w,u)v = 0$
+		\item $R(u,v)w +R(v,w)u + R(w,u)v = 0$ (\emph{first Bianchi identity}).
 		\item $g(R(u,v)w,z)  = g(R(w,z)u, v)$.
 	\end{enumerate}
 \end{proposition}
 
 These symmetries of $R$ lead to a less obvious symmetry of its covariant derivative $\nabla R$, called the \emph{second Bianchi identity}. First, let us recall that $\nabla R$ is the $(1,4)$-tensor field defined by
-\[
-	\left( \nabla_U R \right)(X,Y)Z = \nabla_U(R(X,Y)Z) - R(\nabla_U X, Y)Z - R(X, \nabla_U Y)Z - R(X,Y) \nabla_U Z
-\]
+\begin{align*}
+	\left( \nabla_U R \right)(X,Y)Z = &\nabla_U(R(X,Y)Z) - R(\nabla_U X, Y)Z - \\
+	&-R(X, \nabla_U Y)Z - R(X,Y) \nabla_U Z
+\end{align*}
 for all $U,X,Y,Z \in \mathfrak{X}(M)$.
 
 \begin{definition}[Ricci tensor]
-	The Ricci tensor $\operatorname{Ric}$ of a semi-Riemannian metric $g$ is defined as the following contraction of the Riemann curvature tensor $R$ of $g$:
+	The Ricci tensor $\Ric$ of a semi-Riemannian metric $g$ is defined as the following contraction of the Riemann curvature tensor $R$ of $g$:
 	\[
-		\operatorname{Ric}(X,Y) \defeq \operatorname{trace}(V \mapsto R(V, X)Y ),
+		\Ric(X,Y) \defeq \operatorname{trace}(V \mapsto R(V, X)Y ),
 	\]
-	that is, $\operatorname{Ric}(X,Y) =  \sum_i \omega^i (R(X_i, X)Y)$; where $\{X_i\}$ is a local basis of vector fields and $\{\omega^i\}$ is its dual basis of one-forms.
+	that is, $\Ric(X,Y) =  \sum_i \omega^i (R(X_i, X)Y)$; where $\{X_i\}$ is a local basis of vector fields and $\{\omega^i\}$ is its dual basis of one-forms.
 \end{definition}
 
-THerefore, for a coordinate system $(x_1, \dots, x_n)$ we have
+Therefore, for a coordinate system $(x_1, \dots, x_n)$ we have
 \[
-	\operatorname{Ric} = \sum_{j,k} \operatorname{Ric}\left( \pd{}{x^j},\pd{}{x^j}  \right) dx^j \otimes dx^k,
+	\Ric = \sum_{j,k} \Ric\left( \pd{}{x^j},\pd{}{x^j}  \right) dx^j \otimes dx^k,
 \]
-where the components $\operatorname{Ric}(\pd{}{x^j}, \pd{}{x^k})$ of $\operatorname{Ric}$ are given by
+where the components $\Ric(\pd{}{x^j}, \pd{}{x^k})$ of $\Ric$ are given by
 \[
-	\operatorname{Ric}(\pd{}{x^j}, \pd{}{x^k}) = \sum_i dx^i \left( R(\pd{}{x^i}, \pd{}{x^j})\pd{}{x^k} \right) = \sum_i R^i_{ijk}.
+	\Ric(\pd{}{x^j}, \pd{}{x^k}) = \sum_i dx^i \left( R(\pd{}{x^i}, \pd{}{x^j})\pd{}{x^k} \right) = \sum_i R^i_{ijk}.
 \]
 
 Equivalently,
 \[
-	\operatorname{Ric}(X,Y)  = \sum_{i,h} g^{ih} g(R(\pd{}{x^i}, X)Y, \pd{}{x^h}).
+	\Ric(X,Y)  = \sum_{i,h} g^{ih} g(R(\pd{}{x^i}, X)Y, \pd{}{x^h}).
 \]
 
-\begin{definition}
-	The scalar curvature $S$ of $g$ is the contraction of the $(1,1)$ tensor field $g$-equivalent to the Ricci tensor. In terms of coordinates:
+\begin{definition}[Scalar curvature]
+	The \emph{scalar curvature} $S$ of $g$ is the contraction of the $(1,1)$ tensor field $g$-equivalent to the Ricci tensor. In terms of coordinates:
 	\[
-		S = \sum_{i,j} g^{ij}(\operatornname{Ric})_{ij} = \sum_{i,j,k} g^{ij} R^k_{kij}
+		S = \sum_{i,j} g^{ij}(\Ric)_{ij} = \sum_{i,j,k} g^{ij} R^k_{kij}
 	\]
 \end{definition}
 
 From the second identity of Bianchi we get \cite[p. 88]{oneill83}
 \[
-	\nabla S = 2 \operatorname{div} \hat{\operatorname{Ric}},
+	\nabla S = 2 \operatorname{div} \widehat{\Ric},
 \]
-where $\nabla S$ is the gradient of te scalar curvature, $\hat{\operatorname{Ric}}$ is the contravariant tensor field $g$-equivalent to $\operatorname{Ric}$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
+where $\nabla S$ is the gradient of te scalar curvature, $\widehat{\Ric}$ is the contravariant tensor field $g$-equivalent to $\Ric$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
 
 
 
@@ -775,35 +809,3 @@ where $\nabla S$ is the gradient of te scalar curvature, $\hat{\operatorname{Ric
 
 
 
-Let us compute the expression of the curvature tensor components. Consider that its coordinate expression is as follows:
-\begin{equation}
-	\label{eq:curvaturecomponents}
-	R\left( \pd{}{x^i}, \pd{}{x^j} \right)\pd{}{x^k} = \sum_l R^l_{ijk} \pd{}{x^l}.
-\end{equation}
-
-Using the curvature tensor definition and the Schwarz lemma, that tells us that $[\pd{}{x^i}, \pd{}{x^j}] = 0$, the tensor has the expression
-\[
-	R\left( \pd{}{x^i}, \pd{}{x^j} \right)\pd{}{x^k} = \nabla_{\pd{}{x^i}} \nabla_{\pd{}{x^j}} \pd{}{x^k} - \nabla_{\pd{}{x^j}} \nabla_{\pd{}{x^i}} \pd{}{x^k}.
-\]
-
-Let us compute the first term in details; the second one will have the same expression with swapped indices $i$ and $j$. Using the Christoffel symbols, we have
-\[
-	\nabla_{\pd{}{x^j}} \pd{}{x^k} = \sum_h \Gamma^h_{jk} \pd{}{x^h},
-\]
-from where we can write
-\begin{align*}
-	\nabla_{\pd{}{x^i}} \left( \nabla_{\pd{}{x^j}} \pd{}{x^k} \right) &= \sum_h \nabla_{\pd{}{x^i}} \Gamma^h_{jk} \pd{}{x^h} = \\
-	&= \sum_h \pd{}{x^i} \Gamma^h_{jk} \pd{}{x^h} + \sum_h \Gamma^h_{jk} \nabla_{\pd{}{x^i}} \pd{}{x^h} =\\
-	&= \sum_h \pd{}{x^i} \left( \Gamma^h_{jk} \right) \pd{}{x^h} + \sum_{h,p} \Gamma^h_{jk} \Gamma^p_{ih} \pd{}{x^p}.
-\end{align*}
-
-If we swap the indices $h$ and $p$ on the last addend, the expression of this one term is somewhat more clear:
-\begin{equation}
-	\label{eq:curvatureexpression}
-	\nabla_{\pd{}{x^i}}\nabla_{\pd{}{x^j}} \pd{}{x^k} = \sum_h\left( \pd{}{x^i} \Gamma^h_{jk} + \sum_p \Gamma^p_{jk} \Gamma^h_{ip} \right) \pd{}{x^h}
-\end{equation}
-
-From \autoref{eq:curvaturecomponents}, using \autoref{eq:curvatureexpression} and its analogous with $i$ and $j$ indices swapped, we can finally write the expression of the curvature tensor components:
-\[
-	R^l_{ijk} = \pd{}{x^i} \Gamma^l_{jk} - \pd{}{x^j} \Gamma^l_{ik} + \sum_p \left( \Gamma^p_{jk} \Gamma^l_{ip} - \Gamma^p_{ik} \Gamma^l_{jp} \right)
-\]

@@ -78,7 +78,9 @@ With the concepts of multilinear maps and dual spaces we can now build the defin
 	\end{enumerate}
 \end{example}
 
-\section{Tensor addition, product by a scalar and tensor product}
+\section{Tensor basic operations}
+
+\subsection{Tensor addition and product by a scalar}
 Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear that both $\tensors_{1,0}(V) = V^*$ and $\tensors_{0,1}(V) = V^{**}$ are vector spaces over K. A natural question arises: is $\tensors_{r,s(V)}$ a vector space for arbitrary $r$ and $s$? The following result gives us the answer we are looking for.
 
 \begin{theorem}
@@ -112,6 +114,8 @@ Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear t
 		\item $1T = T, \;\;\forall T \in \tensors_{r,s}(V)$, where $1$ is the unity in $K$.
 	\end{enumerate}
 \end{proof}
+
+\subsection{Tensor product}
 
 Now that we know that $\tensors_{r,s}(V)$ is a vector space, it will be important to study its dimension. Before going down that road, let us define the tensor product, concept upon which we will be able to build a basis for $\tensors_{r,s}(V)$.
 
@@ -379,6 +383,57 @@ Note that whereas all the three vector spaces studied ---$\tensors_{2,0}$, $\ten
 		t^i_j = T_f(\varphi^i, v_j) = \varphi^i(f(v_j)) = a^i_j.
 	\]
 \end{remark}
+
+\section{Tensor Contraction}
+
+We can study another way of obtaining new tensors from old ones. The operation we are going to define is motivated by the following property of the $(1,1)$ tensors.
+
+Consider a tensor $T \in \tensors_{(1,1)}(V)$ and two basis of $\tensors_{(1,1)}(V)$: $\mathcal{B} = \{v_j \otimes \varphi^i\}$ and $\mathcal{B}' = \{v'_j \otimes \varphi'^i\}$, where both indices move independently from 1 to $n$. If the components of the tensor on the two different bases are the following:
+\[
+	t^i_j = T(\varphi^i, v_j) \quad t'^i_j = T(\varphi'^i, v'_j),
+\]
+with the expression of coordinate change being
+\[
+	t'^k_{\phantom{'}l} = \sum_{i,j = 1}^n a^k_i b_l^j  t^i_j \quad \forall k,l \in \{1,2,\dots,n\}.
+\]
+
+From the previous expression is straightforward to see that \cite[p. 198]{romero86} the sum of the coordinates with the same index is invariant under a change of basis. Indeed:
+\begin{align*}
+	\sum_k t'^k_k = \sum_{i,j,k} a^k_i b_k^j  t^i_j = \sum_{i,j} \left( \sum_k a^k_i b_k^j \right) t^i_j = \sum_{i,j} \delta_i^j t^i_j = \sum_i t^i_i.
+\end{align*}
+
+Considering the tensor $T$ as an operator, it is clear that this invariant scalar (a $(0,0)$ tensor) is the trace. We have then a map
+\[
+	C \colon \tensors_{(1,1)}(V) \to \tensors_{(0,0)}(V)
+\]
+defined as $C(T) = \sum_i T(\varphi^i, v_i)$.
+
+The generalization of this map to other tensor types is what we call tensor contraction.
+
+\begin{definition}[Tensor contraction]
+	Let $T \in \tensors_{(r,s)}(V)$, where $r,s > 0$. The contraction of $T$ with respect to the $i$-th contravariant slot and $j$-th covariant slot is the image of $T$ by the application
+	\begin{align*}
+		C^i_j \colon \tensors_{(r,s)}(V) &\to \tensors_{(r-1,s-1)}(V) \\
+		T &\mapsto C^i_j T,
+	\end{align*}
+	where $C^i_j T$ maps each tuple of one-forms and vectors 
+	\[
+		(\psi^1, \dots, \psi^{r-1}, w_1, \dots, w_{s-1})
+	\]
+	to the value
+	\[
+		\sum_k T(\psi^1, \dots, \underbrace{\varphi^k}_{i\textrm{-th slot}}, \dots, \psi^{r-1}, w_1, \dots, \underbrace{v_k}_{j\textrm{-th slot}}, \dots, w_{s-1}),
+	\]
+	where $\{v_i\}$ is a basis of $V$ and $\{\varphi^i\}$ its dual basis.
+\end{definition}
+
+It can be proved ---see \cite[Prop. 6.12]{romero86}--- that $C^i_j T$ is a tensor. As it does not depend on the choice of the basis, the concept of contraction is well-defined.
+
+It is interesting to note that the coordinates of $C^i_j T$ are obtained making equal the $i$-th contravariant, $j$-th covariant coordinate and summing in that index ---see \cite[Prop. 6.14]{romero86} for a more detailed explanation---:
+\[
+	C^i_j T = \left( \sum_m t^{k_1, \dots, k_{i-1}, m, k_{i+1}, \dots, k_r}_{l_1, \dots, l_{j-1}, m, l_{j+1}, \dots, l_s} \right)
+\]
+
 
 \section{Alternative definition of tensor: the physics approach}
 
