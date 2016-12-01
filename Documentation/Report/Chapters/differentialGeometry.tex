@@ -695,7 +695,78 @@ As our primary objective is to study the movement of light, this first small ste
 	It is straightforward to see that $\tilde{R}$, that will be denoted also as $R$, is multilinear and can factor out its scalars.
 \end{proof}
 
-The Riemannian curvature can be considered as an $\R$-multilinear function working on individual tangent vectors \fixme{View O'Neill page 38}.
+The Riemannian curvature can be considered as an $\R$-multilinear function ay any $p\in M$ working on individual tangent vectors.
+
+\begin{remark}[Curvature tensor on tangent vectors]	
+	If $u,v,w \in T_pM$ and $U,V,W \in \mathfrak{X}(\Omega)$, where $\Omega$ is some open neighbourhood of $P$ such that
+	\[
+		U_p = u, \qquad V_p = v, \qquad W_p = w
+	\]
+	then $\left( R(U,V)W \right) _p$ does not depend on the local extensions of the tangent vectors at $p\in M$ \cite[p. 38]{oneill83}, and therefore we can define
+	\begin{align*}
+		R \colon T_p M \times T_p M  \times T_p M  &\to T_p M \\
+		(u,v,w) &\mapsto R(u,v)w \defeq \left(R(U,V)W\right)_p
+	\end{align*}
+	In particular, for any $u,v \in T_p M$ we have a linear operator
+	\[
+	R(u,v) \colon T_p M  \to T_p M \\
+	\]
+	sending each $w\in T_pM$ to $R(u,v)w \in T_p M$, which is called the \emph{curvature operator defined by $u,v\in T_p M$}.
+\end{remark}
+
+The following identities are the symmetries of $R$:
+
+\begin{proposition}
+	If $u,v,w,z \in T_p M$, then
+	\begin{enumerate}
+		\item $R(u,v) = -R(v,u)$ as operators on $T_p M$.
+		\item $g(R(u,v)w, z) = -g(R(u,v)z, w)$.
+		\item $R(u,v)w +R(v,w)u + R(w,u)v = 0$
+		\item $g(R(u,v)w,z)  = g(R(w,z)u, v)$.
+	\end{enumerate}
+\end{proposition}
+
+These symmetries of $R$ lead to a less obvious symmetry of its covariant derivative $\nabla R$, called the \emph{second Bianchi identity}. First, let us recall that $\nabla R$ is the $(1,4)$-tensor field defined by
+\[
+	\left( \nabla_U R \right)(X,Y)Z = \nabla_U(R(X,Y)Z) - R(\nabla_U X, Y)Z - R(X, \nabla_U Y)Z - R(X,Y) \nabla_U Z
+\]
+for all $U,X,Y,Z \in \mathfrak{X}(M)$.
+
+\begin{definition}[Ricci tensor]
+	The Ricci tensor $\operatorname{Ric}$ of a semi-Riemannian metric $g$ is defined as the following contraction of the Riemann curvature tensor $R$ of $g$:
+	\[
+		\operatorname{Ric}(X,Y) \defeq \operatorname{trace}(V \mapsto R(V, X)Y ),
+	\]
+	that is, $\operatorname{Ric}(X,Y) =  \sum_i \omega^i (R(X_i, X)Y)$; where $\{X_i\}$ is a local basis of vector fields and $\{\omega^i\}$ is its dual basis of one-forms.
+\end{definition}
+
+THerefore, for a coordinate system $(x_1, \dots, x_n)$ we have
+\[
+	\operatorname{Ric} = \sum_{j,k} \operatorname{Ric}\left( \pd{}{x^j},\pd{}{x^j}  \right) dx^j \otimes dx^k,
+\]
+where the components $\operatorname{Ric}(\pd{}{x^j}, \pd{}{x^k})$ of $\operatorname{Ric}$ are given by
+\[
+	\operatorname{Ric}(\pd{}{x^j}, \pd{}{x^k}) = \sum_i dx^i \left( R(\pd{}{x^i}, \pd{}{x^j})\pd{}{x^k} \right) = \sum_i R^i_{ijk}.
+\]
+
+Equivalently,
+\[
+	\operatorname{Ric}(X,Y)  = \sum_{i,h} g^{ih} g(R(\pd{}{x^i}, X)Y, \pd{}{x^h}).
+\]
+
+\begin{definition}
+	The scalar curvature $S$ of $g$ is the contraction of the $(1,1)$ tensor field $g$-equivalent to the Ricci tensor. In terms of coordinates:
+	\[
+		S = \sum_{i,j} g^{ij}(\operatornname{Ric})_{ij} = \sum_{i,j,k} g^{ij} R^k_{kij}
+	\]
+\end{definition}
+
+From the second identity of Bianchi we get \cite[p. 88]{oneill83}
+\[
+	\nabla S = 2 \operatorname{div} \hat{\operatorname{Ric}},
+\]
+where $\nabla S$ is the gradient of te scalar curvature, $\hat{\operatorname{Ric}}$ is the contravariant tensor field $g$-equivalent to $\operatorname{Ric}$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
+
 
 
 
