@@ -362,6 +362,8 @@ Going ahead with the generalization of eucliden concepts to the manifolds, we ca
 	where $\gamma'(t)$ is defined on \autoref{pro:tangcurve}, is a vector field along $\gamma$.
 \end{example}
 
+\section{Tensor Fields}
+
 \section{Partitions of Unity}
 \label{sec:partitionunity}
 
@@ -694,3 +696,43 @@ As our primary objective is to study the movement of light, this first small ste
 \end{proof}
 
 The Riemannian curvature can be considered as an $\R$-multilinear function working on individual tangent vectors \fixme{View O'Neill page 38}.
+
+
+
+
+
+
+
+
+Let us compute the expression of the curvature tensor components. Consider that its coordinate expression is as follows:
+\begin{equation}
+	\label{eq:curvaturecomponents}
+	R\left( \pd{}{x^i}, \pd{}{x^j} \right)\pd{}{x^k} = \sum_l R^l_{ijk} \pd{}{x^l}.
+\end{equation}
+
+Using the curvature tensor definition and the Schwarz lemma, that tells us that $[\pd{}{x^i}, \pd{}{x^j}] = 0$, the tensor has the expression
+\[
+	R\left( \pd{}{x^i}, \pd{}{x^j} \right)\pd{}{x^k} = \nabla_{\pd{}{x^i}} \nabla_{\pd{}{x^j}} \pd{}{x^k} - \nabla_{\pd{}{x^j}} \nabla_{\pd{}{x^i}} \pd{}{x^k}.
+\]
+
+Let us compute the first term in details; the second one will have the same expression with swapped indices $i$ and $j$. Using the Christoffel symbols, we have
+\[
+	\nabla_{\pd{}{x^j}} \pd{}{x^k} = \sum_h \Gamma^h_{jk} \pd{}{x^h},
+\]
+from where we can write
+\begin{align*}
+	\nabla_{\pd{}{x^i}} \left( \nabla_{\pd{}{x^j}} \pd{}{x^k} \right) &= \sum_h \nabla_{\pd{}{x^i}} \Gamma^h_{jk} \pd{}{x^h} = \\
+	&= \sum_h \pd{}{x^i} \Gamma^h_{jk} \pd{}{x^h} + \sum_h \Gamma^h_{jk} \nabla_{\pd{}{x^i}} \pd{}{x^h} =\\
+	&= \sum_h \pd{}{x^i} \left( \Gamma^h_{jk} \right) \pd{}{x^h} + \sum_{h,p} \Gamma^h_{jk} \Gamma^p_{ih} \pd{}{x^p}.
+\end{align*}
+
+If we swap the indices $h$ and $p$ on the last addend, the expression of this one term is somewhat more clear:
+\begin{equation}
+	\label{eq:curvatureexpression}
+	\nabla_{\pd{}{x^i}}\nabla_{\pd{}{x^j}} \pd{}{x^k} = \sum_h\left( \pd{}{x^i} \Gamma^h_{jk} + \sum_p \Gamma^p_{jk} \Gamma^h_{ip} \right) \pd{}{x^h}
+\end{equation}
+
+From \autoref{eq:curvaturecomponents}, using \autoref{eq:curvatureexpression} and its analogous with $i$ and $j$ indices swapped, we can finally write the expression of the curvature tensor components:
+\[
+	R^l_{ijk} = \pd{}{x^i} \Gamma^l_{jk} - \pd{}{x^j} \Gamma^l_{ik} + \sum_p \left( \Gamma^p_{jk} \Gamma^l_{ip} - \Gamma^p_{ik} \Gamma^l_{jp} \right)
+\]
