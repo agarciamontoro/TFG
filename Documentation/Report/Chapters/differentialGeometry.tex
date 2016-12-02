@@ -338,7 +338,7 @@ This recently defined space is the target set of what we described as a vector f
 
 From now on, we will note the set of smooth vector fields on $M$ as $\mathfrak{X}(M)$.
 
-Analogously, one can define the set of smooth one forms, that is, the set
+Analogously, one can define the set of smooth covector fields, that is, the set of functions assigning a one-form to each point of the manifold:
 \[
 	\mathfrak{X}^*(M) = \left\{ \begin{aligned}
 		\theta \colon M &\to T^*M \\
@@ -404,7 +404,11 @@ Partitions of unity are an indispensable tool for assembling locally defined  ob
 
 \section{Tensor Fields}
 
+OK THIS IS IMPORTANT:
 
+\begin{definition}[Tensor field]
+	contenidos...
+\end{definition}
 
 \section{Connections on Manifolds}
 
@@ -690,9 +694,99 @@ As our primary objective is to study the movement of light, this first small ste
 	describes a necessary condition for the curves on $M$ to be geodesics.
 \end{remark}
 
-\subsection{Geodesic minimizing properties}
-\fixme{Do it!}
-% doCarmo, 58-65
+\subsection{Variational characterization of geodesics}
+
+When working with geodesics, its natural, elegant definition, although really interesting for theoretical purposes, is not practical. This section aims to find a characterization that let us study geodesics.
+
+First of all, we need to define some more concepts on curves.
+
+\begin{definition}[Variation {\cite[Chap. 9, Def. 2.1]{docarmo79}}]
+	Let $c \colon [0,1] \to M$ be a piecewise smooth curve on a semi-Riemannian manifold $M$. A \emph{variation of $c$} is a continuous map
+	\[
+		f \colon (-\varepsilon, \varepsilon) \times [0,1] \to M
+	\]
+	that satisfies:
+	\begin{enumerate}
+		\item $f(0,t) = c(t), \quad t\in[0,1]$.
+		\item There is a partition of $[0,1]$, $0 = t_0 < t_1 < \dots < t_{k+1} = 1$, such that $f_{|(-\varepsilon, \varepsilon) \times [t_i,t_{i+1}]}$ is smooth for every $i = 0, 1, \dots, k$.
+	\end{enumerate}
+
+	The variation is said to be \emph{proper} if $f(s,0) = c(0)$ and $f(s,1) = c(1)$ for every $s \in (-\varepsilon, \varepsilon)$.
+\end{definition}
+
+\begin{definition}[Variational curve of a $c$]
+	Let $f$ be a variation of a piecewise smooth curve $c$ on a semi-Riemannian manifold $M$, and fix an arbitrary $s \in (-\varepsilon, \varepsilon)$.
+	
+	The curve
+	\begin{align*}
+		f_s \colon [0,1] &\to M \\
+		t &\mapsto f_s(t) \defeq f(s,t)
+	\end{align*}
+	is called the variational curve of $c$\unsure{$c$ or $f$?}.
+\end{definition}
+
+The family of curves $\{f_s\}_{s\in (-\varepsilon, \varepsilon)}$ trivially includes $f_0 = c$, and so it can be considered as a set of close curves to $c$ if $\varepsilon > 0$ is sufficiently small.
+
+Furthermore, tt is clear that the variation is proper if every curve on this family have the same initial point $c(0)$ and the same final point $c(1)$.
+
+\begin{definition}[Transversal curve of variation]\fixme{Curva trasversal de la variación.}
+	Let $f$ be a variation of a piecewise smooth curve $c$ on a semi-Riemannian manifold $M$, and fix an arbitrary $t \in [0,1]$.
+	
+	The curve
+	\begin{align*}
+		f_t \colon (-\varepsilon, \varepsilon) &\to M \\
+		s &\mapsto f_t(s) \defeq f(s,t)
+	\end{align*}
+is called the sectional curve of $f$ \unsure{$f$ or $c$?}.
+\end{definition}
+
+The velocity vector of $f_t$ is
+\[
+V(t) \defeq \pd{f}{s}(0,t),
+\]
+which defines a piecewise smooth vector field along $c$: the so-called \emph{variational field} of $f$.
+
+Furthermore, if $f$ is a proper variation, the velocity satisfies $V(0) = 0$ and $V(1) = 0$.
+
+We can define now a quantity minimized by geodesics, in order to find a characterization with which we can work. In a semi-Riemannian manifold, this quantity will be the energy.
+
+\begin{definition}[Energy of a variation]
+	Let $f$ be a variation of a smooth curve $c$ on a manifold $M$
+	
+	The \emph{energy of $f$} is defined a
+	\begin{align*}
+		E_f \colon (-\varepsilon, \varepsilon) \to \R \\
+		s &\mapsto E_f(s) \defeq \int_0^1 g \left( \pd{f}{t}(s,t), \pd{f}{t}(s,t) \right),
+	\end{align*}
+	where $g$ is a metric on $M$ and $\pd{f}{t}(s,t)$ denotes the velocity of $f_s$ on the instant $t$.
+\end{definition}
+
+Some interesting properties of the energy function are studied on the following proposition, which will help us to find the characterization we are looking for.
+
+\begin{proposition}
+	\label{pro:energyprop}
+	Let $c \colon [0,1] \to M$ a piecewise smooth curve and let $f \colon (-\varepsilon, \varepsilon) \times [0,1] \to M$ be a proper variation of $c$.
+	
+	The energy of $f$, $E_f \colon (-\varepsilon, \varepsilon) \to \R$ satisfies:
+	\[
+		\frac{1}{2} E'_f(0) = - \int_0^1 g\left( V(t), \frac{D}{dt}(\frac{dc}{dt}) \right)dt - \sum_{i=1}^k g \left( V(t_i), \frac{dc}{dt}(t_i^+) - \frac{dc}{dt}(t_i^-) \right),
+	\]
+	where $V$ is the variational field of $f$ and
+	\[
+		\frac{dc}{dt}(t_i^+) = \lim_{\substack{t \to t_i \\ t > t_i}}, \quad \frac{dc}{dt}(t_i^-) = \lim_{\substack{t \to t_i \\ t < t_i}}
+	\]
+\end{proposition}
+
+The characterization of geodesics we are looking for comes as a result from \autoref{pro:energyprop}.
+
+\begin{proposition}
+	A piecewise smooth curve $c \colon [0,1] \to M$ is a geodesic if and only if
+	\[
+		\frac{dE_f}{ds}(0) = 0 \quad \textrm{ for every $f$, proper variation of $c$}.
+	\]
+\end{proposition}
+
+Geodesics are, in short, the critical points of the energy of every proper variation.
 
 \section{Curvature}
 
@@ -823,12 +917,3 @@ From the second identity of Bianchi we get \cite[p. 88]{oneill83}
 	\nabla S = 2 \operatorname{div} \widehat{\Ric},
 \]
 where $\nabla S$ is the gradient of te scalar curvature, $\widehat{\Ric}$ is the contravariant tensor field $g$-equivalent to $\Ric$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
-
-
-
-
-
-
-
-
-
