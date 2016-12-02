@@ -227,6 +227,13 @@ It is trivial to see that the directional derivative is a tangent vector to the 
 	$T_p M$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x \colon U \to M$ is a chart that covers $p$, $\{ \frac{\partial}{\partial x^1}\bigr|_p, \dots, \frac{\partial}{\partial xn}\bigr|_p\}$\footnote{We note by $\frac{\partial}{\partial xi}\bigr|_p \colon \mathcal{F}(M) \to \R$ the function that maps every smooth function $f$ to the value of its derivative with respect to the $i$-th coordinate evaluated at $p$.} is its associated basis on $T_p M$. See \cite[p. 8]{docarmo79} for details.
 \end{remark}
 
+As for every vector space, we can define its dual version.
+\begin{definition}[Cotangent space]
+	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{cotangent space to $M$ at $p$}, denoted as $T_p M^*$ is the dual space of the vector space $T_p M$.
+	
+	The elements $\omega \in T_p M^*$ are called \emph{one-forms} or \emph{covectors} on $p$.
+\end{definition}
+
 The extension of the idea of differential is now straightforward: we have just to remember how the differential on the euclidean case can be defined from derivations and repeat the nearly exact same definition on manifolds.
 
 \begin{definition}[Differential or pushforward]
@@ -311,6 +318,13 @@ To formalize this concept, we should first define the set of the tangent spaces 
 
 It can be proved ---see \cite[Example 2.1]{docarmo79} or \cite[pp. 26, 27]{oneill83}--- that $A'$ is, indeed, an atlas and, therefore, that the tangent bundle of every smooth manifold of dimension $n$ is in turn a smooth manifold of dimension $2n$.
 
+\begin{remark}[Cotangent bundle]
+	The dual version of the tangent bundle, the \emph{cotangent bundle}, can also be defined, and has the expected properties. It is defined as
+	\[
+		T^*M = \bigcup_{p \in M} T_p M^*.
+	\]
+\end{remark}
+
 This recently defined space is the target set of what we described as a vector field. \autoref{def:vectorfield} formalize this idea.
 
 \begin{definition}[Vector field]
@@ -323,6 +337,14 @@ This recently defined space is the target set of what we described as a vector f
 \end{definition}
 
 From now on, we will note the set of smooth vector fields on $M$ as $\mathfrak{X}(M)$.
+
+Analogously, one can define the set of smooth one forms, that is, the set
+\[
+	\mathfrak{X}^*(M) = \left\{ \begin{aligned}
+		\theta \colon M &\to T^*M \\
+		p &\mapsto \theta_p \in T_p M^*
+	\end{aligned} \Bigg/ \theta \textrm{ is smooth} \right\}
+\]
 
 Another interesting way to look at the vector fields, shown on \cite[p. 23]{docarmo79}, consists on considering again the idea of the vectors as directional derivatives: a vector field $X$ on $p$ is then a map that receives a smooth function $f$ on $M$ and gives us another function on $M$, noted as $Xf$ and defined as follows:
 \[
@@ -343,7 +365,7 @@ One can define an interesting operation on vector fields considering them as der
 
 The proof that $[V,W]$ is indeed a vector field can be found at \cite[p. 24]{docarmo79}.
 
-Going ahead with the generalization of eucliden concepts to the manifolds, we can define what a vector field along a curve is:
+Going ahead with the generalization of euclidean concepts to the manifolds, we can define what a vector field along a curve is:
 
 \begin{definition}[Vector field along a curve]
 	Let $c \colon I \to M$ be a curve on a manifold defined on the open subset $I \subset \R$. A \emph{vector field along the curve $c$}, $V$, is a function
@@ -362,8 +384,6 @@ Going ahead with the generalization of eucliden concepts to the manifolds, we ca
 	where $\gamma'(t)$ is defined on \autoref{pro:tangcurve}, is a vector field along $\gamma$.
 \end{example}
 
-\section{Tensor Fields}
-
 \section{Partitions of Unity}
 \label{sec:partitionunity}
 
@@ -381,6 +401,9 @@ A collection $\mathcal{L}$ of subsets of a space $S$ is locally finite provided 
 \end{definition}
 
 Partitions of unity are an indispensable tool for assembling locally defined  objects into a global object (or decomposing a global object into a sum of local objects). For such purposes  partitions of unity with "small" supports are needed.
+
+\section{Tensor Fields}
+
 
 
 \section{Connections on Manifolds}
