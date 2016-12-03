@@ -404,11 +404,54 @@ Partitions of unity are an indispensable tool for assembling locally defined  ob
 
 \section{Tensor Fields}
 
-OK THIS IS IMPORTANT:
+Just as we introduce the concept of vector fields on \autoref{def:vectorfield}, a similar concept arises now: the tensor fields.
+
+We are going to introduce this concept following the line of reasoning on \cite[Ch. 2]{oneill83}.
 
 \begin{definition}[Tensor field]
-	contenidos...
+	A tensor field $A$ on a manifold $M$ $r$ times contravariant and $s$ times covariant is a classic tensor on the vector space $\mathfrak{X}(M)$, whose scalar field is $\mathfrak{F}(M)$, the set of smooth real valued functions on $M$:
+	\[
+		A \colon \underbrace{\mathfrak{X}^*(M) \times \dots \times \mathfrak{X}^*(M)}_{\text{r copies}} \times \underbrace{\mathfrak{X}(M) \times \dots \times \mathfrak{X}(M)}_{\text{s copies}} \to \mathfrak{F}(M).
+	\]
+	
+	As usual, we denote by $\tensors_{(r,s)}(M)$ the set of all tensor fields of type $(r,s)$ on a manifold $M$.
 \end{definition}
+
+It is interesting to study that the name we gave to this concept is not random: indeed, we can see a tensor field $A$ as a proper \emph{field}, in which every point of the manifold is mapped to a tensor.
+
+The basis of this idea comes from the following result, whose proof can be studied on \cite[Ch. 2, Proposition 2]{oneill83}.
+
+\begin{proposition}
+	Let $p \in M$ be a point on a manifold $M$ and $A \in \tensors_{(r,s)}(M)$ a tensor field.
+	
+	Let $\theta^i$ and $\bar{\theta}^i$ be covector fields for every $i \in \{1, \dots, r\}$, and such that
+	\[
+		\theta^i_{|_p} = \bar{\theta}^i_{|_p} \quad \forall i \in \{1, \dots, r\}.
+	\]
+	
+	Similarly, let $X_i$ and $\bar{X}_i$ be vector fields for every $i \in \{1, \dots, s\}$, and such that
+	\[
+		X_{i|_p} = \bar{X}_{i|_p} \quad \forall i \in \{1, \dots, s\}.
+	\]
+	
+	Then,
+	\[
+		A(\theta^1, \dots, \theta^r, X_1, \dots, X_s)(p) = A(\bar{\theta}^1, \dots, \bar{\theta}^r, \bar{X}_1, \dots, \bar{X}_s)(p).
+	\]
+\end{proposition}
+
+This result let us consider each tensor field $A \in \tensors_{(r,s)}(M)$ as the following field on $M$, which is denoted in the same exact way:
+\begin{align*}
+	A \colon M &\to \tensors_{(r,s)}(M) \\
+	p &\mapsto A_p \colon \underbrace{T_p M^* \times \dots \times T_p M^*}_{\text{r copies}} \times \underbrace{T_p M \times \dots \times T_p M}_{\text{s copies}} \to \R
+\end{align*}
+where the tensor $A_p$, now defined on the tangent and cotangent space, is the following mapping:
+\[
+	(\alpha^1, \dots, \alpha^r, x_1, \dots, x_s) \xmapsto{A_p} A(\theta^1, \dots, \theta^r, X_1, \dots, X_s),
+\]
+where $\theta^i$ is any covector field such that $\theta^i_{|_p} = \alpha^i$ and $X_i$ is any vector field such that $X_{i|_p} = x_i$ for every $i \in \{1, \dots, n\}$.
+
+The operation involving tensors, the definition of the tensor components, the tensor contraction and all other classic results thoroughly studied in \autoref{chapter:tensoralgebra}  hold also here for the tensor fields on a manifold.
 
 \section{Connections on Manifolds}
 
@@ -673,7 +716,7 @@ From now on, let $M$ be a semi-Riemannian manifold.
 
 It is a common abuse of notation, using that the covariant derivative is an actual derivation, to write that a curve $\gamma$ on $M$ is a geodesic when $\gamma'' = 0$.
 
-One milestone on the development of this work is to obtain the equations that characterise geodesics: these kind of equations will let us apply a numerical algorithm in order to obtain positions of particles on manifolds. We will see later that a spacetime can be modelled as a 4-dimensional manifold where the geodesics will tell us the path light follows.
+One milestone on the development of this work is to obtain the equations that characterise geodesics: these kind of equations will let us apply a numerical algorithm in order to obtain positions of particles moving on manifolds. We will see later that a spacetime can be modelled as a 4-dimensional manifold whose geodesics will tell us the path light follows.
 
 As our primary objective is to study the movement of light, this first small step in understanding what a geodesic is and what equation it satisfies is very important.
 
@@ -700,7 +743,7 @@ When working with geodesics, its natural, elegant definition, although really in
 
 First of all, we need to define some more concepts on curves.
 
-\begin{definition}[Variation {\cite[Chap. 9, Def. 2.1]{docarmo79}}]
+\begin{definition}[Variation {\cite[Ch. 9, Definition 2.1]{docarmo79}}]
 	Let $c \colon [0,1] \to M$ be a piecewise smooth curve on a semi-Riemannian manifold $M$. A \emph{variation of $c$} is a continuous map
 	\[
 		f \colon (-\varepsilon, \varepsilon) \times [0,1] \to M
@@ -769,15 +812,18 @@ Some interesting properties of the energy function are studied on the following 
 	
 	The energy of $f$, $E_f \colon (-\varepsilon, \varepsilon) \to \R$ satisfies:
 	\[
-		\frac{1}{2} E'_f(0) = - \int_0^1 g\left( V(t), \frac{D}{dt}(\frac{dc}{dt}) \right)dt - \sum_{i=1}^k g \left( V(t_i), \frac{dc}{dt}(t_i^+) - \frac{dc}{dt}(t_i^-) \right),
+		\frac{1}{2} E'_f(0) = - \int_0^1 g\left( V(t), \frac{D}{dt}\left(\frac{dc}{dt}\right) \right)dt - \sum_{i=1}^k g \left( V(t_i), \frac{dc}{dt}(t_i^+) - \frac{dc}{dt}(t_i^-) \right),
 	\]
 	where $V$ is the variational field of $f$ and
 	\[
-		\frac{dc}{dt}(t_i^+) = \lim_{\substack{t \to t_i \\ t > t_i}}, \quad \frac{dc}{dt}(t_i^-) = \lim_{\substack{t \to t_i \\ t < t_i}}
+		\frac{dc}{dt}(t_i^+) = \lim_{\substack{t \to t_i \\ t > t_i}} \frac{dc}{dt}(t), \quad \frac{dc}{dt}(t_i^-) = \lim_{\substack{t \to t_i \\ t < t_i}} \frac{dc}{dt}(t)
 	\]
 \end{proposition}
+\begin{proof}
+	\fixme{Add proof or reference.}
+\end{proof}
 
-The characterization of geodesics we are looking for comes as a result from \autoref{pro:energyprop}.
+The characterization of geodesics we are looking for comes as a consequence of \autoref{pro:energyprop}.
 
 \begin{proposition}
 	A piecewise smooth curve $c \colon [0,1] \to M$ is a geodesic if and only if
@@ -785,6 +831,9 @@ The characterization of geodesics we are looking for comes as a result from \aut
 		\frac{dE_f}{ds}(0) = 0 \quad \textrm{ for every $f$, proper variation of $c$}.
 	\]
 \end{proposition}
+\begin{proof}
+	\fixme{Add proof or reference.}
+\end{proof}
 
 Geodesics are, in short, the critical points of the energy of every proper variation.
 
