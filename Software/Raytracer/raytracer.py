@@ -1,13 +1,12 @@
 import os
 import sys
 import numpy as np
-from numpy import sin, cos, arccos, arctan, arctan2, sqrt
 from numpy import pi as Pi
 from matplotlib import pyplot as plt
-from matplotlib.patches import Circle, PathPatch
+from matplotlib.patches import Circle
 import mpl_toolkits.mplot3d.art3d as art3d
 
-from pycuda import driver, compiler, gpuarray, tools
+from pycuda import driver, compiler, gpuarray
 import jinja2
 
 sys.path.append('../Utils')

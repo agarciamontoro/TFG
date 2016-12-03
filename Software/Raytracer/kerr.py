@@ -1,10 +1,6 @@
 import os
 from numpy import sin, cos, arccos, sqrt
 
-# Set directories for correct handling of paths
-selfDir = os.path.dirname(os.path.abspath(__file__))
-softwareDir = os.path.abspath(os.path.join(selfDir, os.pardir))
-
 
 class BlackHole:
     def __init__(self, spin, innerDiskRadius=9, outerDiskRadius=20):
