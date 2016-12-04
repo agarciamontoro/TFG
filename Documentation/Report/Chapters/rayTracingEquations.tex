@@ -1,0 +1,155 @@
+\chapter{Ray-tracing equations}
+
+The Kerr metric is
+\[
+	g_{\mu\nu} = \begin{pmatrix}
+		-\alpha^2 + \varpi^2\omega^2 & 0 & 0 & -\varpi^2\omega \\
+		0 & \nicefrac{\rho^2}{\Delta} & 0 & 0 \\
+		0 & 0 & \rho^2 & 0 \\
+		-\varpi^2\omega^2 & 0 & 0 & \varpi^2
+	\end{pmatrix},
+\]
+with inverse
+\[
+	g^{\mu\nu} = \begin{pmatrix}
+		-\nicefrac{1}{\alpha^2} & 0 & 0 & -\nicefrac{\omega}{\alpha^2} \\
+		0 & \nicefrac{\Delta}{\rho^2} & 0 & 0 \\
+		0 & 0 & \nicefrac{1}{\rho^2} & 0 \\
+		-\nicefrac{\omega}{\alpha^2} & 0 & 0 & (\nicefrac{1}{\varpi^2}) - (\nicefrac{\omega^2}{\alpha^2})
+	\end{pmatrix},
+\]
+where
+\begin{align*}
+	\omega &= \frac{2ar}{\Sigma^2},  \quad \varpi = \frac{\Sigma\sin\vartheta}{\rho}, \quad \alpha = \frac{\rho\sqrt{\Delta}}{\Sigma}, \quad \rho = \sqrt{r^2 + a^2\cos^2\vartheta},\\
+	\Delta &= r^2 - 2r + a^2, \textrm{ and } \Sigma = \sqrt{(r^2+a^2)^2 - a^2\Delta\sin^2\vartheta}.
+\end{align*}
+
+In order to obtain the geodesic equations we need to note that we have four first integrals of motion \fixme{Define integral of motion}:
+\begin{itemize}
+	\item The killing vector \fixme{Define killing vector} $\partial_t$, which raises the conserved quantity
+	\[
+		g_{\mu\nu}(\partial_t)^\mu u^\nu = (\partial_t)^\mu p_\mu = p_t = -E
+	\]
+	\item The killing vector $\partial_\phi$, which raises the conserved quantity
+	\[
+		g_{\mu\nu}(\partial_\phi)^\mu u^\nu = (\partial_\phi)^\mu p_\mu = p_\phi = L_z
+	\]
+	\item The Carter's constant, which can be written as
+	\begin{equation}
+		\label{eq:carter}
+		Q = p_\vartheta^2 + \cos^2\vartheta \left( a^2 \left( \mu^2 - E^2 \right) + \frac{L_z^2}{\sin^2\vartheta} \right)
+	\end{equation}
+	\item The modulus of the tangent vector $p_\mu$, which is
+	\begin{equation}
+		\label{eq:modulus}
+		p_\mu p_\nu g^{\mu\nu} = -\mu^2,
+	\end{equation}
+	that is,
+	\[
+		\mu^2 + \frac{p_\vartheta^2 + p_r^2 \Delta}{\rho^2} + \frac{L_z^2}{\varpi^2} = \frac{E - L_z \omega}{\alpha^2}
+	\]
+\end{itemize}
+
+In order to obtain the classic equations we need to know the relation between $u^\mu$ and $p_\mu$, which is simply
+\begin{equation}
+	\label{eq:relation}
+	u^\mu = g^{\mu\nu}p_\nu,
+\end{equation}
+where their components will be denoted as
+\[
+	u^\mu = (\dot{t}, \dot{r}, \dot{\vartheta}, \dot{\varphi}), \qquad u_\mu = p_\mu = (p_t, p_r, p_\vartheta, p_\varphi).
+\]
+
+Therefore, \autoref{eq:relation} written on the components noted above, gives us four equations:
+\begin{align}
+	\label{eq:initt}
+	\dot{t} &= \frac{E}{\alpha^2} - \frac{L_z \omega}{\alpha^2} \\
+	\label{eq:initr}
+	\dot{r} &= \frac{p_r \Delta}{\rho^2} \\
+	\label{eq:inittheta}
+	\dot{\vartheta} &= \frac{p_\vartheta}{\rho^2} \\
+	\label{eq:initphi}
+	\dot{\varphi} &= \frac{E \omega}{\alpha^2} + L_z\left( \frac{1}{\varpi^2} - \frac{\omega^2}{\alpha^2} \right)
+\end{align}
+
+Our goal now is to write the previous equations in terms of the constants $E$, $L_z$, $Q$ and $\mu$. Let us see each equation separately.
+
+\section{$\dot{\vartheta}$ Equation}
+
+Using the definition of the Carter constant (\autoref{eq:carter}), we can directly find the value of $p_\vartheta$
+\begin{align}
+	p_\vartheta^2 &= Q + a^2E^2\cos^2\vartheta - a^2\mu^2\cos^2\vartheta - \frac{L_z^2}{\sin^2\vartheta}\cos^2\vartheta = \\
+	&= Q - \cos^2\vartheta\left( a^2\left(\mu^2 - E^2 \right) `\frac{L_z^2}{\sin^2\vartheta} \right).
+\end{align}
+
+Therefore,\autoref{eq:inittheta} is equivalent to the following one:
+\begin{equation}
+	\rho^2 \dot{\vartheta} = \sqrt{\Theta},
+\end{equation}
+where $\Theta$ is defined as
+\begin{equation}
+	\label{eq:deftheta}
+	\Theta = Q - \cos^2\vartheta \left( \frac{L_z^2}{\sin^2\vartheta} + \omega^2\left(\mu^2 - E^2 \right)\right).
+\end{equation}
+
+\section{$\dot{r}$ Equation}
+
+Using \autoref{eq:modulus}, we can find the value of $p_r$:
+\[
+	p_r^2 = \left( \frac{(E - L_z\omega)^2}{\alpha^2} - \frac{L_z^2}{\varpi^2} - \frac{p_\vartheta^2}{\rho^2} - \mu^2 \right) \frac{\rho^2}{\Delta}.
+\]
+
+We can now substitute $p_r$ for its value in the squared version of \autoref{eq:initr}:
+\begin{equation}
+	\label{eq:r1}
+	\dot{r}^2 = \Delta \left( -\eqnote{\dot{\vartheta}}{from $p_\vartheta = \rho^2\dot{\vartheta}$}^2 + \frac{E^2}{\alpha^2\rho^2} - \frac{\mu^2}{\rho^2} - \frac{2L_zE\omega}{\alpha^2\rho^2} + \frac{L_z^2\omega^2}{\alpha^2\rho^2} - \frac{L_z^2}{\rho^2\varpi^2} \right)
+\end{equation}
+
+If we write \autoref{eq:r1} in the form
+\[
+	\rho^2 \dot{r} = \sqrt{R},
+\]
+the function $R$ has the expression
+\begin{align}
+	\nonumber
+	R &= \rho^4 \left( -\frac{\Theta}{\rho^4} + \frac{(E^2 - L_z\omega)^2}{\alpha^2\rho^2} - \frac{\mu^2}{\rho^2} - \frac{L_z^2}{\rho^2\varpi^2} \right) = \\
+	&= \Delta \left( -\Theta + \frac{(E-L_z\omega)^2\rho^2}{\alpha^2} - \mu^2\rho^2 - \frac{L_z^2 \rho^2}{\varpi^2} \right).
+	\label{eq:R1}
+\end{align}
+
+Notice that
+\[
+	\frac{\rho^2}{\alpha^2} = \frac{\Sigma^2}{\Delta}, \qquad \frac{\rho^2}{\varpi^2} = \frac{\rho^4}{\Sigma^2 \sin^2\vartheta}.
+\]
+
+Let us now substitute $\Theta$ by its definition (\autoref{eq:deftheta}) on \autoref{eq:R1}, from which we obtain:
+
+\begin{align}
+	R =\,& \Delta \biggl( -Q + \cos^2\vartheta\left( \frac{L_z^2}{\sin^2\vartheta} + a^2 (\mu^2 - E^2) \right) + \frac{\Sigma^2}{\Delta}(E - L_z\omega)^2 - \nonumber \\
+	&- \mu^2\rho^2 - \frac{L_z^2\rho^4}{\Sigma^2\sin^2\vartheta} \biggr) = \nonumber \\
+	=\,& \Delta \biggl( -Q + \cos^2\vartheta\left( \frac{L_z^2}{\sin^2\vartheta} + a^2 (\mu^2 - E^2) \right) + \nonumber \\
+	&+ \frac{\Sigma^2}{\Delta}\left( E^2 + L_z^2\left( \frac{2ar}{\Sigma^2} \right)^2 - 2EL_z\frac{2ar}{\Sigma^2} \right)  - \mu^2\rho^2 - \nonumber \\
+	&- \frac{L_z^2}{\sin^2\vartheta}\frac{\rho^4}{(r^2 + \omega)^2 - a^2\Delta\sin^2\vartheta} \biggr)
+\end{align}
+
+This can be simplified in order to get a more readable expression:
+\begin{align*}
+	R = &-4aL_zrE + 2Qr - L_z^2(r-2)r - Qr^2 + a^4E^2 - r^3\mu^2(r-2) - \\
+	&- a^2\left(4 + r\left(-\left(2+r\right)E^2 + r\mu^2\right)\right)
+\end{align*}
+
+To simplify even more, let $P$ be the following function:
+\begin{equation}
+	\label{eq:defP}
+	P \defeq E(r^2 + a^2) - aL_z.
+\end{equation}
+
+Finally, the expression for $R$ is:
+\[
+	R = P^2 - \Delta\left(Q + \left(L_z - aE\right)^2 + r^2 \mu^2\right)
+\]
+
+\section{$\dot{\varphi}$ Equation}
+\[
+	\rho^2 \dot{\varphi} = \frac{E2ar}{\Delta} + L_z\left( \frac{\rho^4}{\Sigma^2\sin^2\vartheta} - \frac{4a^2r^2}{\Sigma^2\Delta} \right)
+\]

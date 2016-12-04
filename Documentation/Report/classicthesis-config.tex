@@ -398,3 +398,10 @@
 
 % Defines xmapsto
 \usepackage{mathtools}
+
+\usepackage[nice]{nicefrac}
+
+% Defines a pointing arrow to a symbol with a note below.
+% From http://tex.stackexchange.com/a/117408
+\newcommand{\eqnote}[2]{%
+	\underset{\substack{\uparrow\\\mathrlap{\text{\hspace{-1em}#2}}}}{#1}}
