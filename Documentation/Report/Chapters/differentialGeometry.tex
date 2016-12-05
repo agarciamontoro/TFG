@@ -966,3 +966,53 @@ From the second identity of Bianchi we get \cite[p. 88]{oneill83}
 	\nabla S = 2 \operatorname{div} \widehat{\Ric},
 \]
 where $\nabla S$ is the gradient of te scalar curvature, $\widehat{\Ric}$ is the contravariant tensor field $g$-equivalent to $\Ric$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
+
+\section{Killing Vectors Fields}
+
+\begin{definition}[Integral curve]
+	Let $M$ be a smooth manifold and consider a vector field $X \in \mathcal{X}(M)$.
+	An integral curve of $X$ is a curve
+	\[
+		\gamma \colon I \to M,
+	\]
+	where $I$ is an open interval of $\R$ with $0 \in I$, such that
+	\begin{equation}
+		\label{eq:integralcurve}
+		\gamma'(t) = X_{\gamma(t)} \quad \forall t \in I,
+	\end{equation}
+	that is, the vector field $X$ assigns to every point of the curve its own velocity at that instant.
+\end{definition}
+
+\begin{lemma}
+	Let $p_0 \in M$ be a point on a smooth manifold. There exists a unique (maximal) integral curve of $X\in\mathcal{X}(M)$, $\gamma \colon I \to M$, such that
+	\begin{equation}
+		\label{eq:initcond}
+		\gamma(0) = p_0.
+	\end{equation}
+\end{lemma}
+
+We are now able to see that an integral curve starting at a point on $M$ can be seen as the solution to the differential equation described by \autoref{eq:integralcurve} restricted to the initial conditions given by \autoref{eq:initcond}.
+
+\begin{lemma}
+	Consider a vector field $X \in \mathcal{X}(M)$ and a point $p_0 \in M$. Then, there exists $U$, an open neighbourhood of $p_0$ at $M$, a number $\varepsilon > 0$ and a smooth function
+	\[
+		\varphi \colon (-\varepsilon, \varepsilon) \times U \to M,
+	\]
+	such that for any $q \in U$, the map
+	\[
+		t \mapsto \varphi(t,q)
+	\]
+	is the integral curve of $X$ starting at $q$; \ie, $\varphi$ is the general solution of the differential equation \ref{eq:integralcurve}.
+	
+	The solution $\{\varphi_t\}_{t \in (-\varepsilon, \varepsilon)}$ is known as \emph{a local flow of $X$}.
+\end{lemma}
+
+\begin{definition}[Killing vector field]
+	Let $(M,g)$ be a semi-Riemannian manifold, and consider a vector field $X\in\mathcal{X}(M)$.
+	
+	$X$ is said to be a Killing vector field if every local flow $\{\varphi_t\}$ of $X$ satisfies that
+	\[
+		\varphi_t \colon U \to \varphi_t(U)
+	\]
+	is an isometry.
+\end{definition}
