@@ -75,24 +75,6 @@ Therefore, \autoref{eq:relation} written on the components noted above, gives us
 
 Our goal now is to write the previous equations in terms of the constants $E$, $L_z$, $Q$ and $\mu$. Let us see each equation separately.
 
-\section{$\dot{\vartheta}$ Equation}
-
-Using the definition of the Carter constant (\autoref{eq:carter}), we can directly find the value of $p_\vartheta$
-\begin{align}
-	p_\vartheta^2 &= Q + a^2E^2\cos^2\vartheta - a^2\mu^2\cos^2\vartheta - \frac{L_z^2}{\sin^2\vartheta}\cos^2\vartheta = \\
-	&= Q - \cos^2\vartheta\left( a^2\left(\mu^2 - E^2 \right) `\frac{L_z^2}{\sin^2\vartheta} \right).
-\end{align}
-
-Therefore,\autoref{eq:inittheta} is equivalent to the following one:
-\begin{equation}
-	\rho^2 \dot{\vartheta} = \sqrt{\Theta},
-\end{equation}
-where $\Theta$ is defined as
-\begin{equation}
-	\label{eq:deftheta}
-	\Theta = Q - \cos^2\vartheta \left( \frac{L_z^2}{\sin^2\vartheta} + \omega^2\left(\mu^2 - E^2 \right)\right).
-\end{equation}
-
 \section{$\dot{r}$ Equation}
 
 Using \autoref{eq:modulus}, we can find the value of $p_r$:
@@ -197,8 +179,8 @@ We can simplify the last two pairs of terms using that $\sin^2 \vartheta + \cos^
 
 Factoring out common terms in the last two addends, using the definition of $\Delta$ and defining the function
 \begin{equation}
-\label{eq:defP}
-P \defeq E(r^2 + a^2) - aL_z,
+	\label{eq:defP}
+	P \defeq E(r^2 + a^2) - aL_z,
 \end{equation}
 we simplify a little bit more:
 \begin{align}
@@ -215,6 +197,24 @@ we simplify a little bit more:
 	=\,& P^2 + r^2\mu^2\Delta - L_z^2 \Delta - a^2E^2\Delta - 2L_zaE\Delta - Q\Delta = \nonumber \\
 	=\,& P^2 - \Delta \left( r^2\mu^2 + Q + \left(L_z - aE \right)^2 \right)
 \end{align}
+
+\section{$\dot{\vartheta}$ Equation}
+
+Using the definition of the Carter constant (\autoref{eq:carter}), we can directly find the value of $p_\vartheta$
+\begin{align}
+	p_\vartheta^2 &= Q + a^2E^2\cos^2\vartheta - a^2\mu^2\cos^2\vartheta - \frac{L_z^2}{\sin^2\vartheta}\cos^2\vartheta = \\
+	&= Q - \cos^2\vartheta\left( a^2\left(\mu^2 - E^2 \right) `\frac{L_z^2}{\sin^2\vartheta} \right).
+\end{align}
+
+Therefore,\autoref{eq:inittheta} is equivalent to the following one:
+\begin{equation}
+	\rho^2 \dot{\vartheta} = \sqrt{\Theta},
+\end{equation}
+where $\Theta$ is defined as
+\begin{equation}
+	\label{eq:deftheta}
+	\Theta = Q - \cos^2\vartheta \left( \frac{L_z^2}{\sin^2\vartheta} + \omega^2\left(\mu^2 - E^2 \right)\right).
+\end{equation}
 
 \section{$\dot{\varphi}$ Equation}
 \[
