@@ -968,6 +968,7 @@ From the second identity of Bianchi we get \cite[p. 88]{oneill83}
 where $\nabla S$ is the gradient of te scalar curvature, $\widehat{\Ric}$ is the contravariant tensor field $g$-equivalent to $\Ric$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
 
 \section{Killing Vectors Fields}
+\fixme{Add references to Oneill}
 
 \begin{definition}[Integral curve]
 	Let $M$ be a smooth manifold and consider a vector field $X \in \mathcal{X}(M)$.
@@ -1016,3 +1017,51 @@ We are now able to see that an integral curve starting at a point on $M$ can be 
 	\]
 	is an isometry.
 \end{definition}
+
+When $X$ is a Killing vector field, $g$ does not change under the action of any flow of $X$; \ie, $\varphi^*_t g = g$.
+
+Before finding an interesting characterization of the Killing vector fields, it is necessary to introduce an important concept: the Lie derivative.
+
+\begin{definition}[Lie derivative]
+	Let $(M,g)$ be a semi-Riemannian manifold and let $X\in\mathcal{X}(M)$ be a vector field on $M$. The \emph{Lie derivative of $g$ with respect to $X$} is a function acting on pairs of smooth vector fields $Y,Z \in \mathcal{X}(M)$ defined by:
+	\begin{equation}
+	\label{eq:liederivative}
+		(L_Xg)(Y,Z) = Xg(Y,Z) - g([X,Y],Z) - g(Y,[X,Z])
+	\end{equation}
+\end{definition}
+
+\begin{proposition}[Killing vector fields characterisation]
+	\label{pro:killingchar}
+	A vector field $X \in \mathcal{X}(M)$ on a semi-Riemannian manifold $(M,g)$ is a Killing vector field if and only if
+	\[
+		L_X g = 0,
+	\]
+	where $L_X$ is the Lie derivative with respect to $X$.
+\end{proposition}
+
+We can rewrite the Lie derivative to better work with it. Using \autoref{eq:leviX} and the identity $[X,Y] = \nabla_X Y - \nabla_Y X$, \autoref{eq:liederivative} is equivalent to
+\begin{equation}
+	\label{liederivative2}
+	(L_Xg)(Y,Z) = g(\nabla_Y X, Z)) + g(Y, \nabla_Z X).
+\end{equation}
+
+Using this definition of Lie derivative and \autoref{pro:killingchar}, we can now conclude that $X \in \mathcal{X}(M)$ is a Killing vector field if and only if
+\begin{equation}
+	\label{eq:liecharacterisation}
+	g(\nabla_Y X, Z) + g(Y, \nabla_Z X) = 0 \quad \forall X,Y\in\mathcal{X}(M).
+\end{equation}
+
+\begin{proposition}
+	Let $X\in\mathcal{X}(M)$ be a Killing vector field on a semi-Riemannian manifold $(M,g)$ and considet $\gamma$ a geodesic on $M$. Then,
+	\[
+		g(\gamma'(t), X_{\gamma(t)}) = c,
+	\]
+	where $c\in\R$ depends only on $\gamma$.
+\end{proposition}
+
+\begin{proof}
+	Indeed, using that $\frac{D\gamma'}{dt} = 0$ and \autoref{eq:liecharacterisation}:
+	\begin{align*}
+		\frac{d}{dt} g\left(\gamma'(t),X_{\gamma(t)}\right) = g\biggl(\frac{D\gamma'}{dt}, X_{\gamma(t)}\biggr) + g\left(\gamma'(t), \nabla_{\gamma'(t)}X\right) = 0.
+	\end{align*}
+\end{proof}
