@@ -53,9 +53,11 @@ __global__ void generate_image(void* devRayCoordinates, void* devStatus,
         Real x, y, z;
         int u, v, texel;
 
+        Real rNormalized;
+
         switch(status){
             case DISK:
-                Real rNormalized = (r - innerDiskRadius) / (outerDiskRadius - innerDiskRadius);
+                rNormalized = (r - innerDiskRadius) / (outerDiskRadius - innerDiskRadius);
 
                 u = round((sin(phi) + 1)/2 * diskCols);
                 v = round(rNormalized * diskRows);

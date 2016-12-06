@@ -3,6 +3,7 @@ import functools
 from inspect import isfunction
 import sys
 import time
+
 def _logging_method( cls_name, method ):
     """
     This decorator acts on a class method and inyects a call to its logger

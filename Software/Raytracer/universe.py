@@ -63,3 +63,6 @@ class Universe:
 
         # Update Universe properties
         self.update()
+
+
+universe = Universe()

@@ -1,4 +1,6 @@
-from universe import universe
+from .universe import universe
+from .raytracer import RayTracer
+
 from Utils.attr_dict import AttrDict
 
 import numpy as np
@@ -57,26 +59,23 @@ class Camera:
         """
 
         # Define position
-        self.r = r
+        self._r = r
         self.r2 = r*r
-        self.theta = theta
+        self._theta = theta
         self.phi = phi
 
         # Define lens properties
         self.focalLength = focalLength
 
         # Define sensor properties
-        self.sensorShape = sensorShape
-        self.sensorSize = sensorSize
+        self._sensorShape = sensorShape
+        self._sensorSize = sensorSize
 
         # Compute the width and height of a pixel on physical units
         self.pixelWidth, self.pixelHeight = self.computePixelSize()
 
-        # Compute the value of the metric on the camera position
-        self.metric = self.computeMetricValue()
-
-        # Compute the speed
-        self.speed = self.computeSpeed()
+        # Compute every property for the camera: metric, speed and engine
+        self.update()
 
         # Add camera to the Universe
         universe.cameras.add(self)
@@ -86,8 +85,14 @@ class Camera:
         universe.cameras.remove(self)
 
     def update(self):
+        # Compute the value of the metric on the camera position
         self.metric = self.computeMetricValue()
-        self.beta = self.computeSpeed
+
+        # Compute the speed
+        self.speed = self.computeSpeed()
+
+        # Add the raytracer engine
+        self.engine = RayTracer(self)
 
     def computePixelSize(self):
         """Compute the width and height of a pixel, taking into account the
@@ -119,6 +124,7 @@ class Camera:
         sigma = sqrt((r2 + a2)**2 - a2 * delta * sin(theta)**2)
         alpha = ro * sqrt(delta) / sigma
         omega = 2 * a * r / (sigma**2)
+
 
         # Wut? pomega? See https://en.wikipedia.org/wiki/Pi_(letter)#Variant_pi
         pomega = sigma * sin(theta) / ro
@@ -162,7 +168,7 @@ class Camera:
 
     @property
     def r(self):
-        return self.r
+        return self._r
 
     @r.setter
     def r(self, newValue):
@@ -171,7 +177,7 @@ class Camera:
         self.r2 = self.r * self.r
 
         # Compute again the value of the metric on the camera position
-        self.updateStatus()
+        self.update()
 
     @property
     def theta(self):
@@ -183,7 +189,7 @@ class Camera:
         self._theta = newValue
 
         # Compute again the value of the metric on the camera position
-        self.updateStatus()
+        self.update()
 
     @property
     def sensorShape(self):

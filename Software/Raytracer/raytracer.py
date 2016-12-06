@@ -1,5 +1,7 @@
+from .universe import universe
+from .Utils.logging_utils import LoggingClass
+
 import os
-import sys
 import numpy as np
 from numpy import pi as Pi
 from matplotlib import pyplot as plt
@@ -9,15 +11,12 @@ import mpl_toolkits.mplot3d.art3d as art3d
 from pycuda import driver, compiler, gpuarray
 import jinja2
 
-sys.path.append('../Utils')
-from logging_utils import LoggingClass
-
-__logmodule__ = True
-
 # When importing this module we are initializing the device.
 # Now, we can call the device and send information using
 # the apropiate tools in the pycuda module.
 import pycuda.autoinit
+
+__logmodule__ = True
 
 # Set directories for correct handling of paths
 selfDir = os.path.dirname(os.path.abspath(__file__))
@@ -46,88 +45,6 @@ SPHERE = 0
 DISK = 1
 HORIZON = 2
 STRAIGHT = 3
-
-# Dummy object for the camera (computation of the speed is done here)
-class Camera(metaclass=LoggingClass):
-    """Pinhole camera placed near a Kerr black hole.
-
-    This class contains the necessary data to define a camera that is located on the coordinate system of a Kerr black hole.
-
-    Attributes:
-        r (double): Distance to the coordinate origin; i.e., distance to the
-            black hole centre.
-        r2 (double): Square of `r`.
-        theta (double): Inclination of the camera with respect to the black
-            hole.
-        phi (double): Azimuth of the camera with respect to the black hole.
-        focalLength (double): Distance between the focal point (where every row
-            that reaces the camera has to pass through) and the focal plane
-            (where the actual sensor/film is placed).
-        sensorSize (tuple): 2-tuple that defines the physical dimensions of the
-            sensor in the following way: `(Height, Width)`.
-        sensorShape (tuple): 2-tuple that defines the number of pixels of the
-            sensor in the following way: `(Number of rows, Number of columns)`.
-        pixelWidth (double): Width of one single pixel in physical units. It is
-            computed as `Number of columns / Sensor width`.
-        pixelHeight (double): Height of one single pixel in physical units. It
-            is computed as `Number of rows / Sensor height`.
-        beta (double): Speed of the camera, that follows a circular orbit
-            around the black hole in the equatorial plane. It is computed using
-            the formula (A.7) of Thorne's paper.
-    """
-
-    def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize):
-        """Builds the camera defined by `focalLength`, `sensorShape` and
-        `sensorSize` and locates it at the passed coordinates :math:`(r_c,
-        \\theta_c, \\phi_c)`
-
-        Args:
-            r (double): Distance to the coordinate origin; i.e., distance to
-                the black hole centre.
-            r2 (double): Square of `r`.
-            theta (double): Inclination of the camera with respect to the black
-                hole.
-            phi (double): Azimuth of the camera with respect to the black hole.
-            focalLength (double): Distance between the focal point (where every
-                row that reaces the camera has to pass through) and the focal
-                plane (where the actual sensor/film is placed).
-            sensorSize (tuple): 2-tuple that defines the physical dimensions of
-                the sensor in the following way: `(Height, Width)`.
-            sensorShape (tuple): 2-tuple that defines the number of pixels of
-                the sensor in the following way: `(Number of rows, Number of
-                columns)`.
-        """
-
-        # Define position
-        self.r = r
-        self.r2 = r**2
-        self.theta = theta
-        self.phi = phi
-
-        # Define lens properties
-        self.focalLength = focalLength
-
-        # Define sensor properties
-        self.sensorSize = sensorSize
-        self.sensorShape = sensorShape
-
-        # Compute the width and height of a pixel, taking into account the
-        # physical measure of the sensor (sensorSize) and the number of pixels
-        # per row and per column on the sensor (sensorShape)
-
-        # Sensor height and width in physical units
-        H, W = sensorSize[0], sensorSize[1]
-
-        # Number of rows and columns of pixels in the sensor
-        rows, cols = sensorShape[0], sensorShape[1]
-
-        # Compute width and height of a pixel
-        self.pixelWidth = np.float(W) / np.float(cols)
-        self.pixelHeight = np.float(H) / np.float(rows)
-
-        self.minTheta = self.minPhi = np.inf
-        self.maxTheta = self.maxPhi = -np.inf
-
 
 
 class RayTracer(metaclass=LoggingClass):
@@ -185,14 +102,12 @@ class RayTracer(metaclass=LoggingClass):
             rayTracer.synchronise()
             rayTracer.plotImage()
     """
-    def __init__(self, camera, kerr, blackHole, debug=False):
+    def __init__(self, camera, debug=False):
         self.debug = debug
         self.systemSize = 5
 
         # Set up the necessary objects
         self.camera = camera
-        self.kerr = kerr
-        self.blackHole = blackHole
 
         # Get the number of rows and columns of the final image
         self.imageRows = self.camera.sensorShape[0]
@@ -258,23 +173,23 @@ class RayTracer(metaclass=LoggingClass):
             "CAM_R": self.camera.r,
             "CAM_THETA": self.camera.theta,
             "CAM_PHI": self.camera.phi,
-            "CAM_BETA": self.camera.beta,
+            "CAM_BETA": self.camera.speed,
 
             # Black hole constants
-            "SPIN": self.blackHole.a,
-            "SPIN2": self.blackHole.a**2,
-            "B1": self.blackHole.b1,
-            "B2": self.blackHole.b2,
-            "HORIZON_RADIUS": self.blackHole.horizonRadius,
-            "INNER_DISK_RADIUS": self.blackHole.innerDiskRadius,
-            "OUTER_DISK_RADIUS": self.blackHole.outerDiskRadius,
+            "SPIN": universe.spin,
+            "SPIN2": universe.spinSquared,
+            "B1": universe.b1,
+            "B2": universe.b2,
+            "HORIZON_RADIUS": universe.horizonRadius,
+            "INNER_DISK_RADIUS": universe.accretionDisk.innerRadius,
+            "OUTER_DISK_RADIUS": universe.accretionDisk.outerRadius,
 
             # Kerr metric constants
-            "RO": self.kerr.ro,
-            "DELTA": self.kerr.delta,
-            "POMEGA": self.kerr.pomega,
-            "ALPHA": self.kerr.alpha,
-            "OMEGA": self.kerr.omega,
+            "RO": self.camera.metric.ro,
+            "DELTA": self.camera.metric.delta,
+            "POMEGA": self.camera.metric.pomega,
+            "ALPHA": self.camera.metric.alpha,
+            "OMEGA": self.camera.metric.omega,
 
             # RK45 solver constants
             "R_TOL_I": 1e-6,
@@ -527,7 +442,7 @@ class RayTracer(metaclass=LoggingClass):
             plt.show()
 
     def drawErgoSphere(self, ax):
-        a2 = self.blackHole.a2
+        a2 = universe.spinSquared
 
         # Draw black hole
         u = np.linspace(0, 2 * np.pi, 50)
@@ -590,7 +505,7 @@ class RayTracer(metaclass=LoggingClass):
         u = np.linspace(0, 2 * np.pi, 100)
         v = np.linspace(0, np.pi, 100)
 
-        r = self.blackHole.horizonRadius
+        r = universe.horizonRadius
 
         x = r * np.outer(np.cos(u), np.sin(v))
         y = r * np.outer(np.sin(u), np.sin(v))
@@ -600,9 +515,9 @@ class RayTracer(metaclass=LoggingClass):
                         edgecolors='white', linewidth=0.15)
 
         # Draw accretion disk
-        circle1 = Circle((0, 0), self.blackHole.innerDiskRadius,
+        circle1 = Circle((0, 0), universe.accretionDisk.innerRadius,
                          facecolor='none')
-        circle2 = Circle((0, 0), self.blackHole.outerDiskRadius,
+        circle2 = Circle((0, 0), universe.accretionDisk.outerRadius,
                          facecolor='none')
         ax.add_patch(circle1)
         ax.add_patch(circle2)
