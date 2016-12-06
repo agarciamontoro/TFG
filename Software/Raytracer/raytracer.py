@@ -128,37 +128,6 @@ class Camera(metaclass=LoggingClass):
         self.minTheta = self.minPhi = np.inf
         self.maxTheta = self.maxPhi = -np.inf
 
-    def setSpeed(self, kerr, blackHole):
-        """Given a Kerr metric and a black hole, this method sets the speed of
-        the camera at a circular orbit in the equatorial plane, following formula (A.7) of :cite:`thorne15`:
-
-        .. math::
-            \\beta = \\frac{\\varpi}{\\alpha}(\\Omega - \\omega),
-
-        where :math:`\\Omega = \\frac{1}{a + r_c^{3/2}}` and the other constants are the ones defined in the Kerr metric object. See :class:`~.KerrMetric`.
-
-        Args:
-            kerr (:class:`~.KerrMetric`): A :class:`~.KerrMetric` object containing the constants needed for the
-                equations.
-            blackHole (:class:`~.BlackHole`): A :class:`~.BlackHole` object containing the
-                specifications of the black hole located a the coordinate
-                origin.
-        """
-
-        # Retrieve blackhole's spin and some Kerr constants
-        a = blackHole.a
-        r = self.r
-        pomega = kerr.pomega
-        omega = kerr.omega
-        alpha = kerr.alpha
-
-        # Define speed with equation (A.7)
-        Omega = 1. / (a + r**(3./2.))
-        self.beta = pomega * (Omega-omega) / alpha
-
-        # FIXME: This is being forced to zero only for testing purposes.
-        # Remove this line if you want some real fancy images.
-        self.beta = 0
 
 
 class RayTracer(metaclass=LoggingClass):
