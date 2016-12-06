@@ -26,6 +26,52 @@ def spher2cart(points):
 
     return x, y, z
 
+class Geodesic:
+    def __init__(self, status, coordinates):
+        self.status = status
+        self.coordinates = coordinates
+
+    def plot(self, ax=None):
+        if not ax:
+            # Start figure
+            fig = plt.figure()
+
+            # Start 3D plot
+            ax = fig.gca(projection='3d')
+            ax.set_axis_off()
+
+            # Set axes limits
+            ax.set_xlim3d(-25, 25)
+            ax.set_ylim3d(-25, 25)
+            ax.set_zlim3d(-25, 25)
+
+            # Draw the scene
+            self._drawAxes(ax)
+            self._drawBlackHole(ax)
+
+        rayColour = 'royalblue'
+
+        # Detect if the ray collided with the disk, remove the following steps
+        # and change its colour
+        indicesDisk = np.where(self.status == DISK)[0]
+        if indicesDisk.size > 0:
+            firstCollision = indicesDisk[0]
+            ray = self.coordinates[:firstCollision, :]
+            rayColour = 'darkolivegreen'
+
+        # Detect if the ray entered the horizon, remove the following steps
+        # and change its colour
+        indicesCollision = np.where(self.status == HORIZON)[0]
+        if indicesCollision.size > 0:
+            firstCollision = indicesCollision[0]
+            ray = ray[:firstCollision, :]
+            rayColour = 'maroon'
+
+        # Compute cartesian coordinates of the ray
+        x, y, z = spher2cart(ray)
+
+        # Plot the ray!
+        ax.plot(x, y, z, label='Ray', color=rayColour, linewidth=1.5)
 
 class CongruenceSnapshot:
     def __init__(self, status, coordinates):
@@ -79,6 +125,10 @@ class Congruence:
     def snapshot(self, instant):
         return CongruenceSnapshot(self.status[:, :, instant],
                                   self.coordinates[:, :, :, instant])
+
+    def geodesic(self, row, col):
+        return Geodesic(self.status[row, col, :],
+                        self.coordinates[row, col, :, :])
 
     def plot(self):
         # Start figure
@@ -193,10 +243,3 @@ class Congruence:
         ax.add_patch(circle2)
         art3d.pathpatch_2d_to_3d(circle1, z=0, zdir='z')
         art3d.pathpatch_2d_to_3d(circle2, z=0, zdir='z')
-#
-#
-#
-#
-# class CongruenceSlice(Congruence):
-#     def plot(self):
-#         self.plotAtInstant(0)
