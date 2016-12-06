@@ -364,55 +364,33 @@ class RayTracer(metaclass=LoggingClass):
         self.synchronise()
         return self.rayStatus, self.systemState
 
-    def generate3Dscene(self, xEnd, numSteps=100):
-            stepSize = xEnd / numSteps
+    def slicedRayTrace(self, xEnd, numSteps=100):
+        stepSize = xEnd / numSteps
 
-            # Initialize plotData with the initial position of the rays
-            self.plotData = np.zeros((self.imageRows, self.imageCols,
-                                      3, numSteps+1))
-            self.plotData[:, :, :, 0] = self.systemState[:, :, :3]
+        # Initialize plotData with the initial position of the rays
+        self.plotData = np.zeros((self.imageRows, self.imageCols,
+                                  3, numSteps+1))
+        self.plotData[:, :, :, 0] = self.systemState[:, :, :3]
 
-            # Initialize plotStatus with a matriz full of zeros
-            self.plotStatus = np.empty((self.imageRows, self.imageCols,
-                                       numSteps+1))
-            self.plotStatus[:, :, 0] = 0
+        # Initialize plotStatus with a matriz full of zeros
+        self.plotStatus = np.empty((self.imageRows, self.imageCols,
+                                   numSteps+1), dtype=np.int32)
+        self.plotStatus[:, :, 0] = 0
 
-            x = 0
-            for step in range(numSteps):
-                # Solve the system
-                self.callKernel(x, x + stepSize)
+        x = 0
+        for step in range(numSteps):
+            # Solve the system
+            self.callKernel(x, x + stepSize)
 
-                # Advance the step and synchronise
-                x += stepSize
-                self.synchronise()
+            # Advance the step and synchronise
+            x += stepSize
+            self.synchronise()
 
-                # Get the data and store it for future plot
-                self.plotData[:, :, :, step + 1] = self.systemState[:, :, :3]
-                self.plotStatus[:, :, step + 1] = self.rayStatus
+            # Get the data and store it for future plot
+            self.plotData[:, :, :, step + 1] = self.systemState[:, :, :3]
+            self.plotStatus[:, :, step + 1] = self.rayStatus
 
-    def plotImage(self):
-        # Start figure
-        fig = plt.figure()
-
-        image = np.empty((self.imageRows, self.imageCols, 3))
-
-        for row in range(0, self.imageRows):
-            for col in range(0, self.imageCols):
-                status = self.rayStatus[row, col]
-
-                if status == DISK:
-                    pixel = [1, 0, 0]
-
-                if status == HORIZON:
-                    pixel = [0, 0, 0]
-
-                if status == SPHERE:
-                    pixel = [1, 1, 1]
-
-                image[row, col, :] = pixel
-
-        plt.imshow(image)
-        plt.show()
+        return self.plotStatus, self.plotData
 
     def plotScene(self):
             # Start figure
