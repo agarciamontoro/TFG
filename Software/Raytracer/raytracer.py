@@ -1,4 +1,5 @@
 from .universe import universe
+from .geodesics_congruence import Congruence
 from .Utils.logging_utils import LoggingClass
 
 import os
@@ -359,6 +360,9 @@ class RayTracer(metaclass=LoggingClass):
 
             # Calculate the run length
             self.totalTime += self.start.time_till(self.end)*1e-3
+
+        self.synchronise()
+        return self.rayStatus, self.systemState
 
     def generate3Dscene(self, xEnd, numSteps=100):
             stepSize = xEnd / numSteps

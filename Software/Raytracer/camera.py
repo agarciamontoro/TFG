@@ -1,5 +1,6 @@
 from .universe import universe
 from .raytracer import RayTracer
+from .geodesics_congruence import Congruence
 
 from Utils.attr_dict import AttrDict
 
@@ -216,7 +217,8 @@ class Camera:
         self.pixelWidth, self.pixelHeight = self.computePixelSize()
 
     def shoot(self, finalTime=-150):
-        self.engine.rayTrace(finalTime)
+        raysStatus, raysCoordinates = self.engine.rayTrace(finalTime)
+        return Congruence(raysStatus, raysCoordinates)
 
     def slicedShoot(self, finalTime=-150, slicesNum=100):
         self.engine.slicedRayTrace(finalTime, slicesNum)
