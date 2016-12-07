@@ -1,5 +1,7 @@
-from Raytracer import universe, Camera
+import sys
+sys.path.append('../')
 
+from Raytracer import universe, Camera
 
 # Camera position
 camR = 30
