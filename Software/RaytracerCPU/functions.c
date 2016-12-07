@@ -2,23 +2,23 @@
 #define __FUNCTIONS__
 
 #include <math.h>
+// #include <string.h>
 #include "common.c"
 
 /**
-* Computes the value of the threadId-th component of the function
-* F(t) = (f1(t), ..., fn(t)) and stores it in the memory pointed by f
- * @param  int   threadId      Identifier of the calling thread.
- * @param  Real  x             Value of the time in which the system is solved
- * @param  Real* y             Initial conditions for the system: a pointer to
- *                             a vector whose lenght shall be the same as the
- *                             number of equations in the system.
- * @param  Real* f             Computed value of the function: a pointer to a
- *                             vector whose lenght shall be the same as the
- *                             number of equations in the system.
- * @param  Real* data          Additional data needed by the function, managed
- *                             by the caller.
+* Computes the value of the function F(t) = (dr/dt, dtheta/dt, dphi/dt, dpr/dt,
+* dptheta/dt) and stores it in the memory pointed by f.
+ * @param[in]  y         Initial conditions for the system: a pointer to
+ *                       a vector whose lenght shall be the same as the
+ *                       number of equations in the system: 5
+ * @param[in]  f         Computed value of the function: a pointer to a
+ *                       vector whose lenght shall be the same as the
+ *                       number of equations in the system: 5
+ * @param[in]  data      Additional data needed by the function, managed
+ *                       by the caller. Currently used to get the ray's
+ *                       constants b and q.
  */
-void computeComponent(Real x, Real* y, Real* f, Real* data){
+void computeComponent(Real* y, Real* f, Real* data){
     // Variables to hold the position of the ray, its momenta and related
     // operations between them and the constant a, which is the spin of the
     // black hole.

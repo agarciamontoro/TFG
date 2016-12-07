@@ -1,14 +1,24 @@
 #ifndef __DEFINITIONS__
 #define __DEFINITIONS__
 
+// Pi and Pi/2 constants
+#include <math.h>
+#define Pi M_PI
+#define HALF_PI 1.57079632679489655799898173427209258079528808593750
+
 // Debug switch
 
 
 // Declaration of the system size; i.e., the number of equations
 #define SYSTEM_SIZE 5
+#define DATA_SIZE 2
 
-// Useful constant for collision detection
-#define HALF_PI 1.57079632679489655799898173427209258079528808593750
+// Declaration of the image parameters: number of rows and columns, as well as
+// the total amount of pixels.
+// #define IMG_ROWS 500
+// #define IMG_COLS 500
+// #define NUM_PIXELS 250000
+
 
 // Bisect's constants
 #define BISECT_TOL 0.000001
@@ -58,46 +68,73 @@
 #define E7 (- 1./40.)
 
 // Black hole's spin and its square
-#define __a  1e-08
-#define __a2 __a * __a
+#define __a  0.999
+#define __a2 0.998001
 
 // Camera constants
 #define __d 3
-#define __camR 30
+#define __camR 40
 #define __camTheta 1.511
 #define __camPhi 0
 #define __camBeta 0
 
 // Black hole constants
-#define __b1 -5.19615229843
-#define __b2 5.19615231843
+#define __b1 -6.99833323454
+#define __b2 2.07812987106
 
 // Kerr constants
-#define __ro 30.0
-#define __delta 840.0
-#define __pomega 29.9463819688
-#define __alpha 0.966091783079
-#define __omega 7.40740740741e-13
+#define __ro 40.0000445525
+#define __delta 1520.998001
+#define __pomega 39.9415802793
+#define __alpha 0.974680288179
+#define __omega 3.11982510085e-05
 
-// RK45 parameters
+// SolverRK45 parameters
 #define rtoli 1e-06
 #define atoli 1e-12
 #define safe 0.9
+#define safeInv 1.1111111111111112
 #define fac1 0.2
+#define fac1_inverse 5.0
 #define fac2 10.0
+#define fac2_inverse 0.1
 #define beta 0.04
 #define uround 2.3e-16
+#define MAX_RESOL -2.0
+#define MIN_RESOL -0.1
+
+// SolverRK4 parameters
+#define SOLVER_DELTA 0.03125
+#define SOLVER_EPSILON 1e-06
 
 // Convention for ray's status
 #define HORIZON 2
 #define DISK 1
 #define SPHERE 0
 
-#define horizonRadius 2.0
+// Black hole parameters: horizon radius and disk definition
+#define horizonRadius 1.04471017781
 #define innerDiskRadius 9
 #define outerDiskRadius 20
 
 // Definition of the data type
 typedef double Real;
+
+// Enumerate to make the communication between SolverRK4(5) and its callers
+// easier
+typedef enum solverStatus{
+    SOLVER_SUCCESS,
+    SOLVER_FAILURE
+} SolverStatus;
+
+/**
+ * Returns the sign of `x`; i.e., it returns +1 if x >= 0 and -1 otherwise.
+ * @param  x The number whose sign has to be returned
+ * @return   Sign of `x`, considering 0 as positive.
+ */
+int sign(Real x){
+    return x < 0 ? -1 : +1;
+}
+
 
 #endif // __DEFINITIONS__
