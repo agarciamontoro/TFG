@@ -7,13 +7,16 @@ camPhi = 0
 
 # Camera lens properties
 camFocalLength = 3
-camSensorShape = (1000, 1000)  # (Rows, Columns)
+camSensorShape = (10, 10)  # (Rows, Columns)
 camSensorSize = (2, 2)       # (Height, Width)
 
 universe.spin = 0.999
 
 camera1 = Camera(camR, camTheta, camPhi, camFocalLength, camSensorShape,
-                camSensorSize)
+                 camSensorSize)
+
+camera2 = Camera(camR+10, camTheta, camPhi, camFocalLength, camSensorShape,
+                 camSensorSize)
 
 image = camera1.slicedShoot(slicesNum=10)
-image.snapshot(1).plot()
+image.plot()

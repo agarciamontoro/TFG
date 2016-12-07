@@ -1,5 +1,4 @@
 from .universe import universe
-from .geodesics_congruence import Congruence
 from .Utils.logging_utils import LoggingClass
 
 import os
@@ -60,9 +59,11 @@ class RayTracer(metaclass=LoggingClass):
     trajectories from the focal point of a camera located near the black hole.
 
     The RayTracer class hides all the black magic behind the CUDA code, giving
-    a nice and simple interface to the user that just wants some really cool, and scientifically accurate, images.
+    a nice and simple interface to the user that just wants some really cool,
+    and scientifically accurate, images.
 
-    Given a scene composed by a camera, a Kerr metric and a black hole, the RayTracer just expects a time :math:`x_{end}` to solve the system.
+    Given a scene composed by a camera, a Kerr metric and a black hole, the
+    RayTracer just expects a time :math:`x_{end}` to solve the system.
 
     Example:
         Define the characteristics of the black hole and build it::
@@ -510,9 +511,9 @@ class RayTracer(metaclass=LoggingClass):
         self.rayStatus = self.rayStatusGPU.get()
         self.systemState = self.systemStateGPU.get()
 
-
     def texturedImage(self, disk, sphere):
-        """Image should be a 2D array where each entry is a 3-tuple of Reals between 0.0 and 1.0
+        """Image should be a 2D array where each entry is a 3-tuple of Reals
+        between 0.0 and 1.0
         """
 
         diskGPU = gpuarray.to_gpu(disk)

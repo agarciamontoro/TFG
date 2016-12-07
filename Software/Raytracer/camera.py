@@ -126,7 +126,6 @@ class Camera:
         alpha = ro * sqrt(delta) / sigma
         omega = 2 * a * r / (sigma**2)
 
-
         # Wut? pomega? See https://en.wikipedia.org/wiki/Pi_(letter)#Variant_pi
         pomega = sigma * sin(theta) / ro
 
@@ -135,17 +134,22 @@ class Camera:
 
     def computeSpeed(self):
         """Given a Kerr metric and a black hole, this method sets the speed of
-        the camera at a circular orbit in the equatorial plane, following formula (A.7) of :cite:`thorne15`:
+        the camera at a circular orbit in the equatorial plane, following
+        formula (A.7) of :cite:`thorne15`:
 
         .. math::
             \\beta = \\frac{\\varpi}{\\alpha}(\\Omega - \\omega),
 
-        where :math:`\\Omega = \\frac{1}{a + r_c^{3/2}}` and the other constants are the ones defined in the Kerr metric object. See :class:`~.KerrMetric`.
+        where :math:`\\Omega = \\frac{1}{a + r_c^{3/2}}` and the other
+        constants are the ones defined in the Kerr metric object. See
+        :class:`~.KerrMetric`.
 
         Args:
-            kerr (:class:`~.KerrMetric`): A :class:`~.KerrMetric` object containing the constants needed for the
+            kerr (:class:`~.KerrMetric`): A :class:`~.KerrMetric` object
+            containing the constants needed for the
                 equations.
-            blackHole (:class:`~.BlackHole`): A :class:`~.BlackHole` object containing the
+            blackHole (:class:`~.BlackHole`): A :class:`~.BlackHole` object
+            containing the
                 specifications of the black hole located a the coordinate
                 origin.
         """
