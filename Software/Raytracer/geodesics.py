@@ -59,7 +59,7 @@ class Geodesic:
             ax.set_ylim3d(-25, 25)
             ax.set_zlim3d(-25, 25)
 
-            # # Draw the scene
+            # Draw the scene
             drawScene(ax)
 
         drawGeodesic(ax, self.coordinates, self.colour)
@@ -70,9 +70,10 @@ class Geodesic:
 
 
 class CongruenceSnapshot:
-    def __init__(self, status, coordinates):
+    def __init__(self, status, coordinates, texels=None):
         self.status = status
         self.coordinates = coordinates
+        self.texels = texels
 
         self.congruenceMatrixRows = self.status.shape[0]
         self.congruenceMatrixCols = self.status.shape[1]
@@ -85,22 +86,24 @@ class CongruenceSnapshot:
         ]
 
     def plot(self):
-        # Start figure
         plt.figure()
 
-        image = np.empty((self.congruenceMatrixRows,
-                          self.congruenceMatrixCols,
-                          3))
+        if self.texels is None:
+            image = np.empty((self.congruenceMatrixRows,
+                              self.congruenceMatrixCols,
+                              3))
 
-        for row in range(0, self.congruenceMatrixRows):
-            for col in range(0, self.congruenceMatrixCols):
-                status = self.status[row, col]
+            for row in range(self.congruenceMatrixRows):
+                for col in range(self.congruenceMatrixCols):
+                    status = self.status[row, col]
 
-                image[row, col, :] = self.colors[status]
+                    image[row, col, :] = self.colors[status]
 
-        plt.imshow(image)
+            plt.imshow(image)
+        else:
+            plt.imshow(self.texels)
+
         plt.show()
-
 
 class Congruence:
     def __init__(self, status, coordinates):

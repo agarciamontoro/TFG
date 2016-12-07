@@ -1,5 +1,6 @@
 from Raytracer import universe, Camera
 
+
 # Camera position
 camR = 30
 camTheta = 1.511
@@ -21,17 +22,23 @@ camera1 = Camera(camR, camTheta, camPhi, camFocalLength, camSensorShape,
 camera2 = Camera(camR+10, camTheta, camPhi, camFocalLength, (500, 500),
                  camSensorSize)
 
-# Make an sliced shoot; i.e., store all the intermediate steps in order to
-# plot a 3D scene
-plot3D = camera1.slicedShoot(slicesNum=10)
-plot3D.plot()
-
-# Plot only one geodesic, indexing it with the pixel row,col
-plot3D.geodesic(5, 5).plot()
-
-# You can even plot a snapshot, which may be not that interesting, though...
-plot3D.snapshot(1).plot()
+# # Make an sliced shoot; i.e., store all the intermediate steps in order to
+# # plot a 3D scene
+# plot3D = camera1.slicedShoot(slicesNum=10)
+# plot3D.plot()
+#
+# # Plot only one geodesic, indexing it with the pixel row,col
+# plot3D.geodesic(5, 5).plot()
+#
+# # You can even plot a snapshot, which may be not that interesting, though...
+# plot3D.snapshot(1).plot()
 
 # Make a proper photography!
 photo = camera2.shoot()
 photo.plot()
+
+# Load the textures
+disk = '../Res/Textures/adisk.png'
+sphere = '../Res/Textures/milkyWay.png'
+texturedImage = camera2.shoot(diskPath=disk, spherePath=sphere)
+texturedImage.plot()

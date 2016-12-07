@@ -6,6 +6,7 @@ from Utils.attr_dict import AttrDict
 
 import numpy as np
 from numpy import sin, cos, sqrt
+from matplotlib import image as mimg
 
 
 class Camera:
@@ -220,9 +221,18 @@ class Camera:
         # Update the computation on pixel width and height
         self.pixelWidth, self.pixelHeight = self.computePixelSize()
 
-    def shoot(self, finalTime=-150):
+    def shoot(self, finalTime=-150, diskPath=None, spherePath=None):
         raysStatus, raysCoordinates = self.engine.rayTrace(finalTime)
-        return CongruenceSnapshot(raysStatus, raysCoordinates)
+
+        texels = None
+        if diskPath is not None and spherePath is not None:
+            disk = mimg.imread(diskPath)[:, :, :3]
+            sphere = mimg.imread(spherePath)[:, :, :3]
+
+            texels = self.engine.texturedImage(disk.astype(np.float64),
+                                               sphere.astype(np.float64))
+
+        return CongruenceSnapshot(raysStatus, raysCoordinates, texels)
 
     def slicedShoot(self, finalTime=-150, slicesNum=100):
         raysStatus, raysCoordinates = self.engine.slicedRayTrace(finalTime,
