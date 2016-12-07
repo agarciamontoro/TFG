@@ -15,9 +15,9 @@
 
 // Declaration of the image parameters: number of rows and columns, as well as
 // the total amount of pixels.
-#define IMG_ROWS 10
-#define IMG_COLS 10
-#define NUM_PIXELS 100
+#define IMG_ROWS 500
+#define IMG_COLS 500
+#define NUM_PIXELS 250000
 
 
 // Bisect's constants
