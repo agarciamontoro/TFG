@@ -1,6 +1,6 @@
 from .universe import universe
 from .raytracer import RayTracer
-from .geodesics_congruence import Congruence, CongruenceSnapshot
+from .geodesics import Congruence, CongruenceSnapshot
 
 from Utils.attr_dict import AttrDict
 
