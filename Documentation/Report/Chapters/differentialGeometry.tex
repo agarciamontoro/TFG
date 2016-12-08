@@ -435,6 +435,372 @@ where $\theta^i$ is any covector field such that $\theta^i_{|_p} = \alpha^i$ and
 
 The operation involving tensors, the definition of the tensor components, the tensor contraction and all other classic results thoroughly studied in \autoref{chapter:tensoralgebra}  hold also here for the tensor fields on a manifold.
 
+
+\section{Spacetimes}
+
+In this section we will follow \cite{romero10}
+
+This section introduces the notion of \emph{spacetime}, a mathematical object with a really interesting meaning in physics, as it will model the geometry of the Universe.
+
+All results, proofs, and examples are mainly extracted from \cite{romero10}, which develop an interesting line of reasoning to grasp the nature of the concept.
+
+Before going down that road, we will need some basic concepts, such as the Lorentzian manifolds and the time orientation we can define on them. From this we will be ready to define what a spacetime is, whose properties will be studied.
+
+\subsection{Lorentzian and Riemannian Manifolds}
+
+From now on, let $M$ be a connected $n$-dimensional smooth manifold, with $n\geq2$.
+
+\begin{definition}[Lorentzian product]
+	A \emph{Lorentzian metric $g$} in $M$ is a symmetric 2 times covariant tensor field
+	\[
+	g \colon M \to \tensors_{(0,2)}(M)
+	\]
+	such that
+	\[
+	g_p \colon T_pM \times T_pM \to \R
+	\]
+	is a Lorentzian product (see \autoref{def:lorentzianprod}) for all $p \in M$.
+\end{definition}
+
+\begin{definition}[Lorentzian manifold]
+	$M$ is said to be a \emph{Lorentzian manifold} if it is furnished with a Lorentzian metric $g$. Lorentzian manifolds are usually noted as the pair $(M,g)$.
+\end{definition}
+
+The classical Koszul formula, asserts that if a manifold admits a symmetric 2 times covariant tensor field such that $g_p$ is non-degenerate for every $p \in M$, then $M$ has a Levi-Civita connection $\nabla$.  This follows from \autoref{eq:koszul}, that defines $\nabla$ from the non-degeneracy property; note that we could even define Christoffel symbols $\Gamma^i_{jkl}$ from the non-degeneration.
+
+From the connectedness of $M$, we can assure that there exists a piecewise smooth curve for every pair of points $p_0, p_1 \in M$,
+\[
+\gamma \colon [a,b] \to M,
+\]
+where $a < b$, such that
+\[
+\gamma(a) = p_0, \qquad \gamma(b) = p_1.
+\]
+
+From the existence of $\gamma$, we directly have the parallel transport\fixme{Incoherent notation.}
+\[
+P^\gamma_{a,b} \colon T_{p_0}M \to T_{p_1}M,
+\]
+which is a linear isometry between $(T_{p_0}M, g_{p_0})$ and $(T_{p_1}M, g_{p_1})$. This assures that
+\[
+\operatorname{index}(g_{p_0}) = \operatorname{index}(g_{p_1}).
+\]
+As $p_0$ and $p_1$ are two arbitrary points, the index of the metric on each point as a bilinear form is constant. Therefore, we can define the \emph{index of a Lorentzian metric $g$} as the index of the tensor assigned to any of the points on the $M$.
+
+\begin{definition}[Semi-Riemannian metric]
+	A \emph{semi-Riemannian metric} is a non-degenerate symmetric 2 times covariant tensor field $g$.
+\end{definition}
+
+The index of $g$ classifies the semi-Riemannian metrics:
+\begin{enumerate}
+	\item If $\operatorname{index}(g) = 0$, $g$ is a Riemannian metric.
+	\item If $\operatorname{index}(g) = 1$, $g$ is a Lorentzian metric.
+	\item If $\operatorname{index}(g) = s$, $0 < s < n$, $g$ is an indefinite Riemannian metric.
+\end{enumerate}
+
+This definitions produce the associated definitions on manifolds:
+\begin{definition}[Semi-Riemannian manifold]
+	A semi-Riemannian manifold (resp. Riemannian, indefinite Riemannian) is a pair $(M,g)$, where $g$ is a semi-Riemannian manifold (resp. Riemannian, indefinite Riemannian).
+\end{definition}
+
+\subsection{Time Orientation on Lorentzian Manifolds}
+
+Roughly speaking, a time orientation is a map that assigns one of the two time cones defined on the tangent space to a point on a manifold; \ie, is a map that assigns a time orientation (as defined in \autoref{def:vstimeorientation}) in $T_pM$ for every $p \in M$. Let us formalize this concept a little bit more
+
+Let $(M,g)$ be a Lorentzian manifold and let us denote, for every $p \in T_pM$, the set with the two times cones defined on $(T_p M, g)$ as $C_p(M,g)$. The union of all this sets, denoted by $C(M,g)$ is then a collection of two-possibilities for every point on a manifold:
+\[
+C(M,g) = \bigcup_{p \in M} C_p(M,g).
+\]
+
+\begin{definition}[Time Orientation]
+	A \emph{time orientation} on $(M,g)$ is a map
+	\[
+	\tau \colon M \to C(M,g)
+	\]
+	that satisfies:
+	\begin{itemize}
+		\item $\tau(p) \in C_p(M,g)$ for every $p \in M$.
+		\item There exists an open neighbourhood $U$ for every $p_0 \in M$ and a vector field $X \in \mathcal{X}(U)$ such that
+		\[
+		X_p \in \tau(p), \quad \forall p \in U.
+		\]
+	\end{itemize}
+	
+	A Lorentzian manifold $(M,g)$ is said to be \emph{time orientable} if it admits a time orientation. In this case, there exists two time oriented Lorentzian manifolds:
+	\[
+	(M,g,\tau) \quad\textrm{and}\quad (M,g,\tau'),
+	\]
+	where $\tau'(p)$ is the opposite time cone of $\tau(p)$ for every $p\in M$.
+\end{definition}
+
+The previous definition let us understand the notion of spacetime:
+
+\begin{definition}[Spacetime]
+	A \emph{spacetime} is a four dimensional time oriented Lorentzian manifold.
+\end{definition}
+
+It is interesting to know which manifolds have time orientations, and the following proposition characterizes this fact.
+
+\begin{proposition}
+	\label{pro:timeorientable}
+	A Lorentzian manifold $(M,g)$ is time orientable if and only if there exists a vector field $Y \in \mathcal{M}$ such that $g(Y,Y) < 0$.
+\end{proposition}
+
+Before proving this proposition, it is mandatory to know the concept of partition of unity, which is now introduced.
+
+A collection $\mathcal{L}$ of subsets of a space $S$ is locally finite provided each point of $S$ has a neighbourhood that meets only finitely many elements of $\mathcal{L}$. Let $\{f_\alpha \colon \alpha \in A\}$ be a collection of smooth functions on a manifold $M$ such that $\{\operatorname{supp} f_\alpha \colon \alpha \in A\}$ is locally finite. Then the sum $\sum_\alpha f_\alpha$ is a well-defined smooth function on $M$ , since on some neighbourhood of each point all but a finite number of $f_\alpha$ are identically zero.
+
+\begin{definition}[Smooth partition of unity]
+	A \emph{smooth partition of unity} on a manifold $M$ is a collection $\{f_\alpha \colon \alpha \in A\}$ of functions $f_\alpha \in \mathfrak{F}(M)$ such that
+	\begin{enumerate}
+		\item $0 \leq f_\alpha \leq 1 \quad \forall \alpha \in A$.
+		\item $\{\operatorname{supp} f_\alpha \colon \alpha \in A\}$ is locally finite.
+		\item $\sum_\alpha f_\alpha = 1$.
+	\end{enumerate}
+	
+	The partition is said to be \emph{subordinate} to an open covering $\mathfrak{C}$ of $M$ provided each set $\operatorname{supp} f_\alpha$ is contained in some element of $\mathfrak{C}$.
+\end{definition}
+
+Partitions of unity are an indispensable tool for assembling locally defined  objects into a global object (or decomposing a global object into a sum of local objects). For such purposes  partitions of unity with "small" supports are needed.
+
+We are now ready to understand the proof of \autoref{pro:timeorientable}, extracted from \cite[p. 201]{romero10}.
+
+\begin{proof}
+	If such a vector field exists, then we can choose $\tau(p)$ as the time cone of $(T_pM,g_p)$ such that $Y_p\in \tau(p)$ for all $p\in M$.
+	
+	Conversely, let $\tau$ be a time orientation on $(M,g)$. For each $p_0 \in M$ there exist a neighbourhood $U^{p_{_0}}$ and $X_U\in \mathfrak{X}(U^{p_{_0}})$ such that $(X_U)_p \in \tau(p)$ for all $p\in U^{p_{_0}}$.
+	
+	Let $\{f_{\alpha}\}$ be a smooth partition of unity subordinate to the open covering $\{U^p\, : \, p\in M\}$; i.e. $\{\mathrm{supp}(f_{\alpha)}\}$ is locally finite, $f_{\alpha}\geq 0$, $\sum_{\alpha} f_{\alpha}=1$ and $\mathrm{supp}(f_{\alpha}) \subset U_{\alpha}$ for some $U_{\alpha}$ of the covering of $M$ (see \autoref{sec:partitionunity}).
+	
+	The vector field 
+	\[
+	Y:=\sum f_{\alpha}\, X_{U_{\alpha}}
+	\] 
+	is then well-defined and for each $p\in M$ there exists an open neighbourhood $V(p)$ such that $V \cap \mathrm{supp}(f_{\alpha}) = \emptyset$ for all $\alpha \neq i_1,..,i_k$; therefore
+	\[
+	Y_{\mid V}=f_{i_1}X_{U_{i_1}}+..+f_{i_k}X_{U_{i_k}},
+	\]
+	with $\sum_j f_{i_j}=1$.
+	
+	Then, using the convexity of time cones, \autoref{convexity}, the vector field $Y$ is timelike everywhere.
+\end{proof}
+
+It is interesting to know what a time oriented Lorentzian manifold could look like. Therefore, and for the sake of completion, we copy here the excellent set of examples in \cite[Example 3.2]{romero10}.
+
+\begin{example}
+	~		
+	\begin{enumerate}
+		\item Let $\L^n$ be the $n$-dimensional Lorentz-Minkowski space, i.e. $\L^n$ is $\R^n$ endowed with the Lorentzian metric $g=dx_1^2+...+dx_{n-1}^2-dx_n^2$, where $(x_1,..,x_n)$ is the usual coordinate system of $\R^n$. The coordinate vector field $\partial/\partial x_n$ is unitary timelike and hence, \autoref{pro:timeorientable}, $\L ^n$ is time orientable.
+		\item Let $\S_1^n$ be the $n$-dimensional De Sitter space; i.e. $\S_1^n =\{p \in \L^{n+1} \, :\, g(p,p)=1 \}$, where $g$ denotes the Lorentzian metric of $\L^{n+1}$. For each $p \in \S_1^n$, we have $T_p\S_1^n=\{v \in \L^{n+1} \, : \, g(p,v)=0\}$
+		and denote by $g_p$ the restriction of $g$ to $T_p\S_1^n$, which is Lorentzian because $\L^{n+1}=T_p\S_1^n \oplus \langle p \rangle$, the direct sum is also $g$-orthogonal and $p$ is spacelike. Observe that a vector field on $\S_1^n$ can be contemplated as a smooth map
+		\[
+		X : \S_1^n \longrightarrow \L^{n+1}
+		\]
+		such that at each point $p \in \S_1^n$ we have $X_p$ is $g$-orthogonal to $p$. Thus, if we put $p=(y,t)\in \S_1^n$, $y \in \R^n$, $t \in \R$, then $X_p=(\frac{t}{1+t^2}\,y,1)$ is a well-defined timelike vector field on $\S_1^n$. Therefore, Proposition \autoref{pro:timeorientable}, the Lorentzian manifold $\S_1^n$ is time orientable.
+		\item Let $\H_1^n$ be the $n$-dimensional anti De Sitter space; i.e. $\H_1^n =\{p \in \R^{n+1} \, :\, g'(p,p)=-1 \}$, where $g'=dx_1^2+...+dx_{n-1}^2-dx_n^2-dx_{n+1}^2$ and $(x_1,..,x_n,x_{n+1})$ is the usual coordinate system of $\R^{n+1}$. The semi-Riemannian metric $g'$ on $\R^{n+1}$ has index 2 and $\R^{n+1}_2$ will denote $(\R^{n+1},g')$. For each $p \in \H_1^n$, we have $T_p\H_1^n=\{v \in \R^{n+1} \, : \, g'(p,v)=0\}$ and denote by $g'_p$ the restriction of $g'$ to $T_p\H_1^n$, which is Lorentzian because $\R^{n+1}_2=T_p\H_1^n \oplus \langle p \rangle$, the direct sum is also $g'$-orthogonal and $p$ satisfies $g'(p,p)=-1$. The vector field
+		\[
+		X : \H_1^n \longrightarrow \R^{n+1}_2
+		\]
+		given by $X_p=(0,t,-s)$ for $p=(y,s,t)$, $y \in R^{n-1}$, $s,t\in \R$, is timelike everywhere.
+		
+		Therefore, \autoref{pro:timeorientable}, the Lorentzian manifold $\H_1^n$ is time orientable.
+	\end{enumerate}
+\end{example}
+
+A more interesting characterization of time oriented Lorentzian manifolds is the following one, whose geometric approximation is more clear.
+
+\begin{corollary}
+	\label{cor:timeorientable2}
+	A Lorentzian manifold $(M,g)$ is time orientable if and only if, for every $p \in M$,
+	\[
+	g(P^\gamma_{a,b}(v), v) < 0 \quad \forall v \textrm{ timelike vector on } (T_pM, g_p),
+	\]
+	where $\gamma$ is any piecewise smooth curve defined on $[a,b]$ such that $\gamma(a) = \gamma(b) = p$.
+\end{corollary}
+
+\begin{proof}
+	This proof is extracted from \cite[p. 202]{romero10}.
+	
+	Assume $(M,g)$ is time orientable and consider $X \in \mathfrak{X}(M)$ such that $g(X,X)<0$. Changing $X$ to $-X$, if necessary, we may assume $g(X_p,v)<0$. Let $Y$ be a vector field along $\gamma$ such that $\frac{DY}{dt}=0$ and $Y(a)=v$.
+	
+	Note that we have $Y(b)=P_{a,b}^{\gamma}(v)$. Consider the function $f : [a,b] \longrightarrow \R$ given by
+	\[
+	f(t)= g(X_{\gamma(t)},Y(t))
+	\]
+	which is continuous and never vanishes because $X_{\gamma(t)}$ and $Y(t)(=P_{a,t}^{\gamma}(v))$ are timelike. Therefore $f(t)<0$ for all $t\in [a,b]$ and, in particular, $f(b)<0$. This means, taking into account \autoref{lem:timecone}, that $Y(b)$ and $X_{\gamma(b)}$ lie in the same time cone.
+	
+	Conversely, let us consider, for two arbitrary points $p$ and $q$ of $M$, two piecewise smooth curves $\alpha$ and $\beta$ from $p$ to $q$. We want to show that for any $v\in \mathcal{T}(T_pM,g_p)$ the parallel transported vectors $P^{\alpha}(v)$, $P^{\beta}(v)$ lie in the same time cone of $(T_qM,g_q)$.
+	
+	In order to achieve this conclusion we construct a piecewise smooth curve $\gamma : [a,b] \longrightarrow M$ from $\alpha$ and $\beta$ in a standard way such that $\gamma(a)=\gamma(b)=p$. Note that $$g(P^{\alpha}(v),P^{\beta}(v))=g((P^{\beta})^{-1}P^{\alpha}(v),v)=g(P_{a,b}^{\gamma}(v),v)<0,$$ which means that $P^{\alpha}(v)$ and $P^{\beta}(v)$ lie in the same time cone of $(T_qM,g_q)$.
+	
+	Therefore, we have a well-defined way to chose a time cone $\tau(p)$ at any $p \in M$. Finally, we will to show the smoothness. Given $p_0 \in M$ and the time cone $\tau(p_0)$ consider $v \in \tau(p_0)$. Let $X$ be a vector field which extends $v$; i.e. such that $X_{p_{0}}=v$. Note that $X$ remains timelike in some (connected) open neighbourhood $U$ of $p_0$. For each $q \in U$ we construct a piecewise smooth curve $\alpha : [a,b] \longrightarrow U$ satisfying $\alpha(a)=p_0$,
+	$\alpha(b)=q$ and consider the function $h : [a,b] \longrightarrow \R$ given by
+	\[
+	h(t)=g(X_{\alpha(t)},P_{a,t}^{\alpha}(v))
+	\]
+	which is continuous and never vanishes. Therefore $h(t)<0$ for all $t\in [a,b]$ and, in particular, $h(b)<0$. This means, taking into account \autoref{lem:timecone}, that $X_q$ and $P_{a,b}^{\alpha}(v)$ lie in the same time cone of $(T_qM,g_q)$ and thus $X_q \in \tau(q)$ for all $q \in U$.
+\end{proof}
+
+It is known that each closed piecewise smooth curve on $M$ is null homotopic by means of a piecewise smooth homotopy whenever $M$ is assumed to be simply connected. Using \autoref{cor:timeorientable2}, the following result holds.
+
+\begin{corollary}
+	\label{cor:simplyconnected}
+	If $M$ is simply connected, $(M,g)$ is time orientable.
+\end{corollary}
+
+One interesting question arises now: are there Lorentzian manifolds that are \emph{non} time orientable? The following example, transcribed from \cite[Example 3.5]{romero10}, \cite[Example 1.2.3]{sachs77}, describes a well-known object that satisfy this requirement: a Lorentzian cylinder.
+
+\begin{example}
+	Let $g$ be the Lorentzian metric on $\R^2$ given by
+	\begin{align*}
+	g\Big(\,\frac{\partial}{\partial x},\,\frac{\partial}{\partial x}\,\Big)_{(x,y)}=-g\Big(\,\frac{\partial}{\partial y},\,\frac{\partial}{\partial y}\,\Big)_{(x,y)} &= \cos 2y,\\
+	\quad g\Big(\,\frac{\partial}{\partial x},\,\frac{\partial}{\partial y}\,\Big)_{(x,y)}&= \sin 2y.
+	\end{align*}
+	
+	Observe that
+	\[
+	\mathrm{det}\left(
+	\begin{array}{cc}
+	\cos 2y & \hspace*{4mm}\sin 2y  \\
+	\sin 2y & -\cos 2y
+	\end{array} \right) = -1 < 0
+	\]
+	everywhere, which implies that $g$ is Lorentzian. The map $f : \R^2 \longrightarrow \R^2$, defined by $f(x,y)=(x,y+\pi)$, is clearly an isometry of $(\R^2,g)$. Put $M:=\R^2 / \Z$, where the action of $\Z$ on $\R^2$ is defined via $f$ as follows
+	\[
+	\big(m,(x,y)\big) \mapsto f^m(x,y)=(x,y+m\pi).
+	\]
+	Then $M$ is a cylinder and the metric $g$ may be induced to a Lorentzian metric ${\tilde g}$ in $M$. We want to show that $(M,{\tilde g})$ is not time orientable. If we choose a time cone at $(0,0)$ then along the axis $x=0$ it changes its position in the counter-clockwise rotation sense. Note that $(0,0)$ and $(0,\pi)$ represent the same point of $M$ but the time cones at these points are not compatible with the equivalence relation in $\R^2$ induced by $f$. Note that $Y=-\sin y \frac{\partial}{\partial x} + \cos y \frac{\partial}{\partial y}$ is a timelike vector field on $(\R^2,g)$ (of course, $(\R^2,g)$ is time orientable from \autoref{cor:simplyconnected}) which satisfies $Y_{(0,0)}=\frac{\partial}{\partial y}\mid_{(0,0)}$ and $Y_{(0,\pi)}=-\frac{\partial}{\partial y}\mid_{(0,\pi)}$.
+	
+	Taking into account that $df_{(0,0)}Y_{(0,0)}=-Y_{(0,\pi)}$, $Y$ cannot be induced on $M$. On the other hand, assume there exists ${\tilde X}\in \mathfrak{X}(M)$ such that ${\tilde g}({\tilde X},{\tilde X})<0$ and let $X\in \mathfrak{X}(\R^2)$, $g(X,X)<0$, which projects onto ${\tilde X}$. Necessarily $df_{(x,y)}X_{(x,y)}=X_{(x,y+\pi)}$ and $g(Y_{(x,y)},X_{(x,y)})\neq 0$ for all $(x,y)\in \R^2$.
+	
+	Therefore, either $g(Y,X)>0$ or $g(Y,X)<0$ everywhere. But this is incompatible with
+	\begin{align*}
+	g\left(Y_{(0,\pi)},X_{(0,\pi)}\right) &= -g\left(df_{(0,0)}Y_{(0,0)},df_{(0,0)}X_{(0,0)}\right)=\\
+	&= -g\left(Y_{(0,0)},X_{(0,0)}\right).
+	\end{align*}
+\end{example}
+
+%Previous example shows a (connected) orientable manifold $M$ which admits a Lorentzian metric ${\tilde g}$ such that $(M,{\tilde g})$ is not time orientable. It is possible to have a time orientable Lorentzian manifold $(N,g)$ where $N$ is not (topologically) orientable. Even more, it is also easy to construct a non time orientable Lorentzian manifold $(P,g')$ such that $P$ is not (topologically) orientable.
+%
+%As in the non orientable case, a Lorentzian manifold $(M,g)$ which is not time orientable admits a double Lorentzian covering manifold $({\hat M},{\hat g})$ which is time orientable. Note that $({\hat M}, {\hat g})$ and $(M,g)$ have the same local geometry, but the first one possesses a globally defined timelike vector field and the second one does not.
+
+\subsection{One Dimensional Distributions}
+
+Similar to the question of when can a Lorentzian manifold admit a time orientation, a more elemental question can be asked: given a manifold $M$, can we always construct a Lorentzian metric on it?
+
+In general, the answer is negative, but we can find some interesting characterizations.
+
+First of all, let us define what a one dimensional distribution is
+\begin{definition}[$n$ dimensional distribution]
+	An \emph{$n$ dimensional distribution} on a manifold $M$ is a map that assigns an $n$ dimensional subspace $\mathcal{D}_p$ of $T_pM$ to each $p \in M$, such that there exists an open neighbourhood $U$ of $p$ and $n$ independent vector fields $X_1, \dots, X_n \in \mathcal{X}(U)$ satisfying
+	\[
+	\mathcal{D}_p = \langle X_1(q), \dots, X_n(q) \rangle \quad \forall q \in U.
+	\]
+\end{definition}
+
+We can now formulate a result from \cite{greub72}, that shows that characterization we were looking for.
+
+\begin{proposition}
+	\label{pro:onedimensional}
+	$M$ admits a Lorentzian metric if and only if it admits a one dimensional distribution.
+\end{proposition}
+
+\begin{proof}
+	This proof is extracted from \cite[p. 204]{romero10}.
+	
+	First consider a Lorentzian metric $g$ on $M$, and let $g_R$ be an arbitrarily chosen Riemannian metric on $M$.
+	
+	A $(1,1)$-tensor field $P$ on $M$ can be defined by setting, for each $u \in T_PM$, $P(u)$ the unique vector of $T_pM$ such that
+	\[
+	g_R\big(P(u),v\big)=g(u,v)
+	\]
+	for all $v \in T_pM$, $p \in M$. Clearly, $P$ is $g_R$-selfadjoint and, therefore, at any point $p \in M$, there exists a $g_R$-orthonormal basis of $T_pM$ consisting of eigenvectors of $P$. Observe that none of the eigenvalues is zero, $n-1$ are positive and one is negative.
+	
+	Now, making use of $P$ we will define a 1-dimensional distribution on $M$ \cite{kobnom63}; \ie, an assignment to each $p \in M$ of a 1-dimensional subspace $\mathfrak{D}_p$ of $T_p M$ such that each $p\in M$ has an open neighbourhood $U$ and a vector field $X \in \mathfrak{X}(U)$ such that 
+	\[
+	\mathfrak{D}_p = \langle X_q \rangle \quad \forall q \in U.
+	\]
+	
+	Put $\mathcal{D}_p$ the eigenspace associated to the negative eigenvalue of $P$ at $p$, then $\mathfrak{D}$ defines a $1$-dimensional distribution (or line field) on $M$. It should be noted that $\mathfrak{D}$ clearly depends on the arbitrary Riemannian metric $g_R$.
+	
+	Conversely, if a $1$-dimensional distribution $\mathfrak{D}$ on $M$ is given, fix an arbitrary Riemannian metric $g_R$ on $M$. We know that there exist an open covering $\{U_{\alpha}\}$ of $M$ and vector fields $X_\alpha \in \mathfrak{X}(U_\alpha)$ such that, locally,
+	\[
+	\mathfrak{D}=\langle X_{\alpha} \rangle, \quad \mathrm{with} \quad
+	g_R(X_{\alpha},X_{\alpha})=1.
+	\]
+	
+	By putting
+	\[
+	g_{L}(u,v):=g_{R}(u,v)-2\,g_{R}\big(u,X_{\alpha}(p)\big)\,g_{R}\big(v,X_{\alpha}(p)\big),
+	\]
+	for any tangent vectors $u,v \in T_{p}M$ with $p\in U_\alpha$, it is easily seen that $g_{L}$ does not depend on $\alpha$ and therefore, it is a Lorentzian metric on all $M$.
+\end{proof}
+
+Starting from a Riemannian metric on $M$, which can always be constructed \cite{romero10}, one can build a Lorentzian metric even without a one dimensional distribution; however, the existence of a vector field $X \in \mathcal{X}(M)$ such that $X_p \neq 0$ for any $p \in M$ is needed.
+
+Suppose then that $g_R$ is a Riemannian metric on $M$ and $X$ a vector field satisfying the previous property; then, we can construct $g_L$, a Lorentzian metric on $M$ as follows:
+\[
+g_L(u,v) \defeq g_R(u,v) - 2  \frac{g_R(u, X_p)g_R(v,x_p)}{g_R(X_p,X_p)},
+\]
+where $u,v \in T_pM$ and $p \in M$.
+
+Note that \autoref{pro:onedimensional} can be generalized \cite[Prop. 4.3]{romero10}, \cite{greub72}:
+
+\begin{proposition}
+	An $n$ dimensional manifold admits a Riemannian metric of index $s$, $0 < s < n$, if and only if it admits an $s$ dimensional distribution.
+\end{proposition}
+
+It is known, \cite[p. 205]{romero10}, that if $M$ is non-compact, then it admits a non-vanishing vector field. One way to obtain such field is to consider the gradient with respect to any Riemannian metric of a smooth function with no critical points. From this, we can conclude that $M$ admits a Lorentzian metric.
+
+Equivalently, $M$ admits a one dimensional distribution if and only if its Euler-Poincaré characteristic function, $\mathcal{X}(M)$ is zero. Therefore, any $(2n + 1)$ dimensional compact orientable manifold admits a Lorentzian metric.
+
+In fact, the following topological result holds.
+\begin{proposition}
+	If $M$ si compact, then it admits a non-vanishing vector field if and only if $\mathcal{X}(M)=0$.
+\end{proposition}
+
+From \cite{romero10} we know that on a simply connected manifold, being or not compact, each one dimensional distribution can be obtained from a global non-vanishing vector field $X \in \mathfrak{X}(M)$. The other implication is not true in general, as \autoref{ex:nonvanishing} from \cite[pp. 205-206]{romero10} and \cite{greub72} shows.
+
+\begin{remark}[Lie groups]
+	Before describing the example, let us remember that a \emph{Lie group} is a group $G$ that is also a differentiable manifold, and such that the map
+	\begin{align*}
+	G \times G &\to G \\
+	(a,b) &\mapsto ab^{-1}
+	\end{align*}
+	is differentiable---see \cite[p. 38]{kobnom63}\unsure{Review this reference}.
+	
+	We denote by $L_a$ (resp. $R_a$) the left (resp. right) translation of $G$ by the element $a\in G$, that is:
+	\begin{align*}
+	L_a \colon G \to G \\
+	x &\mapsto ax
+	\end{align*}
+	and
+	\begin{align*}
+	R_a \colon G &\to G \\
+	x &\mapsto xa.
+	\end{align*}
+	
+	Both $L_a$ and $R_a$ are diffeomorphisms on $G$.
+	
+	A vector field $X$ on $G$ is called left invariant (resp. right invariant) if $(dL_a)_b X_b = X_{L_a(b)}$ (resp. $(dR_a)_b X_b = X_{R_a(b)}$) for all $a,b \in G$.
+	
+	Given $v \in T_e G$ there exists a unique left invariant vector field $X$ on $G$ such that $X_e = v$. In fact, $X_a \defeq (dL_a)_e(a) \; \forall a \in G$ (analogously for a right invariant vector field). Note that $v \neq 0$ implies $X_a \neq 0$ for all $a \in G$. Even more, if $\{v_1, \dots, v_n\}$ is a basis of $T_e G$, then there exists a set of left invariant vector fields $\{X_1, \dots, X_n\}$ such that $X_i(w) = v_i, 1 \leq i \leq n$, and  $\{X_1(a), \dots, X_n(a)\}$ is a basis of $T_a G$ for all $a \in G$.
+	
+	Therefore, $G$ admits a global basis of $\mathfrak{X}(G)$. In this case, $G$ is said to be \emph{parallelizable} \cite[Ch. 1, Sec. 4]{kobnom63}\unsure{Review this reference}.
+\end{remark}
+
+We can describe now the example of a one dimensional distribution that cannot be lifted to a global non-vanishing vector field.
+
+\begin{example}
+	\label{ex:nonvanishing}
+	Consider the special orthogonal group of order 3, $SO(3)$, and put $M=\S^{1}\times SO(3)$. Both $\S^1$ and $SO(3)$ are Lie groups.
+	
+	$M$ is a 4-dimensional compact Lie group. Moreover it is parallelizable, and therefore every vector field $X\in\mathfrak{X}(M)$ can be contemplated as a smooth map $$X:M\rightarrow \R^{4}$$ and, by fixing a diffeomorphism $\psi:\R P^{3}\rightarrow SO(3)$, a $1$-dimensional distribution $\mathfrak{D}$ can be seen as a smooth map $$\mathfrak{D}:M\rightarrow SO(3).$$
+	
+	In particular, the canonical projection on the second factor $\mathfrak{D}_2$ defines a natural $1$-dimensional distribution on $M=\S^{1}\times SO(3)$. If we assume that $\mathfrak{D}_2$ lifts to a vector field $X$ without any zero, then, taking into account that $\R^{4}-\{0\}$ is simply connected, one easily shows that $SO(3)$ would be also simply connected, which is not true. Hence $\mathfrak{D}_2$ cannot be lifted to a global vector field on $\S^{1}\times SO(3)$.
+\end{example}
+
+
 \section{Connections on Manifolds}
 
 In this section we will define a connection on a manifold, which in turn will give us the tools to generalize the concept of directional derivative arriving to the definition of covariant derivative.
