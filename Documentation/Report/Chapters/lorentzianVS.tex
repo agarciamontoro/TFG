@@ -7,6 +7,7 @@ Before going down that road we need to know what a Lorentzian vector space is an
 \section{Basic definitions}
 
 \begin{definition}[Lorentzian product and vector space]
+	\label{def:lorentzianprod}
 	Let $V$ be an $n$-dimensional vector space on $\R$, with $n \geq 2$.
 	
 	A \emph{Lorentzian product on $V$} is a non-degenerate symmetric bilinear form on $V$ with index 1; that is, a bilinear form
@@ -195,7 +196,7 @@ and therefore, there exists a unique $\theta \in \R$, $\theta \geq 0$, such that
 
 $\theta$ is called the \emph{hyperbolic angle} between $u$ and $v$.
 
-\section{Time orientation}
+\section{Time Orientation on Lorentzian Vector Spaces}
 
 This last section on Lorentzian vector spaces introduces an important concept: the time orientation. We need some previous concepts before formalizing this idea.
 
@@ -225,6 +226,7 @@ that is, when both $v_n$ and $v'_n$ lie in the same time cone of $(V,g)$.
 This defines two equivalence classes on the set of orthonormal basis: the class defined by $B=(v_1,..,v_{n-1},v_n)$ and the class defined by $\tilde{B}=(v_1,..,v_{n-1},-v_n)$.
 
 \begin{definition}[Time orientation]
+	\label{def:vstimeorientation}
 	A \emph{time orientation} on $(V,g)$ is each one of the two equivalence classes defined by $B$ and $\tilde{B}$.
 \end{definition}
 
@@ -235,6 +237,7 @@ Although the classical orientations on $V$ does not depend on $g$, it is importa
 However, a time orientation does not change if we replace $g$ by a conformally related Lorentzian product $ag$, with $a\in \R$, $a>0$.
 
 \section{Topological remarks}
+\label{sec:toporemarks}
 
 We end this section explaining some topological remarks. If $V$ is an $n$-dimensional vector space and $B$ is a basis of $V$, then we have a linear isomorphism $$b_B : V \longrightarrow \R^n,$$ defined by $b_B(v)=(a_1,..,a_n)$, where $(a_1,..,a_n)$ are the coordinates of $v$ in $B$. By using $b_B$ a topology $\mathfrak{T}_B$ can be defined in $V$ in such a way that the $\mathfrak{T}_B$-open subsets of $V$ are $b_B^{-1}(O)$, where $O$ is an open subset of $\R^n$. It is not difficult to see that $\mathfrak{T}_B = \mathfrak{T}_{B'}$ for any basis $B,B'$ of $V$. Endowed with this topology, the function $V \longrightarrow \R$, given by $v \mapsto g(v,v)$ is continuous. Hence $\mathcal{T}(V,g)$ is an open subset of $V$ and each time cone is also an open subset of $V$. Moreover, the set of nonzero spacelike vectors $\{v\in V \, : \, g(v,v)>0 \}$ is an open subset of $V$ and the light cone with the zero vector $\{v\in V \, : \, g(v,v)=0 \}$ is a closed subset of $V$. Finally, every null vector can be obtained as the limit of a sequence of timelike vectors as well of spacelike vectors (or both types of vectors). Thus, $\{v\in V \, : \, g(v,v)<0 \} \cup \{v\in V \, : \, g(v,v)>0 \}$
 is a dense subset of $V$.

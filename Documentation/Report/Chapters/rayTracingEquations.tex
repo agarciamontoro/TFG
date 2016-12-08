@@ -2,15 +2,15 @@
 
 This chapter aims to find the most computationally stable equations of motion for $\gamma$, a free falling lightlike particle moving on a Kerr spacetime.
 
-The classical equations derived from the definition of geodesic,
+The classical equations derived from the definition of geodesic in terms of the Christoffel symbols,
 \[
-\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0 \quad k = 1, \dots, n,
+	\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0 \quad k = 1, \dots, n,
 \]
 are not interesting enough to later implement a numeric algorithm that integrates them: they do not directly provide conserved quantities that can be useful in our computations and, furthermore, we would have to deal with a second order system of differential equations.
 
-In our journey to find such equations, we will find the classical Hamiltonian formulation \cite[Sec. 33.5]{thorne73}, that gives us a first order system with conserved quantities but with numerically unstable equations; this would force us to deal with the zeros of a pair of square roots.
+In our journey to find such a system that fits our needs, we will find the classical Hamiltonian formulation \cite[Sec. 33.5]{thorne73}, that gives us a first order system with conserved quantities but with numerically unstable equations; this version would force us to deal with the zeros of a pair of square roots.
 
-Finally, we will be able to get rid of those square roots, simply by defining another equivalent Hamiltonian that will led us to a first order system with conserved quantities and which will be numerically-friendly \cite{thorne15}.
+Finally, we will be able to get rid of those square roots, simply by defining another equivalent Hamiltonian that will lead us to a first order system with conserved quantities and which will be numerically-friendly \cite{thorne15}.
 
 From now on, and valid throughout this chapter, let $\gamma$ be a lightlike particle, whose tangent vector components, expressed in Boyer-Lindquist coordinates, are
 \begin{equation}
