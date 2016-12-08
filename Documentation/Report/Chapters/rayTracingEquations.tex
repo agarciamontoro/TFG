@@ -330,10 +330,10 @@ From the general Hamilton's equations:
 \[
 	\dot{p}_i = -\pd{\mathcal{H}}{q_i}, \quad \dot{q}_i = \pd{\mathcal{H}}{p_i},
 \]
-which in this case reads as follows
+which in this case read as follows
 \begin{align*}
-	\dot{r} = \pd{\mathcal{H}}{p_r}, \quad \dot{\vartheta} = \pd{\mathcal{H}}{p_\vartheta}, \quad \dot{\varphi} = \pd{\mathcal{H}}{p_\varphi} \\
-	\dot{p}_r = - \pd{\mathcal{H}}{r}, \quad \dot{p}_\vartheta = - \pd{\mathcal{H}}{\vartheta}
+	\dot{r} &= \pd{\mathcal{H}}{p_r}, \quad \dot{\vartheta} = \pd{\mathcal{H}}{p_\vartheta}, \quad \dot{\varphi} = \pd{\mathcal{H}}{p_\varphi} \\
+	\dot{p}_r &= - \pd{\mathcal{H}}{r}, \quad \dot{p}_\vartheta = - \pd{\mathcal{H}}{\vartheta},
 \end{align*}
 we obtain the expected first order numerically stable system:
 \begin{align}
@@ -341,5 +341,5 @@ we obtain the expected first order numerically stable system:
 	\dot{\vartheta} &= \frac{1}{\rho^2}p_\vartheta \\
 	\dot{\varphi} &= \pd{}{p_\varphi}\left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \\
 	\dot{p}_r &= - \pd{}{r} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right) \\
-	\dot{p}_\vartheta &= - \pd{}{\vartheta} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right)
+	\dot{p}_\vartheta &= - \pd{}{\vartheta} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right).
 \end{align}
