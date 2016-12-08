@@ -28,7 +28,7 @@ From now on, let $M$ be a connected $n$-dimensional smooth manifold, with $n\geq
 	$M$ is said to be a \emph{Lorentzian manifold} if it is furnished with a Lorentzian metric $g$. Lorentzian manifolds are usually noted as the pair $(M,g)$.
 \end{definition}
 
-The classical Koszul formula, asserts that if a manifold admits a symmetric 2 times covariant tensor field such that $g_p$ is non-degenerate for every $p \in M$, then $M$ has a Levi-Civita connection $\nabla$.  This follows from \autoref{eq:kozsul}, that defines $\nabla$ from the non-degeneracy property; note that we could even define Christoffel symbols $\Gamma^i_{jkl}$ from the non-degeneration.
+The classical Koszul formula, asserts that if a manifold admits a symmetric 2 times covariant tensor field such that $g_p$ is non-degenerate for every $p \in M$, then $M$ has a Levi-Civita connection $\nabla$.  This follows from \autoref{eq:koszul}, that defines $\nabla$ from the non-degeneracy property; note that we could even define Christoffel symbols $\Gamma^i_{jkl}$ from the non-degeneration.
 
 From the connectedness of $M$, we can assure that there exists a piecewise smooth curve for every pair of points $p_0, p_1 \in M$,
 \[
@@ -108,8 +108,26 @@ It is interesting to know which manifolds have time orientations, and the follow
 	A Lorentzian manifold $(M,g)$ is time orientable if and only if there exists a vector field $Y \in \mathcal{M}$ such that $g(Y,Y) < 0$.
 \end{proposition}
 
+Before proving this proposition, it is mandatory to know the concept of partition of unity, which is now introduced.
+
+A collection $\mathcal{L}$ of subsets of a space $S$ is locally finite provided each point of $S$ has a neighbourhood that meets only finitely many elements of $\mathcal{L}$. Let $\{f_\alpha \colon \alpha \in A\}$ be a collection of smooth functions on a manifold $M$ such that $\{\operatorname{supp} f_\alpha \colon \alpha \in A\}$ is locally finite. Then the sum $\sum_\alpha f_\alpha$ is a well-defined smooth function on $M$ , since on some neighbourhood of each point all but a finite number of $f_\alpha$ are identically zero.
+
+\begin{definition}[Smooth partition of unity]
+	A \emph{smooth partition of unity} on a manifold $M$ is a collection $\{f_\alpha \colon \alpha \in A\}$ of functions $f_\alpha \in \mathfrak{F}(M)$ such that
+	\begin{enumerate}
+		\item $0 \leq f_\alpha \leq 1 \quad \forall \alpha \in A$.
+		\item $\{\operatorname{supp} f_\alpha \colon \alpha \in A\}$ is locally finite.
+		\item $\sum_\alpha f_\alpha = 1$.
+	\end{enumerate}
+	
+	The partition is said to be \emph{subordinate} to an open covering $\mathfrak{C}$ of $M$ provided each set $\operatorname{supp} f_\alpha$ is contained in some element of $\mathfrak{C}$.
+\end{definition}
+
+Partitions of unity are an indispensable tool for assembling locally defined  objects into a global object (or decomposing a global object into a sum of local objects). For such purposes  partitions of unity with "small" supports are needed.
+
+We are now ready to understand the proof of \autoref{pro:timeorientable}, extracted from \cite[p. 201]{romero10}.
+
 \begin{proof}
-	This proof is extracted from \cite[p. 201]{romero10}.
 
 	If such a vector field exists, then we can choose $\tau(p)$ as the time cone of $(T_pM,g_p)$ such that $Y_p\in \tau(p)$ for all $p\in M$.
 	
@@ -135,20 +153,20 @@ It is interesting to know what a time oriented Lorentzian manifold could look li
 \begin{example}
 	~		
 	\begin{enumerate}
-		\item Let $\L^n$ be the $n$-dimensional Lorentz-Minkowski space, i.e. $\L^n$ is $\R^n$ endowed with the Lorentzian metric $g=dx_1^2+...+dx_{n-1}^2-dx_n^2$, where $(x_1,..,x_n)$ is the usual coordinate system of $\R^n$. The coordinate vector field $\partial/\partial x_n$ is unitary timelike and hence, Proposition \ref{time_orientable}, $\L ^n$ is time orientable.
+		\item Let $\L^n$ be the $n$-dimensional Lorentz-Minkowski space, i.e. $\L^n$ is $\R^n$ endowed with the Lorentzian metric $g=dx_1^2+...+dx_{n-1}^2-dx_n^2$, where $(x_1,..,x_n)$ is the usual coordinate system of $\R^n$. The coordinate vector field $\partial/\partial x_n$ is unitary timelike and hence, \autoref{pro:timeorientable}, $\L ^n$ is time orientable.
 		\item Let $\S_1^n$ be the $n$-dimensional De Sitter space; i.e. $\S_1^n =\{p \in \L^{n+1} \, :\, g(p,p)=1 \}$, where $g$ denotes the Lorentzian metric of $\L^{n+1}$. For each $p \in \S_1^n$, we have $T_p\S_1^n=\{v \in \L^{n+1} \, : \, g(p,v)=0\}$
 		and denote by $g_p$ the restriction of $g$ to $T_p\S_1^n$, which is Lorentzian because $\L^{n+1}=T_p\S_1^n \oplus \langle p \rangle$, the direct sum is also $g$-orthogonal and $p$ is spacelike. Observe that a vector field on $\S_1^n$ can be contemplated as a smooth map
 		\[
 		X : \S_1^n \longrightarrow \L^{n+1}
 		\]
-		such that at each point $p \in \S_1^n$ we have $X_p$ is $g$-orthogonal to $p$. Thus, if we put $p=(y,t)\in \S_1^n$, $y \in \R^n$, $t \in \R$, then $X_p=(\frac{t}{1+t^2}\,y,1)$ is a well-defined timelike vector field on $\S_1^n$. Therefore, Proposition \ref{time_orientable}, the Lorentzian manifold $\S_1^n$ is time orientable.
+		such that at each point $p \in \S_1^n$ we have $X_p$ is $g$-orthogonal to $p$. Thus, if we put $p=(y,t)\in \S_1^n$, $y \in \R^n$, $t \in \R$, then $X_p=(\frac{t}{1+t^2}\,y,1)$ is a well-defined timelike vector field on $\S_1^n$. Therefore, Proposition \autoref{pro:timeorientable}, the Lorentzian manifold $\S_1^n$ is time orientable.
 		\item Let $\H_1^n$ be the $n$-dimensional anti De Sitter space; i.e. $\H_1^n =\{p \in \R^{n+1} \, :\, g'(p,p)=-1 \}$, where $g'=dx_1^2+...+dx_{n-1}^2-dx_n^2-dx_{n+1}^2$ and $(x_1,..,x_n,x_{n+1})$ is the usual coordinate system of $\R^{n+1}$. The semi-Riemannian metric $g'$ on $\R^{n+1}$ has index 2 and $\R^{n+1}_2$ will denote $(\R^{n+1},g')$. For each $p \in \H_1^n$, we have $T_p\H_1^n=\{v \in \R^{n+1} \, : \, g'(p,v)=0\}$ and denote by $g'_p$ the restriction of $g'$ to $T_p\H_1^n$, which is Lorentzian because $\R^{n+1}_2=T_p\H_1^n \oplus \langle p \rangle$, the direct sum is also $g'$-orthogonal and $p$ satisfies $g'(p,p)=-1$. The vector field
 		\[
 		X : \H_1^n \longrightarrow \R^{n+1}_2
 		\]
 		given by $X_p=(0,t,-s)$ for $p=(y,s,t)$, $y \in R^{n-1}$, $s,t\in \R$, is timelike everywhere.
 		
-		Therefore, \autoref{time_orientable}, the Lorentzian manifold $\H_1^n$ is time orientable.
+		Therefore, \autoref{pro:timeorientable}, the Lorentzian manifold $\H_1^n$ is time orientable.
 	\end{enumerate}
 \end{example}
 
@@ -189,6 +207,7 @@ A more interesting characterization of time oriented Lorentzian manifolds is the
 It is known that each closed piecewise smooth curve on $M$ is null homotopic by means of a piecewise smooth homotopy whenever $M$ is assumed to be simply connected. Using \autoref{cor:timeorientable2}, the following result holds.
 
 \begin{corollary}
+	\label{cor:simplyconnected}
 	If $M$ is simply connected, $(M,g)$ is time orientable.
 \end{corollary}
 
@@ -213,7 +232,7 @@ One interesting question arises now: are there Lorentzian manifolds that are \em
 	\[
 		\big(m,(x,y)\big) \mapsto f^m(x,y)=(x,y+m\pi).
 	\]
-	Then $M$ is a cylinder and the metric $g$ may be induced to a Lorentzian metric ${\tilde g}$ in $M$. We want to show that $(M,{\tilde g})$ is not time orientable. If we choose a time cone at $(0,0)$ then along the axis $x=0$ it changes its position in the counter-clockwise rotation sense. Note that $(0,0)$ and $(0,\pi)$ represent the same point of $M$ but the time cones at these points are not compatible with the equivalence relation in $\R^2$ induced by $f$. Note that $Y=-\sin y \frac{\partial}{\partial x} + \cos y \frac{\partial}{\partial y}$ is a timelike vector field on $(\R^2,g)$ (of course, $(\R^2,g)$ is time orientable from \autoref{simply_connected}) which satisfies $Y_{(0,0)}=\frac{\partial}{\partial y}\mid_{(0,0)}$ and $Y_{(0,\pi)}=-\frac{\partial}{\partial y}\mid_{(0,\pi)}$.
+	Then $M$ is a cylinder and the metric $g$ may be induced to a Lorentzian metric ${\tilde g}$ in $M$. We want to show that $(M,{\tilde g})$ is not time orientable. If we choose a time cone at $(0,0)$ then along the axis $x=0$ it changes its position in the counter-clockwise rotation sense. Note that $(0,0)$ and $(0,\pi)$ represent the same point of $M$ but the time cones at these points are not compatible with the equivalence relation in $\R^2$ induced by $f$. Note that $Y=-\sin y \frac{\partial}{\partial x} + \cos y \frac{\partial}{\partial y}$ is a timelike vector field on $(\R^2,g)$ (of course, $(\R^2,g)$ is time orientable from \autoref{cor:simplyconnected}) which satisfies $Y_{(0,0)}=\frac{\partial}{\partial y}\mid_{(0,0)}$ and $Y_{(0,\pi)}=-\frac{\partial}{\partial y}\mid_{(0,\pi)}$.
 	
 	Taking into account that $df_{(0,0)}Y_{(0,0)}=-Y_{(0,\pi)}$, $Y$ cannot be induced on $M$. On the other hand, assume there exists ${\tilde X}\in \mathfrak{X}(M)$ such that ${\tilde g}({\tilde X},{\tilde X})<0$ and let $X\in \mathfrak{X}(\R^2)$, $g(X,X)<0$, which projects onto ${\tilde X}$. Necessarily $df_{(x,y)}X_{(x,y)}=X_{(x,y+\pi)}$ and $g(Y_{(x,y)},X_{(x,y)})\neq 0$ for all $(x,y)\in \R^2$.
 	
