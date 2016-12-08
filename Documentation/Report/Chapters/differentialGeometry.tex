@@ -794,12 +794,13 @@ Furthermore, if $f$ is a proper variation, the velocity satisfies $V(0) = 0$ and
 We can define now a quantity minimized by geodesics, in order to find a characterization with which we can work. In a semi-Riemannian manifold, this quantity will be the energy.
 
 \begin{definition}[Energy of a variation]
+	\label{def:energy}
 	Let $f$ be a variation of a smooth curve $c$ on a manifold $M$
 	
 	The \emph{energy of $f$} is defined a
 	\begin{align*}
-		E_f \colon (-\varepsilon, \varepsilon) \to \R \\
-		s &\mapsto E_f(s) \defeq \int_0^1 g \left( \pd{f}{t}(s,t), \pd{f}{t}(s,t) \right),
+		E_f \colon (-\varepsilon, \varepsilon) &\to \R \\
+		s &\mapsto E_f(s) \defeq \int_0^1 g \left( \pd{f}{t}(s,t), \pd{f}{t}(s,t) \right) dt,
 	\end{align*}
 	where $g$ is a metric on $M$ and $\pd{f}{t}(s,t)$ denotes the velocity of $f_s$ on the instant $t$.
 \end{definition}
@@ -826,6 +827,7 @@ Some interesting properties of the energy function are studied on the following 
 The characterization of geodesics we are looking for comes as a consequence of \autoref{pro:energyprop}.
 
 \begin{proposition}
+	\label{pro:variationalgeodesic}
 	A piecewise smooth curve $c \colon [0,1] \to M$ is a geodesic if and only if
 	\[
 		\frac{dE_f}{ds}(0) = 0 \quad \textrm{ for every $f$, proper variation of $c$}.

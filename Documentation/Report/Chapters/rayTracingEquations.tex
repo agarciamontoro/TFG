@@ -1,49 +1,68 @@
-\chapter{Ray-tracing equations}
+\chapter{Equations of Motion}
 
-The Kerr metric is
+This chapter aims to find the most computationally stable equations of motion for $\gamma$, a free falling lightlike particle moving on a Kerr spacetime.
+
+The classical equations derived from the definition of geodesic,
 \[
-	g_{\mu\nu} = \begin{pmatrix}
-		-\alpha^2 + \varpi^2\omega^2 & 0 & 0 & -\varpi^2\omega \\
-		0 & \nicefrac{\rho^2}{\Delta} & 0 & 0 \\
-		0 & 0 & \rho^2 & 0 \\
-		-\varpi^2\omega^2 & 0 & 0 & \varpi^2
-	\end{pmatrix},
+\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0 \quad k = 1, \dots, n,
 \]
-with inverse
-\[
-	g^{\mu\nu} = \begin{pmatrix}
-		-\nicefrac{1}{\alpha^2} & 0 & 0 & -\nicefrac{\omega}{\alpha^2} \\
-		0 & \nicefrac{\Delta}{\rho^2} & 0 & 0 \\
-		0 & 0 & \nicefrac{1}{\rho^2} & 0 \\
-		-\nicefrac{\omega}{\alpha^2} & 0 & 0 & (\nicefrac{1}{\varpi^2}) - (\nicefrac{\omega^2}{\alpha^2})
-	\end{pmatrix},
-\]
-where
+are not interesting enough to later implement a numeric algorithm that integrates them: they do not directly provide conserved quantities that can be useful in our computations and, furthermore, we would have to deal with a second order system of differential equations.
+
+In our journey to find such equations, we will find the classical Hamiltonian formulation \cite[Sec. 33.5]{thorne73}, that gives us a first order system with conserved quantities but with numerically unstable equations; this would force us to deal with the zeros of a pair of square roots.
+
+Finally, we will be able to get rid of those square roots, simply by defining another equivalent Hamiltonian that will led us to a first order system with conserved quantities and which will be numerically-friendly \cite{thorne15}.
+
+From now on, and valid throughout this chapter, let $\gamma$ be a lightlike particle, whose tangent vector components, expressed in Boyer-Lindquist coordinates, are
+\begin{equation}
+	\label{eq:blcoord1}
+	\mathbf{v}^\alpha = (\dot{t}, \dot{r}, \dot{\vartheta}, \dot{\varphi}),
+\end{equation}
+whereas its covariant equivalent version, the momentum, is noted as
+\begin{equation}
+	\label{eq:blcoord2}
+	\mathbf{p}_\alpha = \mathbf{v}_\alpha = (p_t, p_r, p_\vartheta, p_\varphi).
+\end{equation}
+
+The relation between the two quantities is obtained through the operation of lower and raising indices using the metric. Therefore, we have the two equations
 \begin{align}
-	\omega &= \frac{2ar}{\Sigma^2},  \quad \varpi = \frac{\Sigma\sin\vartheta}{\rho}, \quad \alpha = \frac{\rho\sqrt{\Delta}}{\Sigma}, \quad \rho = \sqrt{r^2 + a^2\cos^2\vartheta},\nonumber\\
-	\Delta &= r^2 - 2r + a^2, \textrm{ and } \Sigma = \sqrt{(r^2+a^2)^2 - a^2\Delta\sin^2\vartheta}.
-	\label{eq:termdef}
+	\label{eq:raisep}
+	\mathbf{v}^\alpha &= g^{\beta\alpha} \mathbf{p}_\beta, \\
+	\label{eq:lowerv}
+	\mathbf{p}_\alpha &= g_{\beta\alpha} \mathbf{v}^\beta.
 \end{align}
 
-In order to obtain the geodesic equations we need to note that we have four first integrals of motion \fixme{Define integral of motion}:
+\section{Classical Hamiltonian Formulation}
+
+It is known \cite[Sec. 33.5]{thorne73} that the geodesic equation $\gamma'' = 0$ is equivalent to the system
+\begin{equation*}
+	\frac{dx^\mu}{d\lambda} = \pd{\mathcal{H}}{p_\mu}, \qquad
+	\frac{dp_\mu}{d\lambda} = - \pd{\mathcal{H}}{x^\mu}.
+\end{equation*},
+where $\lambda$ is an affine parameter such that $d/d\lambda = \mathbb{p}$ and where
+\[
+	\mathcal{H} = \frac{1}{2} g^{\mu\nu} p_\mu p_\nu
+\]
+is the usual Hamiltonian: a half of the square of the velocity.
+
+This Hamiltonian formalism let us obtain four first integrals of motion\fixme{Define integral of motion}\cite[pp. 898-899]{thorne73}, that come as a result from the stationary and axial symmetry of the geometry of Kerr spacetimes, from the nearly miraculous work of Carter when computing the constant named after him and from the modulus of the momentum:
 \begin{itemize}
-	\item The killing vector \fixme{Define killing vector} $\partial_t$, which raises the conserved quantity
+	\item The killing vector $\partial_t$ raises the conserved quantity
 	\[
-		g_{\mu\nu}(\partial_t)^\mu u^\nu = (\partial_t)^\mu p_\mu = p_t = -E
+		g_{\alpha\beta}(\partial_t)^\alpha u^\beta = (\partial_t)^\alpha p_\alpha = p_t = -E,
 	\]
-	\item The killing vector $\partial_\phi$, which raises the conserved quantity
+	\item The killing vector $\partial_\phi$ raises the conserved quantity
 	\[
-		g_{\mu\nu}(\partial_\phi)^\mu u^\nu = (\partial_\phi)^\mu p_\mu = p_\phi = L_z
+		g_{\alpha\beta}(\partial_\phi)^\alpha u^\beta = (\partial_\phi)^\alpha p_\alpha = p_\phi = L_z,
 	\]
 	\item The Carter's constant, which can be written as
 	\begin{equation}
 		\label{eq:carter}
-		Q = p_\vartheta^2 + \cos^2\vartheta \left( a^2 \left( \mu^2 - E^2 \right) + \frac{L_z^2}{\sin^2\vartheta} \right)
+		Q = p_\vartheta^2 + \cos^2\vartheta \left( a^2 \left( \mu^2 - E^2 \right) + \frac{L_z^2}{\sin^2\vartheta} \right).
 	\end{equation}
-	\item The modulus of the tangent vector $p_\mu$, which is
+	\item The modulus of the tangent vector $p_\alpha$, which is
 	\begin{equation}
 		\label{eq:modulus}
-		p_\mu p_\nu g^{\mu\nu} = -\mu^2,
+		p_\alpha p_\beta g^{\alpha\beta} = -\mu^2,
 	\end{equation}
 	that is,
 	\[
@@ -51,17 +70,17 @@ In order to obtain the geodesic equations we need to note that we have four firs
 	\]
 \end{itemize}
 
-In order to obtain the classic equations we need to know the relation between $u^\mu$ and $p_\mu$, which is simply
-\begin{equation}
-	\label{eq:relation}
-	u^\mu = g^{\mu\nu}p_\nu,
-\end{equation}
-where their components will be denoted as
-\[
-	u^\mu = (\dot{t}, \dot{r}, \dot{\vartheta}, \dot{\varphi}), \qquad u_\mu = p_\mu = (p_t, p_r, p_\vartheta, p_\varphi).
-\]
+%\begin{equation}
+%	\begin{cases}
+%		p_t &= -\dot{t}\alpha^2 - \dot{\varphi}\omega\varpi^2 + \dot{t}\omega^2\varpi^2 \\
+%		p_r &= \frac{\dot{r}\rho^2}{\Delta} \\
+%		p_\vartheta &= \dot{\vartheta}\rho^2 \\
+%		p_\varphi &= \dot{\varphi}\varpi^2 - \dot{t}\omega\varpi^2
+%	\end{cases}
+%\end{equation}
 
-Therefore, \autoref{eq:relation} written on the components noted above, gives us four equations:
+
+Using the constants of motion, the relation in \autoref{eq:raisep} and the components notation used in equations \ref{eq:blcoord1} and  \ref{eq:blcoord2}, we obtain four equations:
 \begin{align}
 	\label{eq:initt}
 	\dot{t} &= \frac{E}{\alpha^2} - \frac{L_z \omega}{\alpha^2} \\
@@ -73,118 +92,143 @@ Therefore, \autoref{eq:relation} written on the components noted above, gives us
 	\dot{\varphi} &= \frac{E \omega}{\alpha^2} + L_z\left( \frac{1}{\varpi^2} - \frac{\omega^2}{\alpha^2} \right)
 \end{align}
 
-Our goal now is to write the previous equations in terms of the constants $E$, $L_z$, $Q$ and $\mu$. Let us see each equation separately.
+From this direct computation, we can express all four equations in terms of the constants $E$, $L_z$, $Q$ and $\mu$, which yields the following result \cite[p. 899]{thorne73}.
 
-\section{$\dot{r}$ Equation}
+\begin{theorem}
+	\label{theo:firsteqs}
+	A free falling lightlike particle $\gamma$ satisfies:
+	\begin{align}
+		\label{eq:teq}
+		\rho^2 \dot{t} &=-( aE\sin^2\vartheta - L_z) + \frac{r^2+a^2}{\Delta}P \\
+		\label{eq:req}
+		\rho^2 \dot{r} &= \sqrt{R} \\
+		\label{eq:thetaeq}
+		\rho^2 \dot{\vartheta} &= \sqrt{\Theta} \\
+		\label{eq:phieq}
+		\rho^2 \dot{\varphi} &=-( aE - \frac{L_z}{\sin^2\vartheta}) + \frac{a}{\Delta}P,
+	\end{align}
+	where $R$ and $\Theta$ are the functions defined as follows:
+	\begin{align}
+		\label{eq:defR}
+		R &\defeq P^2 - \Delta \left( r^2\mu^2 + Q + \left(L_z - aE \right)^2 \right), \\
+		\label{eq:defTheta}
+		\Theta &\defeq Q - \cos^2\vartheta \left( \frac{L_z^2}{\sin^2\vartheta} + \omega^2\left(\mu^2 - E^2 \right)\right),
+	\end{align}
+	with $P$ an auxiliary function defined as
+	\begin{equation}
+		\label{eq:defP}
+		P \defeq E(r^2 + a^2) - aL_z.
+	\end{equation}
+\end{theorem}
 
-Using \autoref{eq:modulus}, we can find the value of $p_r$:
-\[
+\begin{proof}
+	We will only prove equations \ref{eq:req} and \ref{eq:thetaeq}, as the computation of the other two is really similar and does not contribute anything interesting. Furthermore, only the $\dot{r}$ and $\dot{\vartheta}$ equations will prove to be useful on the next section of this chapter.
+	
+	\subsection*{$\dot{r}$ Equation}
+	
+	Using \autoref{eq:modulus}, we can find the value of $p_r$:
+	\[
 	p_r^2 = \left( \frac{(E - L_z\omega)^2}{\alpha^2} - \frac{L_z^2}{\varpi^2} - \frac{p_\vartheta^2}{\rho^2} - \mu^2 \right) \frac{\rho^2}{\Delta}.
-\]
-
-We can now substitute $p_r$ for its value in the squared version of \autoref{eq:initr}:
-\begin{equation}
+	\]
+	
+	We can now substitute $p_r$ for its value in the squared version of \autoref{eq:initr}:
+	\begin{equation}
 	\label{eq:r1}
 	\dot{r}^2 = \Delta \left( -\eqnote{\dot{\vartheta}}{from $p_\vartheta = \rho^2\dot{\vartheta}$}^2 + \frac{E^2}{\alpha^2\rho^2} - \frac{\mu^2}{\rho^2} - \frac{2L_zE\omega}{\alpha^2\rho^2} + \frac{L_z^2\omega^2}{\alpha^2\rho^2} - \frac{L_z^2}{\rho^2\varpi^2} \right)
-\end{equation}
-
-If we write \autoref{eq:r1} in the form
-\[
-	\rho^2 \dot{r} = \sqrt{R},
-\]
-the function $R$ has the expression
-\begin{align}
+	\end{equation}
+	
+	If we write \autoref{eq:r1} in the form
+	\[
+	\rho^2 \dot{r} = \sqrt{\widehat{R}},
+	\]
+	the function $\widehat{R}$ has the expression
+	\begin{align}
 	\nonumber
-	R &= \rho^4 \left( -\frac{\Theta}{\rho^4} + \frac{(E^2 - L_z\omega)^2}{\alpha^2\rho^2} - \frac{\mu^2}{\rho^2} - \frac{L_z^2}{\rho^2\varpi^2} \right) = \\
+	\widehat{R} &= \rho^4 \left( -\frac{\Theta}{\rho^4} + \frac{(E^2 - L_z\omega)^2}{\alpha^2\rho^2} - \frac{\mu^2}{\rho^2} - \frac{L_z^2}{\rho^2\varpi^2} \right) = \\
 	&= \Delta \left( -\Theta + \frac{(E-L_z\omega)^2\rho^2}{\alpha^2} - \mu^2\rho^2 - \frac{L_z^2 \rho^2}{\varpi^2} \right).
 	\label{eq:R1}
-\end{align}
-
-Notice that
-\[
+	\end{align}
+	
+	Notice that
+	\[
 	\frac{\rho^2}{\alpha^2} = \frac{\Sigma^2}{\Delta}, \qquad \frac{\rho^2}{\varpi^2} = \frac{\rho^4}{\Sigma^2 \sin^2\vartheta}.
-\]
-
-Let us now substitute $\Theta$ by its definition (\autoref{eq:deftheta}) on \autoref{eq:R1}, from which we obtain:
-
-\begin{align}
-	R =\,& \Delta \biggl( -Q + \cos^2\vartheta\left( \frac{L_z^2}{\sin^2\vartheta} + a^2 (\mu^2 - E^2) \right) + \frac{\Sigma^2}{\Delta}(E - L_z\omega)^2 - \nonumber \\
+	\]
+	
+	Let us now substitute $\Theta$ by its definition (\autoref{eq:deftheta}) on \autoref{eq:R1}, from which we obtain:
+	
+	\begin{align}
+	\widehat{R} =\,& \Delta \biggl( -Q + \cos^2\vartheta\left( \frac{L_z^2}{\sin^2\vartheta} + a^2 (\mu^2 - E^2) \right) + \frac{\Sigma^2}{\Delta}(E - L_z\omega)^2 - \nonumber \\
 	&- \mu^2\rho^2 - \frac{L_z^2\rho^4}{\Sigma^2\sin^2\vartheta} \biggr) = \nonumber \\
 	=\,& \Delta \biggl( -Q + \cos^2\vartheta\left( \frac{L_z^2}{\sin^2\vartheta} + a^2 (\mu^2 - E^2) \right) + \nonumber \\
 	&+ \frac{\Sigma^2}{\Delta}\left( E^2 + L_z^2\left( \frac{2ar}{\Sigma^2} \right)^2 - 2EL_z\frac{2ar}{\Sigma^2} \right)  - \mu^2\rho^2 - \nonumber \\
 	&- \frac{L_z^2}{\sin^2\vartheta}\frac{\rho^4}{(r^2 + \omega)^2 - a^2\Delta\sin^2\vartheta} \biggr)
-\end{align}
-
-This can be simplified in order to get a more readable expression, although the work will be somewhat cumbersome.
-
-Let us start by simplifying the previous expression by actually making the product by the factorised $\Delta$ and the inner $\Sigma^2$:
-
-\begin{align}
-	R =\,& -Q\Delta + \Delta\cos^2\vartheta\left( \frac{L_z^2}{\sin^2\vartheta} + a^2 (\mu^2 - E^2) \right) + \Sigma^2 E^2 + \nonumber \\
+	\end{align}
+	
+	This can be simplified in order to get a more readable expression, although the work will be somewhat cumbersome.
+	
+	Let us start by simplifying the previous expression by actually making the product by the factorised $\Delta$ and the inner $\Sigma^2$:
+	
+	\begin{align}
+	\widehat{R} =\,& -Q\Delta + \Delta\cos^2\vartheta\left( \frac{L_z^2}{\sin^2\vartheta} + a^2 (\mu^2 - E^2) \right) + \Sigma^2 E^2 + \nonumber \\
 	&+ \frac{L_z^2 (2ar)^2}{\Sigma^2} - 2 E L_z 2ar  - \mu^2\rho^2\Delta - \frac{L_z^2}{\sin^2\vartheta}\frac{\Delta\rho^4}{\Sigma^2}
 	\label{eq:R2}
-\end{align}
-
-Rearranging \autoref{eq:R2}, we obtain
-\begin{align}
-	R =& \overbrace{\frac{L_z^2 \left(4a^2r^2 - \frac{\Delta\rho^4}{\sin^2\vartheta}\right)}{\Sigma^2}}^{\text{(\dag)}} - 4 a r E L_z - \mu^2 \rho^2 \Delta + \Sigma^2 E^2 - Q \Delta + \nonumber \\ 
+	\end{align}
+	
+	Rearranging \autoref{eq:R2}, we obtain
+	\begin{align}
+	\widehat{R} =& \overbrace{\frac{L_z^2 \left(4a^2r^2 - \frac{\Delta\rho^4}{\sin^2\vartheta}\right)}{\Sigma^2}}^{\text{(\dag)}} - 4 a r E L_z - \mu^2 \rho^2 \Delta + \Sigma^2 E^2 - Q \Delta + \nonumber \\ 
 	&+ \Delta\cos^2\vartheta\left(\frac{L_z^2}{\sin^2\vartheta} + a^2\left(\mu^2 - E^2\right)\right).
-\end{align}
-
-Let us focus now on (\dag):
-
-\begin{align}
+	\end{align}
+	
+	Let us focus now on (\dag):
+	
+	\begin{align}
 	(\dag) =\,& \frac{L_z^2 \left(4a^2r^2 - \frac{\Delta\rho^4}{\sin^2\vartheta}\right)}{\Sigma^2} = \frac{L_z^2 \left(4a^2r^2\sin^2\vartheta - \rho^4\Delta \right)}{\sin^2\vartheta\left(\left(r^2+a^2\right)^2 - a^2\Delta\sin^2\vartheta\right)} \nonumber \\
 	=\,& \frac{\Biggl\{L_z^2\left(4a^2r^2\sin^2\vartheta+\left(r^2+2r-a^2\right)\left(r^2+\omega^2\cos^2\vartheta\right)^2\right)\Biggr\}(\ddag)}{\sin^2\vartheta\left(\left(r^2+a^2\right)^2-a^2\Delta\sin^2\vartheta\right)}
-\end{align}
-
-Let us try to simplify (\ddag), the numerator of (\dag), first:
-
-\begin{align}
+	\end{align}
+	
+	Let us try to simplify (\ddag), the numerator of (\dag), first:
+	
+	\begin{align}
 	(\ddag) =\,& L_z^2 \Biggl( -r^6 + 2r^6 + r^4 \left( -a^2 - 2a^2\cos^2\vartheta \right) + r^3\left(4 a^2 \cos^2\vartheta \right) + \nonumber \\
 	&+ r^2 \left( -2a^4\cos^2\vartheta - a^4\cos^4\vartheta + 4a^2\sin^2\vartheta\right) + r\left(2a^4\cos^4\vartheta\right) - \nonumber \\
 	&- a^6\cos^4\vartheta \Biggr) = L_z^2 \left( \left(r^2 + a^2\right)^2 - a^2 \left(r^2 - 2r + a^2\right)\sin^2\vartheta \right) \cdot \nonumber \\
 	&\cdot \left( -\frac{a^2}{2} + 2r - r^2 - \frac{1}{2}a^2\cos^2\vartheta + \frac{1}{2a^2\sin^2\vartheta} \right) = \nonumber\\
 	=\,& L_z^2 \Sigma^2 \left( -\frac{a^2}{2} + 2r - r^2 - \frac{1}{2}a^2\cos^2\vartheta + \frac{1}{2a^2\sin^2\vartheta} \right)
-\end{align}
-
-Then, the term (\dag) becomes:
-\[
+	\end{align}
+	
+	Then, the term (\dag) becomes:
+	\[
 	(\dag) = \frac{L_z^2 \left( -\frac{a^2}{2} + 2r - r^2 - \frac{1}{2}a^2\cos^2\vartheta + \frac{1}{2}a^2\sin^2\vartheta\right) }{\sin^2\vartheta},
-\]
-and so the function $R$ can be now written as:
-
-\begin{align}
-	R =& \frac{L_z^2 \left( -\frac{a^2}{2} + 2r - r^2 - \frac{1}{2}a^2\cos^2\vartheta + \frac{1}{2}a^2\sin^2\vartheta\right) }{\sin^2\vartheta} - \nonumber\\
+	\]
+	and so the function $\widehat{R}$ can be now written as:
+	
+	\begin{align}
+	\widehat{R} =& \frac{L_z^2 \left( -\frac{a^2}{2} + 2r - r^2 - \frac{1}{2}a^2\cos^2\vartheta + \frac{1}{2}a^2\sin^2\vartheta\right) }{\sin^2\vartheta} - \nonumber\\
 	&- 4 a r E L_z - \mu^2 \rho^2 \Delta + \Sigma^2 E^2 - Q \Delta + \nonumber \\ 
 	&+ \Delta\cos^2\vartheta\left(\frac{L_z^2}{\sin^2\vartheta} + a^2\left(\mu^2 - E^2\right)\right).
-\end{align}
-
-Substituting $\Sigma$ and $\Delta$ by their values, defined on equations \ref{eq:termdef}, we obtain
-\begin{align}
-	R =\,& \frac{a^2L_z^2}{2} - \Delta Q - 4aL_zrE + a^4E^2 + 2a^2r^2E^2 + r^4E^2 - a^2r^2\mu^2 + \nonumber \\
+	\end{align}
+	
+	Substituting $\Sigma$ and $\Delta$ by their values, defined on equations \ref{eq:termdef}, we obtain
+	\begin{align}
+	\widehat{R} =\,& \frac{a^2L_z^2}{2} - \Delta Q - 4aL_zrE + a^4E^2 + 2a^2r^2E^2 + r^4E^2 - a^2r^2\mu^2 + \nonumber \\
 	&+ 2r^3\mu^2 - r^4\mu^2 + \nonumber\\
 	&+ cos^2\vartheta\left(-a^4E^2 + 2a^2rE^2 - a^2r^2E^2 \right) + \nonumber \\
 	&+ \sin^2\vartheta\left( -a^4E^2 + 2a^2rE^2 - a^2r^2E^2 \right) + \nonumber\\
 	&+ \cot^2\vartheta\left( \frac{a^2L_z^2}{2} - 2L_z^2r + L_z^2r^2 \right) + \nonumber \\
 	&+ \csc^2\vartheta\left( -\frac{a^2L_z^2}{2} + 2L_z^2r - L_z^2r \right).
-\end{align}
-
-We can simplify the last two pairs of terms using that $\sin^2 \vartheta + \cos^2 \vartheta = 1$ and that $\csc^2\vartheta - \cot^2\vartheta = 1$:
-\begin{align}
-	R =\,& \frac{a^2L_z^2}{2} - \Delta Q - 4aL_zrE + a^4E^2 + 2a^2r^2E^2 + r^4E^2 - a^2r^2\mu^2 + \nonumber \\
+	\end{align}
+	
+	We can simplify the last two pairs of terms using that $\sin^2 \vartheta + \cos^2 \vartheta = 1$ and that $\csc^2\vartheta - \cot^2\vartheta = 1$:
+	\begin{align}
+	\widehat{R} =\,& \frac{a^2L_z^2}{2} - \Delta Q - 4aL_zrE + a^4E^2 + 2a^2r^2E^2 + r^4E^2 - a^2r^2\mu^2 + \nonumber \\
 	&+ 2r^3\mu^2 - r^4\mu^2 + \left(-a^4E^2 + 2a^2rE^2 - a^2r^2E^2 \right) + \nonumber \\
 	&+ \left( -\frac{a^2L_z^2}{2} + 2L_z^2r - L_z^2r \right).
-\end{align}
-
-Factoring out common terms in the last two addends, using the definition of $\Delta$ and defining the function
-\begin{equation}
-	\label{eq:defP}
-	P \defeq E(r^2 + a^2) - aL_z,
-\end{equation}
-we simplify a little bit more:
-\begin{align}
-	R =\,& \frac{a^2L_z^2}{2} - \Delta Q - 4aL_zrE + a^4E^2 + 2a^2r^2E^2 + r^4E^2 - a^2r^2\mu^2 + \nonumber \\
+	\end{align}
+	
+	Factoring out common terms in the last two addends, using the definition of $\Delta$ and \autoref{eq:defP}, we simplify a little bit more:
+	\begin{align}
+	\widehat{R} =\,& \frac{a^2L_z^2}{2} - \Delta Q - 4aL_zrE + a^4E^2 + 2a^2r^2E^2 + r^4E^2 - a^2r^2\mu^2 + \nonumber \\
 	&+ 2r^3\mu^2 - r^4\mu^2 + a^2E^2\left(-a^2 + 2r - r^2 \right) + L_z^2\left( -\frac{a^2}{2} + 2r - r^2 \right) = \nonumber \\
 	=\,& \frac{a^2L_z^2}{2} - \Delta Q - 4aL_zrE + a^4E^2 + 2a^2r^2E^2 + r^4E^2 - a^2r^2\mu^2 + \nonumber \\
 	&+ 2r^3\mu^2 - r^4\mu^2 - a^2E^2\Delta + L_z^2\Delta + \frac{a^2L_z^2}{2} = \nonumber \\
@@ -196,27 +240,106 @@ we simplify a little bit more:
 	=\,& P^2 + r^2\mu^2\Delta + L_z^2\Delta - a^2E^\Delta - 2L_zaE\left(2r - r^2 - a^2\right) - Q\Delta = \nonumber\\
 	=\,& P^2 + r^2\mu^2\Delta - L_z^2 \Delta - a^2E^2\Delta - 2L_zaE\Delta - Q\Delta = \nonumber \\
 	=\,& P^2 - \Delta \left( r^2\mu^2 + Q + \left(L_z - aE \right)^2 \right)
-\end{align}
-
-\section{$\dot{\vartheta}$ Equation}
-
-Using the definition of the Carter constant (\autoref{eq:carter}), we can directly find the value of $p_\vartheta$
-\begin{align}
+	\end{align}
+	
+	This proves that $\widehat{R} = R$, and therefore proves \autoref{eq:req}.
+	
+	\subsection*{$\dot{\vartheta}$ Equation}
+	
+	Using the definition of the Carter constant (\autoref{eq:carter}), we can directly find the value of $p_\vartheta$
+	\begin{align}
 	p_\vartheta^2 &= Q + a^2E^2\cos^2\vartheta - a^2\mu^2\cos^2\vartheta - \frac{L_z^2}{\sin^2\vartheta}\cos^2\vartheta = \\
 	&= Q - \cos^2\vartheta\left( a^2\left(\mu^2 - E^2 \right) `\frac{L_z^2}{\sin^2\vartheta} \right).
+	\end{align}
+	
+	Therefore, \autoref{eq:inittheta} is directly equivalent to the following one:
+	\begin{equation}
+	\rho^2 \dot{\vartheta} = \sqrt{\Theta},
+	\end{equation}
+	where $\Theta$ is defined in \autoref{eq:defTheta}. This finally proves \autoref{eq:thetaeq}.
+\end{proof}
+
+	
+\section{Variational Formulation}
+The study of the variational characterization of geodesics gave us an interesting result, from which we can change the problem of finding a geodesic by an equivalent one: to find the solution of a variational problem.
+
+\autoref{pro:variationalgeodesic} states that $\gamma$ is a geodesic if and only if
+\[
+\frac{dE_f}{ds}(0) = 0.
+\]
+
+This lead us to understand geodesics ---we could even define them that way--- as the critical points of the energy, and yields a variational problem whose Lagrangian depends on the proper variation $f(s,t)$.
+
+Using the characterization from \autoref{def:energy}, the variational problem equivalent to finding the equations of motion for $\gamma$ has the following Lagrangian:
+\begin{equation}
+	\label{eq:1stlagrangian}
+	\mathcal{L} = g\left( \frac{df}{dt}, \frac{df}{dt} \right)
+\end{equation}
+
+This Lagrangian can now be expressed in terms of $\gamma$ components. We can then write the usual form of the Lagrangian:
+\begin{align}
+\mathcal{L} =\,& \frac{1}{2} \mathbf{v}^\mu \mathbf{v}_\mu = \\
+=\,& \frac{1}{2} \Biggl( \dot{t}\biggl( -\dot{\varphi}^2\omega\varpi^2 + \dot{t} \left( -\alpha^2 + \omega^2\varpi^2 \right) \biggr) +\\
+&\quad + \dot{r}^2\frac{\rho^2}{\Delta} + \dot{\vartheta}\rho^2 + \dot{\varphi}\left( \dot{\varphi} r^2 - \dot{t} \omega \varpi^2 \right) \Biggr)
 \end{align}
 
-Therefore,\autoref{eq:inittheta} is equivalent to the following one:
+This is similar to the formalism we developed in the previous section, but we can now consider the Hamiltonian version of this formulation, which appear simply by applying the Legendre transform:
+\begin{equation*}
+	\mathcal{H} = \sum p_i q_i - \mathcal{L}.
+\end{equation*}
+
+Our goal now is to recover the system described at \cite[Eq. (A.15)]{thorne15}. In order to do that, we can rewrite $\mathcal{H}$ as follows:
 \begin{equation}
-	\rho^2 \dot{\vartheta} = \sqrt{\Theta},
+	\label{eq:hamiltonian}
+	\mathcal{H} = \frac{p_r^2 \Delta}{2\rho^2} + \frac{p_\vartheta^2}{2\rho^2} + \mathfrak{f},
 \end{equation}
-where $\Theta$ is defined as
+where $\mathfrak{f}$ is the function consisting on the remaining terms of $\mathcal{H}$.
+
+Although $\mathfrak{f}$ is completely defined and can be written as is, we are using the fact that $\mathcal{H} = \frac{-\mu^2}{2}$, and write it using the remaining terms.
+
+Let us first work a little bit more on $\mathcal{H}$, rewriting \autoref{eq:hamiltonian}. First of all, we realize that we can write the definition of the components of $\mathbf{p}_\alpha$ from \autoref{eq:lowerv}:
+\begin{align}
+	\label{eq:pteq}
+	p_t &= -\dot{t}\alpha^2 - \dot{\varphi}\omega\varpi^2 + \dot{t}\omega^2\varpi^2 \\
+	\label{eq:preq}
+	p_r &= \frac{\dot{r}\rho^2}{\Delta}\\
+	\label{eq:pthetaeq}
+	p_\vartheta &= \dot{\vartheta}\rho^2\\
+	\label{eq:pphieq}
+	p_\varphi &= \dot{\varphi}\varpi^2 - \dot{t}\omega\varpi^2\\
+\end{align}
+
+Now, using these equations and the ones obtained in \autoref{theo:firsteqs}, we can rewrite $\mathcal{H}$ as follows:
+\begin{align*}
+	\mathcal{H} &= \frac{p_r^2 \Delta}{2\rho^2} + \frac{p_\vartheta^2}{2\rho^2} + \mathfrak{f} \eqnote{=}{\ref{eq:preq}, \ref{eq:pthetaeq}} \frac{\left( \frac{\dot{r}\rho^2}{\Delta} \right)^2 \Delta}{2\rho^2} + \frac{\left(\dot{\vartheta}\rho^2\right)^2}{2\rho^2} + \mathfrak{f} = \\
+	&= \dot{r}^2\frac{\rho^2}{2\Delta} + \dot{\vartheta}^2\rho^2 + \mathfrak{f} \eqnote{=}{\ref{eq:req}, \ref{eq:thetaeq}} \frac{R}{\rho^4 }\frac{\rho^2}{2\Delta} + \frac{\Theta}{\rho^4}\rho^2 + \mathfrak{f} =\\
+	&= \frac{R}{2\rho^2\Delta} + \frac{\Theta}{\rho^2} + \mathfrak{f}.
+\end{align*}
+
+Now, using that $\mathcal{H} = \frac{-\mu^2}{2}$, we can express $\mathfrak{f}$ easily:
+\[
+	\mathfrak{f} = - \frac{R + \Delta \Theta}{2\Delta\rho^2} - \frac{\mu^2}{2}.
+\]
+
+The final version of the Hamiltonian is:
 \begin{equation}
-	\label{eq:deftheta}
-	\Theta = Q - \cos^2\vartheta \left( \frac{L_z^2}{\sin^2\vartheta} + \omega^2\left(\mu^2 - E^2 \right)\right).
+	\mathcal{H} = \frac{p_r^2 \Delta}{2\rho^2} + \frac{p_\vartheta^2}{2\rho^2} - \frac{R + \Delta \Theta}{2\Delta\rho^2} - \frac{\mu^2}{2}.
 \end{equation}
 
-\section{$\dot{\varphi}$ Equation}
+From the general Hamilton's equations:
 \[
-	\rho^2 \dot{\varphi} = \frac{E2ar}{\Delta} + L_z\left( \frac{\rho^4}{\Sigma^2\sin^2\vartheta} - \frac{4a^2r^2}{\Sigma^2\Delta} \right)
+	\dot{p}_i = -\pd{\mathcal{H}}{q_i}, \quad \dot{q}_i = \pd{\mathcal{H}}{p_i},
 \]
+which in this case reads as follows
+\begin{align*}
+	\dot{r} = \pd{\mathcal{H}}{p_r}, \quad \dot{\vartheta} = \pd{\mathcal{H}}{p_\vartheta}, \quad \dot{\varphi} = \pd{\mathcal{H}}{p_\varphi} \\
+	\dot{p}_r = - \pd{\mathcal{H}}{r}, \quad \dot{p}_\vartheta = - \pd{\mathcal{H}}{\vartheta}
+\end{align*}
+we obtain the expected first order numerically stable system:
+\begin{align}
+	\dot{r} &= \frac{\Delta}{\rho^2} p_r \\
+	\dot{\vartheta} &= \frac{1}{\rho^2}p_\vartheta \\
+	\dot{\varphi} &= \pd{}{p_\varphi}\left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \\
+	\dot{p}_r &= - \pd{}{r} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right) \\
+	\dot{p}_\vartheta &= - \pd{}{\vartheta} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right)
+\end{align}
