@@ -50,7 +50,7 @@ where $\lambda$ is an affine parameter such that $d/d\lambda = \mathbb{p}$ and w
 \]
 is the usual Hamiltonian: a half of the square of the velocity.
 
-This Hamiltonian formalism let us obtain four first integrals of motion\fixme{Define integral of motion}\cite[pp. 898-899]{thorne73}, that come as a result from the stationary and axial symmetry of the geometry of Kerr spacetimes, from the nearly miraculous work of Carter when computing the constant named after him and from the modulus of the momentum:
+This Hamiltonian formalism let us obtain four first integrals of motion \cite[pp. 898-899]{thorne73}, that come as a result from the stationary and axial symmetry of the geometry of Kerr spacetimes, from the nearly miraculous work of Carter when computing the constant named after him and from the modulus of the momentum:
 \begin{itemize}
 	\item The killing vector $\partial_t$ raises the conserved quantity
 	\[
@@ -288,13 +288,13 @@ The study of the variational characterization of geodesics gave us an interestin
 
 This lead us to understand geodesics ---we could even define them that way--- as the critical points of the energy, and yields a variational problem whose Lagrangian depends on the proper variation $f(s,t)$.
 
-Using the characterization from \autoref{def:energy}, the variational problem equivalent to finding the equations of motion for $\gamma$ has the following Lagrangian:
+Using the characterization from \autoref{def:energy}, the variational problem equivalent to finding the equations of motion for $\gamma$ has the following Lagrangian density:
 \begin{equation}
 	\label{eq:1stlagrangian}
-	\mathcal{L} = g\left( \frac{df}{dt}, \frac{df}{dt} \right)
+	\mathcal{L} = g\left( \pd{f}{t}, \pd{f}{t} \right)
 \end{equation}
 
-This Lagrangian can now be expressed in terms of $\gamma$ components. We can then write the usual form of the Lagrangian:
+This Lagrangian density can now be expressed in terms of $\gamma$ components. We can then write the usual form of the Lagrangian density:
 \begin{align}
 \mathcal{L} =\,& \frac{1}{2} \mathbf{v}^\mu \mathbf{v}_\mu = \\
 =\,& \frac{1}{2} \Biggl( \dot{t}\biggl( -\dot{\varphi}^2\omega\varpi^2 + \dot{t} \left( -\alpha^2 + \omega^2\varpi^2 \right) \biggr) +\\
@@ -364,7 +364,7 @@ which in this case read as follows
 	\dot{r} &= \pd{\mathcal{H}}{p_r}, \quad \dot{\vartheta} = \pd{\mathcal{H}}{p_\vartheta}, \quad \dot{\varphi} = \pd{\mathcal{H}}{p_\varphi} \\
 	\dot{p}_r &= - \pd{\mathcal{H}}{r}, \quad \dot{p}_\vartheta = - \pd{\mathcal{H}}{\vartheta},
 \end{align*}
-we obtain the expected first order numerically stable system:
+we obtain the expected first order system, without the problems caused by the previous square roots.
 \begin{align}
 	\dot{r} &= \frac{\Delta}{\rho^2} p_r \\
 	\dot{\vartheta} &= \frac{1}{\rho^2}p_\vartheta \\
