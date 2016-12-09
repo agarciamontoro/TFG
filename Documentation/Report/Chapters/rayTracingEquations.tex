@@ -6,11 +6,17 @@ The classical equations derived from the definition of geodesic in terms of the 
 \[
 	\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0 \quad k = 1, \dots, n,
 \]
-are not interesting enough to later implement a numeric algorithm that integrates them: they do not directly provide conserved quantities that can be useful in our computations and, furthermore, we would have to deal with a second order system of differential equations.
+are the first stop in our journey to find an equation system that suits our needs.
 
-In our journey to find such a system that fits our needs, we will find the classical Hamiltonian formulation \cite[Sec. 33.5]{thorne73}, that gives us a first order system with conserved quantities but with numerically unstable equations; this version would force us to deal with the zeros of a pair of square roots.
+These equations, although really interesting when, for example, one cannot obtain analytic expression for the differential equations, have some flaws that will force us to discard them:
+\begin{itemize}
+	\item It is a second order system of differential equations, which does not really fit the numerical algorithm to integrate them: when converting the system to first order, we double the number of equations to solve.
+	\item The conserved quantities of the system, which will prove key in the computation of the final equations, can be obtained from these equations as well as for the versions we will see later. However, this system has a problem: it is very difficult to get the conserved quantities \emph{into} the equations.
+\end{itemize}
 
-Finally, we will be able to get rid of those square roots, simply by defining another equivalent Hamiltonian that will lead us to a first order system with conserved quantities and which will be numerically-friendly \cite{thorne15}.
+Having discarded this obvious system of equations, we will look for the classical Hamiltonian formulation \cite[Sec. 33.5]{thorne73}, that gives us a first order system with the conserved quantities in the equations. These quantities are derived from the Hamiltonian formulation, but not the Hamiltonian nor its derived equations will be used here, as the final system equations will be obtained with a quadrature methods. In this formulation, however, another problem arises, as a pair of square roots appear on the right hand side of the equations. This problem will be analysed in the corresponding section.
+
+Finally, we will be able to get rid of those square roots, simply by defining the Hamiltonian and using a version of it that will ease our analytical computations. This approach will lead us to a first order system with conserved quantities and which will be numerically-friendly. This is the approach followed on \cite{thorne15}.
 
 From now on, and valid throughout this chapter, let $\gamma$ be a lightlike particle, whose tangent vector components, expressed in Boyer-Lindquist coordinates, are
 \begin{equation}
@@ -50,7 +56,7 @@ This Hamiltonian formalism let us obtain four first integrals of motion\fixme{De
 	\[
 		g_{\alpha\beta}(\partial_t)^\alpha u^\beta = (\partial_t)^\alpha p_\alpha = p_t = -E,
 	\]
-	\item The killing vector $\partial_\phi$ raises the conserved quantity
+	\item Similarly, we can obtain another conserved quantity from the killing vector $\partial_\phi$:
 	\[
 		g_{\alpha\beta}(\partial_\phi)^\alpha u^\beta = (\partial_\phi)^\alpha p_\alpha = p_\phi = L_z,
 	\]
@@ -120,6 +126,16 @@ From this direct computation, we can express all four equations in terms of the 
 		P \defeq E(r^2 + a^2) - aL_z.
 	\end{equation}
 \end{theorem}
+
+Before proving the theorem, it is interesting to analyse these equations. At first sight, the system look like a good candidate for our purposes, but there is a subtle problem that has to be managed: the square roots on equations \ref{eq:req} and \ref{eq:thetaeq}.
+
+This will make the numeric computation more difficult, as it will force us to continuously check the sign of the derivative on the \emph{turning points}. At these points, we will have to decide which branch to continue the computation on.
+
+This can be handled, but not without effort and a particular care on the numerical side of our algorithm: the turning points would be a great source of errors that we want to avoid.
+
+Is for this reasoning that we continue looking for a better system of equations on \autoref{sec:variational}.
+
+Let us however prove this theorem, as the work done here will not be in vain: both equations \ref{eq:req} and \ref{eq:thetaeq} will be used in the following section to obtain the final system of equations.
 
 \begin{proof}
 	We will only prove equations \ref{eq:req} and \ref{eq:thetaeq}, as the computation of the other two is really similar and does not contribute anything interesting. Furthermore, only the $\dot{r}$ and $\dot{\vartheta}$ equations will prove to be useful on the next section of this chapter.
@@ -261,6 +277,8 @@ From this direct computation, we can express all four equations in terms of the 
 
 	
 \section{Variational Formulation}
+\label{sec:variational}
+
 The study of the variational characterization of geodesics gave us an interesting result, from which we can change the problem of finding a geodesic by an equivalent one: to find the solution of a variational problem.
 
 \autoref{pro:variationalgeodesic} states that $\gamma$ is a geodesic if and only if
@@ -316,7 +334,18 @@ Now, using these equations and the ones obtained in \autoref{theo:firsteqs}, we 
 	&= \frac{R}{2\rho^2\Delta} + \frac{\Theta}{\rho^2} + \mathfrak{f}.
 \end{align*}
 
-Now, using that $\mathcal{H} = \frac{-\mu^2}{2}$, we can express $\mathfrak{f}$ easily:
+We can use now an interesting property of the Hamiltonian, which is a conserved quantity itself.
+
+We know that $\mathcal{H} = \frac{1}{2} \mathbf{v}^\alpha \mathbf{v}_\alpha$. Taking into account that $\mathbf{v}$ is a normalized timelike vector, we have
+\[
+	\vert \mathbf{v} \vert = - \frac{\mu}{2}.
+\]
+
+Then, it is clear that
+\[
+	\mathcal{H} = \frac{-\mu^2}{2}
+\]
+and we can finally express $\mathfrak{f}$ easily:
 \[
 	\mathfrak{f} = - \frac{R + \Delta \Theta}{2\Delta\rho^2} - \frac{\mu^2}{2}.
 \]

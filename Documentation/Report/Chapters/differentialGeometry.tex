@@ -50,9 +50,9 @@ The last property of the definition will be proven key in our study, as it will 
 
 The main characteristic of the manifolds, its ressemblance\unsure{Is this word ok?} to the Euclidean space, have to be exploited in order to understand the nature of the mathematical object.
 
-The conceptual space where the manifolds live can be thought as the Plato's world of Ideas\unsure{Maybe too much}, where everything is pure but cannot be understood without studying particular examples.
+The conceptual space where the manifolds live is an abstract place whose study is difficult from our Euclidean perspective.
 
-The idea of the manifold will be understood, then, taking pieces of the manifold and lowering\unsure{Mmm... not sure about the word.} them to the real word; \ie, the Euclidean space, where we will be able to \emph{physically} touch the manifold.
+The idea of the manifold will be understood, then, by breaking it up and lowering\unsure{Mmm... not sure about the word.} the pieces to the real word; \ie, the Euclidean space.
 
 The essential tool to make this happen will be the coordinate charts. These tools are like prisms to see the manifold from the Euclidean perspective, and they will let us grasp the nature of the ideal concept of a manifold.
 
@@ -129,7 +129,9 @@ But what happens if we define two different atlases in the manifold? Will the ca
 \begin{proof}
  	Let $A$ be a smooth atlas on $M^n$ and define $A'$ as the set of all $n$-dimensional coordinate charts that overlaps smoothly with every chart on $A$. We are going to see that $A'$ is a complete atlas.
  	
- 	It is trivial to see that $A'$ is an atlas, since $A \subset A'$ and $A$ is an atlas. The smoothness of the atlas is a consequence of the fact that smoothness is a local property \fixme{Finish.}
+ 	It is trivial to see that $A'$ is an atlas, since $A \subset A'$ and $A$ is an atlas. The smoothness of the atlas is a consequence of the fact that smoothness is a local property. Finally, it is clear that $A'$ is complete as, by definition, if a chart overlaps smoothly with every element of $A'$, then it belongs to $A'$.
+ 	
+ 	If the union of two atlas is a smooth atlas, it is clear that the atlas defined before is the same complete atlas for both of them. Equivalently, if two atlas determine the same complete atlas, their charts smoothly overlaps with every other chart on the complete atlas, and therefore its union is a smooth atlas.
 \end{proof}
 
 \begin{definition}[Differentiable manifold]
@@ -930,8 +932,13 @@ The remaining technical details of the previous reasoning can be found on \cite[
 \end{proposition}
 
 \begin{proof}
-	\unsure{Write it if there's time}
-	See \cite[Proposition 2.6 on section 2.2]{docarmo79}
+	For the sake of simplicity, suppose that the theorem is proved for the case in which $c(I)$ is contained in a local coordinate neighbourhood.
+	
+	A compactness argument shows that for every $t_1 \in I$, the segment $c([t_0, t_1]) \subset M$ can be covered by a finite number of coordinate neighbourhoods. Using the previous hypothesis, there exists a vector field $V$ satisfying the proposition properties in each of the neighbourhoods.
+	
+	From uniqueness, the definitions of each $V$ agree on the non-empty intersections. Therefore, we can define a $V$ satisfying the properties in all $[t_0, t_1]$.
+	
+	The proof of the result for when $c(I)$ is contained in a local coordinate neighbourhood does not add anything interesting to our study, so we omit it here. It can be found on \cite[Ch. 2, Prop. 2.6]{docarmo79}.
 \end{proof}
 
 \subsection{Semi-Riemannian connections}
@@ -1419,7 +1426,7 @@ Before finding an interesting characterization of the Killing vector fields, it 
 \end{definition}
 
 \begin{proposition}[Killing vector fields characterisation]
-	\label{pro:killingchar}
+	\label{pro:Killingchar}
 	A vector field $X \in \mathfrak{X}(M)$ on a semi-Riemannian manifold $(M,g)$ is a Killing vector field if and only if
 	\[
 		L_X g = 0,
@@ -1433,7 +1440,7 @@ We can rewrite the Lie derivative to better work with it. Using \autoref{eq:levi
 	(L_Xg)(Y,Z) = g(\nabla_Y X, Z)) + g(Y, \nabla_Z X).
 \end{equation}
 
-Using this definition of Lie derivative and \autoref{pro:killingchar}, we can now conclude that $X \in \mathfrak{X}(M)$ is a Killing vector field if and only if
+Using this definition of Lie derivative and \autoref{pro:Killingchar}, we can now conclude that $X \in \mathfrak{X}(M)$ is a Killing vector field if and only if
 \begin{equation}
 	\label{eq:liecharacterisation}
 	g(\nabla_Y X, Z) + g(Y, \nabla_Z X) = 0 \quad \forall X,Y\in\mathfrak{X}(M).

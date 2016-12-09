@@ -1,10 +1,16 @@
 \chapter{Kerr Spacetime}
 
+After all the mathematical background, the study of the new concepts properties and the physical introduction, we are ready to introduce the Kerr spacetime, a spacetime that models one of the most interesting and still unknown celestial bodies: the black holes.
+
+The Kerr black hole is the centre (both metaphorically and literally) of our model: it is a celestial body, sometimes known as a black star, so massive that it warps the spacetime in such a way that even the light cannot escape of its force. These theoretical objects are the main line of investigation of both students and renowned experts.
+
+This chapter tries to define it, comment some properties and extract the necessary information we will need to build the ray tracer. A deep study of the Kerr spacetime, however, is far beyond the scope of this work, so the origin of the metric tensor will not be described and the proofs of the results will be omitted, although the main references will be given.
+
 \section{Kerr metric}
 
-The Kerr metric is an exact solution of the Einstein field equation, that models a spacetime with an axially symmetric black hole rotating about an axis through its center.
+The Kerr metric is an exact solution of the Einstein field equation, that models a spacetime with an axially symmetric black hole rotating about an axis through its centre
 
-To describe the spacetime modelled by the Kerr metric, we can picture every event occurring in it as described by the four coordinates $(t, r, \vartheta, \varphi)$:
+To describe the spacetime modelled by the Kerr metric, we can picture every event occurring in it as described by the four coordinates $(t, r, \vartheta, \varphi)$.
 \begin{enumerate}
 	\item A temporal coordinate $t\in\R$.
 	\item Three spatial coordinates, $(r, \vartheta, \varphi)$, whose physical meaning can be understood, from infinity, as follows:
@@ -14,6 +20,8 @@ To describe the spacetime modelled by the Kerr metric, we can picture every even
 		\item $\varphi \in \R$: azimuthal angle with respect to the centre of the star, with the star itself rotating in the positive $\varphi$ direction.
 	\end{enumerate}
 \end{enumerate}
+
+These coordinates are known as $Boyer-Lindquist$ coordinates, and will be used in the following chapters.
 
 \fixme{Add image}
 
@@ -56,7 +64,30 @@ From the definition, some properties of the Kerr metric can be observed \cite[Se
 	\item The Kerr spacetime is asymptotically flat, that is, far from the black hole, the spacetime is flat and the coordinate $r$ can be really viewed as the distance to the black hole. The coordinates $(r, \vartheta, \varphi)$ can then, and only then, be understood as spherical coordinates.
 \end{enumerate}
 
-\section{Kerr Metric Properties}
+\section{Symmetries}
+
+As seen before, Kerr metric is stationary and axially symmetric, from where two symmetries can be obtained using the two Killing vector fields.
+
+If we consider $\mathbf{v}^\alpha$ the tangent vector to a geodesic $\gamma$ and we note
+\[
+	\xi_1 = \partial_t, \qquad \xi_2 = \partial_\varphi
+\]
+the two conserved quantities can be defined as
+\begin{align}
+	-E &\defeq \mathbf{v}^\alpha \xi_{1\alpha} \\
+	L_z &\defeq \mathbf{v}^\alpha \xi_{1\alpha}
+\end{align}
+
+Considering a timelike geodesic, the previous quantities can be understood as the energy of the particle and the angular momentum, both per unit mass and measured from the infinity.
+
+Even if we consider a lightlike geodesic, this interpretation can be maintained by means of parametrizing the geodesic flow with the affine parameter of the geodesic.
+
+The conservation of the angular momentum is interesting to understand that particles near a Kerr black hole are forced to rotate accordingly with it.
+
+The convention for these two conserved quantities will be hold until the end of the document, and will prove key when trying to obtain the equations of motion for a free fall lightlike particle.
+
+
+\section{Horizons and Singularities}
 
 There are whole books, as \cite{oneill95}, whose only aim is to study Kerr spacetime and, in particular, its singularities and horizons, that is, the surfaces on the spacetime which prevent the particles inside them to go out of its region.
 
@@ -90,22 +121,11 @@ These singularities are called \emph{horizons}, as it can be proved \cite[p. 15]
 	Although this theoretical spacetimes exist, we will always assume that $a^2 < 1$.
 \end{remark}
 
-\section{Symmetries}
+\section{Kerr Metric notation}
 
+In the following pages, the Kerr metric will be repeatedly used, so its matrix, along with its inverse, is depicted here for consultation purposes.
 
-
-
-
-
-
-
-
-
-
-
-
-
-The Kerr metric is
+The Kerr metric tensor matrix, described on a Boyer-Lindquist system coordinate, is
 \[
 	g_{\mu\nu} = \begin{pmatrix}
 		-\alpha^2 + \varpi^2\omega^2 & 0 & 0 & -\varpi^2\omega \\
@@ -114,7 +134,8 @@ The Kerr metric is
 		-\varpi^2\omega^2 & 0 & 0 & \varpi^2
 	\end{pmatrix},
 \]
-with inverse
+
+The inverse of the Kerr metric is then
 \[
 	g^{\mu\nu} = \begin{pmatrix}
 		-\nicefrac{1}{\alpha^2} & 0 & 0 & -\nicefrac{\omega}{\alpha^2} \\
@@ -123,7 +144,9 @@ with inverse
 		-\nicefrac{\omega}{\alpha^2} & 0 & 0 & (\nicefrac{1}{\varpi^2}) - (\nicefrac{\omega^2}{\alpha^2})
 	\end{pmatrix},
 \]
-where
+
+
+In both notations, the following formulas are used:
 \begin{align}
 	\omega &= \frac{2ar}{\Sigma^2},  \quad \varpi = \frac{\Sigma\sin\vartheta}{\rho}, \quad \alpha = \frac{\rho\sqrt{\Delta}}{\Sigma}, \quad \rho = \sqrt{r^2 + a^2\cos^2\vartheta},\nonumber\\
 	\Delta &= r^2 - 2r + a^2, \textrm{ and } \Sigma = \sqrt{(r^2+a^2)^2 - a^2\Delta\sin^2\vartheta}.
