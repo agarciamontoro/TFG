@@ -15,9 +15,9 @@
 
 // Declaration of the image parameters: number of rows and columns, as well as
 // the total amount of pixels.
-#define IMG_ROWS 750
-#define IMG_COLS 1000
-#define NUM_PIXELS 750000
+#define IMG_ROWS 1000
+#define IMG_COLS 1500
+#define NUM_PIXELS 1500000
 
 
 // Bisect's constants
@@ -72,22 +72,22 @@
 #define __a2 0.998001
 
 // Camera constants
-#define __d 2
-#define __camR 30
+#define __d 4
+#define __camR 35
 #define __camTheta 1.511
 #define __camPhi 0
-#define __camBeta 0
+#define __camBeta 0.171330392647
 
 // Black hole constants
 #define __b1 -6.99833323454
 #define __b2 2.07812987106
 
 // Kerr constants
-#define __ro 30.0000594033
-#define __delta 840.998001
-#define __pomega 29.9640833095
-#define __alpha 0.966094458274
-#define __omega 7.39123018269e-05
+#define __ro 35.0000509171
+#define __delta 1155.998001
+#define __pomega 34.9524844012
+#define __alpha 0.971009761819
+#define __omega 4.6560355207e-05
 
 // SolverRK45 parameters
 #define rtoli 1e-06

@@ -70,12 +70,15 @@ __global__ void generate_image(void* devRayCoordinates, void* devStatus,
                 break;
 
             case SPHERE:
-                x = sin(theta) * cos(phi);
-                y = sin(theta) * sin(phi);
-                z = cos(theta);
+                // x = sin(theta) * cos(phi);
+                // y = sin(theta) * sin(phi);
+                // z = cos(theta);
+                //
+                // u = round((0.5 + atan2(z, x) / (2*Pi)) * sphereCols);
+                // v = round((0.5 - asin(y) / Pi) * sphereRows);
 
-                u = round((0.5 + atan2(z, x) / (2*Pi)) * sphereCols);
-                v = round((0.5 - asin(y) / Pi) * sphereRows);
+                u = round(sphereCols * phi / (2*Pi));
+                v = round(sphereRows * theta / Pi);
 
                 texel = v*sphereCols + u;
                 sphereTexture += texel * 3;

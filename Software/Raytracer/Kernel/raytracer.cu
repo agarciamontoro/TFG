@@ -47,11 +47,16 @@ __device__ void getCanonicalMomenta(Real rayTheta, Real rayPhi, Real* pR,
     Real nX = fac * Nx / den;
     Real nZ = fac * Nz / den;
 
+    Real Br = 0;
+    Real Btheta = 0;
+    Real Bphi = 1;
+    Real kappa = sqrt(1 - Btheta*Btheta);
+
     // Convert the direction of motion to the FIDO's spherical orthonormal
     // basis. See (A.10)
-    Real nR = nX;
-    Real nTheta = -nZ;
-    Real nPhi = nY;
+    Real nR =( Bphi * nX / kappa) + (Br * nY) + (Br*Btheta * nZ / kappa);
+    Real nTheta = (Btheta * nY) - (kappa * nZ);
+    Real nPhi = - (Br * nX / kappa) + (Bphi * nY) + (Bphi*Btheta * nZ / kappa);
 
     // *********************** SET CANONICAL MOMENTA *********************** //
     // Compute energy as measured by the FIDO. See (A.11)
@@ -176,13 +181,26 @@ __global__ void setInitialConditions(void* devInitCond,void* devConstants,
         Real* constants = globalConstants + pixel*2;
 
         // Compute pixel position in physical units
-        Real x = - (col + 0.5 - IMG_COLS/2) * pixelWidth;
-        Real y = (row + 0.5 - IMG_ROWS/2) * pixelHeight;
+        Real _x = - (col + 0.5 - IMG_COLS/2) * pixelWidth;
+        Real _y = (row + 0.5 - IMG_ROWS/2) * pixelHeight;
+
+        // Rotation in the CCD plane
+        Real roll = 0;
+
+        // Rotation to look above/below
+        Real pitch = 0;
+
+        // Rotation to look left/right
+        Real yaw = -Pi/8.;
+
+        Real x = _x * cos(roll) - _y * sin(roll);
+        Real y = _x * sin(roll) + _y * cos(roll);
+
 
         // Compute direction of the incoming ray in the camera's reference
         // frame
-        Real rayPhi = Pi + atan(x / __d);
-        Real rayTheta = Pi/2 + atan(y / sqrt(__d*__d + x*x));
+        Real rayPhi = yaw + Pi + atan(x / __d);
+        Real rayTheta = pitch + Pi/2 + atan(y / sqrt(__d*__d + x*x));
 
         // Compute canonical momenta of the ray and the conserved quantites b
         // and q

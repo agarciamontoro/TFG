@@ -105,6 +105,28 @@ class CongruenceSnapshot:
 
         plt.show()
 
+    def save(self, path):
+        fig = plt.figure()
+
+        if self.texels is None:
+            image = np.empty((self.congruenceMatrixRows,
+                              self.congruenceMatrixCols,
+                              3))
+
+            for row in range(self.congruenceMatrixRows):
+                for col in range(self.congruenceMatrixCols):
+                    status = self.status[row, col]
+
+                    image[row, col, :] = self.colors[status]
+
+            plt.imshow(image)
+        else:
+            plt.imshow(self.texels)
+
+        fig.savefig(path, bbox_inches='tight')
+        plt.close(fig)
+
+
 class Congruence:
     def __init__(self, status, coordinates):
         self.status = status

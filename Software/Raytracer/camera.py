@@ -168,7 +168,7 @@ class Camera:
 
         # FIXME: This is being forced to zero only for testing purposes.
         # Remove this line if you want some real fancy images.
-        beta = 0
+        # beta = 0
 
         return beta
 
