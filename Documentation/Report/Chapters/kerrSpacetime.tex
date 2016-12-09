@@ -1,5 +1,7 @@
 \chapter{Kerr Spacetime}
 
+\section{Kerr metric}
+
 The Kerr metric is an exact solution of the Einstein field equation, that models a spacetime with an axially symmetric black hole rotating about an axis through its center.
 
 To describe the spacetime modelled by the Kerr metric, we can picture every event occurring in it as described by the four coordinates $(t, r, \vartheta, \varphi)$:
@@ -33,6 +35,7 @@ From these equations, the Kerr metric is defined as follows.
 \begin{definition}[Kerr metric]
 	The \emph{Kerr metric}, described by its line element using Boyer-Lindquist coordinates, is:
 	\begin{align}
+		\label{eq:kerrmetric}
 		ds^2 = &-dt^2 + \rho^2\left(\frac{dr^2}{\Delta} + d\vartheta^2\right) + \left(r^2 + a^2\right)\sin^2\vartheta d\varphi^2 + \\
 		\nonumber
 		&+ \frac{2r}{\rho^2}\left(a\sin^2\vartheta d\varphi - dt\right)
@@ -42,7 +45,7 @@ From these equations, the Kerr metric is defined as follows.
 From the definition, some properties of the Kerr metric can be observed \cite[Sec. 2.1]{galindo14}, \cite[pp. 58-59]{oneill95}:
 \begin{enumerate}
 	\item The Kerr metric is stationary, that is, it not depends on the temporal coordinate, $t$.
-	\item The Kerr metric is axially simmetric, that is, it not depends on the azimuthal angle coordinate, $\varphi$.
+	\item The Kerr metric is axially symmetric, that is, it not depends on the azimuthal angle coordinate, $\varphi$.
 	\item Since the Kerr metric does not depend on the coordinates $t$ and $\varphi$, the coordinate vector fields $\partial_t$ and $\partial_\varphi$ are Killing. This summarises the two previous properties.
 	\item The Kerr metric is invariant when applying the transformation
 	\begin{align*}
@@ -52,6 +55,49 @@ From the definition, some properties of the Kerr metric can be observed \cite[Se
 	that is, travelling to the past reverses the rotation.
 	\item The Kerr spacetime is asymptotically flat, that is, far from the black hole, the spacetime is flat and the coordinate $r$ can be really viewed as the distance to the black hole. The coordinates $(r, \vartheta, \varphi)$ can then, and only then, be understood as spherical coordinates.
 \end{enumerate}
+
+\section{Kerr Metric Properties}
+
+There are whole books, as \cite{oneill95}, whose only aim is to study Kerr spacetime and, in particular, its singularities and horizons, that is, the surfaces on the spacetime which prevent the particles inside them to go out of its region.
+
+This study is beyond the scope of this work, but a short summary of the singularities found on Kerr spacetime is developed below. All of them are explained in detail on \cite[Sec. 2.4]{galindo14}.
+
+From \autoref{eq:kerrmetric}, one can see that the Kerr metric is singular in any of the following cases:
+\begin{align}
+	\rho^2 &= 0 \\
+	\Delta &= 0
+\end{align}
+
+These \emph{singularity equations} throw two different types of singularities: the ones produced by the choice on the coordinate system, but which are not real singularities of the metric (i.e., that can be avoided when changing the coordinate system), and the ones that can be obtained using any coordinate system.
+
+The first singularity, which is caused by the nature of the spacetime and not by the choice of the coordinate system, is obtained when assuming $\rho^2 = 0$, that makes the Kretschmann invariant\footnote{In Kerr spacetimes, the usual scalar curvature (see \autoref{def:scalarcurvature}) vanishes, as $Ric = 0$. However, one can define another invariant quantity in order to describe the spacetime curvature. This description is usually carried out with the help of the Kretschmann invariant, that is defined as $K = Ric_{\alpha\beta\gamma\delta}^{\alpha\beta\gamma\delta}$.} infinite, and that can be physically understood as an infinite curvature of the spacetime itself.
+
+From the second singularity equation, we obtain two coordinate singularities:
+\[
+	r_{\pm} \defeq 1 \pm \sqrt{1 - a^2}
+\]
+
+These singularities are called \emph{horizons}, as it can be proved \cite[p. 15]{galindo14} that, on them, the constant-$r$ hypersurface are null. The two horizons divide the spacetime in three regions:
+\begin{enumerate}
+	\item The region where $r > r_+$, that can be seen as the outside of the black hole.
+	\item The region where $r_- < r < r_+$. Here, any particle falling through $r_+$ is forced to reach $r_-$, reason why the hypersurface defined by $r = r_+$ is called the \emph{event horizon}.
+	\item The region where $r < r_-$, which contains the spacetime singularity.
+\end{enumerate}
+
+\begin{remark}
+	From this second singularity equation, one could think that $a$ should always satisfy $a^2 < 1$. This is not exactly true, as, theoretically, black holes with $a^2 \geq 1$, called \emph{fast and extreme Kerr black holes} can be studied. When $a^2 > 1$, the singularity equation has no real solution and therefore no horizons exist.
+	
+	Although this theoretical spacetimes exist, we will always assume that $a^2 < 1$.
+\end{remark}
+
+\section{Symmetries}
+
+
+
+
+
+
+
 
 
 

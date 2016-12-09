@@ -223,16 +223,25 @@ It is trivial to see that the directional derivative is a tangent vector to the 
 	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{tangent space to $M$ at $p$}, noted as $T_p M$, is the set of all tangent vectors to $M$ on $p$; \ie, the family of derivations at $p$.
 \end{definition}
 
-\begin{remark}
-	$T_p M$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x \colon U \to M$ is a chart that covers $p$, $\{ \frac{\partial}{\partial x^1}\bigr|_p, \dots, \frac{\partial}{\partial xn}\bigr|_p\}$\footnote{We note by $\frac{\partial}{\partial xi}\bigr|_p \colon \mathcal{F}(M) \to \R$ the function that maps every smooth function $f$ to the value of its derivative with respect to the $i$-th coordinate evaluated at $p$.} is its associated basis on $T_p M$. See \cite[p. 8]{docarmo79} for details.
-\end{remark}
-
 As for every vector space, we can define its dual version.
 \begin{definition}[Cotangent space]
 	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{cotangent space to $M$ at $p$}, denoted as $T_p M^*$ is the dual space of the vector space $T_p M$.
 	
-	The elements $\omega \in T_p M^*$ are called \emph{one-forms} or \emph{covectors} on $p$.
+	The elements $\omega \in T_p M^*$ are called \emph{covectors} on $p$.
 \end{definition}
+
+\begin{remark}
+	$T_p M$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x = (x^1, \dots, x^n) \colon U \to M$ is a chart that covers $p$, then (\cite[p. 8]{docarmo79}) $\{ \frac{\partial}{\partial x^1}\bigr|_p, \dots, \frac{\partial}{\partial x^n}\bigr|_p\}$ is its associated basis on $T_p M$, where
+	\[
+	\frac{\partial}{\partial x^i}\bigr|_p (f) = \pd{f}{x^j}(p).
+	\]
+	is usually noted as $\partial_i \bigr|_p$.
+	
+	Equivalently, the basis for the cotangent space $T_p^* M$ is the dual of the preceding one, $\{dx^1\bigr|_p, \dots, dx^n\bigr|_p\}$, where the elements are the dual versions of the previous components, that is, the covectors that satisfy
+	\[
+		dx^i\bigr|_p\left(\partial_j \bigr|_p\right) = \delta^i_j
+	\]
+\end{remark}
 
 The extension of the idea of differential is now straightforward: we have just to remember how the differential on the euclidean case can be defined from derivations and repeat the nearly exact same definition on manifolds.
 
@@ -250,7 +259,7 @@ The extension of the idea of differential is now straightforward: we have just t
 		f &\mapsto X(f \circ F).					
 	\end{align*}
 
-	The function $dF$ is the differental of $F$ at $p$, which is also known as the \emph{pushforward} of $p$ by $F$.
+	The function $dF$ is the differential of $F$ at $p$, which is also known as the \emph{pushforward} of $p$ by $F$.
 		   																	
 \end{definition}
 
@@ -309,9 +318,9 @@ To formalize this concept, we should first define the set of the tangent spaces 
 
 	We can furnish $TM$ with the atlas $A' = \{(\pi^{-1}(U_\alpha), h'_\alpha)\}$, where $h'_\alpha$ defines the coordinates of every point $v \in TM$, as the union of the coordinates of $p (= \pi(v))$ in $U_\alpha$ with the coordinates of $v$ in the associated basis of $T_p M$; \ie, if $(x^1, \dots, x^n)$ are the coordinate functions that assigns every point $p \in M$ to its coordinates on $\R^n$, the coordinates of the elements of $TM$ are
 	\[
-		(x^1 \circ \pi, \dots, x^n \circ \pi, \frac{\partial}{\partial {x^1}}, \dots, \frac{\partial}{\partial {x^n}}),
+		(x^1 \circ \pi, \dots, x^n \circ \pi, d{x^1}, \dots, d{x^n}),
 	\]
-	where $\frac{\partial}{\partial {x^i}} \colon \pi^{-1}(U_\alpha) \to \R$ are the coordinate functions of the tangent space, given by $\frac{\partial v}{\partial {x^i}} = v(x^i)$.
+	where $dx^i \colon \pi^{-1}(U_\alpha) \to \R$ are the coordinate functions of the tangent space, given by $dx^i(v) = v(x^i)$.
 	
 	$TM$ is called the tangent bundle of $M$.
 \end{definition}
@@ -333,20 +342,31 @@ This recently defined space is the target set of what we described as a vector f
 	\[
 		X \colon M \mapsto TM
 	\]
-	that maps every point $p$ on the manifold to a vector $X(p) \in T_p M$, often noted as $X_p$.
+	that assigns to any point $p \in M$ a vector $X(p) \in T_p M$, often noted as $X_p$.
 \end{definition}
 
-From now on, we will note the set of smooth vector fields on $M$ as $\mathfrak{X}(M)$.
+\begin{definition}[Covector field]
+	A \emph{one-form}, or \emph{covector field}, $\Theta$ on a smooth manifold $M$ is the object dual to a vector field; \ie, a function
+	\[
+		\Theta \colon M \mapsto T^*M
+	\]
+	that maps every point $p \in M$ to a covector $\Theta(p) \in T_pM^*$, often noted as $\Theta_p$.
+\end{definition}
 
-Analogously, one can define the set of smooth covector fields, that is, the set of functions assigning a one-form to each point of the manifold:
+From now on, we will note the set of smooth vector fields on $M$ as $\mathfrak{X}(M)$; equivalently, $\mathfrak{X}^*(M)$ will denote the set of all smooth one-forms on $M$.
+
+If $X \in \mathfrak{X}(M)$ and $\Theta \in \mathfrak{X}^*(M)$, we will usually denote its coordinates as
 \[
-	\mathfrak{X}^*(M) = \left\{ \begin{aligned}
-		\theta \colon M &\to T^*M \\
-		p &\mapsto \theta_p \in T_p M^*
-	\end{aligned} \Bigg/ \theta \textrm{ is smooth} \right\}
+	X = \sum x^i \partial_i, \quad \Theta = \sum \vartheta_i dx^i,
+\]
+where the vector fields $\partial_i$, that maps each $p$ to $\partial_i\bigr|_p$, form a basis of $\mathfrak{X}(M)$ and the one-forms $dx^i$, that maps each $p$ to $dx^i \bigr|_p$, are the components of its dual basis. As usual, we have the relation 
+\[
+	dx^i\left(\partial_j\right) = \delta^i_j
 \]
 
-Another interesting way to look at the vector fields, shown on \cite[p. 23]{docarmo79}, consists on considering again the idea of the vectors as directional derivatives: a vector field $X$ on $p$ is then a map that receives a smooth function $f$ on $M$ and gives us another function on $M$, noted as $Xf$ and defined as follows:
+The coordinates can be computed as $x^i\bigr|_p = X_p(x^i)$ and $\vartheta_i\bigr|_p = \Theta_p(\partial_i)$
+
+Another interesting way to look at the vector fields and their dual version, shown on \cite[p. 23]{docarmo79}, consists on considering again the idea of the vectors as directional derivatives: a vector field $X$ on $p$ is then a map that receives a smooth function $f$ on $M$ and gives us another function on $M$, noted as $Xf$ and defined as follows:
 \[
 	(Xf)(p) = X_p(f).
 \]
@@ -438,8 +458,6 @@ The operation involving tensors, the definition of the tensor components, the te
 
 \section{Spacetimes}
 
-In this section we will follow \cite{romero10}
-
 This section introduces the notion of \emph{spacetime}, a mathematical object with a really interesting meaning in physics, as it will model the geometry of the Universe.
 
 All results, proofs, and examples are mainly extracted from \cite{romero10}, which develop an interesting line of reasoning to grasp the nature of the concept.
@@ -450,7 +468,7 @@ Before going down that road, we will need some basic concepts, such as the Loren
 
 From now on, let $M$ be a connected $n$-dimensional smooth manifold, with $n\geq2$.
 
-\begin{definition}[Lorentzian product]
+\begin{definition}[Lorentzian metric tensor]
 	A \emph{Lorentzian metric $g$} in $M$ is a symmetric 2 times covariant tensor field
 	\[
 	g \colon M \to \tensors_{(0,2)}(M)
@@ -465,6 +483,25 @@ From now on, let $M$ be a connected $n$-dimensional smooth manifold, with $n\geq
 \begin{definition}[Lorentzian manifold]
 	$M$ is said to be a \emph{Lorentzian manifold} if it is furnished with a Lorentzian metric $g$. Lorentzian manifolds are usually noted as the pair $(M,g)$.
 \end{definition}
+
+Any metric tensor can be described giving its value on the elements of a basis; \ie, if $(x^1, \dots, x^n)$ is a coordinate system, the components of the metric tensor are
+\[
+	g_{ij} = g(\partial_i, \partial_j),
+\]
+and therefore the metric tensor can be recovered as
+\[
+	g = \sum g_{ij} dx^i \otimes dx^j
+\]
+
+Another way of describing the metric tensor \cite[p. 13]{oneill95} is via its \emph{line element}, usually noted as $ds^2$, which gives at each point $p\in M$ the associated quadratic form of $g_p$; \ie, the value of $ds^2$ on a vector field $X$ is simply $g(X,X)$. One can define the line element in a more clear way by means of a coordinate system:
+\begin{definition}[Line element]
+	The \emph{line element} of a metric tensor $g$ is
+	\[
+		ds^2 = g_{\alpha\beta} dx^\alpha dx^\beta.
+	\]
+\end{definition}
+
+The line element fully identifies the metric tensor, which can be easily reconstructed from it.
 
 The classical Koszul formula, asserts that if a manifold admits a symmetric 2 times covariant tensor field such that $g_p$ is non-degenerate for every $p \in M$, then $M$ has a Levi-Civita connection $\nabla$.  This follows from \autoref{eq:koszul}, that defines $\nabla$ from the non-degeneracy property; note that we could even define Christoffel symbols $\Gamma^i_{jkl}$ from the non-degeneration.
 
@@ -520,7 +557,7 @@ C(M,g) = \bigcup_{p \in M} C_p(M,g).
 	that satisfies:
 	\begin{itemize}
 		\item $\tau(p) \in C_p(M,g)$ for every $p \in M$.
-		\item There exists an open neighbourhood $U$ for every $p_0 \in M$ and a vector field $X \in \mathcal{X}(U)$ such that
+		\item There exists an open neighbourhood $U$ for every $p_0 \in M$ and a vector field $X \in \mathfrak{X}(U)$ such that
 		\[
 		X_p \in \tau(p), \quad \forall p \in U.
 		\]
@@ -692,7 +729,7 @@ In general, the answer is negative, but we can find some interesting characteriz
 
 First of all, let us define what a one dimensional distribution is
 \begin{definition}[$n$ dimensional distribution]
-	An \emph{$n$ dimensional distribution} on a manifold $M$ is a map that assigns an $n$ dimensional subspace $\mathcal{D}_p$ of $T_pM$ to each $p \in M$, such that there exists an open neighbourhood $U$ of $p$ and $n$ independent vector fields $X_1, \dots, X_n \in \mathcal{X}(U)$ satisfying
+	An \emph{$n$ dimensional distribution} on a manifold $M$ is a map that assigns an $n$ dimensional subspace $\mathcal{D}_p$ of $T_pM$ to each $p \in M$, such that there exists an open neighbourhood $U$ of $p$ and $n$ independent vector fields $X_1, \dots, X_n \in \mathfrak{X}(U)$ satisfying
 	\[
 	\mathcal{D}_p = \langle X_1(q), \dots, X_n(q) \rangle \quad \forall q \in U.
 	\]
@@ -736,7 +773,7 @@ We can now formulate a result from \cite{greub72}, that shows that characterizat
 	for any tangent vectors $u,v \in T_{p}M$ with $p\in U_\alpha$, it is easily seen that $g_{L}$ does not depend on $\alpha$ and therefore, it is a Lorentzian metric on all $M$.
 \end{proof}
 
-Starting from a Riemannian metric on $M$, which can always be constructed \cite{romero10}, one can build a Lorentzian metric even without a one dimensional distribution; however, the existence of a vector field $X \in \mathcal{X}(M)$ such that $X_p \neq 0$ for any $p \in M$ is needed.
+Starting from a Riemannian metric on $M$, which can always be constructed \cite{romero10}, one can build a Lorentzian metric even without a one dimensional distribution; however, the existence of a vector field $X \in \mathfrak{X}(M)$ such that $X_p \neq 0$ for any $p \in M$ is needed.
 
 Suppose then that $g_R$ is a Riemannian metric on $M$ and $X$ a vector field satisfying the previous property; then, we can construct $g_L$, a Lorentzian metric on $M$ as follows:
 \[
@@ -1305,6 +1342,7 @@ Equivalently,
 \]
 
 \begin{definition}[Scalar curvature]
+	\label{def:scalarcurvature}
 	The \emph{scalar curvature} $S$ of $g$ is the contraction of the $(1,1)$ tensor field $g$-equivalent to the Ricci tensor. In terms of coordinates:
 	\[
 		S = \sum_{i,j} g^{ij}(\Ric)_{ij} = \sum_{i,j,k} g^{ij} R^k_{kij}
@@ -1321,7 +1359,7 @@ where $\nabla S$ is the gradient of te scalar curvature, $\widehat{\Ric}$ is the
 \fixme{Add references to Oneill}
 
 \begin{definition}[Integral curve]
-	Let $M$ be a smooth manifold and consider a vector field $X \in \mathcal{X}(M)$.
+	Let $M$ be a smooth manifold and consider a vector field $X \in \mathfrak{X}(M)$.
 	An integral curve of $X$ is a curve
 	\[
 		\gamma \colon I \to M,
@@ -1335,7 +1373,7 @@ where $\nabla S$ is the gradient of te scalar curvature, $\widehat{\Ric}$ is the
 \end{definition}
 
 \begin{lemma}
-	Let $p_0 \in M$ be a point on a smooth manifold. There exists a unique (maximal) integral curve of $X\in\mathcal{X}(M)$, $\gamma \colon I \to M$, such that
+	Let $p_0 \in M$ be a point on a smooth manifold. There exists a unique (maximal) integral curve of $X\in\mathfrak{X}(M)$, $\gamma \colon I \to M$, such that
 	\begin{equation}
 		\label{eq:initcond}
 		\gamma(0) = p_0.
@@ -1345,7 +1383,7 @@ where $\nabla S$ is the gradient of te scalar curvature, $\widehat{\Ric}$ is the
 We are now able to see that an integral curve starting at a point on $M$ can be seen as the solution to the differential equation described by \autoref{eq:integralcurve} restricted to the initial conditions given by \autoref{eq:initcond}.
 
 \begin{lemma}
-	Consider a vector field $X \in \mathcal{X}(M)$ and a point $p_0 \in M$. Then, there exists $U$, an open neighbourhood of $p_0$ at $M$, a number $\varepsilon > 0$ and a smooth function
+	Consider a vector field $X \in \mathfrak{X}(M)$ and a point $p_0 \in M$. Then, there exists $U$, an open neighbourhood of $p_0$ at $M$, a number $\varepsilon > 0$ and a smooth function
 	\[
 		\varphi \colon (-\varepsilon, \varepsilon) \times U \to M,
 	\]
@@ -1359,7 +1397,7 @@ We are now able to see that an integral curve starting at a point on $M$ can be 
 \end{lemma}
 
 \begin{definition}[Killing vector field]
-	Let $(M,g)$ be a semi-Riemannian manifold, and consider a vector field $X\in\mathcal{X}(M)$.
+	Let $(M,g)$ be a semi-Riemannian manifold, and consider a vector field $X\in\mathfrak{X}(M)$.
 	
 	$X$ is said to be a Killing vector field if every local flow $\{\varphi_t\}$ of $X$ satisfies that
 	\[
@@ -1373,7 +1411,7 @@ When $X$ is a Killing vector field, $g$ does not change under the action of any 
 Before finding an interesting characterization of the Killing vector fields, it is necessary to introduce an important concept: the Lie derivative.
 
 \begin{definition}[Lie derivative]
-	Let $(M,g)$ be a semi-Riemannian manifold and let $X\in\mathcal{X}(M)$ be a vector field on $M$. The \emph{Lie derivative of $g$ with respect to $X$} is a function acting on pairs of smooth vector fields $Y,Z \in \mathcal{X}(M)$ defined by:
+	Let $(M,g)$ be a semi-Riemannian manifold and let $X\in\mathfrak{X}(M)$ be a vector field on $M$. The \emph{Lie derivative of $g$ with respect to $X$} is a function acting on pairs of smooth vector fields $Y,Z \in \mathfrak{X}(M)$ defined by:
 	\begin{equation}
 	\label{eq:liederivative}
 		(L_Xg)(Y,Z) = Xg(Y,Z) - g([X,Y],Z) - g(Y,[X,Z])
@@ -1382,7 +1420,7 @@ Before finding an interesting characterization of the Killing vector fields, it 
 
 \begin{proposition}[Killing vector fields characterisation]
 	\label{pro:killingchar}
-	A vector field $X \in \mathcal{X}(M)$ on a semi-Riemannian manifold $(M,g)$ is a Killing vector field if and only if
+	A vector field $X \in \mathfrak{X}(M)$ on a semi-Riemannian manifold $(M,g)$ is a Killing vector field if and only if
 	\[
 		L_X g = 0,
 	\]
@@ -1395,14 +1433,14 @@ We can rewrite the Lie derivative to better work with it. Using \autoref{eq:levi
 	(L_Xg)(Y,Z) = g(\nabla_Y X, Z)) + g(Y, \nabla_Z X).
 \end{equation}
 
-Using this definition of Lie derivative and \autoref{pro:killingchar}, we can now conclude that $X \in \mathcal{X}(M)$ is a Killing vector field if and only if
+Using this definition of Lie derivative and \autoref{pro:killingchar}, we can now conclude that $X \in \mathfrak{X}(M)$ is a Killing vector field if and only if
 \begin{equation}
 	\label{eq:liecharacterisation}
-	g(\nabla_Y X, Z) + g(Y, \nabla_Z X) = 0 \quad \forall X,Y\in\mathcal{X}(M).
+	g(\nabla_Y X, Z) + g(Y, \nabla_Z X) = 0 \quad \forall X,Y\in\mathfrak{X}(M).
 \end{equation}
 
 \begin{proposition}
-	Let $X\in\mathcal{X}(M)$ be a Killing vector field on a semi-Riemannian manifold $(M,g)$ and considet $\gamma$ a geodesic on $M$. Then,
+	Let $X\in\mathfrak{X}(M)$ be a Killing vector field on a semi-Riemannian manifold $(M,g)$ and considet $\gamma$ a geodesic on $M$. Then,
 	\[
 		g(\gamma'(t), X_{\gamma(t)}) = c,
 	\]
