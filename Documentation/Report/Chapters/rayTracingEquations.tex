@@ -365,10 +365,15 @@ which in this case read as follows
 	\dot{p}_r &= - \pd{\mathcal{H}}{r}, \quad \dot{p}_\vartheta = - \pd{\mathcal{H}}{\vartheta},
 \end{align*}
 we obtain the expected first order system, without the problems caused by the previous square roots.
-\begin{align}
-	\dot{r} &= \frac{\Delta}{\rho^2} p_r \\
-	\dot{\vartheta} &= \frac{1}{\rho^2}p_\vartheta \\
-	\dot{\varphi} &= \pd{}{p_\varphi}\left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \\
-	\dot{p}_r &= - \pd{}{r} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right) \\
-	\dot{p}_\vartheta &= - \pd{}{\vartheta} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right).
-\end{align}
+
+\begin{theorem}[Equations of motion]
+	\label{theo:eqsmotion}
+	A free falling lightlike particle $\gamma$ satisfies:
+	\begin{align}
+		\dot{r} &= \frac{\Delta}{\rho^2} p_r \\
+		\dot{\vartheta} &= \frac{1}{\rho^2}p_\vartheta \\
+		\dot{\varphi} &= \pd{}{p_\varphi}\left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \\
+		\dot{p}_r &= - \pd{}{r} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right) \\
+		\dot{p}_\vartheta &= - \pd{}{\vartheta} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right).
+	\end{align}
+\end{theorem}

@@ -40,7 +40,7 @@ First of all, it is known that if $V$ is finite-dimensional, the dimensions of $
 	\varphi^i(v_j) = \delta^i_j.
 \]
 
-Furthermore, the reflexiveness theorem \change{Reflexiveness theorem is the worst translation ever} tells us that there exists a natural isomorphism between $V$ and its double dual space, $V^{**}$, when $V$ is finite-dimensional. This isomorphism assigns, to every vector $v \in V$, a function that maps every one-form into its evaluation on $v$:
+Furthermore, the theorem for the double dual space (\cite[Th. 4.3]{nomizu79}) tells us that there exists a natural isomorphism between $V$ and its double dual space, $V^{**}$, when $V$ is finite-dimensional. This isomorphism assigns, to every vector $v \in V$, a function that maps every one-form into its evaluation on $v$:
 \begin{align}
 	\label{eq:naturaliso}
 	\psi \colon V &\longrightarrow V^{**} \\
@@ -131,7 +131,7 @@ Now that we know that $\tensors_{r,s}(V)$ is a vector space, it will be importan
 	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r+r'\}$ and $v_j \in V$ for all $j \in \{1,\dots,s+s'\}$.
 \end{definition}
 
-It is easy to prove that $T \otimes T' \in \tensors_{r+r',s+s'}(V)$ for every $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. However, the proof is long and cumbersome to write, and it can be found in almost every elementary book on tensor algebra.\unsure{Add reference.}
+It is easy to prove that $T \otimes T' \in \tensors_{r+r',s+s'}(V)$ for every $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. However, the proof is long and cumbersome to write, and it can be found in almost every elementary book on tensor algebra (\cite{romero86}, \cite{nomizu79}).
 
 Furthermore, we can see that, given $T \in \tensors_{r,s}(V)$, $T' \in \tensors_{r',s'}(V)$ and $T'' \in \tensors_{r'',s''}(V)$:
 \begin{align*}
@@ -544,7 +544,7 @@ This proposition, whose trivial proof can be found on \cite[Proposition 9.30]{ro
 These isomorphisms also allow us to translate geometrical objects from $V$ to $V^*$; particularly, we can see the induced metric $g^*$ on $V^*$:
 
 \begin{proposition}
-	The application $g^*$ that maps every $\varphi, \psi \in V^*$ on $g^*(\varphi,\psi) = g(\varphi^\sharp, \psi^\sharp)$ is a metric on $V^*$. Furthermore, $g^*$ is the only metric that allows $\flat$ and $\sharp$ to be isometries\unsure{Weird expression}.
+	The application $g^*$ that maps every $\varphi, \psi \in V^*$ on $g^*(\varphi,\psi) = g(\varphi^\sharp, \psi^\sharp)$ is a metric on $V^*$. Furthermore, $g^*$ is the only metric that allows $\flat$ and $\sharp$ to be isometries.
 \end{proposition}
 
 \begin{proof}
@@ -556,7 +556,7 @@ These isomorphisms also allow us to translate geometrical objects from $V$ to $V
 		g^*(v^\flat, w^\flat) = g\left(\left(v^\flat\right)^\sharp, \left(w^\flat\right)^\sharp\right) = g(v, w).
 	\end{equation}
 
-	If $g'$ is another metric that allows $\flat$ to be an isometry\unsure{Weird expression}, then \[g'(v^\flat, w^\flat) = g(v, w).\] But using \autoref{proof:isometry} we see that $g^*(v^\flat, w^\flat) = g'(v^\flat, w^\flat)$. Given that $\flat$ is one\nobreakdash-to\nobreakdash-one we conclude that $g' = g^*$.
+	If $g'$ is another metric that allows $\flat$ to be an isometry, then \[g'(v^\flat, w^\flat) = g(v, w).\] But using \autoref{proof:isometry} we see that $g^*(v^\flat, w^\flat) = g'(v^\flat, w^\flat)$. Given that $\flat$ is one\nobreakdash-to\nobreakdash-one we conclude that $g' = g^*$.
 \end{proof}
 
 The metrics $g$ and $g^*$ allow us to establish a connection between the coordinates of $v$ and $v^\flat$ and between the coordinates of $\varphi$ and $\varphi^\sharp$.

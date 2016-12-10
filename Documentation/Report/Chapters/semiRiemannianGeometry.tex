@@ -56,11 +56,11 @@ where $a < b$, such that
 \gamma(a) = p_0, \qquad \gamma(b) = p_1.
 \]
 
-From the existence of $\gamma$, we directly have the parallel transport\fixme{Incoherent notation.}
+From the existence of $\gamma$, we directly have the parallel transport
 \[
 P^\gamma_{a,b} \colon T_{p_0}M \to T_{p_1}M,
 \]
-which is a linear isometry between $(T_{p_0}M, g_{p_0})$ and $(T_{p_1}M, g_{p_1})$. This assures that
+where we use the notation on \cite[Prop 3.19]{oneill83} which is a linear isometry between $(T_{p_0}M, g_{p_0})$ and $(T_{p_1}M, g_{p_1})$. This assures that
 \[
 \operatorname{index}(g_{p_0}) = \operatorname{index}(g_{p_1}).
 \]
@@ -346,7 +346,7 @@ From \cite{romero10} we know that on a simply connected manifold, being or not c
 	G \times G &\to G \\
 	(a,b) &\mapsto ab^{-1}
 	\end{align*}
-	is differentiable---see \cite[p. 38]{kobnom63}\unsure{Review this reference}.
+	is differentiable---see \cite[p. 38]{kobnom63}.
 	
 	We denote by $L_a$ (resp. $R_a$) the left (resp. right) translation of $G$ by the element $a\in G$, that is:
 	\begin{align*}
@@ -365,7 +365,7 @@ From \cite{romero10} we know that on a simply connected manifold, being or not c
 	
 	Given $v \in T_e G$ there exists a unique left invariant vector field $X$ on $G$ such that $X_e = v$. In fact, $X_a \defeq (dL_a)_e(a) \; \forall a \in G$ (analogously for a right invariant vector field). Note that $v \neq 0$ implies $X_a \neq 0$ for all $a \in G$. Even more, if $\{v_1, \dots, v_n\}$ is a basis of $T_e G$, then there exists a set of left invariant vector fields $\{X_1, \dots, X_n\}$ such that $X_i(w) = v_i, 1 \leq i \leq n$, and  $\{X_1(a), \dots, X_n(a)\}$ is a basis of $T_a G$ for all $a \in G$.
 	
-	Therefore, $G$ admits a global basis of $\mathfrak{X}(G)$. In this case, $G$ is said to be \emph{parallelizable} \cite[Ch. 1, Sec. 4]{kobnom63}\unsure{Review this reference}.
+	Therefore, $G$ admits a global basis of $\mathfrak{X}(G)$. In this case, $G$ is said to be \emph{parallelizable} \cite[Ch. 1, Sec. 4]{kobnom63}.
 \end{remark}
 
 We can describe now the example of a one dimensional distribution that cannot be lifted to a global non-vanishing vector field.
@@ -381,9 +381,9 @@ We can describe now the example of a one dimensional distribution that cannot be
 
 \section{Semi-Riemannian connections}
 
-This section follows the line of reasoning on \cite[Ch. 2, Section 3]{docarmo79}.
+On \autoref{sec:affineconnections}, we studied connections on general manifolds, regardless of the addition of a metric. However, the existence of an interesting connection is naturally assured when one adds a semi-Riemannian metric to the manifold: the Levi-Civita connection, whose interest will be shown along this section.
 
-When adding a metric to the smooth manifold, an interesting connection will appear naturally: the Levi-Civita connection, whose interest on the study of the geodesic will be shown.\fixme{Introduction stating that a metric is now needed.}
+This section follows the line of reasoning on \cite[Ch. 2, Section 3]{docarmo79}.
 
 \begin{definition}[Metric compatible connection]
 	% doCarmo, 45
@@ -406,9 +406,7 @@ This definition will let us compute the derivative of the vector fields product 
 	\]
 \end{proposition}
 
-\begin{proof}
-	See \cite[Ch. 2, Section 3, Proposition 3.2]{docarmo79}.\unsure{Write if time}
-\end{proof}
+See \cite[Ch. 2, Section 3, Proposition 3.2]{docarmo79} for the proof, which is omitted here because it does not add anything interesting to our purposes.
 
 In fact, we can redefine what a connection compatible with a metric is using \autoref{pro:compatibleleibniz}.
 
@@ -650,10 +648,6 @@ Some interesting properties of the energy function are studied on the following 
 		\frac{dc}{dt}(t_i^+) = \lim_{\substack{t \to t_i \\ t > t_i}} \frac{dc}{dt}(t), \quad \frac{dc}{dt}(t_i^-) = \lim_{\substack{t \to t_i \\ t < t_i}} \frac{dc}{dt}(t)
 	\]
 \end{proposition}
-\begin{proof}
-	\fixme{Add proof or reference.}
-\end{proof}
-
 The characterization of geodesics we are looking for comes as a consequence of \autoref{pro:energyprop}.
 
 \begin{proposition}
@@ -663,9 +657,8 @@ The characterization of geodesics we are looking for comes as a consequence of \
 		\frac{dE_f}{ds}(0) = 0 \quad \textrm{ for every $f$, proper variation of $c$}.
 	\]
 \end{proposition}
-\begin{proof}
-	\fixme{Add proof or reference.}
-\end{proof}
+
+The proofs of \autoref{pro:energyprop} and \autoref{pro:variationalgeodesic} will be omitted, as they are long to write and do not add anything interesting regarding the scope of this work. They can be found on \cite[Ch. 9, Prop. 2.4]{docarmo79} and in \cite[Ch. 9, Prop. 2.5]{docarmo79}.
 
 Geodesics are, in short, the critical points of the energy of every proper variation.
 
@@ -801,7 +794,8 @@ From the second identity of Bianchi we get \cite[p. 88]{oneill83}
 where $\nabla S$ is the gradient of te scalar curvature, $\widehat{\Ric}$ is the contravariant tensor field $g$-equivalent to $\Ric$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
 
 \section{Killing Vectors Fields}
-\fixme{Add references to Oneill}
+
+This section is based on the study of Killing vector fields developed on \cite[pp. 250-252]{oneill83}.
 
 \begin{definition}[Integral curve]
 	Let $M$ be a smooth manifold and consider a vector field $X \in \mathfrak{X}(M)$.
