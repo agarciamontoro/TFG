@@ -11,7 +11,7 @@ The algorithm implemented for the ray tracer, which is the one described in \cit
 		\item The position of the camera is described by the coordinates $\{r_c, \vartheta_c, \varphi_c\}$.
 		\item The camera speed with respect to the FIDO is noted as $\beta$.
 		\item The direction of motion relative to the FIDO is described by a unit vector $B$ in the camera's reference frame.
-		\item We set up a right-handed coordinate system placed on the camera's reference frame, with orthonormal basis $\{e_x, e_y, e_z\}$, where
+		\item We set up a right-handed coordinate system placed on the camera's reference frame, with the orthonormal basis $\{e_x, e_y, e_z\}$, where
 		\begin{itemize}
 			\item $e_y$ is identified with $B$, \ie, it points to the direction of motion of the camera.
 			\item $e_x$ is perpendicular to $e_y$ and contained on the plane $\langle e_{\widehat{r}}, e_{\widehat{\vartheta}} \rangle$.
@@ -65,6 +65,7 @@ By composing \autoref{eq:initmap} and \autoref{eq:pixelmap}, we define the map
 that summarises all the work the algorithm does: from a pixel on the camera's reference frame, we compute the origin of the incoming ray that hit that pixel.
 
 \subsection{Pixel to Ray Map}
+\label{subcsec:pixeltoray}
 
 Let us consider a pixel $P$ whose coordinates on the sensor's reference frame are $(p_x, p_y)$, as depicted in \autoref{fig:pinhole}.
 
@@ -98,7 +99,37 @@ This discussion assumed the pixel coordinates to have its origin at the centre o
 Finally, one should take into account the need to convert the pixel from the sensor coordinates to physical units. This is handled by computing the pixel width and height using the size of the sensor in physical units.
 
 \subsection{Initial Conditions Computation}
-\subsection{Ray Tracing}
+The algorithm kernel integrates, backwards in time, a system of differential equations. We already know the system we are working with, \autoref{theo:eqsmotion}, but for such a system to be uniquely solved, a set of initial conditions is needed.
+
+That is, for each ray we need to know its components \[(r, \vartheta, \varphi, p_r, p_\vartheta)\] at the time $\tau = 0$.
+
+All rays hitting the camera's share the same $r$, namely the position of the camera $r_c$.
+
+In \autoref{subcsec:pixeltoray}, the initial $\vartheta$ and $\varphi$ for each ray were computed.
+
+Therefore, we only need to compute the initial momentum components, $p_r$ and $p_\vartheta$, for each ray. In short, assuming we know the pixel the incoming ray is hitting and, thus, the $\vartheta_{cs}$ and $\varphi_{cs}$ components of the ray on the camera's local sky, we expect to obtain the map
+\[
+	(\vartheta_{cs}, \varphi_{cs}) \xmapsto{IC} (p_r, p_\vartheta).
+\]
+
+This is not a difficult task but a very delicate one, as some coordinate systems have to be taken into account and we should have a good understanding of them in order to properly compute the bases changes. A short summary of the work that follows is listed here:
+\begin{enumerate}
+	\item The initial position of the ray is known to be $(r_c, \vartheta_{cs}, \varphi_{cs})$. The components of the unit vector that points on the direction of motion of the camera, $B$, are noted as $(B_{\widehat{r}}, B_{\widehat{\vartheta}}, B_{\widehat{\varphi}})$, whereas its speed relative to the FIDO, $\beta$, is known (\cite[A.7]{thorne15}) to be
+	\[
+		\beta = \frac{\varpi}{\alpha}(\Omega - \omega),
+	\]
+	where $\Omega = \left( a + r_c^{3/2} \right)^{-1}$ and the quantities $\varpi$, $\alpha$ and $\omega$ are the ones defined in \autoref{eq:termdef}.
+	\item From $(\vartheta_{cs}, \varphi_{cs})$ we compute the unit vector in Cartesian coordinates, $N = (N_x, N_y, N_z)$, pointing to the direction of the incoming ray. This is computed on the camera's reference frame $\{e_x, e_y, e_z\}$, thus a simple change to Cartesian coordinates is needed.
+	\item The relativistic aberration caused by the motion of the camera and its speed around the black hole causes the FIDO to measure the direction of motion of the incoming ray slightly different. The Cartesian components of this derived unit vector, $n_F = (n_{F_x}, n_{F_y}, n_{F_z})$ need to be computed.
+	\item Then, $n_F$ needs to be seen from the FIDO's orthonormal basis by means of the ligatures provided by the vector $B$ and the orthogonal relations. This gives us the components $(n_{F_{\widehat{r}}}, n_{F{\widehat{\vartheta}}}, n_{F_{\widehat{\varphi}}})$ on the basis $\{e_{\widehat{r}}, e_{\widehat{\vartheta}}, e_{\widehat{\varphi}}\}$.
+	\item From $n_F$ expressed on the right coordinate system, it is then easy to compute the covariant components of the four momentum $(p_t, p_r, p_\vartheta, p_\varphi)$, where we assume the energy to be unitary; \ie, $p_t = -E = -1$.
+\end{enumerate}
+
+\fixme{Explain more!}
+
+\subsection{System Numerical Solver}
+
+
 
 \section{Parallelization Techniques}
 \subsection{Classic Parallelization}
