@@ -193,6 +193,11 @@ class RayTracer(metaclass=LoggingClass):
             "ALPHA": self.camera.metric.alpha,
             "OMEGA": self.camera.metric.omega,
 
+            # Camera rotation angles
+            "PITCH": np.float64(self.camera.pitch),
+            "ROLL": np.float64(self.camera.roll),
+            "YAW": np.float64(self.camera.yaw),
+
             # RK45 solver constants
             "R_TOL_I": 1e-6,
             "A_TOL_I": 1e-12,

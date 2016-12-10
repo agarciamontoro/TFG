@@ -89,6 +89,11 @@
 #define __alpha {{ ALPHA }}
 #define __omega {{ OMEGA }}
 
+// Camera rotation angles
+#define __pitch {{ PITCH }}
+#define __roll {{ ROLL }}
+#define __yaw {{ YAW }}
+
 // SolverRK45 parameters
 #define rtoli {{ R_TOL_I }}
 #define atoli {{ A_TOL_I }}

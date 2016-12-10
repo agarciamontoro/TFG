@@ -38,7 +38,7 @@ class Camera:
             the formula (A.7) of Thorne's paper.
     """
     def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize,
-                 roll, pitch, yaw):
+                 roll=0, pitch=0, yaw=0):
         """Builds the camera defined by `focalLength`, `sensorShape` and
         `sensorSize` and locates it at the passed coordinates :math:`(r_c,
         \\theta_c, \\phi_c)`
@@ -60,11 +60,14 @@ class Camera:
             sensorSize (tuple): 2-tuple that defines the physical dimensions of
                 the sensor in the following way: `(Height, Width)`.
             roll (double): The roll angle of the CCD; i.e., the rotation angle
-                of the CCD on the plane of the CCD. Defaults to zero, that means the CCD is 
+                of the CCD on the plane of the CCD. Defaults to zero, that
+                means the CCD is facing the black hole centre.
             pitch (double): The pitch angle of the CCD; i.e., the above/below
                 direction of looking. Defaults to zero, that means the CCD is
                 facing the black hole centre.
-            yaw (double)
+            yaw (double): The yaw angle of the CCD; i.e., the left/right
+                direction of lookin. Defaults to zero, that means the CCD is
+                facing the black hole centre.
 
         """
 
@@ -80,6 +83,11 @@ class Camera:
         # Define sensor properties
         self._sensorShape = sensorShape
         self._sensorSize = sensorSize
+
+        # Define rotation of the CCD
+        self._roll = roll
+        self._pitch = pitch
+        self._yaw = yaw
 
         # Compute the width and height of a pixel on physical units
         self.pixelWidth, self.pixelHeight = self.computePixelSize()
@@ -101,7 +109,7 @@ class Camera:
         # Compute the speed
         self.speed = self.computeSpeed()
 
-        # Add the raytracer engine
+        # Add the RayTracer engine
         self.engine = RayTracer(self)
 
     def computePixelSize(self):
@@ -204,6 +212,43 @@ class Camera:
 
         # Compute again the value of the metric on the camera position
         self.update()
+
+    @property
+    def pitch(self):
+        return self._pitch
+
+    @pitch.setter
+    def pitch(self, newValue):
+        # Set yaw angle
+        self._pitch = newValue
+
+        # Recompile engine
+        self.engine = RayTracer(self)
+
+    @property
+    def roll(self):
+        return self._roll
+
+    @roll.setter
+    def roll(self, newValue):
+        # Set roll angle
+        self._roll = newValue
+
+        # Recompile engine
+        self.engine = RayTracer(self)
+
+    @property
+    def yaw(self):
+        return self._yaw
+
+    @yaw.setter
+    def yaw(self, newValue):
+        # Set yaw angle
+        self._yaw = newValue
+
+        # Recompile engine
+        self.engine = RayTracer(self)
+
 
     @property
     def sensorShape(self):

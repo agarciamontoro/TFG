@@ -184,23 +184,16 @@ __global__ void setInitialConditions(void* devInitCond,void* devConstants,
         Real _x = - (col + 0.5 - IMG_COLS/2) * pixelWidth;
         Real _y = (row + 0.5 - IMG_ROWS/2) * pixelHeight;
 
-        // Rotation in the CCD plane
-        Real roll = 0;
-
-        // Rotation to look above/below
-        Real pitch = 0;
-
-        // Rotation to look left/right
-        Real yaw = -Pi/8.;
-
-        Real x = _x * cos(roll) - _y * sin(roll);
-        Real y = _x * sin(roll) + _y * cos(roll);
-
+        // Rotate the pixels with the roll angle
+        Real x = _x * cos(__roll) - _y * sin(__roll);
+        Real y = _x * sin(__roll) + _y * cos(__roll);
 
         // Compute direction of the incoming ray in the camera's reference
-        // frame
-        Real rayPhi = yaw + Pi + atan(x / __d);
-        Real rayTheta = pitch + Pi/2 + atan(y / sqrt(__d*__d + x*x));
+        // frame: we sum the yaw angle to phi and the pitch angle to theta in
+        // order to implement the camera CCD rotation. See pitch, roll and yaw
+        // attributes in Camera class (camera.py)
+        Real rayPhi = __yaw + Pi + atan(x / __d);
+        Real rayTheta = __pitch + Pi/2 + atan(y / sqrt(__d*__d + x*x));
 
         // Compute canonical momenta of the ray and the conserved quantites b
         // and q

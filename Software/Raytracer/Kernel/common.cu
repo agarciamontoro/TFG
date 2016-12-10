@@ -15,9 +15,9 @@
 
 // Declaration of the image parameters: number of rows and columns, as well as
 // the total amount of pixels.
-#define IMG_ROWS 1000
-#define IMG_COLS 1500
-#define NUM_PIXELS 1500000
+#define IMG_ROWS 800
+#define IMG_COLS 1200
+#define NUM_PIXELS 960000
 
 
 // Bisect's constants
@@ -72,7 +72,7 @@
 #define __a2 0.998001
 
 // Camera constants
-#define __d 4
+#define __d 5
 #define __camR 35
 #define __camTheta 1.511
 #define __camPhi 0
@@ -88,6 +88,11 @@
 #define __pomega 34.9524844012
 #define __alpha 0.971009761819
 #define __omega 4.6560355207e-05
+
+// Camera rotation angles
+#define __pitch 0.0
+#define __roll 0.0
+#define __yaw -0.4
 
 // SolverRK45 parameters
 #define rtoli 1e-06
