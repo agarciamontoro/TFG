@@ -6,7 +6,7 @@ from Raytracer import universe, Camera
 
 # Camera position
 camR = 35
-camTheta = 1.511
+camTheta = 0
 camPhi = 0
 
 # Camera lens properties

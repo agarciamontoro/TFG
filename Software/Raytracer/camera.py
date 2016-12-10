@@ -37,7 +37,8 @@ class Camera:
             around the black hole in the equatorial plane. It is computed using
             the formula (A.7) of Thorne's paper.
     """
-    def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize):
+    def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize,
+                 roll, pitch, yaw):
         """Builds the camera defined by `focalLength`, `sensorShape` and
         `sensorSize` and locates it at the passed coordinates :math:`(r_c,
         \\theta_c, \\phi_c)`
@@ -58,6 +59,13 @@ class Camera:
                 columns)`.
             sensorSize (tuple): 2-tuple that defines the physical dimensions of
                 the sensor in the following way: `(Height, Width)`.
+            roll (double): The roll angle of the CCD; i.e., the rotation angle
+                of the CCD on the plane of the CCD. Defaults to zero, that means the CCD is 
+            pitch (double): The pitch angle of the CCD; i.e., the above/below
+                direction of looking. Defaults to zero, that means the CCD is
+                facing the black hole centre.
+            yaw (double)
+
         """
 
         # Define position
