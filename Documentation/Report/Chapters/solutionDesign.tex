@@ -99,6 +99,7 @@ This discussion assumed the pixel coordinates to have its origin at the centre o
 Finally, one should take into account the need to convert the pixel from the sensor coordinates to physical units. This is handled by computing the pixel width and height using the size of the sensor in physical units.
 
 \subsection{Initial Conditions Computation}
+\label{sec:initcond}
 The algorithm kernel integrates, backwards in time, a system of differential equations. We already know the system we are working with, \autoref{theo:eqsmotion}, but for such a system to be uniquely solved, a set of initial conditions is needed.
 
 That is, for each ray we need to know its components \[(r, \vartheta, \varphi, p_r, p_\vartheta)\] at the time $\tau = 0$.
@@ -127,9 +128,52 @@ This is not a difficult task but a very delicate one, as some coordinate systems
 
 \fixme{Explain more!}
 
-\subsection{System Numerical Solver}
+\subsection{Numerical Solver}
 
+Once we have the differential equations system and the initial conditions for the ray we want to solve, the final step is to numerically integrate, backwards in time, the geodesic followed by the ray.
 
+The problem reduces then to numerically integrate a differential equations system, which is a well-known problem and widely studied in the literature.
+
+In order to accomplish this task, the algorithm used by our ray tracer uses a classic Runge-Kutta method, along with an automated step size computation based on the estimated error of the step.
+
+The Runge-Kutta method is based on the \texttt{DOPRI5} algorithm, described in \cite{hairer93} and \cite{hairer96}, and whose Butcher's table can be seen on \autoref{tab:butcher}.
+
+The automated control for the step size based on the estimated error follows the ideas in \cite[Sec. II.4, Subsec. Automatic Step Size Control]{hairer93}.
+
+Furthermore, the step size is stabilized using the algorithm described in \cite[Sec. IV.2]{hairer96}.
+
+\begin{table}[bth]
+	\myfloatalign
+	\label{tab:butcher}
+	\begin{tabularx}{.9\textwidth}{c|ccccccc}
+		$0$&  & & & & & & \\
+		$\frac{1}{5}$&  $\frac{1}{5}$& & & & & & \\
+		$\frac{3}{10}$&  $\frac{3}{40}$&  $\frac{9}{40}$& & & & & \\
+		$\frac{4}{5}$&  $\frac{44}{45}$&  $-\frac{56}{15}$&  $\frac{32}{9}$& & & & \\
+		$\frac{8}{9}$&  $\frac{19372}{6561}$&  $-\frac{25360}{2187}$&  $\frac{64448}{6561}$&  $-\frac{212}{729}$& & & \\
+		$1$&  $\frac{9017}{3168}$&  $-\frac{355}{33}$&  $\frac{46732}{5247}$&  $\frac{49}{176}$&  $-\frac{5103}{18656}$& & \\
+		$1$&  $\frac{35}{384}$&  $0$&  $\frac{500}{1113}$&  $\frac{125}{192}$&  $-\frac{2187}{6784}$&  $\frac{11}{84}$& \\ \hline
+		$y_1$&  $\frac{35}{384}$&  $0$&  $\frac{500}{1113}$&  $\frac{125}{192}$&  $-\frac{2187}{6784}$&  $\frac{11}{84}$&  $0$ \\ \hline
+		$\widehat{y}_1$&  $\frac{5179}{57600}$&  $0$&  $\frac{7571}{16695}$&  $\frac{393}{640}$&  $-\frac{92097}{339200}$&  $\frac{187}{2100}$&  $\frac{1}{40}$
+	\end{tabularx}
+	\caption{Butcher's table for the ray tracer solver}
+\end{table}
+
+\subsection{Runge-Kutta 5(4)}
+
+The Runge-Kutta methods integrate general initial values problems like the following one,
+\begin{align*}
+	\dot{y} = f(t,y) \\
+	y(t_0) = y_0,
+\end{align*}
+where $y$ can be scalar or vector and $f$, $t_0$ and $y_0$ are known.
+
+Our system of differential equations, \autoref{theo:eqsmotion}, follows this model, with
+\begin{enumerate}
+	\item $\dot{y} = (\dot{r}, \dot{\vartheta}, \dot{\varphi}, \dot{p}_r, \dot{p}_\vartheta)$,
+	\item $f(t,y)$ is the right hand side of the equations and actually it does not depend on $t$, thus it can be written as $f(y)$.
+	\item $t_0 = 0$ and $y_0 = (r_0, \vartheta_0, \varphi_0, p_{r0}, p_{\vartheta0})$ are the initial conditions computed in \autoref{sec:initcond}.
+\end{enumerate}
 
 \section{Parallelization Techniques}
 \subsection{Classic Parallelization}
