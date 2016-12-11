@@ -1,3 +1,7 @@
+<p align="center">
+<img src="https://s30.postimg.org/hvjen0qo1/ezgif_com_9440f853a9.gif" />
+</p>
+
 # TFG
 General Relativity massively parallel raytracer - a free software alternative.
 
