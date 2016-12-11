@@ -1,6 +1,20 @@
 \chapter{Solution implementation}
 
+This chapter covers the implementation details, the technologies used, the different decisions made and the reasons that led us to make them.
+
+In short, the software developed is a Python package that implements a general relativity ray tracer using the library \ac{CUDA} as the back-end, generating images of a Kerr black hole from close distances.
+
+The primary requirement when designing and implementing the software has been the \emph{ease of use}. The Python package exposes a minimal yet powerful public \ac{API}, abstracting all \ac{CUDA}-related code and letting the user configure the properties of the black hole and the cameras placed near it.
+
 \section{Technologies Used}
+
+The following technologies have been used on the implementation of this software:
+\begin{enumerate}
+	\item Programming languages: Python and C.
+	\item Parallelization library: CUDA.
+	\item Documentation: Sphinx and Doxygen.
+\end{enumerate}
+
 \subsection{Python}
 \subsection{CUDA}
 \subsection{PyCUDA}
