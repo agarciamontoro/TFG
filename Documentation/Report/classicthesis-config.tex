@@ -90,7 +90,8 @@
     sorting=nyt, % name, year, title
     maxbibnames=10, % default: 3, et al.
     %backref=true,%
-    natbib=true % natbib compatibility mode (\citep and \citet still work)
+    natbib=true, % natbib compatibility mode (\citep and \citet still work)
+    firstinits=true
 }{biblatex}
     \usepackage{biblatex}
 
@@ -208,7 +209,7 @@
 \makeatletter
 \@ifpackageloaded{babel}%
     {%
-       \addto\extrasamerican{%
+       \addto\extrasbritish{%
 			\renewcommand*{\figureautorefname}{Figure}%
 			\renewcommand*{\tableautorefname}{Table}%
 			\renewcommand*{\partautorefname}{Part}%
@@ -384,6 +385,7 @@
 \newcommand*{\definitionautorefname}{Definition}
 \newcommand*{\exampleautorefname}{Example}
 \newcommand*{\remarkautorefname}{Remark}
+\newcommand*{\algorithmautorefname}{Algorithm}
 
 % Numbering of equations following chapter.number convention
 \numberwithin{equation}{chapter}
@@ -406,3 +408,6 @@
 \newcommand{\eqnote}[2]{%
 	\underset{\substack{\uparrow\\\mathrlap{\text{\hspace{-1em}#2}}}}{#1}}
 
+% Algorithms
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}

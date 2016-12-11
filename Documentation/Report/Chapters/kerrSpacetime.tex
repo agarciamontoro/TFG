@@ -6,28 +6,46 @@ The Kerr black hole is the centre (both metaphorically and literally) of our mod
 
 This chapter tries to define it, comment some properties and extract the necessary information we will need to build the ray tracer. A deep study of the Kerr spacetime, however, is far beyond the scope of this work, so the origin of the metric tensor will not be described and the proofs of the results will be omitted, although the main references will be given.
 
+Let us set up some terminology, described in \cite[Def. 1.6.2, 1.6.3]{oneill95} in order to understand the following pages.
+
+\begin{definition}[Timelike particle]
+	A future-pointing timelike curve $\alpha$ in a spacetime is known as a \emph{timelike (or material) particle}. Its mass is defined as $m = \vert \alpha' \vert$.
+\end{definition}
+
+\begin{definition}[Lightlike particle]
+	A \emph{lightlike (or null) particle} $\gamma$ in a spacetime is a future-pointing lightlike geodesic.
+\end{definition}
+
+\begin{definition}[Causal particle]
+	A \emph{causal particle} in a spacetime is either a material particle or a lightlike particle.
+\end{definition}
+
+It is trivial to see that the mass of a lightlike particle is zero.
+
+Throughout all the chapter we choose natural units; \ie, we set the speed of light and the mass to the unity. This is the usual way of working in physics, and it will ease the notation of the following equations.
+
 \section{Kerr Metric}
 
-The Kerr metric is an exact solution of the Einstein field equation, that models a spacetime with an axially symmetric black hole rotating about an axis through its centre
+The Kerr metric is an exact solution of the vacuum Einstein field equation, that models a spacetime with an axially symmetric black hole rotating \footnote{It is important to note here that the black hole does not actually rotate: the Kerr metric is a solution to the vacuum Einstein field equation, so no mass is located on the spacetime. When we talk about the mass of the black hole, we are really talking about the mass of the colliding star that formed it. However, as the black hole curves the spacetime in such a way that any particle falling into it is forced to rotate, we can picture this as the rotation of the black hole itself.} about an axis through its centre.
 
-To describe the spacetime modelled by the Kerr metric, we can picture every event occurring in it as described by the four coordinates $(t, r, \vartheta, \varphi)$.
+The coordinate chart we are going to use to describe each event occuring on the spacetime's manifold is defined by the \emph{Boyer-Lindquist} coordinates, whose four components are noted as $(t, r, \vartheta, \varphi)$.
+
+The basis for the tangent space of the spacetime will be noted as $(\partial_t, \partial_r, \partial_\vartheta, \partial_\varphi)$, whereas its dual basis will be noted as $(dt, dr, d\vartheta, d\varphi)$
+
+Although, historically, the origin of these coordinates did not have any physical meaning, an observer placed at the infinity would understand them as follows:
 \begin{enumerate}
-	\item A time coordinate $t\in\R$.
-	\item Three spatial coordinates, $(r, \vartheta, \varphi)$, whose physical meaning can be understood, from infinity, as follows:
+	\item $t\in\R$ is the time coordinate.
+	\item $(r, \vartheta, \varphi)$ are the spatial coordinates:
 	\begin{enumerate}
-		\item $r \in \R^+$: distance to the centre of the star.
-		\item $\vartheta \in \R$: polar angle with respect to the centre of the star.
-		\item $\varphi \in \R$: azimuthal angle with respect to the centre of the star, with the star itself rotating in the positive $\varphi$ direction.
+		\item $r \in \R^+$ is the distance to the centre of the black hole.
+		\item $\vartheta \in \R$ is the polar angle with respect to the centre of the black hole.
+		\item $\varphi \in \R$ is the azimuthal angle with respect to the centre of the black hole, with the black hole itself rotating in the positive $\varphi$ direction.
 	\end{enumerate}
 \end{enumerate}
 
-These coordinates are known as $Boyer-Lindquist$ coordinates, and will be used in the following chapters.
-
-\fixme{Add image}
-
 Kerr spacetime depends on two parameters that models the black hole:
 \begin{enumerate}
-	\item $M > 0$, its mass.
+	\item $M > 0$, which could be considered as its mass.
 	\item $a \neq 0$, its angular momentum per unit of mass.
 \end{enumerate}
 
@@ -46,7 +64,7 @@ From these equations, the Kerr metric is defined as follows.
 		\label{eq:kerrmetric}
 		ds^2 = &-dt^2 + \rho^2\left(\frac{dr^2}{\Delta} + d\vartheta^2\right) + \left(r^2 + a^2\right)\sin^2\vartheta d\varphi^2 + \\
 		\nonumber
-		&+ \frac{2r}{\rho^2}\left(a\sin^2\vartheta d\varphi - dt\right)
+		&+ \frac{2r}{\rho^2}\left(a\sin^2\vartheta d\varphi - dt\right).
 	\end{align}
 \end{definition}
 
@@ -57,8 +75,8 @@ From the definition, some properties of the Kerr metric can be observed \cite[Se
 	\item Since the Kerr metric does not depend on the coordinates $t$ and $\varphi$, the coordinate vector fields $\partial_t$ and $\partial_\varphi$ are Killing. This summarises the two previous properties.
 	\item The Kerr metric is invariant when applying the transformation
 	\begin{align*}
-		t \to -t
-		\varphi \to -\varphi,
+		t &\to -t \\
+		\varphi &\to -\varphi,
 	\end{align*}
 	that is, travelling to the past reverses the rotation.
 	\item The Kerr spacetime is asymptotically flat, that is, far from the black hole, the spacetime is flat and the coordinate $r$ can be really viewed as the distance to the black hole. The coordinates $(r, \vartheta, \varphi)$ can then, and only then, be understood as spherical coordinates.
@@ -72,19 +90,19 @@ If we consider $\mathbf{v}^\alpha$ the tangent vector to a geodesic $\gamma$ and
 \[
 	\xi_1 = \partial_t, \qquad \xi_2 = \partial_\varphi
 \]
-the two conserved quantities can be defined as
+the two quantities $\mathbf{v}^\alpha \xi_{1\alpha}$ and $\mathbf{v}^\alpha \xi_{1\alpha}$ are conserved, and can be noted as
 \begin{align}
 	-E &\defeq \mathbf{v}^\alpha \xi_{1\alpha} \\
-	L_z &\defeq \mathbf{v}^\alpha \xi_{1\alpha}
+	L_z &\defeq \mathbf{v}^\alpha \xi_{1\alpha}.
 \end{align}
+
+This comes from the fact 
 
 Considering a timelike geodesic, the previous quantities can be understood as the energy of the particle and the angular momentum, both per unit mass and measured from the infinity.
 
 Even if we consider a lightlike geodesic, this interpretation can be maintained by means of parametrizing the geodesic flow with the affine parameter of the geodesic.
 
-The conservation of the angular momentum is interesting to understand that particles near a Kerr black hole are forced to rotate accordingly with it.
-
-The convention for these two conserved quantities will be hold until the end of the document, and will prove key when trying to obtain the equations of motion for a free fall lightlike particle.
+The convention for these two conserved quantities will be hold until the end of the document, and will prove key when trying to obtain the equations of motion for a free fall causal particle.
 
 
 \section{Horizons and Singularities}
@@ -101,11 +119,11 @@ From \autoref{eq:kerrmetric}, one can see that the Kerr metric is singular in an
 
 These \emph{singularity equations} throw two different types of singularities: the ones produced by the choice on the coordinate system, but which are not real singularities of the metric (i.e., that can be avoided when changing the coordinate system), and the ones that can be obtained using any coordinate system.
 
-The first singularity, which is caused by the nature of the spacetime and not by the choice of the coordinate system, is obtained when assuming $\rho^2 = 0$, that makes the Kretschmann invariant\footnote{In Kerr spacetimes, the usual scalar curvature (see \autoref{def:scalarcurvature}) vanishes, as $Ric = 0$. However, one can define another invariant quantity in order to describe the spacetime curvature. This description is usually carried out with the help of the Kretschmann invariant, that is defined as $K = Ric_{\alpha\beta\gamma\delta}^{\alpha\beta\gamma\delta}$.} infinite, and that can be physically understood as an infinite curvature of the spacetime itself.
+The first singularity, which is caused by the nature of the spacetime and not by the choice of the coordinate system, is obtained when assuming $\rho^2 = 0$, that makes the Kretschmann invariant\footnote{In Kerr spacetimes, the usual scalar curvature (see \autoref{def:scalarcurvature}) vanishes, as $Ric = 0$. However, one can define another invariant quantity in order to describe the spacetime curvature. This description is usually carried out with the help of the Kretschmann invariant, that is defined as $K = Ric_{\alpha\beta\gamma\delta}Ric^{\alpha\beta\gamma\delta}$.} divergent, and that can be physically understood as a divergent curvature of the spacetime itself.
 
 From the second singularity equation, we obtain two coordinate singularities:
 \[
-	r_{\pm} \defeq 1 \pm \sqrt{1 - a^2}
+	r_{\pm} \defeq M \pm \sqrt{M - a^2}
 \]
 
 These singularities are called \emph{horizons}, as it can be proved \cite[p. 15]{galindo14} that, on them, the constant-$r$ hypersurface are null. The two horizons divide the spacetime in three regions:
@@ -116,9 +134,9 @@ These singularities are called \emph{horizons}, as it can be proved \cite[p. 15]
 \end{enumerate}
 
 \begin{remark}
-	From this second singularity equation, one could think that $a$ should always satisfy $a^2 < 1$. This is not exactly true, as, theoretically, black holes with $a^2 \geq 1$, called \emph{fast and extreme Kerr black holes} can be studied. When $a^2 > 1$, the singularity equation has no real solution and therefore no horizons exist.
+	From this second singularity equation, one could think that $a$ should always satisfy $a^2 < M^2$. This is not exactly true, as, theoretically, black holes with $a^2 \geq M^2$, called \emph{fast and extreme Kerr black holes} can be studied. When $a^2 > M^2$, the singularity equation has no real solution and therefore no horizons exist.
 	
-	Although this theoretical spacetimes exist, we will always assume that $a^2 < 1$.
+	Although these theoretical spacetimes exist, we will always assume that $a^2 < 1 = M^2$.
 \end{remark}
 
 \section{Kerr Metric notation}

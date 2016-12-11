@@ -112,7 +112,15 @@ C(M,g) = \bigcup_{p \in M} C_p(M,g).
 	where $\tau'(p)$ is the opposite time cone of $\tau(p)$ for every $p\in M$.
 \end{definition}
 
-The previous definition let us understand the notion of spacetime:
+We can define some terms, using the notation on \cite[p. 33]{oneill95}, regarding the time orientation:
+\begin{enumerate}
+	\item The selected time cones when we time-orient a manifold are called \emph{future time cones}, whereas the other ones are known as \emph{past time cones}.
+	\item A timelike tangent vector is called \emph{future-pointing} if it lays in a future time cone. It is called past-pointing in any other case.
+	\item The light cone in the boundary of the future time cones is called \emph{future light cone}, whose vectors being future-pointing.
+	\item A curve that is either lightlike or timelike is called a \emph{causal} curve, and it is future-pointing if all its tangent vectors are future-pointing.
+\end{enumerate}
+
+The previous definitions let us understand the notion of spacetime:
 
 \begin{definition}[Spacetime]
 	A \emph{spacetime} is a four dimensional time oriented Lorentzian manifold.
@@ -557,7 +565,7 @@ As our primary objective is to study the movement of light, this first small ste
 		0 = \pd{}{x^k} \left( \frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} \right).
 	\]
 	
-	We conclude that the differential equations system of order 2 given by
+	We conclude that the \ac{ODE} system of order 2 given by
 	\begin{equation}
 	\label{eq:geodesic}
 		\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0 \quad k = 1, \dots, n
@@ -819,7 +827,7 @@ This section is based on the study of Killing vector fields developed on \cite[p
 	\end{equation}
 \end{lemma}
 
-We are now able to see that an integral curve starting at a point on $M$ can be seen as the solution to the differential equation described by \autoref{eq:integralcurve} restricted to the initial conditions given by \autoref{eq:initcond}.
+We are now able to see that an integral curve starting at a point on $M$ can be seen as the solution to the \ac{ODE} described by \autoref{eq:integralcurve} restricted to the initial conditions given by \autoref{eq:initcond}.
 
 \begin{lemma}
 	Consider a vector field $X \in \mathfrak{X}(M)$ and a point $p_0 \in M$. Then, there exists $U$, an open neighbourhood of $p_0$ at $M$, a number $\varepsilon > 0$ and a smooth function
@@ -830,7 +838,7 @@ We are now able to see that an integral curve starting at a point on $M$ can be 
 	\[
 		t \mapsto \varphi(t,q)
 	\]
-	is the integral curve of $X$ starting at $q$; \ie, $\varphi$ is the general solution of the differential equation \ref{eq:integralcurve}.
+	is the integral curve of $X$ starting at $q$; \ie, $\varphi$ is the general solution of the \ac{ODE} \ref{eq:integralcurve}.
 	
 	The solution $\{\varphi_t\}_{t \in (-\varepsilon, \varepsilon)}$ is known as \emph{a local flow of $X$}.
 \end{lemma}

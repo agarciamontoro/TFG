@@ -1,6 +1,6 @@
 \chapter{Equations of Motion}
 
-This chapter aims to find the most computationally stable equations of motion for $\gamma$, a free falling lightlike particle moving on a Kerr spacetime.
+This chapter aims to find the most computationally stable equations of motion for $\gamma$, a free falling causal particle moving on a Kerr spacetime.
 
 The classical equations derived from the definition of geodesic in terms of the Christoffel symbols,
 \[
@@ -14,11 +14,11 @@ These equations, although really interesting when, for example, one cannot obtai
 	\item The conserved quantities of the system, which will prove key in the computation of the final equations, can be obtained from these equations as well as for the versions we will see later. However, this system has a problem: it is very difficult to get the conserved quantities \emph{into} the equations.
 \end{itemize}
 
-Having discarded this obvious system of equations, we will look for the classical Hamiltonian formulation \cite[Sec. 33.5]{thorne73}, that gives us a first order system with the conserved quantities in the equations. These quantities are derived from the Hamiltonian formulation, but not the Hamiltonian nor its derived equations will be used here, as the final system equations will be obtained with a quadrature methods. In this formulation, however, another problem arises, as a pair of square roots appear on the right hand side of the equations. This problem will be analysed in the corresponding section.
+Having discarded this obvious system of equations, we will look for the classical Hamiltonian formulation \cite[Sec. 33.5]{thorne73}, that gives us a first order system with the conserved quantities in the equations. These quantities are derived from the Hamiltonian formulation, but not the Hamiltonian nor its derived equations will be used here, as the final system equations will be integrated by quadrature. In this formulation, however, another problem arises, as a pair of square roots appear on the right hand side of the equations. This problem will be analysed in the corresponding section.
 
 Finally, we will be able to get rid of those square roots, simply by defining the Hamiltonian and using a version of it that will ease our analytical computations. This approach will lead us to a first order system with conserved quantities and which will be numerically-friendly. This is the approach followed on \cite{thorne15}.
 
-From now on, and valid throughout this chapter, let $\gamma$ be a lightlike particle, whose tangent vector components, expressed in Boyer-Lindquist coordinates, are
+From now on, and valid throughout this chapter, let $\gamma$ be a causal particle, whose tangent vector components, expressed in Boyer-Lindquist coordinates, are
 \begin{equation}
 	\label{eq:blcoord1}
 	\mathbf{v}^\alpha = (\dot{t}, \dot{r}, \dot{\vartheta}, \dot{\varphi}),
@@ -40,17 +40,17 @@ The relation between the two quantities is obtained through the operation of low
 \section{Classical Hamiltonian Formulation}
 
 It is known \cite[Sec. 33.5]{thorne73} that the geodesic equation $\gamma'' = 0$ is equivalent to the system
-\begin{equation*}
-	\frac{dx^\mu}{d\lambda} = \pd{\mathcal{H}}{p_\mu}, \qquad
-	\frac{dp_\mu}{d\lambda} = - \pd{\mathcal{H}}{x^\mu}.
-\end{equation*},
+\begin{align*}
+	\frac{dx^\mu}{d\lambda} = \pd{\mathcal{H}}{p_\mu} \\
+	\frac{dp_\mu}{d\lambda} = - \pd{\mathcal{H}}{x^\mu},
+\end{align*}
 where $\lambda$ is an affine parameter such that $d/d\lambda = \mathbb{p}$ and where
 \[
 	\mathcal{H} = \frac{1}{2} g^{\mu\nu} p_\mu p_\nu
 \]
-is the usual Hamiltonian: a half of the square of the velocity.
+is the usual Hamiltonian, obtained from the kinetic energy (with mass equal to one): half of the square of the velocity.
 
-This Hamiltonian formalism let us obtain four first integrals of motion \cite[pp. 898-899]{thorne73}, that come as a result from the stationary and axial symmetry of the geometry of Kerr spacetimes, from the nearly miraculous work of Carter when computing the constant named after him and from the modulus of the momentum:
+This Hamiltonian formalism let us obtain four first integrals of motion \cite[pp. 898-899]{thorne73}, that come as a result from the stationary and axial symmetry of the geometry of Kerr spacetimes, from the nearly miraculous work of Carter when computing the constant named after him \cite{carter68} and from the modulus of the momentum:
 \begin{itemize}
 	\item The killing vector $\partial_t$ raises the conserved quantity
 	\[
@@ -65,14 +65,14 @@ This Hamiltonian formalism let us obtain four first integrals of motion \cite[pp
 		\label{eq:carter}
 		Q = p_\vartheta^2 + \cos^2\vartheta \left( a^2 \left( \mu^2 - E^2 \right) + \frac{L_z^2}{\sin^2\vartheta} \right).
 	\end{equation}
-	\item The modulus of the tangent vector $p_\alpha$, which is
+	\item The modulus of the tangent vector $p_\alpha$:
 	\begin{equation}
 		\label{eq:modulus}
 		p_\alpha p_\beta g^{\alpha\beta} = -\mu^2,
 	\end{equation}
-	that is,
+	where $\mu$ is 1 if the considered particle has mass and 0 in any other case, as when considering a photon. Writing the value of the left hand side of \autoref{eq:modulus} and restructuring, we have that
 	\[
-		\mu^2 + \frac{p_\vartheta^2 + p_r^2 \Delta}{\rho^2} + \frac{L_z^2}{\varpi^2} = \frac{E - L_z \omega}{\alpha^2}
+		\mu^2 + \frac{p_\vartheta^2 + p_r^2 \Delta}{\rho^2} + \frac{L_z^2}{\varpi^2} = \frac{E - L_z \omega}{\alpha^2}.
 	\]
 \end{itemize}
 
@@ -138,7 +138,22 @@ Is for this reasoning that we continue looking for a better system of equations 
 Let us however prove this theorem, as the work done here will not be in vain: both equations \ref{eq:req} and \ref{eq:thetaeq} will be used in the following section to obtain the final system of equations.
 
 \begin{proof}
-	We will only prove equations \ref{eq:req} and \ref{eq:thetaeq}, as the computation of the other two is really similar and does not contribute anything interesting. Furthermore, only the $\dot{r}$ and $\dot{\vartheta}$ equations will prove to be useful on the next section of this chapter.
+	We will prove equations \ref{eq:req} and \ref{eq:thetaeq}. The method for computing the other two is similar as the one used in \ref{eq:req}. Furthermore, only the $\dot{r}$ and $\dot{\vartheta}$ equations will prove to be useful on the next section of this chapter.
+	
+	\subsection*{$\dot{\vartheta}$ Equation}
+	
+	Using the definition of the Carter constant (\autoref{eq:carter}), we can directly find the value of $p_\vartheta$
+	\begin{align}
+	p_\vartheta^2 &= Q + a^2E^2\cos^2\vartheta - a^2\mu^2\cos^2\vartheta - \frac{L_z^2}{\sin^2\vartheta}\cos^2\vartheta = \\
+	&= Q - \cos^2\vartheta\left( a^2\left(\mu^2 - E^2 \right) `\frac{L_z^2}{\sin^2\vartheta} \right).
+	\end{align}
+	
+	Therefore, \autoref{eq:inittheta} is directly equivalent to the following one:
+	\begin{equation}
+	\label{eq:sqrtTheta}
+	\rho^2 \dot{\vartheta} = \sqrt{\Theta},
+	\end{equation}
+	where $\Theta$ is defined in \autoref{eq:defTheta}. This finally proves \autoref{eq:thetaeq}.
 	
 	\subsection*{$\dot{r}$ Equation}
 	
@@ -153,7 +168,7 @@ Let us however prove this theorem, as the work done here will not be in vain: bo
 	\dot{r}^2 = \Delta \left( -\eqnote{\dot{\vartheta}}{from $p_\vartheta = \rho^2\dot{\vartheta}$}^2 + \frac{E^2}{\alpha^2\rho^2} - \frac{\mu^2}{\rho^2} - \frac{2L_zE\omega}{\alpha^2\rho^2} + \frac{L_z^2\omega^2}{\alpha^2\rho^2} - \frac{L_z^2}{\rho^2\varpi^2} \right)
 	\end{equation}
 	
-	If we write \autoref{eq:r1} in the form
+	If we use \autoref{eq:sqrtTheta} and write \autoref{eq:r1} in the form
 	\[
 	\rho^2 \dot{r} = \sqrt{\widehat{R}},
 	\]
@@ -259,20 +274,6 @@ Let us however prove this theorem, as the work done here will not be in vain: bo
 	\end{align}
 	
 	This proves that $\widehat{R} = R$, and therefore proves \autoref{eq:req}.
-	
-	\subsection*{$\dot{\vartheta}$ Equation}
-	
-	Using the definition of the Carter constant (\autoref{eq:carter}), we can directly find the value of $p_\vartheta$
-	\begin{align}
-	p_\vartheta^2 &= Q + a^2E^2\cos^2\vartheta - a^2\mu^2\cos^2\vartheta - \frac{L_z^2}{\sin^2\vartheta}\cos^2\vartheta = \\
-	&= Q - \cos^2\vartheta\left( a^2\left(\mu^2 - E^2 \right) `\frac{L_z^2}{\sin^2\vartheta} \right).
-	\end{align}
-	
-	Therefore, \autoref{eq:inittheta} is directly equivalent to the following one:
-	\begin{equation}
-	\rho^2 \dot{\vartheta} = \sqrt{\Theta},
-	\end{equation}
-	where $\Theta$ is defined in \autoref{eq:defTheta}. This finally proves \autoref{eq:thetaeq}.
 \end{proof}
 
 	
@@ -330,8 +331,8 @@ Let us first work a little bit more on $\mathcal{H}$, rewriting \autoref{eq:hami
 Now, using these equations and the ones obtained in \autoref{theo:firsteqs}, we can rewrite $\mathcal{H}$ as follows:
 \begin{align*}
 	\mathcal{H} &= \frac{p_r^2 \Delta}{2\rho^2} + \frac{p_\vartheta^2}{2\rho^2} + \mathfrak{f} \eqnote{=}{\ref{eq:preq}, \ref{eq:pthetaeq}} \frac{\left( \frac{\dot{r}\rho^2}{\Delta} \right)^2 \Delta}{2\rho^2} + \frac{\left(\dot{\vartheta}\rho^2\right)^2}{2\rho^2} + \mathfrak{f} = \\
-	&= \dot{r}^2\frac{\rho^2}{2\Delta} + \dot{\vartheta}^2\rho^2 + \mathfrak{f} \eqnote{=}{\ref{eq:req}, \ref{eq:thetaeq}} \frac{R}{\rho^4 }\frac{\rho^2}{2\Delta} + \frac{\Theta}{\rho^4}\rho^2 + \mathfrak{f} =\\
-	&= \frac{R}{2\rho^2\Delta} + \frac{\Theta}{\rho^2} + \mathfrak{f}.
+	&= \dot{r}^2\frac{\rho^2}{2\Delta} + \frac{\dot{\vartheta}^2\rho^2}{2} + \mathfrak{f} \eqnote{=}{\ref{eq:req}, \ref{eq:thetaeq}} \frac{R}{\rho^4 }\frac{\rho^2}{2\Delta} + \frac{\Theta}{2\rho^4}\rho^2 + \mathfrak{f} =\\
+	&= \frac{R}{2\rho^2\Delta} + \frac{\Theta}{2\rho^2} + \mathfrak{f}.
 \end{align*}
 
 We can use now an interesting property of the Hamiltonian, which is a conserved quantity itself.
@@ -345,7 +346,12 @@ Then, it is clear that
 \[
 	\mathcal{H} = \frac{-\mu^2}{2}
 \]
-and we can finally express $\mathfrak{f}$ easily:
+and therefore
+\[
+	\frac{R}{2\rho^2\Delta} + \frac{\Theta}{2\rho^2} + \mathfrak{f} = \frac{-\mu^2}{2}.
+\]
+
+We can finally obtain the expression for $\mathfrak{f}$ easily:
 \[
 	\mathfrak{f} = - \frac{R + \Delta \Theta}{2\Delta\rho^2} - \frac{\mu^2}{2}.
 \]
