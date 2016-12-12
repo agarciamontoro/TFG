@@ -30,6 +30,7 @@ speedup <- data.frame(Pixels = m$Pixels,
                       SpeedUp = m$CPU / m$GPU)
 
 ggplot(speedup, aes(Pixels, SpeedUp)) +
-  geom_line()
+  geom_line() +
+  geom_smooth(method = "lm",formula = y ~ log(x))
 ```
 
