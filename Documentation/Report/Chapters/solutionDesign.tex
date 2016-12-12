@@ -6,7 +6,10 @@ In short, the solution to the problem of studying what an observer near a black 
 
 This work implements a general relativity ray tracer; \ie, a ray tracer for which the path followed by light is not always a straight line.
 
+In \autoref{sec:gendesc}, the layout of the solution is depicted, whereas in \autoref{sec:parallel}, the parallelization designed is explained. \autoref{sec:pinhole} explains the pinhole camera model, describing the identification of each pixel on the camera with a lightlike particle coming from the celestial sphere. Finally, \autoref{sec:initcond} and \autoref{sec:numerical} describes the necessary work to numerically solve the geodesic equations.
+
 \section{General Description}
+\label{sec:gendesc}
 
 Imagine a spacetime defined by a Kerr metric, with a black hole on its centre, and a camera with a digital sensor placed near it.
 
@@ -14,7 +17,7 @@ As we have studied, all rays that hit the sensor have followed a geodesic to fin
 
 For every pixel on the sensor, the ray tracer work can be abstracted as a function that computes the path of the ray that hit it. Therefore, from the pixel coordinates, $p = (p_x, p_y)$, it computes the geodesic path followed by the ray.
 
-This point is computed using the \ac{ODE} system described in \autoref{theo:eqsmotion}, derived from the Kerr spacetime. Therefore, a numerical solver for such systems is needed, along with the initial conditions of each ray. This conforms an \emph{initial value problem}, a kind of well-known problems whose numerical solutions are widely studied.
+This point is computed using the \ac{ODE} system described in \autoref{theo:eqsmotion}, derived from the Kerr spacetime. Therefore, a numerical solver for such systems is needed, along with the initial conditions of each ray. This conforms an \ac{IVP}, a kind of well-known problems whose numerical solutions are widely studied.
 
 Abstracting all these tasks out, the general outline of the ray tracer is described on \autoref{alg:raytracer}.
 
@@ -68,11 +71,68 @@ In short, the algorithm goal is to compute the following map
 \end{equation}
 for each considered geodesic arriving at the camera.
 
-One could take this algorithm description and, using the equations on \autoref{theo:eqsmotion}, integrate geodesics whose initial condition is an arbitrary $(\vartheta_{cs}, \varphi_{cs})$.
+\section{Parallelization Techniques}
+\label{sec:parallel}
 
-This work, however, aims to generate realistic images of what an observer would see when looking at a black hole from near distances. With this goal in mind, the camera is abstracted as a simple, yet effective, model that will let us produce such images.
+A ray tracer is in general highly parallelizable, and our design is not different: it performs the exact same operation on a large set of different data, namely it solves the \ac{ODE} system, whose equations (\autoref{theo:eqsmotion}) are always the same, on a large number of different initial conditions.
+
+The idea behind the parallelization design is easy: for each parallelized node, we have to feed the numerical solver with a different initial condition, computed from each pixel of the image. Using the classic Flynn's taxonomy \cite{flynn72} terminology, our architecture follows a \ac{SIMD} paradigm, where a single generalized task works on multiple data streams in order to compute multiple results.
+
+Ideally, we would like to design a completely parallel solution, in which we have the same number of nodes in the parallel architecture as pixels we have in the image. Although this is highly difficult for large images with the classic parallelization on \acp{CPU}, the new \ac{GPU} techniques will help us get closer this goal.
+
+\subsection{General-Purpose Computing on Graphics Processing Units}
+
+Historically, \acp{GPU} have been used to process tasks and data always related to computer graphic purposes, whereas \acp{CPU} have been used in general computation.
+
+In recent years, a new powerful technique has been deeply studied: the so-called \ac{GPGPU}. Its goal is to use the \acp{GPU}, designed to have thousands of cores that can process data in parallel, to general purpose computing, not only computer graphics tasks.
+
+Although each of the cores on a \ac{GPU} is much less powerful than a single \ac{CPU}, the great order of parallelization ---thousands of cores in a \ac{GPU} against just a few dozens of them on \acp{CPU}--- and the specific design to handle a parallel architecture makes the use of \ac{GPGPU} appealing when one want to design an efficient solution.
+
+Our ray tracer uses this paradigm, virtually parallelizing the computation of each geodesic in a different \ac{GPU} core. We say \emph{virtually} because the number of cores in a \ac{GPU} is always finite, and for large images, some computations will have to be serialized. However, as we will see in the following chapter, this will be transparent to us, developers, by using a proper \ac{GPGPU} library.
+
+\subsection{Parallelized Solution}
+
+With this paradigm in mind, we can describe the parallelized solution by modifying the main loop on \autoref{alg:raytracer}, whose iterations will be split across all the nodes on the \ac{GPU}.
+
+If we abstract the computation of the geodesic that hits one single pixel in a function, as shown in \autoref{alg:onepixel}, we can finally define the layout of the parallelized solution.
+
+\begin{algorithm}[bth]
+	\caption{Single pixel geodesic computation}
+	\label{alg:onepixel}
+	\begin{algorithmic}[1]
+		\Function{ComputeGeodesic}{$p_x, p_y$, Geodesics}
+		\State initCond $\gets$ initConditions($p_x$, $p_y$)
+		\State $\gamma_{xy} \gets$ solveInitValueProblem(ODEsystem, initCond)
+		\State Geodesics $\gets$ Geodesics $\cup \gamma_{xy}$
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+\autoref{alg:raytracer2} shows the parallelized solution following the \ac{SIMD} paradigm. The solution is similar to the one shown at \autoref{alg:raytracer} but with a little change: the loop is now parallelized and each pixel is computed at a different node of the parallel architecture.
+
+\begin{algorithm}
+	\caption{High-level abstraction of the ray tracer}
+	\label{alg:raytracer2}
+	\begin{algorithmic}[1]
+		\Function{Ray Tracer}{d}
+		\State ODEsystem $\gets$ Geodesics equations for the Kerr spacetime
+		\State Camera $\gets$ Pinhole camera model
+		\State Geodesics $\gets \{\emptyset\}$
+		\State $(\textrm{Node}_1, \dots, \textrm{Node}_n) \gets$ Initialize parallel device
+		\For{pixel $p^i = (p^i_x, p^i_y)$ in the Camera sensor}
+		\State ComputeGeodesic($p^i_x, p^i_y$, Geodesics) at $\textrm{Node}_i$
+		\EndFor
+		\Return{Geodesics}
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
 
 \section{Pinhole Camera}
+\label{sec:pinhole}
+
+One could take the solution description and, using the equations on \autoref{theo:eqsmotion}, integrate geodesics whose initial condition is an arbitrary $(\vartheta_{cs}, \varphi_{cs})$.
+
+This work, however, aims to generate realistic images of what an observer would see when looking at a black hole from near distances. With this goal in mind, the camera is abstracted as a simple, yet effective, model that will let us produce such images.
 
 \subsection{Foundations}
 
@@ -173,6 +233,7 @@ where
 
 \section{Initial Conditions Computation}
 \label{sec:initcond}
+
 The algorithm kernel integrates, backwards in time, an \ac{ODE} system. We already know the system we are working with, \autoref{theo:eqsmotion}, but for such a system to be uniquely solved, a set of initial conditions is needed.
 
 That is, for each ray we need to know its components, \[(r, \vartheta, \varphi, p_r, p_\vartheta),\] at the time $\tau = 0$.
@@ -409,7 +470,7 @@ The moment of the ray is then $f(n)$, that is,
 We know that Kerr is stationary, so $p_t$ is conserved (see \autoref{eq:conservedpt}). We will normalize it by defining
 \[
 	E_f = - \frac{1}{p_t}
-\]
+\]  
 as the energy measured by the \ac{FIDO} and multiplying $p$ by $E_f$. The final components of the momentum \cite[Eq. (A.11)]{thorne15} are:
 \begin{align}
 	p_t &= -1, \\
@@ -424,6 +485,7 @@ Because of the axial symmetry on Kerr black holes (see \autoref{eq:conservedpphi
 \end{equation}
 
 \section{Numerical Solver}
+\label{sec:numerical}
 
 Once we have the \ac{ODE} system and the initial conditions for the ray we want to solve, the final step is to numerically integrate, backwards in time, the geodesic followed by the ray.
 
@@ -439,7 +501,7 @@ Furthermore, the step size is stabilized using the algorithm described in \cite[
 
 \subsection{Adaptive Runge-Kutta Method}
 
-The Runge-Kutta methods solve general initial values problems like the following one,
+The Runge-Kutta methods solve general \ac{IVP} like the following one,
 \begin{align*}
 	\dot{y} = f(t,y) \\
 	y(t_0) = y_0,
@@ -501,24 +563,3 @@ The selected Runge-Kutta algorithm is a fourth order method with an estimation o
 \end{table}
 
 \subsection{Stabilization algorithm}
-
-\section{Parallelization Techniques}
-
-A ray tracer is in general highly parallelizable, and our design is not different: it performs the exact same operation on a large set of different data, namely it solves the \ac{ODE} system (\autoref{the:eqsmotion}), whose equations are always the same, on a large number of different initial conditions.
-
-The idea behind the parallelization design is easy: for each parallelized node, we have to feed the numerical solver with a different initial condition, computed from each pixel of the image. Using the classic Flynn's taxonomy \cite{flynn72} terminology, our architecture follows a \ac{SIMD} paradigm, where a single generalized task works on multiple data streams in order to compute multiple results.
-
-Ideally, we would like to design a completely parallel solution, in which we have the same number of nodes in the parallel architecture as pixels we have in the image. Although this is highly difficult for large images with the classic parallelization on \ac{CPU}, the new \ac{GPU} techniques will help us get closer this goal.
-
-\subsection{General-Purpose Computing on Graphics Processing Units}
-
-Historically, \ac{GPU}s have been used to process tasks and data always related to computer graphic purposes, whereas \ac{CPU}s have been used in general computation.
-
-In recent years, a new powerful technique has been deeply studied: the so-called \ac{GPGPU}. Its goal is to use the \ac{GPU}s, designed to have thousands of cores that can process data in parallel, to general purpose computing, not only computer graphics tasks.
-
-Although each of the cores on a \ac{GPU} is much less powerful than a single \ac{CPU}, the great order of parallelization ---thousands of cores in a \ac{GPU} against just a few dozens of them on \ac{CPU}s--- and the specific design to handle a parallel architecture makes the use of \ac{GPGPU} appealing when one want to design an efficient solution.
-
-Our ray tracer uses this paradigm, virtually parallelizing the computation of each geodesic in a different \ac{GPU} core. We say \emph{virtually} because the number of cores in a \ac{GPU} is always finite, and for large images, some computations will have to be serialized. This will be transparent to us, developers, by using a \ac{GPGPU} library, which will be seen in the following chapter.
-
-\subsection{Parallelized Algorithm}
-
