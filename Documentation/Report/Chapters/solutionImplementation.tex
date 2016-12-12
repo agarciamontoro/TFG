@@ -28,15 +28,15 @@ The following technologies have been used on the implementation of this software
 
 \ac{CUDA} is a powerful library that abstracts the interaction with the \ac{GPU} in order to let the user implement general purpose programs on it.
 
-\ac{CUDA} abstracts all kinds of \acp{GPU} in a hierarchy to manage instructions and shared memory, a list with the main levels on the hierarchy folllows:
+\ac{CUDA} abstracts all kinds of \acp{GPU} in a hierarchy to manage instructions and shared memory. A list with the main levels on the hierarchy follows:
 \begin{itemize}
-	\item Thread: a minimal unit managed by the \ac{GPU}. It is a set of data and instructions that is handled by a single processing unit of the \ac{GPU}. It has its own local memory, the fastest of all the memories defined by \ac{CUDA}, and only accessible by the thread itself.
-	\item Warp: a logical set of 32 threads, whose usage can be omitted by developers but that can increase the performance highly.
-	\item Block: a three dimensional matrix where every element is a thread. All threads in a block can access to a section of the memory, called \emph{shared memory}; it is much faster than the global memory. Every thread has a unique per-block identifier.
-	\item Grid: a three dimensional matrix where every element is a block. The memory accessible by all threads in all blocks is called the \emph{global memory}, and it is the slowest one. Every block has a unique identifier in the grid.
+	\item \emph{Thread}: the minimal unit managed by the \ac{GPU}. It is a set of data and instructions that is handled by a single processing unit of the \ac{GPU}. It has its own local memory, the fastest of all the memories defined by \ac{CUDA}, and only accessible by the thread itself.
+	\item \emph{Warp}: a logical set of 32 threads that execute the same instruction at the same time on different data. Although the consideration of the warps can be omitted by developers, a good design that takes this into account can increase the performance highly, as a warp takes advantage of the spatial locality of data, optimising accesses to memory.
+	\item \emph{Block}: a three dimensional (although one can omit any of the dimensions) matrix where every element is a thread. All threads in a block can access a section of the memory, called \emph{shared memory}, which is much faster than the global memory. Every thread has a unique per-block identifier.
+	\item \emph{Grid}: a three dimensional (although one can omit any of the dimensions) matrix where every element is a block. The memory accessible by all threads in all blocks is called the \emph{global memory}, and it is the slowest one. Every block has a unique identifier within the grid.
 \end{itemize}
 
-The \ac{CUDA} device is then configured as a set of threads, uniquely identified by their block indices and thread indices relative to the blocks.
+The \ac{CUDA} device is configured once at the beginning of the program as a set of threads, uniquely identified by their block indices and thread indices relative to the blocks.
 
 \begin{figure}[bth]
 	\myfloatalign
@@ -52,5 +52,43 @@ The shape of the \ac{CUDA} grid and blocks are customizable by the user, but the
 This section will study how the grid and blocks are shaped on our software and the implemented parallelized code, as well as some fine-tuning techniques used to speed up the computations.
 
 \subsection{Device Setup}
-\subsection{CUDA Kernel}
+
+The configuration of the grid for a ray tracer seems natural. As we are working with images, which are simply two dimensional matrices, the grid will be shaped as a two dimensional matrix, where every thread will compute the geodesic corresponding to a pixel.
+
+The important question now is how to configure the pixels between the blocks; \ie, how to define the number of blocks per column and per row in the grid.
+
+The most simple answer is to define one dimensional blocks of a fixed size that extend along the rows of the image. The very first implementation of the ray tracer used this configuration, but the speed up against the \ac{CPU} implementation was very poor.
+
+The branch divergence was guilty of the poor performance: along a row of the image, the behaviour of the corresponding geodesics is very different, and the so-called \emph{warp divergence} occurs: in a warp ---which in this configuration is defined along the rows of the image---, all threads execute the same instruction at the same time; if the control flow vary between the threads in a warp, some of them will be idle, which causes a great loss of parallel efficiency.
+
+This is avoided by designing a configuration that ensures, or at least that facilitates, that all the threads in a warp execute the same exact code without branch divergence. In our case, this means that the geodesics hitting the pixels in a warp should have followed a nearby path.
+
+However, without knowing a priori the origin of the geodesics, we can only guess which pixels will have similar geodesics. The configuration design follows then this sensible guess: \emph{nearby pixels are hit by geodesics with nearby origins}.
+
+From this assumption, we designed warps as squared as possible, configuring the blocks to have an integer number of warps. This resulted in the following configuration:
+\begin{enumerate}
+	\item Each block has $8\times8$ threads; \ie, two warps of $8\times4$ threads are located per block. See \autoref{fig:warpconf}.
+	\begin{figure}[bth]
+		\myfloatalign
+		\includegraphics[width=.5\linewidth]{gfx/warpconf.png}
+		\caption[Raytracer block configuration]{Raytracer block configuration}
+		\label{fig:warpconf}
+	\end{figure}
+	\item The grid size is dynamically computed using the image size provided by the user. The number of rows and columns of the grid are computed with the following formulas:
+	\begin{equation*}
+		G_C = \left \lfloor{\frac{I_C - 1}{B_C} + 1}\right \rfloor, \qquad
+		G_R = \left \lfloor{\frac{I_R - 1}{B_R} + 1}\right \rfloor,
+	\end{equation*}
+	where $G_C$ and $G_R$ are the number of blocks per column and per row, $I_C$ and $I_R$ are the columns and rows of pixels of the image and $B_C = B_R = 8$ are the number of columns and rows of a block. These formulas ensure we have enough threads to compute each pixel. The remaining threads, which do not have any geodesic to compute, will be idle during all the program execution.
+\end{enumerate}
+
+\subsection{CUDA Kernels}
+
+The main function executed by \ac{CUDA} on the \ac{GPU} is called the \emph{kernel}. Our implementation has three kernels, where every thread is identified with a pixel via its unique identifier in the \ac{CUDA} device. The kernels are:
+\begin{enumerate}
+	\item \lstinline{setInitialConditions()}: it is the kernel to compute the initial conditions for every pixel, as designed in \autoref{sec:initcond}. From the pixel coordinates, it computes the corresponding pair $(\vartheta_{cs}, \varphi_{cs})$.
+	\item  \lstinline{kernel()}: it is the main kernel. It receives the initial conditions for every pixel and the final time until which the \ac{ODE} system will be integrated. It computes the origin of each geodesic, \ie, the pair $(\vartheta', \varphi')$, using the design described at \autoref{sec:numerical}, while continuously checking for collisions with the accretion disk.
+	\item \lstinline{generate_image()}: it is an auxiliary kernel to map textures into the images. It receives the origin of the geodesic corresponding to each pixel in the image and maps it to a pixel in the provided texture.
+\end{enumerate}
+
 \subsection{Fine-Tuning}

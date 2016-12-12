@@ -413,12 +413,14 @@ We finally have the direction of motion of the ray expressed in the proper basis
 	\label{fig:diagram}
 \end{figure}
 
-Remember that $N$ has the orthonormal basis, so the expression of $\phi_N$ is trivial: only the sign of the time coordinate has to be changed. The expression of $\phi_E$ is more difficult, and that is why we are going to compute $f$ as
+Remember that $N$ has the orthonormal basis, so the expression of the metric on this space, noted as $\phi_N$, is trivial: its matrix is the diagonal $(-1, 1, 1, 1)$; \ie, only the sign of the time coordinate has to be changed. The expression of the metric on $E$, noted as $\phi_E$, is more difficult. That is why we are going to compute $f$ as
 \begin{equation}
-	f = (T^*)^{-1} \circ \phi_N.
+	\label{eq:f}
+	f = (T^*)^{-1} \circ \phi_N,
 \end{equation}
+an not as $f = \phi_E \circ T$.
 
-Using matrix notation, we have
+Using matrix notation, \autoref{eq:f} can be written as
 \begin{equation}
 	\mathcal{M}_f = \left(\mathcal{M}^t\right)^{-1} \mathcal{M}_{\phi_N},
 \end{equation}
