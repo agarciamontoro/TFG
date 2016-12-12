@@ -91,4 +91,16 @@ The main function executed by \ac{CUDA} on the \ac{GPU} is called the \emph{kern
 	\item \lstinline{generate_image()}: it is an auxiliary kernel to map textures into the images. It receives the origin of the geodesic corresponding to each pixel in the image and maps it to a pixel in the provided texture.
 \end{enumerate}
 
-\subsection{Fine-Tuning}
+\subsection{Optimizations}
+
+The computational bottleneck of the ray tracer is the \ac{ODE}solver. In particular, the computation of the right hand side of the system ---in terms of the \autoref{sec:numerical}, the function $f(y,t)$---, which involves a lot of operations, some of them really expensive, as the \lstinline{sin()} and \lstinline{cos()} functions.
+
+This chunk of code has been highly optimised, pre-computing all repeated operations and using efficient implementations such as the \lstinline{sincos()} function. The derivatives on equations \ref{eq:eqsmotionp}, \ref{eq:eqsmotionpr} and \ref{eq:eqsmotionpt} have been expressed in their most elementary terms and all common quantities between them have been also pre-computed. To optimise the memory access time, the thread's local memory has been used whenever it was possible.
+
+Furthermore, a specific issue has been taking into account: the \ac{ILP}. It is clear that a single thread cannot keep the \ac{GPU} busy, so the device schedules threads and instructions in such a way that the \ac{GPU} is always busy.
+
+One way of helping the \ac{CUDA} scheduler to maximize the device occupancy is to design the code optimising the \ac{ILP}.
+
+All the ray tracer implementation is coded in such a way that independent instructions are together, whereas dependent ones are as far as possible one of the other. This let the scheduler issue instructions in parallel without having to wait for dependent computations to finish.
+
+In particular, the code of the computation of $f(y,t)$ has been deeply studied in order to maximize the \ac{ILP}.
