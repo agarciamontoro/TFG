@@ -27,7 +27,7 @@ if __name__ == '__main__':
     camSensorShape = (1000, 1000)  # (Rows, Columns)
 
     # Set black hole spin
-    universe.spin = .999
+    universe.spin = .0001
     universe.accretionDisk.innerRadius = 9
     universe.accretionDisk.outerRadius = 20
 
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     if len(sys.argv) < 5:
         print("Usage: python benchmarkGPU.py outputPath minSide maxSide step")
         sys.exit()
-        
+
     # Benchmark parameters
     outputPath = sys.argv[1]
     start = int(sys.argv[2])

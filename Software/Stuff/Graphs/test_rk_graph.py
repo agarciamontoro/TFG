@@ -8,7 +8,7 @@ from rk4 import RK4Solver
 
 if __name__ == '__main__':
     selfDir = os.path.dirname(os.path.abspath(__file__))
-    functions = os.path.abspath(os.path.join(selfDir, "system1.cu"))
+    functions = os.path.abspath(os.path.join(selfDir, "system3.cu"))
     dummyData = np.array([[[1, 2], [1, 2]]])
 
     # Own solver build (force double precision)

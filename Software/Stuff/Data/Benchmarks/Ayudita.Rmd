@@ -9,28 +9,82 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 require(ggplot2)
 require(reshape2)
+
+formatter1000 <- function(x){ 
+    x/1000000
+}
 ```
 
 # Holis
 
 ```{r}
-CPU <- read.csv("999CPU.csv")
-GPU <- read.csv("999GPU.100.csv")
-m <- merge(CPU,GPU)
-colnames(m) <- c("Pixels","CPU","GPU")
+CPU9 <- read.csv("999/999CPU.csv")
+GPU9 <- read.csv("999/999GPU.csv")
+m9 <- merge(CPU9,GPU9)
+colnames(m9) <- c("Pixels","CPU","GPU")
 
-EscandiMorning <- melt(m, id.vars = "Pixels")
+CPU1 <- read.csv("0001/0001CPU.csv")
+GPU1 <- read.csv("0001/0001GPU.csv")
+m1 <- merge(CPU1,GPU1)
+colnames(m1) <- c("Pixels","CPU","GPU")
+```
 
-ggplot(EscandiMorning, aes(Pixels, value, color = variable)) +
-  geom_line() +
-  ylab("Time") +
+
+```{r}
+# EscandiMorning <- melt(m, id.vars = "Pixels")
+# 
+# ggplot(EscandiMorning, aes(Pixels, value, color = "red")) +
+#   geom_line() +
+#   ylab("Time") +
+#   theme(legend.title=element_blank())
+
+speedup1 <- data.frame(Pixels = m1$Pixels,
+                       SpeedUp = m1$CPU / m1$GPU)
+
+speedup9 <- data.frame(Pixels = m9$Pixels,
+                       SpeedUp = m9$CPU / m9$GPU)
+
+# ggplot(speedup1, aes(Pixels,)) +
+#   geom_line(aes(y = SpeedUp, colour = "Schwarzschild")) + 
+#   geom_line(aes(data = speedup9, colour = "Kerr")) +
+#   ylab("Speed up") +
+#   xlab("Image megapixels") +
+#   ggtitle("Parallel code speed up") +
+#   scale_x_continuous(labels = formatter1000)
+  #geom_smooth(method = "lm",formula = y ~ log(x))
+
+# (plot2 <- ggplot(NULL, aes(v, p)) + 
+#       geom_point(data = df1) +
+#       geom_step(data = df2)
+# )
+```
+
+```{r}
+ggplot() + 
+  geom_line(data=speedup1, aes(x=Pixels, y=SpeedUp, colour='Spin = 0.999')) + 
+  geom_line(data=speedup9, aes(x=Pixels, y=SpeedUp, colour='Spin = 0.0001')) +
+  ylab("Speed up") +
+  xlab("Image megapixels") +
+  ggtitle("Parallelized code speed up") +
+  scale_x_continuous(labels = formatter1000) +
   theme(legend.title=element_blank())
 
-speedup <- data.frame(Pixels = m$Pixels,
-                      SpeedUp = m$CPU / m$GPU)
+ggsave("../../../../Documentation/Report/gfx/speedup.png")
+```
 
-ggplot(speedup, aes(Pixels, SpeedUp)) +
-  geom_line() +
-  geom_smooth(method = "lm",formula = y ~ log(x))
+```{r}
+data <- read.csv("../../Graphs/stepradiusiter2.csv")
+data$Step <- abs(data$Step)
+data$Step <- scale(data$Step, center = min(data$Step), scale = max(data$Step) - min(data$Step))
+data$Radius <- scale(data$Radius, center = min(data$Radius), scale = max(data$Radius) - min(data$Radius))
+
+
+# data$Step <- abs(data$Step)
+ggplot(data, aes(Iteration)) +
+  ylab("") +
+  ggtitle("Normalized progression ") +
+  geom_line(aes(y = Radius, colour="Radius")) +
+  geom_line(aes(y = Step, colour="Step")) +
+  theme(legend.title=element_blank())
 ```
 

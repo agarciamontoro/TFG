@@ -184,7 +184,7 @@ class Camera:
 
         # FIXME: This is being forced to zero only for testing purposes.
         # Remove this line if you want some real fancy images.
-        # beta = 0
+        beta = 0
 
         return beta
 
@@ -262,6 +262,9 @@ class Camera:
         # Update the computation on pixel width and height
         self.pixelWidth, self.pixelHeight = self.computePixelSize()
 
+        # Recompile engine
+        self.engine = RayTracer(self)
+
     @property
     def sensorSize(self):
         return self._sensorSize
@@ -274,6 +277,9 @@ class Camera:
         # Update the computation on pixel width and height
         self.pixelWidth, self.pixelHeight = self.computePixelSize()
 
+        # Recompile engine
+        self.engine = RayTracer(self)
+
     def shoot(self, finalTime=-150, diskPath=None, spherePath=None):
         raysStatus, raysCoordinates = self.engine.rayTrace(finalTime)
 
@@ -285,7 +291,7 @@ class Camera:
             texels = self.engine.texturedImage(disk.astype(np.float64),
                                                sphere.astype(np.float64))
 
-        return CongruenceSnapshot(raysStatus, raysCoordinates, texels)
+        return CongruenceSnapshot(raysStatus, raysCoordinates, texels), self.engine.totalTime
 
     def slicedShoot(self, finalTime=-150, slicesNum=100):
         raysStatus, raysCoordinates = self.engine.slicedRayTrace(finalTime,
