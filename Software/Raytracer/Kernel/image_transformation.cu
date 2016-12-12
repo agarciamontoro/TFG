@@ -85,8 +85,8 @@ __global__ void generate_image(void* devRayCoordinates, void* devStatus,
                 //     }
                 // }
 
-                unsigned p1 = 4.0 * rNormalized;
-                unsigned p2 = floor(fmod(phi+2*Pi, 2*Pi) * 4.0 / (2*Pi));
+                int p1 = 4.0 * rNormalized;
+                int p2 = floor(fmod(phi+2*Pi, 2*Pi) * 4.0 / (2*Pi));
 
                 image[1] = image[2] = 0;
 
