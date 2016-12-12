@@ -1,0 +1,35 @@
+---
+title: "Ayudita"
+author: "Antonio Álvarez Caballero"
+date: "11 de diciembre de 2016"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(ggplot2)
+require(reshape2)
+```
+
+# Holis
+
+```{r}
+CPU <- read.csv("999CPU.csv")
+GPU <- read.csv("999GPU.100.csv")
+m <- merge(CPU,GPU)
+colnames(m) <- c("Pixels","CPU","GPU")
+
+EscandiMorning <- melt(m, id.vars = "Pixels")
+
+ggplot(EscandiMorning, aes(Pixels, value, color = variable)) +
+  geom_line() +
+  ylab("Time") +
+  theme(legend.title=element_blank())
+
+speedup <- data.frame(Pixels = m$Pixels,
+                      SpeedUp = m$CPU / m$GPU)
+
+ggplot(speedup, aes(Pixels, SpeedUp)) +
+  geom_line()
+```
+
