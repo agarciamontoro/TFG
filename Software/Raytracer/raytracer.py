@@ -368,7 +368,7 @@ class RayTracer(metaclass=LoggingClass):
             self.totalTime += self.start.time_till(self.end)*1e-3
 
         self.synchronise()
-        return self.rayStatus, self.systemState
+        return self.rayStatus, self.systemState, self.totalTime
 
     def slicedRayTrace(self, xEnd, numSteps=100):
         stepSize = xEnd / numSteps

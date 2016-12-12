@@ -64,11 +64,49 @@ __global__ void generate_image(void* devRayCoordinates, void* devStatus,
                 texel = v*diskCols + u;
                 diskTexture += texel * 3;
 
-                memcpy(image, diskTexture, 3*sizeof(Real));
+
+                // Real numBueno = fabs((phi + Pi) / (2*Pi));
+                //
+                //
+                // if(fmod(numBueno, 2*Pi/100) < Pi/100){
+                //     if(fmod(rNormalized, 0.2) < 0.1){
+                //         image[0] = 1;
+                //     }
+                //     else{
+                //         image[0] = 0;
+                //     }
+                // }
+                // else{
+                //     if(fmod(rNormalized, 0.2) < 0.1){
+                //         image[0] = 0;
+                //     }
+                //     else{
+                //         image[0] = 1;
+                //     }
+                // }
+
+                unsigned p1 = 4.0 * rNormalized;
+                unsigned p2 = floor(fmod(phi+2*Pi, 2*Pi) * 4.0 / (2*Pi));
+
+                image[1] = image[2] = 0;
+
+                if((p1 ^ p2) & 1)
+                    image[0] = 1;
+                else{
+                    image[0] = 1;
+                    image[1] = image[2] = 1;
+                }
+
+
+
+                // memcpy(image, diskTexture, 3*sizeof(Real));
 
                 break;
 
             case SPHERE:
+                phi = fmod(phi, 2*Pi);
+                theta = fmod(theta, Pi);
+
                 u = round(sphereCols * phi / (2*Pi));
                 v = round(sphereRows * theta / Pi);
 
