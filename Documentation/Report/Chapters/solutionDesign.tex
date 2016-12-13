@@ -493,9 +493,9 @@ Once we have the \ac{ODE} system and the initial conditions for the ray we want 
 
 The problem reduces then to numerically integrate an \ac{ODE} system, which is a well-known problem and widely studied in the literature.
 
-In order to accomplish this task, the algorithm used by our ray tracer uses a classic Runge-Kutta method, along with an automated step size computation based on the estimated error of the step.
+In order to accomplish this task, the algorithm used by our ray tracer uses a classic \ac{RK} method, along with an automated step size computation based on the estimated error of the step.
 
-The Runge-Kutta method is based on the \texttt{DOPRI5} algorithm, described in \cite{hairer93} and \cite{hairer96}.
+The \ac{RK} method is based on the \texttt{DOPRI5} algorithm, described in \cite{hairer93} and \cite{hairer96}.
 
 The automated control for the step size based on the estimated error follows the ideas in \cite[Sec. II.4, Subsec. Automatic Step Size Control]{hairer93}.
 
@@ -503,14 +503,14 @@ Furthermore, the step size is stabilized using the algorithm described in \cite[
 
 \subsection{Adaptive Runge-Kutta Method}
 
-The Runge-Kutta methods solve general \ac{IVP} like the following one,
+The \ac{RK} methods solve general \ac{IVP} like the following one,
 \begin{align*}
 	\dot{y} = f(t,y) \\
 	y(t_0) = y_0,
 \end{align*}
 where $y$ can be scalar or vector and $f$, $t_0$ and $y_0$ are known.
 
-Given a pair $(t_n, y_n)$, the adaptive Runge-Kutta methods compute the value of the system at time $t_{n+1}$ as follows:
+Given a pair $(t_n, y_n)$, the adaptive \ac{RK} methods compute the value of the system at time $t_{n+1}$ as follows:
 \begin{align*}
 	y_{n+1} = y_n + h \sum_{i=1}^s b_i k_i\\
 	y^*_{n+1} = y_n + h \sum_{i=1}^s b^*_i k_i,
@@ -534,7 +534,7 @@ The coefficients $a_{ij}$, $b_i$, $b_i^*$ and $c_i$ define the model, and are us
 		& $b_1$ & $b_2$ & $\cdots$ & $b_{s-1}$ & $b_s$ \\ \hline
 		& $b^*_1$ & $b^*_2$ & $\cdots$ & $b^*_{s-1}$ & $b^*_s$ \\
 	\end{tabularx}
-	\caption{Butcher's table for a generic adaptive Runge-Kutta method}
+	\caption{Butcher's table for a generic adaptive \ac{RK} method}
 	\label{tab:generalbutcher}
 \end{table}
 
@@ -545,7 +545,7 @@ Our system of \ac{ODE}, \autoref{theo:eqsmotion}, follows this model:
 	\item $t_0 = 0$ and $y_0 = (r_c, \vartheta_{cs}, \varphi_{cs}, p_{r}, p_{\vartheta})$ are the initial conditions computed in \autoref{sec:initcond}.
 \end{enumerate}
 
-The selected Runge-Kutta algorithm is a fourth order method with an estimation of the error based on a fifth order approximation, and whose Butcher's table is described on \autoref{tab:butcher}.
+The selected \ac{RK} algorithm is a fourth order method with an estimation of the error based on a fifth order approximation, and whose Butcher's table is described on \autoref{tab:butcher}.
 
 \begin{table}[bth]
 	\myfloatalign
