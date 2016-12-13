@@ -223,7 +223,9 @@ Furthermore, the pitch, roll and yaw angles were assumed to be zero. However, th
 
 Taking all this into account, the final formulas to compute $(\vartheta_{cs}, \varphi_{cs})$ from the physical coordinates of the pixel $(p_x, p_y)$ are
 \begin{align}
+	\label{eq:pinhole1}
 	\vartheta_{cs} &= \eta + \frac{\pi}{2} + \arctan{\frac{p_y}{\sqrt{p_x^2 + d^2}}}, \\
+	\label{eq:pinhole2}
 	\varphi_{cs} &= \lambda + \pi + \arctan{\frac{p_x}{d}}.,
 \end{align}
 where
