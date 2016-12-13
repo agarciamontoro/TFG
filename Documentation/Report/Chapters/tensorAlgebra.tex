@@ -1,7 +1,7 @@
 \chapter{Tensor Algebra}
 \label{chapter:tensoralgebra}
 
-This chapter covers some basic tools needed in the further development of this work. Although basic, its knowledge is crucial on a lot fields, and its interest for the study of the Geometry will unveil on the following chapters.
+This chapter covers some basic tools needed in the further development of this work. Although basic, its knowledge is crucial in a lot of fields, and its interest for the study of the Geometry will unveil in the following chapters.
 
 Nearly all definitions, results and ideas are based on \cite[Chapters 6 and 9]{romero86}.
 
@@ -70,7 +70,7 @@ With the concepts of multilinear maps and dual spaces we can now build the defin
 		\item Let $\varphi \in V^*$; \ie,  $\varphi \colon V \to K$ is a one-form. From \autoref{def:tensor} it is clear that $\varphi$ is a tensor of type $(0,1)$ over $V$.
 		\item Let $v \in V$ be a vector. Using the natural isomorphism between $V$ and its double dual space, the vector $v$ can be identified with $\psi_v \colon V^* \to K$, and thus we can understand $v$ as a tensor of type $(1,0)$.
 		\item Consider now $f \in \End_K V$ and let $T_f \colon V^* \times V \to K$ be the map defined as $T_f(\varphi, v) \defeq \varphi(f(v))$. It is clear that $T_f$ is a tensor of type $(1,1)$. Moreover, if we consider $f$ to be the identity map $1_V$, then $T_{1_V}$ is the tensor that maps every pair of (vector, one-form) to the evaluation of the one-form on the vector; \ie, is the tensor associated to the natural isomorphism between $V$ and $V^{**}$.
-		\item Common operations on several mathematical fields can also be seen as tensors. For example, the inner product can be defined as a tensor of type $(0,2)$ as follows:
+		\item Common operations in several mathematical fields can also be seen as tensors. For example, the inner product can be defined as a tensor of type $(0,2)$ as follows:
 		\begin{align*}
 			T \colon V \times V &\to K\\
 			(v,w) &\mapsto \sum_{i=1}^n v_i w_i.
@@ -107,7 +107,7 @@ Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear t
 		\item For each $T\in\tensors_{r,s}(V)$ there exists an \emph{opposite tensor} $-T$ defined as \[(-T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = - T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)\] that satisfies $T + (-T) = -T + T = 0$.
 		\item $T + T' = T' + T$.
 	\end{enumerate}
-	This provides abelian goup structure to $\tensors_{r,s}(V)$. The following properties finally show that $\tensors_{r,s}(V)$ is a vector space:
+	This provides $\tensors_{r,s}(V)$ with abelian goup structure. The following properties finally show that $\tensors_{r,s}(V)$ is a vector space:
 	\begin{enumerate}
 		\item $a(T+T') = aT+ aT', \;\;\forall a \in K, \;\forall T,T' \in \tensors_{r,s}(V)$.
 		\item $(a+b)T = aT + bT, \;\;\forall a,b \in K, \;\forall T \in \tensors_{r,s}(V)$.
@@ -147,7 +147,7 @@ In fact, the application
 \end{align*}
 is a bilinear map.
 
-As a particular example, we can define the tensor product between two tensors of type $(1,0)$ and $(0,1)$ as the following tensor:\footnote{Note that we are using the reflexiveness theorem to ease the notation, as we are writing $v$ ---a letter used for vectors of $V$--- to describe an element of $V^{**}$.}
+As a particular example, we can define the tensor product between two tensors of type $(1,0)$ and $(0,1)$ as the following tensor:\footnote{This is an abuse of notation, as we are writing $v$ ---a letter used for vectors of $V$--- to describe an element of $V^{**}$.}
 \[
 	v \otimes \varphi \in \tensors_{1,1}(V),
 \]
@@ -200,7 +200,7 @@ Two particularly important examples of the above theorem let us grasp the dualit
 
 Let $V$ be a vector space with dimension $n$, with basis $B = \{v_1, \dots, v_n\}$ and dual basis $B^* = \{\varphi^i, \dots, \varphi^n\}$.
 
-We know that $\tensors_{1,0}(V) = V^{**}$, and using reflexiveness theorem we can write each vector $v \in V \simeq V^{**}$ as
+We know that $\tensors_{1,0}(V) = V^{**}$, and we can write each vector $v \in V \simeq V^{**}$ as
 \[
 v = \sum_{i=1}^n b^i v_i,
 \]
@@ -212,7 +212,7 @@ Similarly, we can consider $\tensors_{0,1}(V) = V^*$. Each of its elements, $\ps
 \]
 Note here that the coordinates are retrieved evaluating the form in each element of the basis $B$: $a_j = \psi(v_j)$.
 
-This shows that both evaluating a one-form on the elements of the basis $B$ and projecting a vector with the elements of the basis $B^*$ can be seen as dual operations: both of them gives the coordinates of the corresponding element on the corresponding basis.
+This shows that both evaluating a one-form on the elements of the basis $B$ and projecting a vector with the elements of the basis $B^*$ can be seen as dual operations: both of them give the coordinates of the corresponding element on the corresponding basis.
 
 The notion of tensor help us to understand this duality: we now see both elements as the \emph{same} mathematical entity, where both operations are expressed in different bases with the corresponding change of coordinates.
 
@@ -269,7 +269,7 @@ This change of bases in $V$ and $V^*$  is key to understand \autoref{pro:changeT
 		t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} &= T(\varphi'^{k_1}, \dots, \varphi'^{k_r}, v_{l_1}', \dots, v_{l_s}')  = \\
 		&= T(\sum a_{i_1}^{k_1}\varphi^{i_1}, \dots, \sum a_{i_r}^{k_r}\varphi{i_r}, \sum b_{l_1}^{j_1} v_{j_1}, \dots, \sum b_{l_s}^{j_s} v_{j_s}) = \\
 		&= \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} T(\varphi^{k_1}, \dots, \varphi^{k_r}, v_{l_1}, \dots, v_{l_s}) = \\
-		&= \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r}
+		&= \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r}.
 	\end{align*}
 \end{proof}
 
@@ -348,7 +348,7 @@ The matrix notation is now somewhat different:
 
 This last expression is very interesting, as it tells us that the \emph{matrices} of the coordinates of $T$ in both bases of $\tensors_{1,1}(V)$ are similar, not congruent as in \autoref{eq:tensors20} or \autoref{eq:tensors02}.
 
-Remember now the third item in \autoref{ex:tensors}: it established a relationship between $\tensors_{1,1}(V)$ and $\End_K V$, that is now clear again: we see that \autoref{eq:tensors11} is not only the change of coordinates of a tensor, but also the expression of the change of basis matrix of the corresponding endomorphism.
+Remember now the third item in \autoref{ex:tensors}: it established a relationship between $\tensors_{1,1}(V)$ and $\End_K V$, that is now clear again: we see that \autoref{eq:tensors11} is not only the change of coordinates of a tensor, but also the expression of the change of the basis matrix of the corresponding endomorphism.
 
 This is not surprising as both spaces are isomorphic, with a \emph{natural} isomorphism between them:
 \begin{theorem}
@@ -398,12 +398,12 @@ with the expression of coordinate change being
 	t'^k_{\phantom{'}l} = \sum_{i,j = 1}^n a^k_i b_l^j  t^i_j \quad \forall k,l \in \{1,2,\dots,n\}.
 \]
 
-From the previous expression is straightforward to see that \cite[p. 198]{romero86} the sum of the coordinates with the same index is invariant under a change of basis. Indeed:
+From the previous expression it is straightforward to see that \cite[p. 198]{romero86} the sum of the coordinates with the same index is invariant under a change of basis. Indeed:
 \begin{align*}
 	\sum_k t'^k_k = \sum_{i,j,k} a^k_i b_k^j  t^i_j = \sum_{i,j} \left( \sum_k a^k_i b_k^j \right) t^i_j = \sum_{i,j} \delta_i^j t^i_j = \sum_i t^i_i.
 \end{align*}
 
-Considering the tensor $T$ as an operator, it is clear that this invariant scalar (a $(0,0)$ tensor) is the trace. We have then a map
+Considering the tensor $T$ as an operator, it is clear that this invariant scalar (a $(0,0)$ tensor) is the trace. We then have a map
 \[
 	C \colon \tensors_{(1,1)}(V) \to \tensors_{(0,0)}(V)
 \]
@@ -440,7 +440,7 @@ It is interesting to note that the coordinates of $C^i_j T$ are obtained making 
 
 Equations \ref{eq:tensors20}, \ref{eq:tensors02} and \ref{eq:tensors11} can be interpreted otherwise, as they can be used to build an alternative definition of tensor.
 
-This reinterpretation first needs a new concept to be developed, the multidimensional arrays, that will be used to represent tensors by their coordinates on a certain basis.
+This reinterpretation first needs a new concept to be developed, multidimensional arrays, that will be used to represent tensors by their coordinates on a certain basis.
 
 \begin{definition}[Multidimensional array]
 	Let $K$ be a field and $s, r$ and $n$ non-negative integers. A \emph{multidimensional array} of type $(r,s)$ and order $n$ is an ordered set of $n^{r+s}$ $K$-scalars, which we will note as
@@ -533,7 +533,7 @@ This addition to the naked vector space we have had until now will let us find a
 	\end{enumerate}	
 \end{proposition}
 
-This proposition, whose trivial proof can be found on \cite[Proposition 9.30]{romero86}, let us define the so-called musical isomorphisms, that gives us the possibility to completely identify $V$ and $V^*$ ---this identification depends on the metric $g$---:
+This proposition, whose trivial proof can be found on \cite[Proposition 9.30]{romero86}, let us define the so-called musical isomorphisms, that give us the possibility to completely identify $V$ and $V^*$ ---this identification depends on the metric $g$---:
 
 \begin{definition}[Musical isomorphisms]
 	The isomorphisms $\flat \colon V \to V^*$ and $\sharp \colon V^* \to V$, defined on \autoref{pro:musical}, are called \emph{musical isomorphisms induced by g}. We call $\flat$ \emph{flat} and $\sharp$ \emph{sharp}.
@@ -604,7 +604,7 @@ Going back to the beginning of this section, we will see now how we could build 
 \end{theorem}
 
 \begin{proof}
-	The linearity of the musical isomorphisms assure the linearity on each component of the functions $T'$ and $T''$, which proves 1.
+	The linearity of the musical isomorphisms assures the linearity on each component of the functions $T'$ and $T''$, which proves 1.
 	
 	Given that $\tensors_{(1,1)}$ and $\tensors_{(0,2)}$ have the same dimension, to prove that $T \mapsto T'$ is an isomorphism we just need to prove that the map $T \mapsto T'$ is injective. But this comes as a direct consequence of the fact that $\sharp$ is bijective. The proof for $T \mapsto T''$ is similar.
 	
@@ -615,7 +615,7 @@ Going back to the beginning of this section, we will see now how we could build 
 	\label{pro:musicalcoord}
 	Let $B = (v_1, \dots, v_n)$ be an ordered basis of $(V,g)$ and let $B^* = (\varphi^1, \dots, \varphi^n)$ be its dual basis. Consider a tensor $T\in\tensors_{(0,2)}(V)$ that is defined as follows:
 	\[
-		T = \sum_{i,j}^{n} t_{ij} \varphi^i \otimes \varphi^j
+		T = \sum_{i,j}^{n} t_{ij} \varphi^i \otimes \varphi^j.
 	\]
 	
 	Then, if the tensors $T'$ and $T''$ from \autoref{theo:tensoriso} have the coordinates
@@ -640,7 +640,7 @@ Going back to the beginning of this section, we will see now how we could build 
 	it is easy to conclude the first expression:
 	\begin{align*}
 		t'^i_j &= T'(\varphi^i, v_j) = T((\varphi^i)^\sharp, v_j) = T(\sum_k g^*(\varphi^k, \varphi^i) v_k, v_j) = \\
-		&= \sum_{k=1}^n g^*(\varphi^k, \varphi^i) T(v_k, v_j) = \sum_k g^*(\varphi^k, \varphi^i) t_{kj}
+		&= \sum_{k=1}^n g^*(\varphi^k, \varphi^i) T(v_k, v_j) = \sum_k g^*(\varphi^k, \varphi^i) t_{kj}.
 	\end{align*}
 
 	The second one is very similar:
@@ -648,7 +648,7 @@ Going back to the beginning of this section, we will see now how we could build 
 		t''^{ij} &= T''(\varphi^i, \varphi^j) = T((\varphi^i)^\sharp, (\varphi^j)^\sharp) = \\
 		&= T(\sum_k g^*(\varphi^k, \varphi^i) v_k, \sum_l g^*(\varphi^l, \varphi^j) v_l) = \\
 		&= \sum_{k,l=1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) T(v_k, v_l) = \\
-		&= \sum_{k,l=1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) t_{kl}
+		&= \sum_{k,l=1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) t_{kl}.
 	\end{align*}
 \end{proof}
 
@@ -662,12 +662,12 @@ Going back to the beginning of this section, we will see now how we could build 
 
 \begin{remark}
 	\label{rem:raiselower}
-	Of course, these two expressions can be \emph{inverted}, in order to obtain the coordinates of a $(0,2)$-tensor from the coordinates of tensors of type $(1,1)$ or $(2,0)$. Multiplying conveniently by the metric we obtain the inverted expressions. Consider the first expression, $t'^i_j = \sum_{k=1}^n g^*(\varphi^k, \varphi^i) t_{kj}$, multiply by $g_{il}$ and sum over $i$:
+	Of course, these two expressions can be \emph{inverted} in order to obtain the coordinates of a $(0,2)$-tensor from the coordinates of tensors of type $(1,1)$ or $(2,0)$. Multiplying conveniently by the metric we obtain the inverted expressions. Consider the first expression, $t'^i_j = \sum_{k=1}^n g^*(\varphi^k, \varphi^i) t_{kj}$, multiply by $g_{il}$ and sum over $i$:
 	\begin{align*}
 		t'^i_j &= \sum_{k=1}^n g^{ki} t_{kj} \\
 		\sum_{i=1}^n g_{il} t'^i_j &= \sum_{k=1}^n \left(\sum_{i=1}^n g_{il} g^{ki}\right) t_{kj} \\
 		\sum_{i=1}^n g_{il} t'^i_j &= \sum_{k=1}^n \delta^k_l t_{kj} \\
-		\sum_{i=1}^n g_{il} t'^i_j &= t_{lj}
+		\sum_{i=1}^n g_{il} t'^i_j &= t_{lj}.
 	\end{align*}
 	
 	We can obtain the inverted version of the second expression in a similar way, now multiplying by $g_{im} g_{jp}$ and summing over $i$ and $j$:
@@ -682,22 +682,22 @@ Going back to the beginning of this section, we will see now how we could build 
 	\[
 		t_{ij} = \sum_{k=1}^n g_{ki} t^k_j
 		\quad \textrm{and} \quad
-		t_{ij} = \sum_{k,l=1}^n g_{ki} g_{lj} t^{kl}
+		t_{ij} = \sum_{k,l=1}^n g_{ki} g_{lj} t^{kl}.
 	\]
 \end{remark}
 
 Although we have seen \autoref{pro:musicalcoord} for tensors of order 2, the result is easily generalized to tensors of any other order. This provides us with a great tool to identify tensors of the same order through the musical isomorphisms.
 
-This whole identification, which is in practice a technique consisting of multiplying by the metric in order to obtain the same tensor with a different type ---as shown in \autoref{rem:raiselower}--- is a well-known operation known as \emph{raise and lower indices}. This operation will become extremely important on the differential geometry discussion, which will be key to this work.
+This whole identification, which is in practice a technique consisting of multiplying by the metric in order to obtain the same tensor with a different type ---as shown in \autoref{rem:raiselower}--- is a well-known operation called \emph{raise and lower indices}. This operation will become extremely important on the differential geometry discussion, which will be key to this work.
 
-But before going ahead, let us ease even more the identification between tensors. Let us consider again the example of tensors of order 2, but now with $B$ an orthonormal basis; we know from previous discussions that, in this case, $B^*$ is also orthonormal; \ie, the metric on the elements of the basis is
+But before going ahead, let us ease even more the identification between tensors. Let us consider again the example of tensors of order 2, but now with $B$ as an orthonormal basis; we know from previous discussions that, in this case, $B^*$ is also orthonormal; \ie, the metric on the elements of the basis is
 \[
 	g^{ij} = \delta^i_j.
 \]
 
 Then, the expressions for the change of coordinates, following the notation of \autoref{rem:raiselower}, are even easier:
 \[
-	t^i_j = t_{ij} = t^{ij}
+	t^i_j = t_{ij} = t^{ij}.
 \]
 
 We can finish this section with an interesting example on the use of the musical isomorphisms.

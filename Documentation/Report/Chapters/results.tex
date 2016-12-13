@@ -27,7 +27,7 @@ The ray tracer generates images with a wide range of possibilities. First of all
 
 \autoref{fig:blackholenodisk} shows the same previous image, but rendered without the disk to better see the distortion produced by the black hole.
 
-Furthermore, the rendered images can plotted as three dimensional projections, letting the user observe the paths followed by the geodesics in order to understand how they were curved.
+Furthermore, the rendered images can be plotted as three dimensional projections, letting the user observe the paths followed by the geodesics in order to understand how they were curved.
 
 An example of this feature can be seen on \autoref{fig:3dprojection}, where four snapshots of the three dimensional projection are shown. Blue lines represent geodesics that come from the celestial sphere, red lines are geodesics that never existed, as they would have originated inside the black hole's horizon; finally, the green lines are the geodesics whose origin is on the accretion disk.
 
@@ -106,7 +106,7 @@ In fact, both the step line and the radius line are very similar, showing the co
 
 Regarding the efficiency of the ray tracer, a benchmark against a \ac{CPU} implementation has been done.
 
-The \ac{CPU} implementation has essentially the same code that the \ac{GPU}-parallelized version, except for the obvious changes than were made to adapt the code to the \ac{CUDA} grid.
+The \ac{CPU} implementation has essentially the same code that the \ac{GPU}-parallelized version, except for the obvious changes that were made to adapt the code to the \ac{CUDA} grid.
 
 \autoref{fig:speedup} shows two benchmarks using both versions of the ray tracer: one with a Kerr spacetime where the black hole has a spin of $a = 0.0001$ and another one where the spin is $a = 0.999$.
 
@@ -213,7 +213,7 @@ The curvature of the disk around the black hole is really interesting. It let us
 
 Let us set up a simple image where the shadow is depicted with black pixels, the celestial sphere with white pixels and the disk with red ones.
 
-\autoref{fig:explanation} shows this image, where we have noted the different parts of the disk we will talk about. The big stripe crossing the shadow, that gets over it is the top of the disk. The lower stripe, that gets closer to the shadow and go around on top of it is the disk bottom. We will denote the thin line just on top of the shadow as the upper part of the inner halo, where the thin line just below it will be called lower part of the inner halo.
+\autoref{fig:explanation} shows this image, where we have noted the different parts of the disk we will talk about. The big stripe crossing the shadow that gets over it is the top of the disk. The lower stripe, that gets closer to the shadow and goes around on top of it is the disk bottom. We will denote the thin line just on top of the shadow as the upper part of the inner halo, where the thin line just below it will be called lower part of the inner halo.
 
 It is interesting to visualize the geodesics that hit the disk in order to understand the processes that lead us to see the disk with such a great distortion.
 
@@ -263,7 +263,7 @@ We can visualize, on the disk, the final point of the geodesic on the camera. In
 	\label{fig:cathegories}
 \end{figure}
 
-Finally, \autoref{fig:detail} shows a close up of the left side of the shadow, where all the versions of the disk show and where even more halos are appreciated. This time, for the sake of its beauty, a texture on the celestial sphere is added and the disk is drawn completely white.
+Finally, \autoref{fig:detail} shows a close up of the left side of the shadow where even more halos are appreciated. This time, for the sake of its beauty, a texture on the celestial sphere is added and the disk is drawn completely white.
 
 \begin{figure}[bth]
 	\myfloatalign

@@ -67,7 +67,7 @@ This section covers the implementation details for some of the most complex bloc
 
 \ac{CUDA} abstracts all kinds of \acp{GPU} in a hierarchy to manage instructions and shared memory. A list with the main levels on the hierarchy follows:
 \begin{itemize}
-	\item \emph{Thread}: the minimal unit managed by the \ac{GPU}. It is a set of data and instructions that is handled by a single processing unit of the \ac{GPU}. It has its own local memory, the fastest of all the memories defined by \ac{CUDA}, and only accessible by the thread itself.
+	\item \emph{Thread}: the minimal unit managed by the \ac{GPU}. It is a set of data and instructions that is handled by a single processing unit of the \ac{GPU}. It has its own local memory, the fastest of all the memories defined by \ac{CUDA}, and is only accessible by the thread itself.
 	\item \emph{Warp}: a logical set of 32 threads that execute the same instruction at the same time on different data. Although the consideration of the warps can be omitted by developers, a good design that takes this into account can increase the performance highly, as a warp takes advantage of the spatial locality of data, optimising accesses to memory.
 	\item \emph{Block}: a three dimensional (although one can omit any of the dimensions) matrix where every element is a thread. All threads in a block can access a section of the memory, called \emph{shared memory}, which is much faster than the global memory. Every thread has a unique per-block identifier.
 	\item \emph{Grid}: a three dimensional (although one can omit any of the dimensions) matrix where every element is a block. The memory accessible by all threads in all blocks is called the \emph{global memory}, and it is the slowest one. Every block has a unique identifier within the grid.
@@ -94,9 +94,9 @@ The configuration of the grid for a ray tracer seems natural. As we are working 
 
 The important question now is how to configure the pixels between the blocks; \ie, how to define the number of blocks per column and per row in the grid.
 
-The most simple answer is to define one dimensional blocks of a fixed size that extend along the rows of the image. The very first implementation of the ray tracer used this configuration, but the speed up against the \ac{CPU} implementation was very poor.
+The simplest answer is to define one dimensional blocks of a fixed size that extend along the rows of the image. The very first implementation of the ray tracer used this configuration, but the speed up against the \ac{CPU} implementation was very poor.
 
-The branch divergence was guilty of the poor performance: along a row of the image, the behaviour of the corresponding geodesics is very different, and the so-called \emph{warp divergence} occurs: in a warp ---which in this configuration is defined along the rows of the image---, all threads execute the same instruction at the same time; if the control flow vary between the threads in a warp, some of them will be idle, which causes a great loss of parallel efficiency.
+The branch divergence was guilty of the poor performance: along a row of the image, the behaviour of the corresponding geodesics is very different, and the so-called \emph{warp divergence} occurs: in a warp ---which in this configuration is defined along the rows of the image---, all threads execute the same instruction at the same time; if the control flow varies between the threads in a warp, some of them will be idle, which causes a great loss of parallel efficiency.
 
 This is avoided by designing a configuration that ensures, or at least that facilitates, that all the threads in a warp execute the same exact code without branch divergence. In our case, this means that the geodesics hitting the pixels in a warp should have followed a nearby path.
 

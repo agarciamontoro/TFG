@@ -49,7 +49,7 @@ The last property of the definition will be proven key in our study, as it will 
 
 \subsection{Charts}
 
-The main characteristic of the manifolds, its ressemblance to the Euclidean space, have to be exploited in order to understand the nature of the mathematical object.
+The main characteristic of the manifolds, its resemblance to the Euclidean space, have to be exploited in order to understand the nature of the mathematical object.
 
 The conceptual space where the manifolds live is an abstract place whose study is difficult from our Euclidean perspective.
 
@@ -83,14 +83,14 @@ The concept of manifold is quite general and includes a vast set of examples. We
 
 This section introduces the notion of differentiable structure, whose definition is key in the later description of differentiable manifolds, the core concept of this chapter.
 
-The first question in this study is the following: a chart describe perfectly a single piece of the manifold, but what happens when the domains of a pair of charts overlap? The following two definitions specify the concepts involved in this question.
+The first question in this study is the following: a chart describes perfectly a single piece of the manifold, but what happens when the domains of a pair of charts overlap? The following two definitions specify the concepts involved in this question.
 
 % TODO: Add the usual conmutative diagram for the transition maps
 
 \begin{definition}[Transition map]
     Let $M^n$ be a manifold and $(U, \phi)$, $(V, \psi)$ a pair of coordinate charts in $M^n$ with overlapping domains, that is:
     \[
-        U \cap V \neq \emptyset
+        U \cap V \neq \emptyset.
     \]
 
     The homeomorphism between the open sets of the Euclidean space $\R^n$,
@@ -104,13 +104,13 @@ The first question in this study is the following: a chart describe perfectly a 
     Two charts $(U, \phi)$, $(V, \psi)$ are said to overlap smoothly if their domains are disjoint ---\ie, if $U \cap V  = \emptyset$--- or if the transition map $\psi \circ \phi^{-1}$ is a diffeomorphism.
 \end{definition}
 
-The description of two charts that overlap smoothly can be naturally extended to the concept of smooth atlas, that will make possible to do calculus on the manifold.
+The description of two charts that overlap smoothly can be naturally extended to the concept of smooth atlas, which will make possible to do calculus on the manifold.
 
 \begin{definition}[Smooth coordinate atlas]
     An atlas $A$ is said to be smooth if every pair of charts in $A$ overlap smoothly.
 \end{definition}
 
-But what happens if we define two different atlases in the manifold? Will the calculus depend on this choice? Fortunately we can find, for each manifold, one particular atlas that contain every other atlas defined there. It is formally described in the following definition and its uniqueness is proved in \autoref{prop:max-atlas-uniq}.
+But what happens if we define two different atlases in the manifold? Will the calculus depend on this choice? Fortunately, we can find, for each manifold, one particular atlas that contain every other atlas defined there. It is formally described in the following definition and its uniqueness is proved in \autoref{prop:max-atlas-uniq}.
 
 \begin{definition}[Complete atlas]
     A \emph{complete atlas} ---or \emph{maximal atlas}--- on $M^n$ is a smooth atlas that contains each coordinate chart in $M^n$ that overlaps smoothly with every coordinate chart in $M^n$.
@@ -132,7 +132,7 @@ But what happens if we define two different atlases in the manifold? Will the ca
  	
  	It is trivial to see that $A'$ is an atlas, since $A \subset A'$ and $A$ is an atlas. The smoothness of the atlas is a consequence of the fact that smoothness is a local property. Finally, it is clear that $A'$ is complete as, by definition, if a chart overlaps smoothly with every element of $A'$, then it belongs to $A'$.
  	
- 	If the union of two atlas is a smooth atlas, it is clear that the atlas defined before is the same complete atlas for both of them. Equivalently, if two atlas determine the same complete atlas, their charts smoothly overlaps with every other chart on the complete atlas, and therefore its union is a smooth atlas.
+ 	If the union of two atlas is a smooth atlas, it is clear that the atlas defined before is the same complete atlas for both of them. Equivalently, if two atlas determine the same complete atlas, their charts smoothly overlap with every other chart on the complete atlas, and therefore their union is a smooth atlas.
 \end{proof}
 
 \begin{definition}[Differentiable manifold]
@@ -140,7 +140,7 @@ But what happens if we define two different atlases in the manifold? Will the ca
 \end{definition}
 
 \begin{example}
-	The concept of differentiable manifold is, probably, the most important idea throughout all this work. Let us see then some examples in order to better understand that these spaces we will going to work with are not that abstract ---although they can be---.
+	The concept of differentiable manifold is, probably, the most important idea throughout all this work. Let us see then some examples in order to better understand that these spaces we will work with are not that abstract ---although they can be---.
 	
 	\begin{enumerate}
 		\item The Euclidean space $\R^n$ is a differentiable manifold considering the identity map as its atlas.
@@ -167,7 +167,7 @@ As the differentiability is a local concept, being the manifolds locally Euclide
 
 This definition includes also the case in which $M$, $N$ or even both of them are the euclidean spaces $\R^m$ and $\R^n$. There is no ambiguity between this and the euclidean definition of smoothness, as one can take the identity map as coordinate chart when one of the manifolds is an euclidean space and the usual definition will be found.
 
-From this definition it is trivial to prove that, if a family of smooth maps cover a manifold with the maps being equal where their images overlap, a unique smooth function that is equal to each individual map on its image can be built.
+From this definition it is trivial to prove that, if a family of smooth maps covers a manifold with the maps being equal where their images overlap, a unique smooth function that is equal to each individual map on its image can be built.
 
 Furthermore, it is easy to see that the identity of a manifold, the coordinate charts and the composition of smooth functions are smooth. Smoothness also implies continuity.
 
@@ -237,13 +237,13 @@ As for every vector space, we can define its dual version.
 	\label{rem:derivedbases}
 	$T_p M$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x = (x^1, \dots, x^n) \colon U \to M$ is a chart that covers $p$, then (\cite[p. 8]{docarmo79}) $\{ \frac{\partial}{\partial x^1}\bigr|_p, \dots, \frac{\partial}{\partial x^n}\bigr|_p\}$ is its associated basis on $T_p M$, where
 	\[
-	\frac{\partial}{\partial x^i}\bigr|_p (f) = \pd{f}{x^j}(p).
+	\frac{\partial}{\partial x^i}\bigr|_p (f) = \pd{f}{x^j}(p)
 	\]
 	is usually noted as $\partial_i \bigr|_p$.
 	
 	Equivalently, the basis for the cotangent space $T_p^* M$ is the dual of the preceding one, $\{dx^1\bigr|_p, \dots, dx^n\bigr|_p\}$, where the elements are the dual versions of the previous components, that is, the covectors that satisfy
 	\[
-		dx^i\bigr|_p\left(\partial_j \bigr|_p\right) = \delta^i_j
+		dx^i\bigr|_p\left(\partial_j \bigr|_p\right) = \delta^i_j.
 	\]
 \end{remark}
 
@@ -320,7 +320,7 @@ To formalize this concept, we should first define the set of the tangent spaces 
 	\]
 	where the projection $\pi \colon TM \to M$ maps every tangent vector $v$ to $p$, the manifold point such that $v \in T_p M$.
 
-	We can furnish $TM$ with the atlas $A' = \{(\pi^{-1}(U_\alpha), h'_\alpha)\}$, where $h'_\alpha$ defines the coordinates of every point $v \in TM$, as the union of the coordinates of $p (= \pi(v))$ in $U_\alpha$ with the coordinates of $v$ in the associated basis of $T_p M$; \ie, if $(x^1, \dots, x^n)$ are the coordinate functions that assigns every point $p \in M$ to its coordinates on $\R^n$, the coordinates of the elements of $TM$ are
+	We can furnish $TM$ with the atlas $A' = \{(\pi^{-1}(U_\alpha), h'_\alpha)\}$, where $h'_\alpha$ defines the coordinates of every point $v \in TM$, as the union of the coordinates of $p (= \pi(v))$ in $U_\alpha$ with the coordinates of $v$ in the associated basis of $T_p M$; \ie, if $(x^1, \dots, x^n)$ are the coordinate functions that assign every point $p \in M$ to its coordinates on $\R^n$, the coordinates of the elements of $TM$ are
 	\[
 		(x^1 \circ \pi, \dots, x^n \circ \pi, d{x^1}, \dots, d{x^n}),
 	\]
@@ -338,7 +338,7 @@ It can be proved ---see \cite[Example 2.1]{docarmo79} or \cite[pp. 26, 27]{oneil
 	\]
 \end{remark}
 
-This recently defined space is the target set of what we described as a vector field. \autoref{def:vectorfield} formalize this idea.
+This recently defined space is the target set of what we described as a vector field. \autoref{def:vectorfield} formalizes this idea.
 
 \begin{definition}[Vector field]
 	\label{def:vectorfield}
@@ -363,9 +363,9 @@ If $X \in \mathfrak{X}(M)$ and $\Theta \in \mathfrak{X}^*(M)$, we will usually d
 \[
 	X = \sum x^i \partial_i, \quad \Theta = \sum \vartheta_i dx^i,
 \]
-where the vector fields $\partial_i$, that maps each $p$ to $\partial_i\bigr|_p$, form a basis of $\mathfrak{X}(M)$ and the one-forms $dx^i$, that maps each $p$ to $dx^i \bigr|_p$, are the components of its dual basis. As usual, we have the relation 
+where the vector fields $\partial_i$, which map each $p$ to $\partial_i\bigr|_p$, form a basis of $\mathfrak{X}(M)$ and the one-forms $dx^i$, which map each $p$ to $dx^i \bigr|_p$, are the components of its dual basis. As usual, we have the relation 
 \[
-	dx^i\left(\partial_j\right) = \delta^i_j
+	dx^i\left(\partial_j\right) = \delta^i_j.
 \]
 
 The coordinates can be computed as $x^i\bigr|_p = X_p(x^i)$ and $\vartheta_i\bigr|_p = \Theta_p(\partial_i)$
@@ -446,7 +446,7 @@ The basis of this idea comes from the following result, whose proof can be studi
 	\]
 \end{proposition}
 
-This result let us consider each tensor field $A \in \tensors_{(r,s)}(M)$ as the following field on $M$, which is denoted in the same exact way:
+This result lets us consider each tensor field $A \in \tensors_{(r,s)}(M)$ as the following field on $M$, which is denoted in the same exact way:
 \begin{align*}
 	A \colon M &\to \tensors_{(r,s)}(M) \\
 	p &\mapsto A_p \colon \underbrace{T_p M^* \times \dots \times T_p M^*}_{\text{r copies}} \times \underbrace{T_p M \times \dots \times T_p M}_{\text{s copies}} \to \R
@@ -482,7 +482,7 @@ The following definitions and results can be found at \cite[Ch. 2, Section 2]{do
 	where $X,Y,Z \in \mathfrak{X}(M)$ and $f,g \in \mathcal{F}(M)$.
 \end{definition}
 
-On \cite[Chapter 2, Remark 2.3]{docarmo79} we can see how the last property of \autoref{def:affineconnection} let us show that the affine connection is a local concept. Consider a coordinate system $(x^1, \dots, x^n)$ around $p$ and describe the vector fields $X, Y$ as follows:
+On \cite[Chapter 2, Remark 2.3]{docarmo79} we can see how the last property of \autoref{def:affineconnection} lets us show that the affine connection is a local concept. Consider a coordinate system $(x^1, \dots, x^n)$ around $p$ and describe the vector fields $X, Y$ as follows:
 \[
 X = \sum_i x^i X_i, \qquad Y = \sum_j y^j X_j,
 \]

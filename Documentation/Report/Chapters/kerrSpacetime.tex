@@ -3,9 +3,9 @@
 
 After all the mathematical background, the study of the new concepts properties and the physical introduction, we are ready to introduce the Kerr spacetime, a spacetime that models one of the most interesting and still unknown celestial bodies: the black holes.
 
-The Kerr black hole is the centre (both metaphorically and literally) of our model: it is a celestial body, sometimes known as a black star, so massive that it warps the spacetime in such a way that even the light cannot escape of its force. These theoretical objects are the main line of investigation of both students and renowned experts.
+The Kerr black hole is the centre (both metaphorically and literally) of our model: it is a celestial body, sometimes known as a black star, so massive that it warps the spacetime in such a way that even the light cannot escape the spacetime curvature. These theoretical objects are the main line of investigation of both students and renowned experts.
 
-This chapter tries to define it, comment some properties and extract the necessary information we will need to build the ray tracer. A deep study of the Kerr spacetime, however, is far beyond the scope of this work, so the origin of the metric tensor will not be described and the proofs of the results will be omitted, although the main references will be given.
+This chapter tries to define it, comment on some properties and extract the necessary information we will need to build the ray tracer. A deep study of the Kerr spacetime, however, is far beyond the scope of this work, so the origin of the metric tensor will not be described and the proofs of the results will be omitted, although the main references will be given.
 
 Let us set up some terminology, described in \cite[Def. 1.6.2, 1.6.3]{oneill95} in order to understand the following pages.
 
@@ -55,7 +55,7 @@ As all units, the mass will be set to $M = 1$, and so the black hole will only b
 To introduce the Kerr metric, we first need to define two functions that will be omnipresent in the study of this particular spacetime:
 \begin{align}
 	\rho^2 &= r^2 + a^2\cos^2\vartheta \\
-	\Delta &= r^2 + -2r + a^2
+	\Delta &= r^2 + -2r + a^2.
 \end{align}
 
 From these equations, the Kerr metric is defined as follows.
@@ -114,22 +114,22 @@ This study is beyond the scope of this work, but a short summary of the singular
 From \autoref{eq:kerrmetric}, one can see that the Kerr metric is singular in any of the following cases:
 \begin{align}
 	\rho^2 &= 0 \\
-	\Delta &= 0
+	\Delta &= 0.
 \end{align}
 
 These \emph{singularity equations} throw two different types of singularities: the ones produced by the choice on the coordinate system, but which are not real singularities of the metric (i.e., that can be avoided when changing the coordinate system), and the ones that can be obtained using any coordinate system.
 
-The first singularity, which is caused by the nature of the spacetime and not by the choice of the coordinate system, is obtained when assuming $\rho^2 = 0$, that makes the Kretschmann invariant\footnote{In Kerr spacetimes, the usual scalar curvature (see \autoref{def:scalarcurvature}) vanishes, as $Ric = 0$. However, one can define another invariant quantity in order to describe the spacetime curvature. This description is usually carried out with the help of the Kretschmann invariant, that is defined as $K = Ric_{\alpha\beta\gamma\delta}Ric^{\alpha\beta\gamma\delta}$.} divergent, and that can be physically understood as a divergent curvature of the spacetime itself.
+The first singularity, which is caused by the nature of the spacetime and not by the choice of the coordinate system, is obtained when assuming $\rho^2 = 0$, which makes the Kretschmann invariant\footnote{In Kerr spacetimes, the usual scalar curvature (see \autoref{def:scalarcurvature}) vanishes, as $Ric = 0$. However, one can define another invariant quantity in order to describe the spacetime curvature. This description is usually carried out with the help of the Kretschmann invariant, that is defined as $K = Ric_{\alpha\beta\gamma\delta}Ric^{\alpha\beta\gamma\delta}$.} divergent, and that can be physically understood as a divergent curvature of the spacetime itself.
 
 From the second singularity equation, we obtain two coordinate singularities:
 \[
-	r_{\pm} \defeq M \pm \sqrt{M - a^2}
+	r_{\pm} \defeq M \pm \sqrt{M - a^2}.
 \]
 
-These singularities are called \emph{horizons}, as it can be proved \cite[p. 15]{galindo14} that, on them, the constant-$r$ hypersurface are null. The two horizons divide the spacetime in three regions:
+These singularities are called \emph{horizons}, as it can be proved \cite[p. 15]{galindo14} that, on them, the constant-$r$ hypersurfaces are null. The two horizons divide the spacetime in three regions:
 \begin{enumerate}
 	\item The region where $r > r_+$, that can be seen as the outside of the black hole.
-	\item The region where $r_- < r < r_+$. Here, any particle falling through $r_+$ is forced to reach $r_-$, reason why the hypersurface defined by $r = r_+$ is called the \emph{event horizon}.
+	\item The region where $r_- < r < r_+$. Here, any particle falling through $r_+$ is forced to reach $r_-$, hence, the hypersurface defined by $r = r_+$ is called the \emph{event horizon}.
 	\item The region where $r < r_-$, which contains the spacetime singularity.
 \end{enumerate}
 
@@ -150,7 +150,7 @@ The Kerr metric tensor matrix, described on a \ac{BL} system coordinate, is
 		0 & \nicefrac{\rho^2}{\Delta} & 0 & 0 \\
 		0 & 0 & \rho^2 & 0 \\
 		-\varpi^2\omega^2 & 0 & 0 & \varpi^2
-	\end{pmatrix},
+	\end{pmatrix}.
 \]
 
 The inverse of the Kerr metric is then
@@ -160,7 +160,7 @@ The inverse of the Kerr metric is then
 		0 & \nicefrac{\Delta}{\rho^2} & 0 & 0 \\
 		0 & 0 & \nicefrac{1}{\rho^2} & 0 \\
 		-\nicefrac{\omega}{\alpha^2} & 0 & 0 & (\nicefrac{1}{\varpi^2}) - (\nicefrac{\omega^2}{\alpha^2})
-	\end{pmatrix},
+	\end{pmatrix}.
 \]
 
 

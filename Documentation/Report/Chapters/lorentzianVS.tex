@@ -58,7 +58,7 @@ The study of the Lorentzian vector spaces will be based on \autoref{lem:lorentzs
 \end{lemma}
 
 \begin{proof}
-	As $\langle v \rangle$ is non degenerate, so it is $v^\perp$. Then, $V = \langle v \rangle + v^\perp$ is a direct sum. As the $v^\perp$ index is necessarily zero, $v^\perp$ is spacelike and, consequently
+	As $\langle v \rangle$ is non degenerate, so is $v^\perp$. Then, $V = \langle v \rangle + v^\perp$ is a direct sum. As the $v^\perp$ index is necessarily zero, $v^\perp$ is spacelike and, consequently
 	
 	See \cite[Lemma 5.26]{oneill83} for details.
 \end{proof}
@@ -83,7 +83,7 @@ From \cite[Cor. 1.1.5]{sachs77}, \cite[p. 155]{oneill83}, we can see:
 \end{proposition}
 
 \begin{proof}
-    From \autoref{lem:lorentzspan} we can write $V=\langle v \rangle \oplus v^{\perp},$ with $g(v,v)=-1$. Therefore, there exist $a,b \in \R\setminus\{0\}$ and $u,w \in v^\perp$ such that:
+    From \autoref{lem:lorentzspan} we can write $V=\langle v \rangle \oplus v^{\perp},$ with $g(v,v)=-1$. Therefore, there exists $a,b \in \R\setminus\{0\}$ and $u,w \in v^\perp$ such that:
     \begin{align*}
         x=av+u, \quad u\neq 0, \quad g(u,u)=a^2,\\
         y=bv+w, \quad w\neq 0, \quad g(v,v)=b^2.
@@ -104,12 +104,12 @@ From now on, $\mathcal{T}(V,g)$ will denote the set of all timelike vectors on $
 
 It is clear that $C(v)$ is not empty, as $v$ itself lays on its own time cone.
 
-Furthermore, as no two timelike vector can be orthogonal, $g(v,w) \neq 0$ for each $w \in \mathcal{T}(V,g)$; \ie, either $w\in C(v)$ or $w\in C(-v)$. This let us describe $\mathcal{T}(V,g)$ as a union of two time cones for each timelike vector.
+Furthermore, as no two timelike vectors can be orthogonal, $g(v,w) \neq 0$ for each $w \in \mathcal{T}(V,g)$; \ie, either $w\in C(v)$ or $w\in C(-v)$. This let us describe $\mathcal{T}(V,g)$ as a union of two time cones for each timelike vector.
 \[
 \mathcal{T}(V,g) = C(v) \cup C(-v) \quad \forall v\in \mathcal{T}(V,g)
 \]
 
-The following result characterizes when two timelike vectors lie in the same time cone 
+The following result characterizes when two timelike vectors lie in the same time cone.
 
 It is interesting to know when two timelike vectors lie in the same time cone. \autoref{lem:timecone}, based on \cite[Lemma 5.29]{oneill83}, gives us the answer.
 
@@ -149,7 +149,7 @@ This corollary let us conclude that time cones are convex subsets of $V$. Furthe
 
 \section{Wrong-way inequalities}
 
-First of all, we can obtain an the so-called \emph{wrong-way Schwarz inequality} ---see \cite[Prop. 5.30]{oneill83}--- when considering only timelike vectors.
+First of all, we can obtain the so-called \emph{wrong-way Schwarz inequality} ---see \cite[Prop. 5.30]{oneill83}--- when considering only timelike vectors.
 
 \begin{proposition}[Wrong-way Schwarz inequality]
 	\label{pro:wrongway}
@@ -177,7 +177,7 @@ We can obtain another wrong-way inequality. As a consequence of \autoref{pro:wro
 
 \begin{corollary}[Wrong-way Minkowski inequality]
 	\label{Minkowski}
-    Let $u,v \in \mathcal{T}(V,g)$ be two timelike vector that lie in the same time cone. The following inequality is hold:
+    Let $u,v \in \mathcal{T}(V,g)$ be two timelike vectors that lie in the same time cone. The following inequality is hold:
     \[
         \sqrt{-g(u+v,u+v)} \geq \sqrt{-g(u,u)}+\sqrt{-g(v,v)}
     \]
@@ -199,7 +199,7 @@ $\theta$ is called the \emph{hyperbolic angle} between $u$ and $v$.
 
 \section{Time Orientation on Lorentzian Vector Spaces}
 
-This last section on Lorentzian vector spaces introduces an important concept: the time orientation. We need some previous concepts before formalizing this idea.
+This last section on Lorentzian vector spaces introduces an important concept: time orientation. We need some previous concepts before formalizing this idea.
 
 \begin{definition}[Orthonormal basis of $(V,g)$]
 	Let $B = (v_1, \dots, v_n)$ be a basis of $V$. $B$ is said to be \emph{orthonormal} when
@@ -240,5 +240,5 @@ However, a time orientation does not change if we replace $g$ by a conformally r
 \section{Topological remarks}
 \label{sec:toporemarks}
 
-We end this section explaining some topological remarks. If $V$ is an $n$-dimensional vector space and $B$ is a basis of $V$, then we have a linear isomorphism $$b_B : V \longrightarrow \R^n,$$ defined by $b_B(v)=(a_1,..,a_n)$, where $(a_1,..,a_n)$ are the coordinates of $v$ in $B$. By using $b_B$ a topology $\mathfrak{T}_B$ can be defined in $V$ in such a way that the $\mathfrak{T}_B$-open subsets of $V$ are $b_B^{-1}(O)$, where $O$ is an open subset of $\R^n$. It is not difficult to see that $\mathfrak{T}_B = \mathfrak{T}_{B'}$ for any basis $B,B'$ of $V$. Endowed with this topology, the function $V \longrightarrow \R$, given by $v \mapsto g(v,v)$ is continuous. Hence $\mathcal{T}(V,g)$ is an open subset of $V$ and each time cone is also an open subset of $V$. Moreover, the set of nonzero spacelike vectors $\{v\in V \, : \, g(v,v)>0 \}$ is an open subset of $V$ and the light cone with the zero vector $\{v\in V \, : \, g(v,v)=0 \}$ is a closed subset of $V$. Finally, every null vector can be obtained as the limit of a sequence of timelike vectors as well of spacelike vectors (or both types of vectors). Thus, $\{v\in V \, : \, g(v,v)<0 \} \cup \{v\in V \, : \, g(v,v)>0 \}$
+We end this section making some topological remarks. If $V$ is an $n$-dimensional vector space and $B$ is a basis of $V$, then we have a linear isomorphism $$b_B : V \longrightarrow \R^n,$$ defined by $b_B(v)=(a_1,..,a_n)$, where $(a_1,..,a_n)$ are the coordinates of $v$ in $B$. By using $b_B$ a topology $\mathfrak{T}_B$ can be defined in $V$ in such a way that the $\mathfrak{T}_B$-open subsets of $V$ are $b_B^{-1}(O)$, where $O$ is an open subset of $\R^n$. It is not difficult to see that $\mathfrak{T}_B = \mathfrak{T}_{B'}$ for any basis $B,B'$ of $V$. Endowed with this topology, the function $V \longrightarrow \R$, given by $v \mapsto g(v,v)$ is continuous. Hence, $\mathcal{T}(V,g)$ is an open subset of $V$ and each time cone is also an open subset of $V$. Moreover, the set of nonzero spacelike vectors $\{v\in V \, : \, g(v,v)>0 \}$ is an open subset of $V$ and the light cone with the zero vector $\{v\in V \, : \, g(v,v)=0 \}$ is a closed subset of $V$. Finally, every null vector can be obtained as the limit of a sequence of timelike vectors as well of spacelike vectors (or both types of vectors). Thus, $\{v\in V \, : \, g(v,v)<0 \} \cup \{v\in V \, : \, g(v,v)>0 \}$
 is a dense subset of $V$.

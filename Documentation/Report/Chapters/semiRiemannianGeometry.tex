@@ -3,7 +3,7 @@
 
 This section introduces the notion of \emph{spacetime}, a mathematical object with a really interesting meaning in physics, as it will model the geometry of the Universe.
 
-All results, proofs, and examples are mainly extracted from \cite{romero10}, which develop an interesting line of reasoning to grasp the nature of the concept.
+All results, proofs, and examples are mainly extracted from \cite{romero10}, which develops an interesting line of reasoning to grasp the nature of the concept.
 
 Before going down that road, we will need some basic concepts, such as the Lorentzian manifolds and the time orientation we can define on them. From this we will be ready to define what a spacetime is, whose properties will be studied.
 
@@ -33,7 +33,7 @@ Any metric tensor can be described giving its value on the elements of a basis; 
 \]
 and therefore the metric tensor can be recovered as
 \[
-	g = \sum g_{ij} dx^i \otimes dx^j
+	g = \sum g_{ij} dx^i \otimes dx^j.
 \]
 
 Another way of describing the metric tensor \cite[p. 13]{oneill95} is via its \emph{line element}, usually noted as $ds^2$, which gives at each point $p\in M$ the associated quadratic form of $g_p$; \ie, the value of $ds^2$ on a vector field $X$ is simply $g(X,X)$. One can define the line element in a more clear way by means of a coordinate system:
@@ -46,7 +46,7 @@ Another way of describing the metric tensor \cite[p. 13]{oneill95} is via its \e
 
 The line element fully identifies the metric tensor, which can be easily reconstructed from it.
 
-The classical Koszul formula, asserts that if a manifold admits a symmetric 2 times covariant tensor field such that $g_p$ is non-degenerate for every $p \in M$, then $M$ has a Levi-Civita connection $\nabla$.  This follows from \autoref{eq:koszul}, that defines $\nabla$ from the non-degeneracy property; note that we could even define Christoffel symbols $\Gamma^i_{jkl}$ from the non-degeneration.
+The classical Koszul formula asserts that if a manifold admits a symmetric 2 times covariant tensor field such that $g_p$ is non-degenerate for every $p \in M$, then $M$ has a Levi-Civita connection $\nabla$.  This follows from \autoref{eq:koszul}, that defines $\nabla$ from the non-degeneracy property; note that we could even define Christoffel symbols $\Gamma^i_{jkl}$ from the non-degeneration.
 
 From the connectedness of $M$, we can assure that there exists a piecewise smooth curve for every pair of points $p_0, p_1 \in M$,
 \[
@@ -85,7 +85,7 @@ This definitions produce the associated definitions on manifolds:
 
 \section{Time Orientation on Lorentzian Manifolds}
 
-Roughly speaking, a time orientation is a map that assigns one of the two time cones defined on the tangent space to a point on a manifold; \ie, is a map that assigns a time orientation (as defined in \autoref{def:vstimeorientation}) in $T_pM$ for every $p \in M$. Let us formalize this concept a little bit more
+Roughly speaking, a time orientation is a map that assigns one of the two time cones defined on the tangent space to a point on a manifold; \ie, is a map that assigns a time orientation (as defined in \autoref{def:vstimeorientation}) in $T_pM$ for every $p \in M$. Let us formalize this concept a little bit more.
 
 Let $(M,g)$ be a Lorentzian manifold and let us denote, for every $p \in T_pM$, the set with the two times cones defined on $(T_p M, g)$ as $C_p(M,g)$. The union of all this sets, denoted by $C(M,g)$ is then a collection of two-possibilities for every point on a manifold:
 \[
@@ -117,7 +117,7 @@ We can define some terms, using the notation on \cite[p. 33]{oneill95}, regardin
 \begin{enumerate}
 	\item The selected time cones when we time-orient a manifold are called \emph{future time cones}, whereas the other ones are known as \emph{past time cones}.
 	\item A timelike tangent vector is called \emph{future-pointing} if it lays in a future time cone. It is called past-pointing in any other case.
-	\item The light cone in the boundary of the future time cones is called \emph{future light cone}, whose vectors being future-pointing.
+	\item The light cone in the boundary of the future time cones is called \emph{future light cone}, whose vectors are future-pointing.
 	\item A curve that is either lightlike or timelike is called a \emph{causal} curve, and it is future-pointing if all its tangent vectors are future-pointing.
 \end{enumerate}
 
@@ -184,7 +184,7 @@ It is interesting to know what a time oriented Lorentzian manifold could look li
 		\[
 		X : \S_1^n \longrightarrow \L^{n+1}
 		\]
-		such that at each point $p \in \S_1^n$ we have $X_p$ is $g$-orthogonal to $p$. Thus, if we put $p=(y,t)\in \S_1^n$, $y \in \R^n$, $t \in \R$, then $X_p=(\frac{t}{1+t^2}\,y,1)$ is a well-defined timelike vector field on $\S_1^n$. Therefore, Proposition \autoref{pro:timeorientable}, the Lorentzian manifold $\S_1^n$ is time orientable.
+		such that at each point $p \in \S_1^n$ we have $X_p$ is $g$-orthogonal to $p$. Thus, if we put $p=(y,t)\in \S_1^n$, $y \in \R^n$, $t \in \R$, then $X_p=(\frac{t}{1+t^2}\,y,1)$ is a well-defined timelike vector field on $\S_1^n$. Therefore, \autoref{pro:timeorientable}, the Lorentzian manifold $\S_1^n$ is time orientable.
 		\item Let $\H_1^n$ be the $n$-dimensional anti De Sitter space; i.e. $\H_1^n =\{p \in \R^{n+1} \, :\, g'(p,p)=-1 \}$, where $g'=dx_1^2+...+dx_{n-1}^2-dx_n^2-dx_{n+1}^2$ and $(x_1,..,x_n,x_{n+1})$ is the usual coordinate system of $\R^{n+1}$. The semi-Riemannian metric $g'$ on $\R^{n+1}$ has index 2 and $\R^{n+1}_2$ will denote $(\R^{n+1},g')$. For each $p \in \H_1^n$, we have $T_p\H_1^n=\{v \in \R^{n+1} \, : \, g'(p,v)=0\}$ and denote by $g'_p$ the restriction of $g'$ to $T_p\H_1^n$, which is Lorentzian because $\R^{n+1}_2=T_p\H_1^n \oplus \langle p \rangle$, the direct sum is also $g'$-orthogonal and $p$ satisfies $g'(p,p)=-1$. The vector field
 		\[
 		X : \H_1^n \longrightarrow \R^{n+1}_2
@@ -195,7 +195,7 @@ It is interesting to know what a time oriented Lorentzian manifold could look li
 	\end{enumerate}
 \end{example}
 
-A more interesting characterization of time oriented Lorentzian manifolds is the following one, whose geometric approximation is more clear.
+A more interesting characterization of time oriented Lorentzian manifolds is the following one, whose geometric approximation is clearer.
 
 \begin{corollary}
 	\label{cor:timeorientable2}
@@ -221,7 +221,7 @@ A more interesting characterization of time oriented Lorentzian manifolds is the
 	
 	In order to achieve this conclusion we construct a piecewise smooth curve $\gamma : [a,b] \longrightarrow M$ from $\alpha$ and $\beta$ in a standard way such that $\gamma(a)=\gamma(b)=p$. Note that $$g(P^{\alpha}(v),P^{\beta}(v))=g((P^{\beta})^{-1}P^{\alpha}(v),v)=g(P_{a,b}^{\gamma}(v),v)<0,$$ which means that $P^{\alpha}(v)$ and $P^{\beta}(v)$ lie in the same time cone of $(T_qM,g_q)$.
 	
-	Therefore, we have a well-defined way to chose a time cone $\tau(p)$ at any $p \in M$. Finally, we will to show the smoothness. Given $p_0 \in M$ and the time cone $\tau(p_0)$ consider $v \in \tau(p_0)$. Let $X$ be a vector field which extends $v$; i.e. such that $X_{p_{0}}=v$. Note that $X$ remains timelike in some (connected) open neighbourhood $U$ of $p_0$. For each $q \in U$ we construct a piecewise smooth curve $\alpha : [a,b] \longrightarrow U$ satisfying $\alpha(a)=p_0$,
+	Therefore, we have a well-defined way to chose a time cone $\tau(p)$ at any $p \in M$. Finally, we will show the smoothness. Given $p_0 \in M$ and the time cone $\tau(p_0)$ consider $v \in \tau(p_0)$. Let $X$ be a vector field which extends $v$; i.e. such that $X_{p_{0}}=v$. Note that $X$ remains timelike in some (connected) open neighbourhood $U$ of $p_0$. For each $q \in U$ we construct a piecewise smooth curve $\alpha : [a,b] \longrightarrow U$ satisfying $\alpha(a)=p_0$,
 	$\alpha(b)=q$ and consider the function $h : [a,b] \longrightarrow \R$ given by
 	\[
 	h(t)=g(X_{\alpha(t)},P_{a,t}^{\alpha}(v))
@@ -236,7 +236,7 @@ It is known that each closed piecewise smooth curve on $M$ is null homotopic by 
 	If $M$ is simply connected, $(M,g)$ is time orientable.
 \end{corollary}
 
-One interesting question arises now: are there Lorentzian manifolds that are \emph{non} time orientable? The following example, transcribed from \cite[Example 3.5]{romero10}, \cite[Example 1.2.3]{sachs77}, describes a well-known object that satisfy this requirement: a Lorentzian cylinder.
+One interesting question arises now: are there Lorentzian manifolds that are \emph{non} time orientable? The following example, transcribed from \cite[Example 3.5]{romero10}, \cite[Example 1.2.3]{sachs77}, describes a well-known object that satisfies this requirement: a Lorentzian cylinder.
 
 \begin{example}
 	Let $g$ be the Lorentzian metric on $\R^2$ given by
@@ -311,7 +311,7 @@ We can now formulate a result from \cite{greub72}, that shows that characterizat
 	
 	Put $\mathcal{D}_p$ the eigenspace associated to the negative eigenvalue of $P$ at $p$, then $\mathfrak{D}$ defines a $1$-dimensional distribution (or line field) on $M$. It should be noted that $\mathfrak{D}$ clearly depends on the arbitrary Riemannian metric $g_R$.
 	
-	Conversely, if a $1$-dimensional distribution $\mathfrak{D}$ on $M$ is given, fix an arbitrary Riemannian metric $g_R$ on $M$. We know that there exist an open covering $\{U_{\alpha}\}$ of $M$ and vector fields $X_\alpha \in \mathfrak{X}(U_\alpha)$ such that, locally,
+	Conversely, if a $1$-dimensional distribution $\mathfrak{D}$ on $M$ is given, fix an arbitrary Riemannian metric $g_R$ on $M$. We know that there exists an open covering $\{U_{\alpha}\}$ of $M$ and vector fields $X_\alpha \in \mathfrak{X}(U_\alpha)$ such that, locally,
 	\[
 	\mathfrak{D}=\langle X_{\alpha} \rangle, \quad \mathrm{with} \quad
 	g_R(X_{\alpha},X_{\alpha})=1.
@@ -344,7 +344,7 @@ Equivalently, $M$ admits a one dimensional distribution if and only if its Euler
 
 In fact, the following topological result holds.
 \begin{proposition}
-	If $M$ si compact, then it admits a non-vanishing vector field if and only if $\mathcal{X}(M)=0$.
+	If $M$ is compact, then it admits a non-vanishing vector field if and only if $\mathcal{X}(M)=0$.
 \end{proposition}
 
 From \cite{romero10} we know that on a simply connected manifold, being or not compact, each one dimensional distribution can be obtained from a global non-vanishing vector field $X \in \mathfrak{X}(M)$. The other implication is not true in general, as \autoref{ex:nonvanishing} from \cite[pp. 205-206]{romero10} and \cite{greub72} shows.
@@ -400,7 +400,7 @@ This section follows the line of reasoning on \cite[Ch. 2, Section 3]{docarmo79}
 	
 	The connection is said to be compatible with the metric when, for every smooth curve $c$ and for every pair of vector fields $P, P'$ along $c$, the product of the vector fields is constant:
 	\[
-		g(P, P') = constant
+		g(P, P') = constant.
 	\]
 \end{definition}
 
@@ -489,7 +489,7 @@ We can now state the main theorem for this section, which, paraphrasing Barret O
 	Summing equalities \ref{eq:leviX} and \ref{eq:leviY}, substracting \ref{eq:leviZ} and using the symmetry of $\nabla$:
 	\begin{align*}
 		&X g(Y,Z) + Y g(Z,X) - Z g(X,Y) = \\
-		= &g([X,Z], Y) + g([Y,Z], X) + g([X,Y], Z) + 2g(Z, \nabla_Y X)
+		= &g([X,Z], Y) + g([Y,Z], X) + g([X,Y], Z) + 2g(Z, \nabla_Y X).
 	\end{align*}
 
 	Therefore, we can extract an equality that proves that $\nabla$ is uniquely determined by the metric:
@@ -531,7 +531,7 @@ There is still one question left: is the covariant derivative an actual generali
 	\Gamma^m_{ij} &= \frac{1}{2} g^{km} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right) = \\
 	&= \frac{1}{2} \sum_k g^{km} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right) = \\
 	&= \frac{1}{2} \sum_k \delta^k_m \left( \pd{}{x^i} \delta^j_k + \pd{}{x^j} \delta^k_i - \pd{}{x^k} \delta^i_j \right) = \\
-	&= 0
+	&= 0.
 \end{align*}
 
 We can conclude what we state at the beginning of this section: when restricted to the euclidean spaces, the covariant derivative and the directional derivative agree.
@@ -559,7 +559,7 @@ As our primary objective is to study the movement of light, this first small ste
 
 \begin{remark}[Differential equations satisfied by a geodesic]
 	% doCarmo, 53
-	Therefore, let us see the local equations satisfied by a geodesic $\gamma$ on on a coordinate system $(U,x)$ around $\gamma(t_0)$, $t_0 \in I$.
+	Therefore, let us see the local equations satisfied by a geodesic $\gamma$ on a coordinate system $(U,x)$ around $\gamma(t_0)$, $t_0 \in I$.
 	
 	Let $\gamma(t) = (x^1(t), \dots, x^n(t)$ be the coordinates of the curve on $U$. Using the expression of the covariant derivative and assuming $\gamma$ is a geodesic; \ie, that its velocity vector field is parallel, we can write:
 	\[
@@ -607,7 +607,7 @@ First of all, we need to define some more concepts on curves.
 
 The family of curves $\{f_s\}_{s\in (-\varepsilon, \varepsilon)}$ trivially includes $f_0 = c$, and so it can be considered as a set of close curves to $c$ if $\varepsilon > 0$ is sufficiently small.
 
-Furthermore, tt is clear that the variation is proper if every curve on this family have the same initial point $c(0)$ and the same final point $c(1)$.
+Furthermore, it is clear that the variation is proper if every curve on this family have the same initial point $c(0)$ and the same final point $c(1)$.
 
 \begin{definition}[Transverse curve of variation]
 	Let $f$ be a variation of a piecewise smooth curve $c$ on a semi-Riemannian manifold $M$, and fix an arbitrary $t \in [0,1]$.
@@ -634,7 +634,7 @@ We can define now a quantity minimized by geodesics, in order to find a characte
 	\label{def:energy}
 	Let $f$ be a variation of a smooth curve $c$ on a manifold $M$
 	
-	The \emph{energy of $f$} is defined a
+	The \emph{energy of $f$} is defined as
 	\begin{align*}
 		E_f \colon (-\varepsilon, \varepsilon) &\to \R \\
 		s &\mapsto E_f(s) \defeq \int_0^1 g \left( \pd{f}{t}(s,t), \pd{f}{t}(s,t) \right) dt,
@@ -690,7 +690,7 @@ Geodesics are, in short, the critical points of the energy of every proper varia
 	To see the curvature $R$ as a $(1,3)$ tensor consider the function defined as
 		\begin{align*}
 		\tilde{R} \colon \mathfrak{X}(M)^* \times \mathfrak{X}(M) \times \mathfrak{X}(M) \times \mathfrak{X}(M) &\to \mathfrak{X}(M) \\
-		(\Omega, X, Y, Z) &\mapsto \Omega\left(R(X,Y)Z\right)
+		(\Omega, X, Y, Z) &\mapsto \Omega\left(R(X,Y)Z\right).
 	\end{align*}
 	It is straightforward to see that $\tilde{R}$, that will be denoted also as $R$, is multilinear and can factor out its scalars.
 \end{proof}
@@ -705,7 +705,7 @@ The Riemannian curvature can be considered as an $\R$-multilinear function ay an
 	then $\left( R(U,V)W \right) _p$ does not depend on the local extensions of the tangent vectors at $p\in M$ \cite[p. 38]{oneill83}, and therefore we can define
 	\begin{align*}
 		R \colon T_p M \times T_p M  \times T_p M  &\to T_p M \\
-		(u,v,w) &\mapsto R(u,v)w \defeq \left(R(U,V)W\right)_p
+		(u,v,w) &\mapsto R(u,v)w \defeq \left(R(U,V)W\right)_p.
 	\end{align*}
 	In particular, for any $u,v \in T_p M$ we have a linear operator
 	\[
@@ -744,7 +744,7 @@ If we swap the indices $h$ and $p$ on the last addend, the expression of this on
 
 From \autoref{eq:curvaturecomponents}, using \autoref{eq:curvatureexpression} and its analogous with $i$ and $j$ indices swapped, we can finally write the expression of the curvature tensor components:
 \[
-R^l_{ijk} = \pd{}{x^i} \Gamma^l_{jk} - \pd{}{x^j} \Gamma^l_{ik} + \sum_p \left( \Gamma^p_{jk} \Gamma^l_{ip} - \Gamma^p_{ik} \Gamma^l_{jp} \right)
+R^l_{ijk} = \pd{}{x^i} \Gamma^l_{jk} - \pd{}{x^j} \Gamma^l_{ik} + \sum_p \left( \Gamma^p_{jk} \Gamma^l_{ip} - \Gamma^p_{ik} \Gamma^l_{jp} \right).
 \]
 
 The following identities are the symmetries of $R$:
@@ -792,7 +792,7 @@ Equivalently,
 	\label{def:scalarcurvature}
 	The \emph{scalar curvature} $S$ of $g$ is the contraction of the $(1,1)$ tensor field $g$-equivalent to the Ricci tensor. In terms of coordinates:
 	\[
-		S = \sum_{i,j} g^{ij}(\Ric)_{ij} = \sum_{i,j,k} g^{ij} R^k_{kij}
+		S = \sum_{i,j} g^{ij}(\Ric)_{ij} = \sum_{i,j,k} g^{ij} R^k_{kij}.
 	\]
 \end{definition}
 
@@ -800,7 +800,7 @@ From the second identity of Bianchi we get \cite[p. 88]{oneill83}
 \[
 	\nabla S = 2 \operatorname{div} \widehat{\Ric},
 \]
-where $\nabla S$ is the gradient of te scalar curvature, $\widehat{\Ric}$ is the contravariant tensor field $g$-equivalent to $\Ric$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
+where $\nabla S$ is the gradient of the scalar curvature, $\widehat{\Ric}$ is the contravariant tensor field $g$-equivalent to $\Ric$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
 
 \section{Killing Vectors Fields}
 

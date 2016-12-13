@@ -18,7 +18,7 @@ As we have studied, all rays that hit the sensor have followed a geodesic to fin
 
 For every pixel on the sensor, the ray tracer work can be abstracted as a function that computes the path of the ray that hit it. Therefore, from the pixel coordinates, $p = (p_x, p_y)$, it computes the geodesic path followed by the ray.
 
-This point is computed using the \ac{ODE} system described in \autoref{theo:eqsmotion}, derived from the Kerr spacetime. Therefore, a numerical solver for such systems is needed, along with the initial conditions of each ray. This conforms an \ac{IVP}, a kind of well-known problems whose numerical solutions are widely studied.
+This point is computed using the \ac{ODE} system described in \autoref{theo:eqsmotion}, derived from the Kerr spacetime. Therefore, a numerical solver for such systems is needed, along with the initial conditions of each ray. This conforms an \ac{IVP}, a kind of well-known problem whose numerical solutions are widely studied.
 
 Abstracting all these tasks out, the general outline of the ray tracer is described on \autoref{alg:raytracer}.
 
@@ -40,7 +40,7 @@ Abstracting all these tasks out, the general outline of the ray tracer is descri
 	\end{algorithmic}
 \end{algorithm}
 
-The solution designed for the ray tracer is based on the algorithm described in \cite{thorne15}, that assumes the following:
+The solution designed for the ray tracer is based on the algorithm described in \cite{thorne15}, which assumes the following:
 \begin{enumerate}
 	\item The spacetime is defined by the Kerr metric written in \ac{BL} coordinates (see \autoref{eq:kerrmetric}), with a black hole in the centre of the spatial coordinates parametrized by its spin $a$. Its mass is assumed to be 1.
 	\item The \ac{FIDO} is a locally non-rotating observer. We define a family of \acp{FIDO} at rest in space with orthonormal basis vectors $\{e_r, e_\vartheta, e_\varphi\}$, pointing along the spatial coordinate lines.
@@ -79,7 +79,7 @@ A ray tracer is in general highly parallelizable, and our design is not differen
 
 The idea behind the parallelization design is easy: for each parallelized node, we have to feed the numerical solver with a different initial condition, computed from each pixel of the image. Using the classic Flynn's taxonomy \cite{flynn72} terminology, our architecture follows a \ac{SIMD} paradigm, where a single generalized task works on multiple data streams in order to compute multiple results.
 
-Ideally, we would like to design a completely parallel solution, in which we have the same number of nodes in the parallel architecture as pixels we have in the image. Although this is highly difficult for large images with the classic parallelization on \acp{CPU}, the new \ac{GPU} techniques will help us get closer this goal.
+Ideally, we would like to design a completely parallel solution, in which we have the same number of nodes in the parallel architecture as pixels we have in the image. Although this is highly difficult for large images with the classic parallelization on \acp{CPU}, the new \ac{GPU} techniques will help us get closer to this goal.
 
 \subsection{General-Purpose Computing on Graphics Processing Units}
 
@@ -87,7 +87,7 @@ Historically, \acp{GPU} have been used to process tasks and data always related 
 
 In recent years, a new powerful technique has been deeply studied: the so-called \ac{GPGPU}. Its goal is to use the \acp{GPU}, designed to have thousands of cores that can process data in parallel, to general purpose computing, not only computer graphics tasks.
 
-Although each of the cores on a \ac{GPU} is much less powerful than a single \ac{CPU}, the great order of parallelization ---thousands of cores in a \ac{GPU} against just a few dozens of them on \acp{CPU}--- and the specific design to handle a parallel architecture makes the use of \ac{GPGPU} appealing when one want to design an efficient solution.
+Although each of the cores on a \ac{GPU} is much less powerful than a single \ac{CPU}, the great order of parallelization ---thousands of cores in a \ac{GPU} against just a few dozens of them on \acp{CPU}--- and the specific design to handle a parallel architecture makes the use of \ac{GPGPU} appealing when one wants to design an efficient solution.
 
 Our ray tracer uses this paradigm, virtually parallelizing the computation of each geodesic in a different \ac{GPU} core. We say \emph{virtually} because the number of cores in a \ac{GPU} is always finite, and for large images, some computations will have to be serialized. However, as we will see in the following chapter, this will be transparent to us, developers, by using a proper \ac{GPGPU} library.
 
@@ -142,7 +142,7 @@ The camera considered in the work follows the \emph{pinhole camera model}, which
 The camera is described by the following parameters:
 \begin{enumerate}
 	\item The position on the Kerr spacetime, described by the spatial \ac{BL} coordinates $\{r_c, \vartheta_c, \varphi_c\}$.
-	\item The \emph{sensor} (that can be though as the film or the CCD of a usual camera), which is described by its \emph{resolution} (number of pixels per column and number of pixels per row) and by its size (width and height in physical units).
+	\item The \emph{sensor} (that can be thought as the film or the CCD of a usual camera), which is described by its \emph{resolution} (number of pixels per column and number of pixels per row) and by its size (width and height in physical units).
 	\item The \emph{focal point}, $F$: a point in the line perpendicular to the sensor and going through its centre. This point will collect all incoming rays and can be though as the diaphragm, whose aperture is infinitely small.
 	\item The \emph{focal distance}, $d$: distance from the focal point to the sensor.
 	\item The \emph{pitch}, \emph{roll} and \emph{yaw} angles, that describe the rotation of the sensor on each of its axis, depicted in \autoref{fig:pitchrollyaw}.
@@ -192,13 +192,13 @@ Similary, the value of $\vartheta$ comes from the triangle $Fp_xP$ in \autoref{f
 	\vartheta = \arctan{\frac{p_y}{\sqrt{p_x^2 + d^2}}}.
 \]
 
-Finally, we need to adjust the zero for both $\vartheta$ and $\varphi$ to agree with the angle convention of the coordinate system. Therefore, the final formulas to computing the direction of an incoming ray hitting the camera's sensor ar a pixel $P = (p_x, p_y)$ are the following:
+Finally, we need to adjust the zero for both $\vartheta$ and $\varphi$ to agree with the angle convention of the coordinate system. Therefore, the final formulas to computing the direction of an incoming ray hitting the camera's sensor as a pixel $P = (p_x, p_y)$ are the following:
 \begin{align}
 	\vartheta_{cs} &= \frac{\pi}{2} + \arctan{\frac{p_y}{\sqrt{p_x^2 + d^2}}}, \\
 	\varphi_{cs} &= \pi + \arctan{\frac{p_x}{d}}.
 \end{align}
 
-This discussion assumed the pixel coordinates to have its origin at the centre of the sensor. This is not the common coordinate system for pixels, as it usually have its origin at the top-left corner. A simple translation fixes that.
+This discussion assumed the pixel coordinates to have its origin at the centre of the sensor. This is not the common coordinate system for pixels, as it usually has its origin at the top-left corner. A simple translation fixes that.
 
 Furthermore, the pitch, roll and yaw angles were assumed to be zero. However, the addition of these angles is not difficult:
 \begin{itemize}
@@ -264,7 +264,7 @@ Before going ahead with the details of the five steps above, let us set up the b
 	\mathcal{B}_u = (\partial_t, \partial_r, \partial_\vartheta, \partial_\varphi).
 \end{equation}
 
-Furthermore, ee would like to work with an orthonormal spherical basis, that will be noted as
+Furthermore, we would like to work with an orthonormal spherical basis, that will be noted as
 \begin{equation}
 	\mathcal{B}_s = (e_t, e_r, e_\vartheta, e_\varphi).
 \end{equation}
@@ -291,7 +291,7 @@ Imposing the orthonormality property ($e_t$ has to be negative unitary to preser
 \begin{align}
 	\label{eq:systemab}
 	g(e_t, e_t) &= -1 \\ \nonumber
-	g(e_t, e_\varphi) &= 0
+	g(e_t, e_\varphi) &= 0.
 \end{align}
 
 From \autoref{eq:systemab}, we conclude that $a = \frac{1}{\alpha}$ and $b = \frac{\omega}{\alpha}$. Therefore, the orthonormal basis $\mathcal{B}_s$ vectors are:
@@ -566,8 +566,6 @@ The selected \ac{RK} algorithm is a fourth order method with an estimation of th
 	\caption{Butcher's table for the ray tracer solver}
 	\label{tab:butcher}
 \end{table}
-
-\subsection{Stabilization algorithm}
 
 \section{Accretion Disk}
 
