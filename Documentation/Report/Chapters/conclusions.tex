@@ -1,0 +1,19 @@
+\chapter*{Conclusions}
+
+This work has studied the necessary differential geometry to understand an introduction to the general relativity theory and the study of geodesics in Kerr spacetimes.
+
+This has led to an \ac{ODE} system whose numerical solution has been implemented with a \ac{RK} method, that has been parallelized using \ac{GPGPU} techniques in order to improve the efficiency by a factor of approximately 120.
+
+The developed work has been greatly rewarding both academically and personally. The introduction to the general relativity theory and to the physics behind it was fascinating, and the learned concepts on \ac{GPU} parallelization have been of great interest for a professional future.
+
+All the initial objectives have been successfully fulfilled, and good results have been obtained, both from the mathematical study, where the author has learned a lot more than expected and from the software implementation, whose efficiency and accuracy has been proven to be really satisfactory.
+
+This work, however, is far from being finished, and some work could be done to improve it.
+
+First of all, one of the most important issues for the author was that the software had to be free\footnote{As in freedom.}. Although the implemented code have been released under a GNU General Public License, it is based on proprietary software, namely the \ac{CUDA} library. Therefore, it would be interesting to port the software to use OpenCL, the open standard on \ac{GPGPU} techniques. This would also widen the range of final possible users of the software, as \ac{CUDA} is only implemented in NVIDIA \acp{GPU}, whereas OpenCL has implementations for virtually all devices.
+
+Furthermore, a lot of work in the documentation has to be done: a web page with a detailed documentation, with examples and use cases is being developed, but at the time of delivery of this work, it is not finished.
+
+Finally, the optimization of the parallelized code can still be improved.
+
+On the other hand, some more aspects related to the spacetimes can be added to the software, as the use of different coordinate systems that permits to generate images from inside the black hole's horizon.
