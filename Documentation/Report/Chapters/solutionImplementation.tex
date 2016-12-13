@@ -1,4 +1,5 @@
 \chapter{Solution implementation}
+\label{chapter:implementation}
 
 This chapter covers the implementation details, the technologies used, the different decisions made and the reasons that led us to make them.
 
@@ -8,23 +9,48 @@ The primary requirement when designing and implementing the software has been th
 
 \section{Technologies Used}
 
-The following technologies have been used on the implementation of this software:
+The base code, exposed to the final user and with an easy to understand \ac{API}, is written in Python. The reason to choose this language is that it is widely used in the scientific community, and whose rise on these fields is increasing. Furthermore, it let us write simple understandable code withouth losing the power of the \ac{OOP}.
+
+The \ac{CUDA} code is written in \ac{CUDA}-C, an extension of the well-known C language that permits to manage the \ac{GPU} and to establish a communication between the host (the \ac{CPU}) and the device (the \ac{GPU}). This is the most difficult code, highly optimised and where the ray tracer kernel and \ac{RK} solver are implemented.
+
+In order to glue together the Python package and the \ac{CUDA} kernel, the PyCUDA library is used.
+
+Finally, Sphinx has been used to manage the documentation of the package, letting the user access the Python docstrings on the objects defined. The C code has been documented using Doxygen, whose output is takes as an input by Sphinx in order to generate a complete documentation.
+
+\subsection{Python Package}
+
+The Python package is organised in four main files:
 \begin{enumerate}
-	\item Programming languages: Python and C.
-	\item Parallelization library: \ac{CUDA}.
-	\item Documentation: Sphinx and Doxygen.
+	\item \lstinline{universe.py}: defines a \lstinline{Universe} class, and exposes an instance of it to the package. This instace, called \lstinline{universe}, has all the general information about the spacetime, namely the black hole's spin and the accretion disk radius.
+	\item \lstinline{camera.py}: defines a \lstinline{Camera} class, that contains all the necessary information that characterise it: the sensor size in physical units, the sensor resolution, the roll, pitch and yaw angles and its position with respect to the black hole centre. Internally, the \lstinline{Camera} class has an attribute called \lstinline{engine}, which is an instance of the \lstinline{RayTracer} class. The \lstinline{Camera} class is in charge of computing the $\alpha$, $\omega$ and $\varpi$ quantities, that defines the value of the Kerr metric on the point where the camera is placed.
+	\item \lstinline{raytracer.py}: defines a \lstinline{RayTracer} class, which implements the PyCUDA calls to the \ac{CUDA} kernels. From the user perspective, it is the class that solves the \ac{ODE} system, although it delegates this work on the \ac{CUDA} methods.
+	\item \lstinline{geodesics.py}: defines a main \lstinline{Congruence} class, which is a set of solved geodesics with their position at every computed time. There are two more classes defined in this file: \lstinline{GeodesicSnapshot}, which is a slice of the \lstinline{Congruence} containing the position of all computed geodesics at a single instant and \lstinline{Geodesic}, which is a slice of \lstinline{Congruence} containing one single geodesic with its position at all computed times.
 \end{enumerate}
 
-\subsection{Python}
+The workflow when using this package as a user would be: import the \lstinline{universe} instance and the \lstinline{Camera} class from the package, define as much cameras as desired and configure their properties, configure the spin of the black hole and the accretion disk through the \lstinline{universe} instance if the default values are not wanted and call the method \lstinline{shoot()} from an instance of the camera. This returns a \lstinline{CongruenceSnapshot} instance that can be plotted with its method \lstinline{plot()}.
+
 \subsection{CUDA}
+
+All \ac{CUDA} related files are stored in a directory inside the package. There are four main files inside that directory:
+\begin{enumerate}
+	\item \lstinline{raytracer.cu}: defines two kernels, \lstinline{setInitialConditions} and \lstinline{kernel}. They are explained with detail in \autoref{sec:cuda}.
+	\item \lstinline{solvers.cu}: implements the \ac{RK} solver along with the automatic step size computation algorithm.
+	\item \lstinline{image_transformation.cu}: defines a third kernel, \lstinline{generate_image}, that manages the texture maps. See \autoref{sec:cuda} for more details.
+	\item \lstinline{functions.cu}: implements the right hand side of the \ac{ODE} system; \ie, the $f(y)$ function.
+\end{enumerate}
+
 \subsection{PyCUDA}
+
+The interface between Python and \ac{CUDA} is implemented in the \lstinline{RayTracer} Python class. This class uses the PyCUDA module to configure the device, to manage the memory transactions between host and device and to execute the kernels on the device when the user on the host requests it.
+
 \subsection{Documentation: Sphinx and Doxygen}
 
 \section{Algorithm Implementation}
-\subsection{Initial Conditions Computation}
-\subsection{Raytracing}
+
+This section covers the implementation details for some of the most complex blocks on the code.
 
 \section{CUDA Parallelization}
+\label{sec:cuda}
 
 \ac{CUDA} is a powerful library that abstracts the interaction with the \ac{GPU} in order to let the user implement general purpose programs on it.
 
@@ -40,7 +66,7 @@ The \ac{CUDA} device is configured once at the beginning of the program as a set
 
 \begin{figure}[bth]
 	\myfloatalign
-	\includegraphics[width=.8\linewidth]{gfx/cudagrid.png}
+	\includegraphics[width=.8\linewidth]{gfx/cudagrid}
 	\caption[$2\times3$ grid with $16\times16$ blocks]{$2\times3$ grid with $16\times16$ blocks}
 	\label{fig:cudagrid}
 \end{figure}
@@ -76,8 +102,8 @@ From this assumption, we designed warps as squared as possible, configuring the 
 	\end{figure}
 	\item The grid size is dynamically computed using the image size provided by the user. The number of rows and columns of the grid are computed with the following formulas:
 	\begin{equation*}
-		G_C = \left \lfloor{\frac{I_C - 1}{B_C} + 1}\right \rfloor, \qquad
-		G_R = \left \lfloor{\frac{I_R - 1}{B_R} + 1}\right \rfloor,
+	G_C = \left \lfloor{\frac{I_C - 1}{B_C} + 1}\right \rfloor, \qquad
+	G_R = \left \lfloor{\frac{I_R - 1}{B_R} + 1}\right \rfloor,
 	\end{equation*}
 	where $G_C$ and $G_R$ are the number of blocks per column and per row, $I_C$ and $I_R$ are the columns and rows of pixels of the image and $B_C = B_R = 8$ are the number of columns and rows of a block. These formulas ensure we have enough threads to compute each pixel. The remaining threads, which do not have any geodesic to compute, will be idle during all the program execution.
 \end{enumerate}
@@ -112,3 +138,25 @@ It is clear that the third one depends on the other two to be executed. However,
 All the ray tracer implementation is coded in such a way that independent instructions are together, whereas dependent ones are as far as possible one of the other. This let the scheduler issue instructions in parallel without having to wait for dependent computations to finish.
 
 In particular, the code of the computation of $f(y,t)$ has been deeply studied in order to maximize the \ac{ILP}.
+
+\subsection{Initial Conditions Computation}
+
+The initial conditions computation is implemented as a kernel on the \lstinline{raytracer.cu} file.
+
+It receives a pointer to two allocated sections of memory in the device: one to store the output of the initial conditions and another to store the output of the computation of the conserved quantities $b$ and $q$.
+
+Each thread solve the formulas obtained in \autoref{sec:pinhole}: equations \ref{eq:pinhole1} and \ref{eq:pinhole2} and the ones obtained in \autoref{sec:initcond}, and store the computed values in the pointed sections of the memory.
+
+\subsection{Ray Tracing}
+
+The ray tracing kernel implements the main logic of the software: it executes the \ac{RK} solver while continuously checking for collisions with either the disk or the black hole, following the design on \autoref{sec:numerical}.
+
+It receives a pointer to an allocated section of the memory where the initial conditions of the system are stored. After solving the \ac{ODE} system, it rewrites this buffer to provide the user with the final \ac{BL} coordinates of the considered geodesics.
+
+An auxiliary buffer is used in order to known if a given geodesic has hit the disk, has fallen into the black hole or if it points to the celestial sphere.
+
+\subsection{Texture Mapping}
+
+The texture mapping is a simple kernel implemented in the \lstinline{image_transformation.cu} file. It receives the final computed solution of the \ac{ODE} system, a pointer to a section of the memory where the textures pixels are assumed to be stored along with the size of the textures and a pointer to another previously allocated section of memory where the final pixels of the image will be stored.
+
+It then computes the texture mapping and outputs the result to the final image.

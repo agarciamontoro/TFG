@@ -1,4 +1,5 @@
 \chapter{Solution Design}
+\label{chapter:design}
 
 This chapter aims to fully describe the solution design from a top to bottom approach. First of all, the general idea of the design is described, abstracting every detail to easily understand the whole. Later on, the different sections of the design are explained with all their characteristics described. The implementation details are left for the following chapters, whereas here we only focus on the ideas and methods used.
 
@@ -222,7 +223,9 @@ Furthermore, the pitch, roll and yaw angles were assumed to be zero. However, th
 
 Taking all this into account, the final formulas to compute $(\vartheta_{cs}, \varphi_{cs})$ from the physical coordinates of the pixel $(p_x, p_y)$ are
 \begin{align}
+	\label{eq:pinhole1}
 	\vartheta_{cs} &= \eta + \frac{\pi}{2} + \arctan{\frac{p_y}{\sqrt{p_x^2 + d^2}}}, \\
+	\label{eq:pinhole2}
 	\varphi_{cs} &= \lambda + \pi + \arctan{\frac{p_x}{d}}.,
 \end{align}
 where
@@ -534,7 +537,7 @@ The coefficients $a_{ij}$, $b_i$, $b_i^*$ and $c_i$ define the model, and are us
 		& $b_1$ & $b_2$ & $\cdots$ & $b_{s-1}$ & $b_s$ \\ \hline
 		& $b^*_1$ & $b^*_2$ & $\cdots$ & $b^*_{s-1}$ & $b^*_s$ \\
 	\end{tabularx}
-	\caption{Butcher's table for a generic adaptive \ac{RK} method}
+	\caption[Butcher's table for an adaptive \ac{RK} method]{Butcher's table for a generic adaptive \ac{RK} method.}
 	\label{tab:generalbutcher}
 \end{table}
 
