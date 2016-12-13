@@ -43,7 +43,7 @@ Abstracting all these tasks out, the general outline of the ray tracer is descri
 The solution designed for the ray tracer is based on the algorithm described in \cite{thorne15}, that assumes the following:
 \begin{enumerate}
 	\item The spacetime is defined by the Kerr metric written in \ac{BL} coordinates (see \autoref{eq:kerrmetric}), with a black hole in the centre of the spatial coordinates parametrized by its spin $a$. Its mass is assumed to be 1.
-	\item The \ac{FIDO} is a locally non-rotating observer. We define a family of \ac{FIDO} at rest in space with orthonormal basis vectors $\{e_r, e_\vartheta, e_\varphi\}$, pointing along the spatial coordinate lines.
+	\item The \ac{FIDO} is a locally non-rotating observer. We define a family of \acp{FIDO} at rest in space with orthonormal basis vectors $\{e_r, e_\vartheta, e_\varphi\}$, pointing along the spatial coordinate lines.
 	\item A camera is placed outside of the horizon of the black hole.
 	\begin{enumerate}
 		\item The position of the camera is described by the coordinates $\{r_c, \vartheta_c, \varphi_c\}$.
@@ -537,7 +537,7 @@ The coefficients $a_{ij}$, $b_i$, $b_i^*$ and $c_i$ define the model, and are us
 		& $b_1$ & $b_2$ & $\cdots$ & $b_{s-1}$ & $b_s$ \\ \hline
 		& $b^*_1$ & $b^*_2$ & $\cdots$ & $b^*_{s-1}$ & $b^*_s$ \\
 	\end{tabularx}
-	\caption[Butcher's table for an adaptive \ac{RK} method]{Butcher's table for a generic adaptive \ac{RK} method.}
+	\caption[Butcher's table for an adaptive RK method]{Butcher's table for a generic adaptive \ac{RK} method.}
 	\label{tab:generalbutcher}
 \end{table}
 
@@ -568,3 +568,47 @@ The selected \ac{RK} algorithm is a fourth order method with an estimation of th
 \end{table}
 
 \subsection{Stabilization algorithm}
+
+\section{Accretion Disk}
+
+Accretion disks are disk-like structures, usually made of gas or dust, orbiting around massive objects, such as the black holes we are dealing with.
+
+The design of the ray tracer has taken this into account, including a feature that provides the user with the possibility of adding an infinitely thin accretion disk orbiting on the equatorial plane.
+
+This disk, always placed on the equatorial plane and that shares its centre with the black hole's, is defined as an annulus characterised by its inner and outer radii, denoted as $r_{in}$ and $r_{out}$.
+
+The interaction between the geodesics and the accretion disk is really interesting to see the distortion in the spacetime near the shadow. It is then mandatory to have a way of detecting if an integrated geodesic collides with the disk.
+
+The only way of detecting this collision is continuously checking if the geodesic has crossed the equatorial plane. If the geodesic is on the equatorial plane, \ie, if its $\vartheta$ coordinate is equal to $\nicefrac{\pi}{2}$, it is in collision with the disk if, and only if, its $r$ coordinate satisfies
+\begin{equation}
+	\label{eq:collision}
+	r_{out} > r > r_{in}.
+\end{equation}
+
+The solver works with discrete time intervals, \ie, we know the value $y(t_0)$ and it can compute the value $y(t_1)$. Therefore, it is probable that if a geodesic crosses the equatorial plane, it does it at a time $t \in (t_0, t_1)$. The only way of assuring that we detect the equatorial plane crossing, is to look at the change of the sign of $\vartheta$ with respect to $\nicefrac{\pi}{2}$ at the edges of the interval. That is, we know that a geodesic crosses the equatorial plane in an interval $[t_0, t_1]$ if and only if $\vartheta(t_0) < \nicefrac{\pi}{2}$ and $\vartheta(t_1) \geq \nicefrac{\pi}{2}$, or the other way around.
+
+\subsection{Bisection Algorithm}
+
+With this constraint in mind, it is necessary to design a way of computing the exact point where a geodesic crosses the equatorial plane. A bisection algorithm is the solution proposed: when we detect that a geodesic crosses the equatorial plane in an interval $[t_0, t_1]$, we ask the solver to compute whether it crossed it in the interval $[t_0, \nicefrac{(t_1 - t_0)}{2}]$. If the answer is affirmative, we repeat the process by changing $t_1 = \nicefrac{(t_1 - t_0)}{2}$; otherwise, we make the check assuming $t_0 = \nicefrac{(t_1 - t_0)}{2}$. The process repeats until a pre defined error tolerance, or a pre defined maximum number of iterations, is reached. This usual bisection technique let us find the exact point where the crossing took place, and let us check whether the geodesic satisfies \autoref{eq:collision} when $\vartheta \approx \nicefrac{\pi}{2}$.
+
+The first design assumed the collision detection and the \ac{RK} solver to be independent tasks. That is, the ray tracer called the solver several times with very small time intervals in order to check, between these calls, whether the geodesic has collided with the disk.
+
+\begin{algorithm}
+	\caption{Disk collision detection - rejected version}
+	\label{alg:collision}
+	\begin{algorithmic}[1]
+		\Function{Collision Detection}{resolution}
+		\For{$t$ from $t_0$ to $t_{end}$ in steps of size resolution}
+		\State RKSolver(t, t + resolution)
+		\If{the geodesic has crossed the eq. plane}
+			\State collisionCheck $\gets$ bisection($[t, t + resolution]$)
+		\EndIf
+		\EndFor
+		\Return{collisionCheck}
+		\EndFunction
+	\end{algorithmic}
+\end{algorithm}
+
+This idea, depicted on \ref{alg:collision}, caused a great loss on the efficiency ---we were artificially bounding the step size computed by the automatic step algorithm---, as well as the addition of the parameter resolution, which changed the final performance greatly. This was difficult and a bad design decision, so the solution was redesigned. The final idea, that was then proved to be very efficient, consisted on assimilating the collision detection inside the solver itself.
+
+That way, the \ac{RK} solver is called only once, with the final time interval $[t_0, t_{end}]$. The resolution variable is removed, as it is the same solver, with its automatic step size detection, who decides when to call the check and the bisection.

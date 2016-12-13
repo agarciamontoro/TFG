@@ -41,9 +41,20 @@ All \ac{CUDA} related files are stored in a directory inside the package. There 
 
 \subsection{PyCUDA}
 
-The interface between Python and \ac{CUDA} is implemented in the \lstinline{RayTracer} Python class. This class uses the PyCUDA module to configure the device, to manage the memory transactions between host and device and to execute the kernels on the device when the user on the host requests it.
+The interface between Python and \ac{CUDA} is implemented in the Python class \lstinline{RayTracer}. This class uses the PyCUDA module to configure the device, to manage the memory transactions between host and device and to execute the kernels on the device when the user on the host requests it.
 
 \subsection{Documentation: Sphinx and Doxygen}
+
+The documentation of the software has been made with Sphinx on the Python code and with Doxygen in the C code.
+
+This let us set up a workflow where we document the objects and methods and then we generate different outputs. For example, Sphinx can render HTML documents, and a web page was designed in order to publish a good documentation that can be consulted from everywhere. This web page is not finished, and it is not included in the final code, but \autoref{fig:screenshot} shows an example screenshot of what it looks like.
+
+\begin{figure}[bth]
+	\myfloatalign
+	\includegraphics[width=\linewidth]{gfx/documentationscreenshot}
+	\caption[Screenshot of the still unfinished web page]{Screenshot of the still unfinished web page.}
+	\label{fig:screenshot}
+\end{figure}
 
 \section{Algorithm Implementation}
 
