@@ -1,0 +1,30 @@
+\chapter{Introduction}
+
+This work aims to study how the light moves on the surroundings of black holes, developing a tool that use this information to generate images of what an observer would see when getting closer to a body of this kind.
+
+This problem is well-known \cite{oneill83} \cite{oneill95}, and has been widely studied. The main problem is that we do not usually have analytic expressions for the paths followed by photons, which force us to work with numerical solutions.
+
+There are a lot of research groups studying different processes near black holes, as the formation of jets and accretion disks. It is important, then, to have a general-purpose, robust, stable and well documented code that let the scientists obtain the results they need. There are several numerical implementations \cite{thorne15} \cite{chan13} that solve this problem, but they are either privative, are not well documented or are not adapted with a general purpose. The scientific community would take advantage of a code with such characteristics, and so the main goal of this work is to implement it.
+
+The addressed problem can be divided into two sub problems:
+\begin{enumerate}
+	\item To understand how the light moves near a black hole, particularly on a Kerr spacetime, with all the mathematics and physics needed. This will yield an \ac{ODE} system with no analytic solution.
+	\item To implement a software, in particular a ray tracer, that numerically solve the equations for the photons trajectories obtained with the previous work.
+\end{enumerate}
+
+The understanding of this problem involves a solid mathematical background on differential and semi-Riemannian geometry, it needs of an introduction to the general relativity theory and a good understanding of the movement of photons on relativistic spacetimes. The necessary concepts and results on these fields are widely studied.
+
+Furthermore, the implemented solution is parallelized using \ac{GPU} techniques, obtaining a code that can be up to 125 times faster than non-parallelized solutions. The \ac{GPU} architecture is studied on the work and the software design is made with the hardware specific issues in mind.
+
+The work is organised in three main blocks:
+\begin{enumerate}
+	\item Mathematics: in this part, all the needed mathematical background is studied, from basic concepts as the tensor algebra to the more advanced topics as the semi-Riemannian geometry.
+	\item General Relativity: this part is focused on the concepts particular to the general relativity theory, studying the concept of spacetime and obtaining the equations for the photons trajectories near Kerr black holes.
+	\item Computer Science: the last part covers the computational solution to the problem of finding the path followed by light in the surroundings of a black hole. It describes the design, studying \ac{GPGPU} techniques, describing the implemented solution and the results obtained.
+\end{enumerate}
+
+On the Mathematics part, \autoref{chapter:lorentzian} studies the basic concept upon which we will build all the following results: the lorentzian vector spaces; it introduces basic terminology and results that will let us understand the following chapters. \autoref{chapter:tensoralgebra} is a wide introduction to the tensor algebra, a basic tool used diary in physics, in particular in relativistic spacetimes. \autoref{chapter:diffgeom} is an introduction to the differential geometry, studying smooth manifolds and all the structures we can build upon them. Finally, \autoref{chapter:semiriemannian} introduces the notion of semi-Riemannian geometry, key concept on the general relativity theory.
+
+\autoref{chapter:einstein} covers the geometric description of gravity, studying the Einstein field equations. \autoref{chapter:kerr} introduces and examines Kerr spacetimes, the universe in which the considered photons will live. Finally, \autoref{chapter:equations} is focused on the obtaining of the differential equations that characterise the photons trajectories and that will be numerically solved by the software.
+
+On the third main block, the software design and implementation is described. \autoref{chapter:design} focus on the design, explaining the particular decisions made. \autoref{chapter:implementation} study the code implemented. Finally, \autoref{chapter:results} makes a wide study of the results that can be obtained with the software, as well as a study on the accuracy and efficiency of the code.
