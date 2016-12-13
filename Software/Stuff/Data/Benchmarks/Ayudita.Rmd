@@ -75,16 +75,91 @@ ggsave("../../../../Documentation/Report/gfx/speedup.png")
 ```{r}
 data <- read.csv("../../Graphs/stepradiusiter2.csv")
 data$Step <- abs(data$Step)
-data$Step <- scale(data$Step, center = min(data$Step), scale = max(data$Step) - min(data$Step))
-data$Radius <- scale(data$Radius, center = min(data$Radius), scale = max(data$Radius) - min(data$Radius))
+
+data$Step <- (data$Step - min(data$Step))/(max(data$Step) - min(data$Step))
+data$Radius <- (data$Radius - min(data$Radius))/(max(data$Radius) - min(data$Radius))
+
+
+# data$Step <- scale(data$Step, center = min(data$Step), scale = max(data$Step) - min(data$Step))
+# data$Radius <- scale(data$Radius, center = min(data$Radius), scale = max(data$Radius) - min(data$Radius))
 
 
 # data$Step <- abs(data$Step)
 ggplot(data, aes(Iteration)) +
   ylab("") +
-  ggtitle("Normalized progression ") +
-  geom_line(aes(y = Radius, colour="Radius")) +
-  geom_line(aes(y = Step, colour="Step")) +
+  # ggtitle("Automatic step computation") +
+  geom_line(aes(y = Radius, colour="Normalized radius")) +
+  geom_line(aes(y = Step, colour="Normalized step")) +
   theme(legend.title=element_blank())
+
+# ggsave("../../../../Documentation/Report/gfx/stepradius2.png")
 ```
+
+
+```{r}
+data <- read.csv("../../Graphs/iter_paso_r_theta_kretchman.csv")
+data$Step <- abs(data$Step)
+
+data$Step <- (data$Step - min(data$Step))/(max(data$Step) - min(data$Step))
+data$R <- (data$R - min(data$R))/(max(data$R) - min(data$R))
+data$Theta <- (data$Theta - min(data$Theta))/(max(data$Theta) - min(data$Theta))
+data$Kretchmann <- (data$Kretchmann - min(data$Kretchmann))/(max(data$Kretchmann) - min(data$Kretchmann))
+
+
+ggplot(data, aes(Iteration)) +
+  ylab("") +
+  # ggtitle("Automatic step computation") +
+  geom_line(aes(y = R, colour="Normalized radius")) +
+  geom_line(aes(y = Step, colour="Normalized step")) +
+  geom_line(aes(y = Theta, colour="Normalized theta")) +
+  geom_line(aes(y = Kretchmann, colour="Normalized\nKretschmann")) +
+  theme(legend.title=element_blank())
+
+
+ggsave("../../../../Documentation/Report/gfx/kretschmann.png")
+
+```
+
+
+```{r}
+points <- read.csv("../../Graphs/points.csv")
+
+require(Bessel)
+analytic <- AiryB(points$X)
+
+data <- data.frame(x = points$X, airy=analytic, rk=points$Y)
+
+ggplot(data, aes(x)) +
+  xlab("") +
+  ylab("") +
+  # ggtitle("Automatic step computation") +
+  geom_line(aes(y = airy, colour="Analytic expression"), size=0.3) +
+  geom_point(aes(y = rk, colour="Runge-Kutta solution"), size=0.2) +
+  xlim(-9,2) +
+  ylim(-0.5,1.5) +
+  theme(legend.title=element_blank())
+
+ggsave("../../../../Documentation/Report/gfx/analytic.png", width=10)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
