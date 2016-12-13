@@ -1,0 +1,35 @@
+%*******************************************************
+% Resumen
+%*******************************************************
+%\renewcommand{\abstractname}{Abstract}
+\pdfbookmark[1]{Resumen}{Resumen}
+\begingroup
+\let\clearpage\relax
+\let\cleardoublepage\relax
+\let\cleardoublepage\relax
+
+\chapter*{Resumen}
+
+El principal objetivo de este trabajo se centra en estudiar cómo se mueve la luz en zonas cercanas a agujeros negros. Este es un conocimiento teórico que tiene una finalidad práctica directa: desarrollar una herramienta informática que use esa información para generar imágenes de lo que vería un observador moviéndose cerca de un agujero negro.
+
+Este es un problema estudiado en profundidad por muchos autores, con libros enteros (\cite{oneill83}, \cite{oneill95}) dedicados única y exclusivamente a analizar los resultados y propiedades que llevan a comprender cómo se mueve un fotón dentro de lo que se conoce como un espaciotiempo relativista. El principal problema para conocer estas trayectorias es que no se suele disponer de una expresión analítica para ellas, por lo que es necesario recurrir a soluciones numéricas que las aproximen.
+
+En este campo hay una gran variedad de grupos de investigación, cuyo principal objetivo es el estudio de los diferentes procesos que ocurren cerca de un agujero negro, como los \emph{jets} o los discos de acreción. Esto crea una necesidad entre la comunidad científica que aún no ha sido del todo satisfecha: los investigadores necesitan de un código robusto, estable, bien documentado y de propósito general que les permita obtener los resultados que busquen.
+
+Hay varias soluciones que buscan enfrentarse a este problema, como \cite{thorne15} y \cite{chan13}, pero estas implementaciones o bien no son de propósito general, o son privativas o no están bien documentadas, lo que hace su uso muchísimo más complejo. La necesidad de un código con las anteriores características sigue viva, y este trabajo trata de avanzar en esa dirección, ofreciendo un \emph{software} bajo una licencia libre que pueda ser usado, estudiado, modificado y compartido por la comunidad.
+
+El problema que trata este trabajo puede dividirse en dos grandes bloques:
+\begin{enumerate}
+	\item Adquirir la base matemática y física suficiente para entender cómo se mueve la luz cerca de un agujero negro; en particular en un espaciotiempo de Kerr. Una vez se tiene esta base de conocimiento, podremos obtener un sistema de ecuaciones diferenciales cuya solución sea la trayectoria seguida por una partícula luminosa en un espaciotiempo relativista.
+	\item Diseñar e implementar un \emph{software} ---en particular un trazador de rayos, o \emph{ray tracer} en inglés---, además de analizar su rendimiento y precisión en una serie de pruebas, que haga uso del anterior conocimiento para generar soluciones a las trayectorias seguidas por los fotones. 
+\end{enumerate}
+
+Esta división del problema deja claras la vertiente matemática y la computacional del trabajo, que se complementan de una manera natural para generar un estudio robusto y completo del problema.
+
+La primera parte del problema no sólo necesita del estudio de algunos conceptos físicos completamente nuevos para un alumno de un grado en matemáticas e informática, sino que requiere de una base matemática que no se ve en el curso del grado y que se desarrolla en este trabajo. Los dos pilares matemáticos necesarios para entender los siguientes conceptos están formados por la geometría diferencial y por la geometría semi-Riemanniana. Una vez que hayamos conseguido estos conocimientos, y sólo entonces, podremos adentrarnos en el fascinante mundo de la teoría de la relatividad general, que nos llevará directamente al estudio del movimiento de los fotones en espaciotiempos relativistas.
+
+Por otro lado, el programa implementado va a ser paralelizado usando \acp{GPU}s, usando lo que se conoce como computación de propósito general en procesadores gráficos. Esto va a requerir de un profundo estudio de las arquitecturas \emph{hardware} de los procesadores gráficos que usaremos.
+
+\vfill
+
+\endgroup
