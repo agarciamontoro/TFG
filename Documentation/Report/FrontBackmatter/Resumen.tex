@@ -10,13 +10,17 @@
 
 \chapter*{Resumen}
 
+\section*{Descripción general}
+
 El principal objetivo de este trabajo se centra en estudiar cómo se mueve la luz en zonas cercanas a agujeros negros. Este es un conocimiento teórico que tiene una finalidad práctica directa: desarrollar una herramienta informática que use esa información para generar imágenes de lo que vería un observador moviéndose cerca de un agujero negro.
 
 Este es un problema estudiado en profundidad por muchos autores, con libros enteros (\cite{oneill83}, \cite{oneill95}) dedicados única y exclusivamente a analizar los resultados y propiedades que llevan a comprender cómo se mueve un fotón dentro de lo que se conoce como un espaciotiempo relativista. El principal problema para conocer estas trayectorias es que no se suele disponer de una expresión analítica para ellas, por lo que es necesario recurrir a soluciones numéricas que las aproximen.
 
-En este campo hay una gran variedad de grupos de investigación, cuyo principal objetivo es el estudio de los diferentes procesos que ocurren cerca de un agujero negro, como los \emph{jets} o los discos de acreción. Esto crea una necesidad entre la comunidad científica que aún no ha sido del todo satisfecha: los investigadores necesitan de un código robusto, estable, bien documentado y de propósito general que les permita obtener los resultados que busquen.
+En este campo hay una gran variedad de grupos de investigación activos, cuyo principal objetivo es el estudio de los diferentes procesos que ocurren cerca de un agujero negro, como los \emph{jets} o los discos de acreción. Esto crea una necesidad entre la comunidad científica que aún no ha sido del todo satisfecha: los investigadores necesitan de un código robusto, estable, bien documentado y de propósito general que les permita obtener los resultados que busquen, de manera que no pierdan tiempo en implementaciones que podrían dedicar a buscar resultados.
 
 Hay varias soluciones que buscan enfrentarse a este problema, como \cite{thorne15} y \cite{chan13}, pero estas implementaciones o bien no son de propósito general, o son privativas o no están bien documentadas, lo que hace su uso muchísimo más complejo. La necesidad de un código con las anteriores características sigue viva, y este trabajo trata de avanzar en esa dirección, ofreciendo un \emph{software} bajo una licencia libre que pueda ser usado, estudiado, modificado y compartido por la comunidad.
+
+\section*{Problema abordado}
 
 El problema que trata este trabajo puede dividirse en dos grandes bloques:
 \begin{enumerate}
@@ -26,9 +30,37 @@ El problema que trata este trabajo puede dividirse en dos grandes bloques:
 
 Esta división del problema deja claras la vertiente matemática y la computacional del trabajo, que se complementan de una manera natural para generar un estudio robusto y completo del problema.
 
-La primera parte del problema no sólo necesita del estudio de algunos conceptos físicos completamente nuevos para un alumno de un grado en matemáticas e informática, sino que requiere de una base matemática que no se ve en el curso del grado y que se desarrolla en este trabajo. Los dos pilares matemáticos necesarios para entender los siguientes conceptos están formados por la geometría diferencial y por la geometría semi-Riemanniana. Una vez que hayamos conseguido estos conocimientos, y sólo entonces, podremos adentrarnos en el fascinante mundo de la teoría de la relatividad general, que nos llevará directamente al estudio del movimiento de los fotones en espaciotiempos relativistas.
+La primera parte del problema no sólo necesita del estudio de algunos conceptos físicos completamente nuevos para un alumno de un grado en matemáticas e informática, sino que requiere de una base matemática que no se ve en el curso del grado y que se desarrolla en este trabajo. Los dos pilares matemáticos necesarios para entender los siguientes conceptos están formados por la geometría diferencial y por la geometría semi-riemanniana. Una vez que hayamos conseguido estos conocimientos, y sólo entonces, podremos adentrarnos en el fascinante mundo de la teoría de la relatividad general, que nos llevará directamente al estudio del movimiento de los fotones en espaciotiempos relativistas.
 
-Por otro lado, el programa implementado va a ser paralelizado usando \acp{GPU}s, usando lo que se conoce como computación de propósito general en procesadores gráficos. Esto va a requerir de un profundo estudio de las arquitecturas \emph{hardware} de los procesadores gráficos que usaremos.
+Por otro lado, el programa implementado va a ser paralelizado usando \acp{GPU}s, mediante lo que se conoce como computación de propósito general en procesadores gráficos. Esto va a requerir de un profundo estudio de las arquitecturas \emph{hardware} de los procesadores gráficos que finalmente usaremos. Además, el diseño \emph{software} se ha hecho con la arquitectura gráfica en mente, intentando optimizar el paralelismo y aumentar la eficiencia.
+
+\section*{Descripción de la memoria}
+
+La memoria está dividida en tres grandes bloques, si obviamos el primero, que sirve de introducción al trabajo, y el último, donde se describen las conclusiones del mismo.
+
+\begin{enumerate}
+	\item La primera parte desarrolla la matemática necesaria para todo el trabajo restante, y sin ella nada de lo que sigue se puede entender.
+	\item La segunda, a su vez, es una introducción a la teoría estrella de Einstein, la teoría de la relatividad general, que definió un cambio de paradigma en la física del momento.
+	\item La tercera y última se dedica en exclusiva a estudiar el diseño, implementación y pruebas del \emph{software} implementado, además de estudiar los resultados que de él se obtienen.
+\end{enumerate}
+
+La primera parte está dedicada al estudio de las herramientas matemáticas necesarias para poder entender los siguientes capítulos. El capítulo \ref{chapter:lorentzian} está dedicado al bloque básico de conocimiento sobre el que construiremos todo lo demás, los espacios vectoriales lorentzianos. El capítulo \ref{chapter:tensoralgebra} se centra en una herramienta muy potente, y ampliamente usada en física: los tensores; este concepto se estudia con profundidad por su enorme importancia, que contrasta con su invisibilidad en el programa de estudios del grado en matemáticas. Después de sentar las bases necesarias para entender los conceptos geométricos siguientes, el capítulo \ref{chapter:diffgeom} sirve como introducción a la geometría diferencial, un campo de enorme interés tanto para matemáticos como para físicos, y donde ambas ciencias convergen. La geometría diferencial es un campo muy amplio y no se estudia en su totalidad, pero nos sirve como paso anterior a la geometría semi-riemanniana, desarrollada en el capítulo \ref{chapter:semiriemannian}.
+
+La segunda parte de la memoria es una introducción a los conceptos de la teoría de relatividad general que nos ayudarán a llegar a las ecuaciones para las trayectorias de la luz que buscamos desde el principio. El capítulo \ref{chapter:einstein} describe la ecuación de campo de Einstein, señalando su importancia en la descripción geométrica de la gravedad. El capítulo \ref{chapter:kerr} define y analiza de una forma superficial ---porque un estudio profundo se sale del ámbito de este trabajo--- los espaciotiempos de Kerr, que son los que definirán los agujeros negros con los que trabajaremos. Por último, el capítulo \ref{chapter:equations} es una guía exhaustiva para obtener el sistema de ecuaciones diferenciales que finalmente se usará en la implementación del \emph{ray tracer}.
+
+La tercera y última parte de la memoria se centra en el desarrollo software realizado. El capítulo \ref{chapter:design} describe de forma pormenorizada el diseño del programa que luego será implementado, razonando cada decisión tomada y comparándolas con soluciones que fueron descartadas por ser ineficientes, poco elegantes o simplemente erróneas. El capítulo \ref{chapter:implementation} se centra en la implementación, describiendo las particularidades del código y de los algoritmos diseñados; en particular, se describe con gran detalle la arquitectura usada en los procesadores gráficos. Por último, el capítulo \ref{chapter:results} hace un recorrido por los resultados más importantes, tanto técnicos como científicos, que se pueden derivar de la implementación realizada.
+
+\section*{Análisis del trabajo realizado}
+
+Los objetivos del trabajo marcados cuando este se propuso se han cumplido de una forma realmente satisfactoria. Los conocimientos matemáticos se han desarrollado con detalle y rigor, y aunque los temas más avanzados como la teoría de la relatividad general se han tratado con ligereza, por la profunda complejidad que conllevan, los aspectos más básicos han sido entendidos e interiorizados.
+
+Por otro lado, el \emph{software} implementado cumple con todos los requisitos que se definieron al principio del trabajo: es un paquete de código libre, distribuido bajo \ac{GPL}, que permite a los usuarios obtener información de los espaciotiempos relativistas de Kerr de forma muy sencilla. La eficiencia del programa ha sido puesto a prueba y los resultados han sido altamente satisfactorios, consiguiendo tiempos hasta ciento veinticinco veces mejores que los obtenidos con códigos no paralelizados. Además, la cantidad de conocimientos adquiridos sobre arquitectura de procesadores gráficos y de jerarquías de memorias en ellos ha sido de gran utilidad, ayudando a comprender los entresijos de la paralelización y a diseñar software paralelo de mayor calidad.
+
+Además, los resultados científicos derivados de la implementación del estudio teórico han sido de gran interés, y han ayudado a despertar en el autor una curiosidad hacia la física que hasta ahora estaba latente. Los campos de las geometrías diferencial y semi-riemanniana son de gran interés tanto para matemáticos como para físicos, y es uno de esos lugares donde la línea entre ambas ciencias es extremadamente fina.
+
+Cabe también decir que la cantidad de referencias consultadas ha sido de gran interés. Libros clásicos como \cite{romero86}, \cite{oneill83}, \cite{docarmo79}, \cite{thorne73} o \cite{nomizu79} han sido complementados con referencias de artículos que están en la vanguardia de la investigación, como \cite{thorne15} o \cite{chan13}. El conocimiento adquirido en el uso de las referencias bibliográficas no es objetivamente computable, pero ha tenido un gran valor académico.
+
+Por último, este trabajo no termina aquí: la implementación de nuevas características, como la posibilidad de generar imágenes desde dentro del agujero negro, ya está en camino; además, se hace necesario usar tecnologías completamente libres para que el código esté libre de cualquier atadura. Aunque el código escrito tiene una licencia libre, la librería usada para la computación paralela es privativa, así que el siguiente paso es claro: reescribir la parte paralelizada para usar estándares abiertos que faciliten aún más el uso del programa por parte de la comunidad científica.
 
 \vfill
 
