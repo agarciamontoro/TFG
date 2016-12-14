@@ -2,7 +2,7 @@
 @Author: alejandro
 @Date:   2016-12-14T18:34:36+01:00
 @Last modified by:   alejandro
-@Last modified time: 2016-12-14T19:22:04+01:00
+@Last modified time: 2016-12-14T19:26:52+01:00
 -->
 
 
@@ -23,11 +23,11 @@ The package can be found on the [Raytracer](https://github.com/agarciamontoro/TF
 This ray tracer can render images of what an observer near a Kerr black hole would see, from arbitrary positions and with arbitrary textures mapped on the bodies.
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/agarciamontoro/TFG/master/Documentation/Report/gfx/bh_texture_disk-xmas.png" />
+<img src="https://raw.githubusercontent.com/agarciamontoro/TFG/master/Documentation/Report/gfx/bh_texture_disk-xmas.png" style="max-width:600px" />
 </p>
 
 You can even visualize the geodesics around the black hole in 3D!
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/agarciamontoro/TFG/master/Documentation/Report/gfx/3d_mess.png" />
+<img src="https://raw.githubusercontent.com/agarciamontoro/TFG/master/Documentation/Report/gfx/3d_mess.png" style="max-width:600px" />
 </p>
