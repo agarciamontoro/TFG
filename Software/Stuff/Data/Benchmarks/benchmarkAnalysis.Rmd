@@ -61,8 +61,8 @@ speedup9 <- data.frame(Pixels = m9$Pixels,
 
 ```{r}
 ggplot() + 
-  geom_line(data=speedup1, aes(x=Pixels, y=SpeedUp, colour='Spin = 0.999')) + 
-  geom_line(data=speedup9, aes(x=Pixels, y=SpeedUp, colour='Spin = 0.0001')) +
+  geom_line(data=speedup1, aes(x=Pixels, y=SpeedUp, colour='Spin = 0.0001')) +
+  geom_line(data=speedup9, aes(x=Pixels, y=SpeedUp, colour='Spin = 0.999')) +
   ylab("Speed up") +
   xlab("Image megapixels") +
   ggtitle("Parallelized code speed up") +
