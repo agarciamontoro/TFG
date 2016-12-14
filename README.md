@@ -2,7 +2,7 @@
 @Author: alejandro
 @Date:   2016-12-14T18:34:36+01:00
 @Last modified by:   alejandro
-@Last modified time: 2016-12-14T19:18:08+01:00
+@Last modified time: 2016-12-14T19:22:04+01:00
 -->
 
 
@@ -14,13 +14,13 @@
 # General Relativity Raytracer
 ## A Massively Parallel Free Software Alternative.
 
-This repository contains the work on a ray tracer that computes the trajectories of photons in relativistic spacetimes; in particular around a Kerr black hole.
+This repository contains all the work for my Bachelor's thesis: a ray tracer that computes the trajectories of photons in relativistic spacetimes; in particular around a Kerr black hole, along with the final thesis.
 
-The final package can be found on the [Raytracer](https://github.com/agarciamontoro/TFG/tree/master/Software/Raytracer) directory.
+The package can be found on the [Raytracer](https://github.com/agarciamontoro/TFG/tree/master/Software/Raytracer) directory; the sources for the thesis are stored on the [Report](https://github.com/agarciamontoro/TFG/tree/master/Documentation/Report) directory.
 
---------
+### What can I do with this?
 
-It can render images of what an observer near a Kerr black hole would see, from arbitrary positions and with arbitrary textures mapped on the bodies.
+This ray tracer can render images of what an observer near a Kerr black hole would see, from arbitrary positions and with arbitrary textures mapped on the bodies.
 
 <p align="center">
 <img src="https://raw.githubusercontent.com/agarciamontoro/TFG/master/Documentation/Report/gfx/bh_texture_disk-xmas.png" />
