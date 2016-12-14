@@ -1,6 +1,6 @@
 ---
-title: "Ayudita"
-author: "Antonio Álvarez Caballero"
+title: "Data Analysis"
+author: "Antonio Álvarez Caballero and Alejandro García Montoro"
 date: "11 de diciembre de 2016"
 output: pdf_document
 ---
@@ -10,12 +10,15 @@ knitr::opts_chunk$set(echo = TRUE)
 require(ggplot2)
 require(reshape2)
 
-formatter1000 <- function(x){ 
+# Auxiliar function to format axis label on plots
+formatter1000 <- function(x){
     x/1000000
 }
 ```
 
-# Holis
+# Benchmarks
+
+Read data from CPU and GPU benchmarks for both 0.0001 and 0.999 spin.
 
 ```{r}
 CPU9 <- read.csv("999/999CPU.csv")
@@ -29,38 +32,21 @@ m1 <- merge(CPU1,GPU1)
 colnames(m1) <- c("Pixels","CPU","GPU")
 ```
 
+Compute the speedups.
 
 ```{r}
-# EscandiMorning <- melt(m, id.vars = "Pixels")
-# 
-# ggplot(EscandiMorning, aes(Pixels, value, color = "red")) +
-#   geom_line() +
-#   ylab("Time") +
-#   theme(legend.title=element_blank())
 
 speedup1 <- data.frame(Pixels = m1$Pixels,
                        SpeedUp = m1$CPU / m1$GPU)
 
 speedup9 <- data.frame(Pixels = m9$Pixels,
                        SpeedUp = m9$CPU / m9$GPU)
-
-# ggplot(speedup1, aes(Pixels,)) +
-#   geom_line(aes(y = SpeedUp, colour = "Schwarzschild")) + 
-#   geom_line(aes(data = speedup9, colour = "Kerr")) +
-#   ylab("Speed up") +
-#   xlab("Image megapixels") +
-#   ggtitle("Parallel code speed up") +
-#   scale_x_continuous(labels = formatter1000)
-  #geom_smooth(method = "lm",formula = y ~ log(x))
-
-# (plot2 <- ggplot(NULL, aes(v, p)) + 
-#       geom_point(data = df1) +
-#       geom_step(data = df2)
-# )
 ```
 
+Plot the speedup and save.
+
 ```{r}
-ggplot() + 
+ggplot() +
   geom_line(data=speedup1, aes(x=Pixels, y=SpeedUp, colour='Spin = 0.0001')) +
   geom_line(data=speedup9, aes(x=Pixels, y=SpeedUp, colour='Spin = 0.999')) +
   ylab("Speed up") +
@@ -69,25 +55,22 @@ ggplot() +
   scale_x_continuous(labels = formatter1000) +
   theme(legend.title=element_blank())
 
-ggsave("../../../../Documentation/Report/gfx/speedup.png")
+ggsave("../Documentation/Report/gfx/speedup.png")
 ```
 
+# Data Analysis
+
+## Step Size Study
+
 ```{r}
-data <- read.csv("../../Graphs/stepradiusiter2.csv")
+data <- read.csv("../Graphs/stepradiusiter2.csv")
 data$Step <- abs(data$Step)
 
 data$Step <- (data$Step - min(data$Step))/(max(data$Step) - min(data$Step))
 data$Radius <- (data$Radius - min(data$Radius))/(max(data$Radius) - min(data$Radius))
 
-
-# data$Step <- scale(data$Step, center = min(data$Step), scale = max(data$Step) - min(data$Step))
-# data$Radius <- scale(data$Radius, center = min(data$Radius), scale = max(data$Radius) - min(data$Radius))
-
-
-# data$Step <- abs(data$Step)
 ggplot(data, aes(Iteration)) +
   ylab("") +
-  # ggtitle("Automatic step computation") +
   geom_line(aes(y = Radius, colour="Normalized radius")) +
   geom_line(aes(y = Step, colour="Normalized step")) +
   theme(legend.title=element_blank())
@@ -95,9 +78,10 @@ ggplot(data, aes(Iteration)) +
 # ggsave("../../../../Documentation/Report/gfx/stepradius2.png")
 ```
 
+## Kretschmann Study
 
 ```{r}
-data <- read.csv("../../Graphs/iter_paso_r_theta_kretchman.csv")
+data <- read.csv("./Graphs/iter_paso_r_theta_kretchman.csv")
 data$Step <- abs(data$Step)
 
 data$Step <- (data$Step - min(data$Step))/(max(data$Step) - min(data$Step))
@@ -116,13 +100,13 @@ ggplot(data, aes(Iteration)) +
   theme(legend.title=element_blank())
 
 
-ggsave("../../../../Documentation/Report/gfx/kretschmann.png")
-
+ggsave("../Documentation/Report/gfx/kretschmann.png")
 ```
 
+# Accuracy Study
 
 ```{r}
-points <- read.csv("../../Graphs/points.csv")
+points <- read.csv("./Graphs/points.csv")
 
 require(Bessel)
 analytic <- AiryB(points$X)
@@ -139,27 +123,5 @@ ggplot(data, aes(x)) +
   ylim(-0.5,1.5) +
   theme(legend.title=element_blank())
 
-ggsave("../../../../Documentation/Report/gfx/analytic.png", width=10)
-
+ggsave("../Documentation/Report/gfx/analytic.png", width=10)
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
