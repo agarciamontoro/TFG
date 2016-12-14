@@ -16,7 +16,8 @@
 
 This repository contains all the work for my Bachelor's thesis: a ray tracer that computes the trajectories of photons in relativistic spacetimes; in particular around a Kerr black hole, along with the final thesis.
 
-The package can be found on the [Raytracer](https://github.com/agarciamontoro/TFG/tree/master/Software/Raytracer) directory; the sources for the thesis are stored on the [Report](https://github.com/agarciamontoro/TFG/tree/master/Documentation/Report) directory.
+The package can be found in the [Raytracer](https://github.com/agarciamontoro/TFG/tree/master/Software/Raytracer) directory; the sources for the thesis are stored in the 
+[Report](https://github.com/agarciamontoro/TFG/tree/master/Documentation/Report) directory.
 
 ### What can I do with this?
 
