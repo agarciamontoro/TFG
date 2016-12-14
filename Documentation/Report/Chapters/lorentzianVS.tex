@@ -1,11 +1,11 @@
-\chapter{Lorentzian vector spaces}
+\chapter{Lorentzian Vector Spaces}
 \label{chapter:lorentzian}
 
 This chapter follows the ideas on \cite{romero10}, which set up the basic background needed to understand what we will call later a spacetime, the main mathematical object in which we will develop our work.
 
 Before going down that road we need to know what a Lorentzian vector space is and the basic concepts that we can build upon it.
 
-\section{Basic definitions}
+\section{Basic Definitions}
 
 \begin{definition}[Lorentzian product and vector space]
 	\label{def:lorentzianprod}
@@ -58,7 +58,7 @@ The study of the Lorentzian vector spaces will be based on \autoref{lem:lorentzs
 \end{lemma}
 
 \begin{proof}
-	As $\langle v \rangle$ is non degenerate, so is $v^\perp$. Then, $V = \langle v \rangle + v^\perp$ is a direct sum. As the $v^\perp$ index is necessarily zero, $v^\perp$ is spacelike and, consequently
+	As $\langle v \rangle$ is non degenerate, so is $v^\perp$. Then, $V = \langle v \rangle + v^\perp$ is a direct sum.
 	
 	See \cite[Lemma 5.26]{oneill83} for details.
 \end{proof}
@@ -91,7 +91,7 @@ From \cite[Cor. 1.1.5]{sachs77}, \cite[p. 155]{oneill83}, we can see:
     If $g(x,y)=0$ then $\lvert g(u,w) \rvert = \sqrt{g(u,u)}\sqrt{g(w,w)}$ and therefore, from \autoref{eq:schwarz}, $u=kw$ for some $k\in \R$. In fact, $k=a/b$. The converse is trivial.
 \end{proof}
 
-\section{Time cones}
+\section{Time Cones}
 
 From now on, $\mathcal{T}(V,g)$ will denote the set of all timelike vectors on $(V,g)$.
 
@@ -104,9 +104,9 @@ From now on, $\mathcal{T}(V,g)$ will denote the set of all timelike vectors on $
 
 It is clear that $C(v)$ is not empty, as $v$ itself lays on its own time cone.
 
-Furthermore, as no two timelike vectors can be orthogonal, $g(v,w) \neq 0$ for each $w \in \mathcal{T}(V,g)$; \ie, either $w\in C(v)$ or $w\in C(-v)$. This let us describe $\mathcal{T}(V,g)$ as a union of two time cones for each timelike vector.
+Furthermore, as no two timelike vectors can be orthogonal, $g(v,w) \neq 0$ for each $w \in \mathcal{T}(V,g)$; \ie, either $w\in C(v)$ or $w\in C(-v)$. This let us describe $\mathcal{T}(V,g)$ as a union of two time cones for each timelike vector:
 \[
-\mathcal{T}(V,g) = C(v) \cup C(-v) \quad \forall v\in \mathcal{T}(V,g)
+\mathcal{T}(V,g) = C(v) \cup C(-v) \quad \forall v\in \mathcal{T}(V,g).
 \]
 
 The following result characterizes when two timelike vectors lie in the same time cone.
@@ -143,11 +143,11 @@ Let $w\in\mathcal{T}(V,g)$, $u,v\in C(w)$ and $a,b\in \R$ with $a,b\geq 0$ and $
     As $g(au+bv,w)=a g(u,w)+ b g(v,w)<0$, \autoref{lem:timecone} proves the result.
 \end{proof}
 
-This corollary let us conclude that time cones are convex subsets of $V$. Furthermore, it is important to realize that if $u\in C(v)$ then $C(u)=C(v)$.
+This corollary lets us conclude that time cones are convex subsets of $V$. Furthermore, it is important to realize that if $u\in C(v)$ then $C(u)=C(v)$.
 
 \autoref{classic_Schwarz} showed that the Schwarz inequality holds on the orthogonal space of any timelike vector. This result is not true if we consider any pair of vectors, but what happens when we focus on timelike vectors? Some interesting results will appear.
 
-\section{Wrong-way inequalities}
+\section{Wrong-Way Inequalities}
 
 First of all, we can obtain the so-called \emph{wrong-way Schwarz inequality} ---see \cite[Prop. 5.30]{oneill83}--- when considering only timelike vectors.
 
@@ -155,7 +155,7 @@ First of all, we can obtain the so-called \emph{wrong-way Schwarz inequality} --
 	\label{pro:wrongway}
     Let $u,v \in \mathcal{T}(V,g)$ be a pair of timelike vectors. Then, its product satisfies the following:
     \[
-        \lvert g(u,v) \vert \geq \sqrt{-g(u,u)}\sqrt{-g(v,v)}
+        \lvert g(u,v) \vert \geq \sqrt{-g(u,u)}\sqrt{-g(v,v)},
     \]
     with equality holding if and only if $u$ and $v$ are linearly dependent.
 \end{proposition}
@@ -177,11 +177,11 @@ We can obtain another wrong-way inequality. As a consequence of \autoref{pro:wro
 
 \begin{corollary}[Wrong-way Minkowski inequality]
 	\label{Minkowski}
-    Let $u,v \in \mathcal{T}(V,g)$ be two timelike vectors that lie in the same time cone. The following inequality is hold:
+    Let $u,v \in \mathcal{T}(V,g)$ be two timelike vectors that lie in the same time cone. Then:
     \[
-        \sqrt{-g(u+v,u+v)} \geq \sqrt{-g(u,u)}+\sqrt{-g(v,v)}
+        \sqrt{-g(u+v,u+v)} \geq \sqrt{-g(u,u)}+\sqrt{-g(v,v)},
     \]
-    and equality holds if and only if $u$ and $v$ are linearly dependent.
+    where the equality holds if and only if $u$ and $v$ are linearly dependent.
 \end{corollary}
 
 We can now formalize the notion of angle between two timelike vectors.
@@ -224,7 +224,7 @@ Let $B = (v_1, \dots, v_n)$ and $B' = (v'_1, \dots, v'_n)$ be two orthonormal ba
 \]
 that is, when both $v_n$ and $v'_n$ lie in the same time cone of $(V,g)$.
 
-This defines two equivalence classes on the set of orthonormal basis: the class defined by $B=(v_1,..,v_{n-1},v_n)$ and the class defined by $\tilde{B}=(v_1,..,v_{n-1},-v_n)$.
+This defines two equivalence classes on the set of orthonormal bases: the class defined by $B=(v_1,..,v_{n-1},v_n)$ and the class defined by $\tilde{B}=(v_1,..,v_{n-1},-v_n)$.
 
 \begin{definition}[Time orientation]
 	\label{def:vstimeorientation}
@@ -237,7 +237,7 @@ Although the classical orientations on $V$ does not depend on $g$, it is importa
 
 However, a time orientation does not change if we replace $g$ by a conformally related Lorentzian product $ag$, with $a\in \R$, $a>0$.
 
-\section{Topological remarks}
+\section{Topological Remarks}
 \label{sec:toporemarks}
 
 We end this section making some topological remarks. If $V$ is an $n$-dimensional vector space and $B$ is a basis of $V$, then we have a linear isomorphism $$b_B : V \longrightarrow \R^n,$$ defined by $b_B(v)=(a_1,..,a_n)$, where $(a_1,..,a_n)$ are the coordinates of $v$ in $B$. By using $b_B$ a topology $\mathfrak{T}_B$ can be defined in $V$ in such a way that the $\mathfrak{T}_B$-open subsets of $V$ are $b_B^{-1}(O)$, where $O$ is an open subset of $\R^n$. It is not difficult to see that $\mathfrak{T}_B = \mathfrak{T}_{B'}$ for any basis $B,B'$ of $V$. Endowed with this topology, the function $V \longrightarrow \R$, given by $v \mapsto g(v,v)$ is continuous. Hence, $\mathcal{T}(V,g)$ is an open subset of $V$ and each time cone is also an open subset of $V$. Moreover, the set of nonzero spacelike vectors $\{v\in V \, : \, g(v,v)>0 \}$ is an open subset of $V$ and the light cone with the zero vector $\{v\in V \, : \, g(v,v)=0 \}$ is a closed subset of $V$. Finally, every null vector can be obtained as the limit of a sequence of timelike vectors as well of spacelike vectors (or both types of vectors). Thus, $\{v\in V \, : \, g(v,v)<0 \} \cup \{v\in V \, : \, g(v,v)>0 \}$

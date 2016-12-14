@@ -36,7 +36,7 @@ and therefore the metric tensor can be recovered as
 	g = \sum g_{ij} dx^i \otimes dx^j.
 \]
 
-Another way of describing the metric tensor \cite[p. 13]{oneill95} is via its \emph{line element}, usually noted as $ds^2$, which gives at each point $p\in M$ the associated quadratic form of $g_p$; \ie, the value of $ds^2$ on a vector field $X$ is simply $g(X,X)$. One can define the line element in a more clear way by means of a coordinate system:
+Another way of describing the metric tensor \cite[p. 13]{oneill95} is via its \emph{line element}, usually noted as $ds^2$, which gives at each point $p\in M$ the associated quadratic form of $g_p$; \ie, the value of $ds^2$ on a vector field $X$ is simply $g(X,X)$. One can define the line element in a more clear way by means of a coordinate system.
 \begin{definition}[Line element]
 	The \emph{line element} of a metric tensor $g$ is
 	\[
@@ -213,7 +213,7 @@ A more interesting characterization of time oriented Lorentzian manifolds is the
 	
 	Note that we have $Y(b)=P_{a,b}^{\gamma}(v)$. Consider the function $f : [a,b] \longrightarrow \R$ given by
 	\[
-	f(t)= g(X_{\gamma(t)},Y(t))
+	f(t)= g(X_{\gamma(t)},Y(t)),
 	\]
 	which is continuous and never vanishes because $X_{\gamma(t)}$ and $Y(t)(=P_{a,t}^{\gamma}(v))$ are timelike. Therefore $f(t)<0$ for all $t\in [a,b]$ and, in particular, $f(b)<0$. This means, taking into account \autoref{lem:timecone}, that $Y(b)$ and $X_{\gamma(b)}$ lie in the same time cone.
 	
@@ -224,7 +224,7 @@ A more interesting characterization of time oriented Lorentzian manifolds is the
 	Therefore, we have a well-defined way to chose a time cone $\tau(p)$ at any $p \in M$. Finally, we will show the smoothness. Given $p_0 \in M$ and the time cone $\tau(p_0)$ consider $v \in \tau(p_0)$. Let $X$ be a vector field which extends $v$; i.e. such that $X_{p_{0}}=v$. Note that $X$ remains timelike in some (connected) open neighbourhood $U$ of $p_0$. For each $q \in U$ we construct a piecewise smooth curve $\alpha : [a,b] \longrightarrow U$ satisfying $\alpha(a)=p_0$,
 	$\alpha(b)=q$ and consider the function $h : [a,b] \longrightarrow \R$ given by
 	\[
-	h(t)=g(X_{\alpha(t)},P_{a,t}^{\alpha}(v))
+	h(t)=g(X_{\alpha(t)},P_{a,t}^{\alpha}(v)),
 	\]
 	which is continuous and never vanishes. Therefore $h(t)<0$ for all $t\in [a,b]$ and, in particular, $h(b)<0$. This means, taking into account \autoref{lem:timecone}, that $X_q$ and $P_{a,b}^{\alpha}(v)$ lie in the same time cone of $(T_qM,g_q)$ and thus $X_q \in \tau(q)$ for all $q \in U$.
 \end{proof}
@@ -332,7 +332,7 @@ g_L(u,v) \defeq g_R(u,v) - 2  \frac{g_R(u, X_p)g_R(v,x_p)}{g_R(X_p,X_p)},
 \]
 where $u,v \in T_pM$ and $p \in M$.
 
-Note that \autoref{pro:onedimensional} can be generalized \cite[Prop. 4.3]{romero10}, \cite{greub72}:
+Note that \autoref{pro:onedimensional} can be generalized \cite[Prop. 4.3]{romero10}, \cite{greub72}
 
 \begin{proposition}
 	An $n$ dimensional manifold admits a Riemannian metric of index $s$, $0 < s < n$, if and only if it admits an $s$ dimensional distribution.
@@ -388,7 +388,7 @@ We can describe now the example of a one dimensional distribution that cannot be
 	In particular, the canonical projection on the second factor $\mathfrak{D}_2$ defines a natural $1$-dimensional distribution on $M=\S^{1}\times SO(3)$. If we assume that $\mathfrak{D}_2$ lifts to a vector field $X$ without any zero, then, taking into account that $\R^{4}-\{0\}$ is simply connected, one easily shows that $SO(3)$ would be also simply connected, which is not true. Hence $\mathfrak{D}_2$ cannot be lifted to a global vector field on $\S^{1}\times SO(3)$.
 \end{example}
 
-\section{Semi-Riemannian connections}
+\section{Semi-Riemannian Connections}
 
 On \autoref{sec:affineconnections}, we studied connections on general manifolds, regardless of the addition of a metric. However, the existence of an interesting connection is naturally assured when one adds a semi-Riemannian metric to the manifold: the Levi-Civita connection, whose interest will be shown along this section.
 
@@ -540,7 +540,7 @@ We can conclude what we state at the beginning of this section: when restricted 
 
 From now on, let $M$ be a semi-Riemannian manifold.
 
-\subsection{Basic definition}
+\subsection{Basic Definition}
 
 \begin{definition}[Geodesic]
 	% doCarmo, 52
@@ -574,7 +574,7 @@ As our primary objective is to study the movement of light, this first small ste
 	describes a necessary condition for the curves on $M$ to be geodesics.
 \end{remark}
 
-\subsection{Variational characterization of geodesics}
+\subsection{Variational Characterization of Geodesics}
 
 When working with geodesics, its natural, elegant definition, although really interesting for theoretical purposes, is not practical. This section aims to find a characterization that let us study geodesics.
 
@@ -802,7 +802,7 @@ From the second identity of Bianchi we get \cite[p. 88]{oneill83}
 \]
 where $\nabla S$ is the gradient of the scalar curvature, $\widehat{\Ric}$ is the contravariant tensor field $g$-equivalent to $\Ric$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
 
-\section{Killing Vectors Fields}
+\section{Killing Vector Fields}
 
 This section is based on the study of Killing vector fields developed on \cite[pp. 250-252]{oneill83}.
 

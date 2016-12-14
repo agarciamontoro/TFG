@@ -1,7 +1,7 @@
-\chapter{Introduction to differential geometry}
+\chapter{Introduction to Differential Geometry}
 \label{chapter:diffgeom}
 
-\section{Differentiable manifolds}
+\section{Differentiable Manifolds}
 
 Roughly speaking, a manifold is a topological space that, locally, looks like the Euclidean space $\R^n$. This similitude is essential, and will let us control the manifold as if we were working in the Euclidean space; generally, the definitions concerning manifolds and the properties proved from them will be based on the known properties of $\R^n$.
 
@@ -18,7 +18,7 @@ The following definition specifies the formal concept of a topological manifold:
 
 The first property states that, for every point $p \in M^n$, there exists an open neighbourhood $U \subset M^n$ of $p$ and a homeomorphism
 \[
-    h \colon U \to V
+    h \colon U \to V,
 \]
 
 with $V \subset \R^n$ an open set.
@@ -77,7 +77,7 @@ One single chart may not cover the whole manifold. In order to completely unders
 
 % Examples?
 
-\subsection{Differentiable structures}
+\subsection{Differentiable Structures}
 
 The concept of manifold is quite general and includes a vast set of examples. We can impose, however, some properties on the smoothness of the manifold to restrict the objects we will work with.
 
@@ -132,7 +132,7 @@ But what happens if we define two different atlases in the manifold? Will the ca
  	
  	It is trivial to see that $A'$ is an atlas, since $A \subset A'$ and $A$ is an atlas. The smoothness of the atlas is a consequence of the fact that smoothness is a local property. Finally, it is clear that $A'$ is complete as, by definition, if a chart overlaps smoothly with every element of $A'$, then it belongs to $A'$.
  	
- 	If the union of two atlas is a smooth atlas, it is clear that the atlas defined before is the same complete atlas for both of them. Equivalently, if two atlas determine the same complete atlas, their charts smoothly overlap with every other chart on the complete atlas, and therefore their union is a smooth atlas.
+ 	If the union of two atlases is a smooth atlas, it is clear that the atlas defined before is the same complete atlas for both of them. Equivalently, if two atlas determine the same complete atlas, their charts smoothly overlap with every other chart on the complete atlas, and therefore their union is a smooth atlas.
 \end{proof}
 
 \begin{definition}[Differentiable manifold]
@@ -180,7 +180,7 @@ As well as the definition of smoothness, the definition of diffeomorphism can be
 	When there exists such map, $M$ and $N$ are said to be diffeomorphic.
 \end{definition}
 
-\subsection{Tangent space}
+\subsection{Tangent Space}
 
 Once we know what a differentiable function is, the next step we need to take in order to set up a proper place to do calculus on manifolds is to define the differential.
 
@@ -197,7 +197,7 @@ The usual directional derivative is a linear map that satisfies the Leibniz rule
 
 From now on, we will note the set of all the smooth real-valued functions on a manifold $M$ as $\mathcal{F}(M)$:
 \[
-\mathcal{F}(M) \defeq \{f \colon M \to \R / \textrm{f is smooth} \}
+\mathcal{F}(M) \defeq \{f \colon M \to \R \,/\, \textrm{f is smooth} \}.
 \]
 
 \begin{definition}[Derivation]
@@ -303,7 +303,7 @@ Every smooth curve is differentiable in the manifold sense, and having understoo
 	in such a way that it is smooth on $\gamma(0) = p$ and that its tangent vector is $\gamma'(0) = X$.
 \end{proof}
 
-\section{Vector fields}
+\section{Vector Fields}
 
 In our journey to understand geometry on manifolds, one key step is to generalize what we called directional derivative in the euclidean spaces. The directional derivative of a function on a point gives us information on how the function changes when moving in the given direction; the concept of geodesic will need of this idea, but first we have to set up some definitions and technical results.
 
@@ -459,7 +459,7 @@ where $\theta^i$ is any covector field such that $\theta^i_{|_p} = \alpha^i$ and
 
 The operation involving tensors, the definition of the tensor components, the tensor contraction and all other classic results thoroughly studied in \autoref{chapter:tensoralgebra}  hold also here for the tensor fields on a manifold.
 
-\section{Affine connections}
+\section{Affine Connections}
 \label{sec:affineconnections}
 
 In this section we will define a connection on a manifold, which in turn will give us the tools to generalize the concept of directional derivative arriving to the definition of covariant derivative.
