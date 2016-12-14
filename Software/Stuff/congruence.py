@@ -5,39 +5,45 @@ sys.path.append('../')
 from Raytracer import universe, Camera
 
 # Camera position
-camR = 12
-camTheta = np.pi/2
+camR = 40
+camTheta = 1.511
 camPhi = 0
 
 # Camera lens properties
-camFocalLength = 4
-camSensorShape = (5, 5)  # (Rows, Columns)
-camSensorSize = (6, 6)       # (Height, Width)
+camFocalLength = 20
+camSensorShape = (10, 10)  # (Rows, Columns)
+camSensorSize = (6, 6)   # (Height, Width)
 
 # Set black hole spin
-universe.spin = .75
-universe.accretionDisk.innerRadius = 20
-universe.accretionDisk.outerRadius = 5
+universe.spin = .999
+universe.accretionDisk.innerRadius = 7
+universe.accretionDisk.outerRadius = 20
 # Create a camera
 camera1 = Camera(camR, camTheta, camPhi, camFocalLength, camSensorShape,
                  camSensorSize)
 
 # Create another camera
-camera2 = Camera(camR, camTheta, camPhi, camFocalLength, (2000, 2000),
+camera2 = Camera(camR, camTheta, camPhi, camFocalLength, (4000, 4000),
                  camSensorSize)
 
 # # Make an sliced shoot; i.e., store all the intermediate steps in order to
 # # plot a 3D scene
-# camera1.pitch = 0.2
-# plot3D = camera1.slicedShoot(slicesNum=1000)
+# plot3D = camera1.slicedShoot(finalTime=-60, slicesNum=10000)
 # plot3D.plot()
 #
+# disk = '../../Data/Textures/patchdisk.png'
+# sphere = '../../Data/Textures/milkyWay.png'
+# camera1.sensorShape = (3000, 3000)
+# texturedImage, _ = camera1.shoot(diskPath=disk, spherePath=sphere)
+# texturedImage.plot()
+
 # # Plot only one geodesic, indexing it with the pixel row,col
-# plot3D.geodesic(5, 5).plot()
+# plot3D.geodesic(2, 4).plot()
 # # You can even plot a snapshot, which may be not that interesting, though...
 # plot3D.snapshot(1).plot()
 # #
 # Make a proper photography!
+camera2.yaw = -0.06
 photo, _ = camera2.shoot()
 photo.plot()
 

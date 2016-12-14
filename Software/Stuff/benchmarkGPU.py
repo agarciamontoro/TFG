@@ -27,7 +27,7 @@ if __name__ == '__main__':
     camSensorShape = (1000, 1000)  # (Rows, Columns)
 
     # Set black hole spin
-    universe.spin = .0001
+    universe.spin = .999
     universe.accretionDisk.innerRadius = 9
     universe.accretionDisk.outerRadius = 20
 

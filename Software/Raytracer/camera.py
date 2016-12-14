@@ -22,8 +22,8 @@ class Camera:
         theta (double): Inclination of the camera with respect to the black
             hole.
         phi (double): Azimuth of the camera with respect to the black hole.
-        focalLength (double): Distance between the focal point (where every row
-            that reaces the camera has to pass through) and the focal plane
+        focalLength (double): Distance between the focal point (where every ray
+            that reaches the camera has to pass through) and the focal plane
             (where the actual sensor/film is placed).
         sensorSize (tuple): 2-tuple that defines the physical dimensions of the
             sensor in the following way: `(Height, Width)`.
@@ -33,17 +33,24 @@ class Camera:
             computed as `Number of columns / Sensor width`.
         pixelHeight (double): Height of one single pixel in physical units. It
             is computed as `Number of rows / Sensor height`.
-        beta (double): Speed of the camera, that follows a circular orbit
+        speed (double): Speed of the camera, that follows a circular orbit
             around the black hole in the equatorial plane. It is computed using
             the formula (A.7) of Thorne's paper.
+        roll (double): The roll angle of the CCD; i.e., the rotation angle
+            of the CCD on its plane. Defaults to zero, that means the CCD is
+            facing the black hole centre.
+        pitch (double): The pitch angle of the CCD; i.e., the above/below
+            direction of looking. Defaults to zero, that means the CCD is
+            facing the black hole centre.
+        yaw (double): The yaw angle of the CCD; i.e., the left/right
+            direction of lookin. Defaults to zero, that means the CCD is
+            facing the black hole centre.
     """
     def __init__(self, r, theta, phi, focalLength, sensorShape, sensorSize,
                  roll=0, pitch=0, yaw=0):
         """Builds the camera defined by `focalLength`, `sensorShape` and
         `sensorSize` and locates it at the passed coordinates :math:`(r_c,
         \\theta_c, \\phi_c)`
-
-        TODO: Add a parameter to show where the camera is looking at.
 
         Args:
             r (double): Distance to the coordinate origin; i.e., distance to
