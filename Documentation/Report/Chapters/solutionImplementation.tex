@@ -96,7 +96,7 @@ The important question now is how to configure the pixels between the blocks; \i
 
 The simplest answer is to define one dimensional blocks of a fixed size that extend along the rows of the image. The very first implementation of the ray tracer used this configuration, but the speed up against the \ac{CPU} implementation was very poor.
 
-The branch divergence was guilty of the poor performance: along a row of the image, the behaviour of the corresponding geodesics is very different, and the so-called \emph{warp divergence} occurs: in a warp ---which in this configuration is defined along the rows of the image---, all threads execute the same instruction at the same time; if the control flow varies between the threads in a warp, some of them will be idle, which causes a great loss of parallel efficiency.
+The branch divergence was guilty of the poor performance: along a row of the image, the behaviour of the corresponding geodesics is very different, and the so-called \emph{warp divergence} occurs: in a warp, which in this configuration is defined along the rows of the image, all threads execute the same instruction at the same time; if the control flow varies between the threads in a warp, some of them will be idle, which causes a great loss of parallel efficiency.
 
 This is avoided by designing a configuration that ensures, or at least that facilitates, that all the threads in a warp execute the same exact code without branch divergence. In our case, this means that the geodesics hitting the pixels in a warp should have followed a nearby path.
 

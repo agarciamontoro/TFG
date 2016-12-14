@@ -215,7 +215,7 @@ Furthermore, the pitch, roll and yaw angles were assumed to be zero. However, th
 		\begin{pmatrix}
 			p_x \\
 			p_y
-		\end{pmatrix}
+		\end{pmatrix}.
 	\]
 	\item The pitch angle, noted as $\eta$, has to be simply added to the $\vartheta$ coordinate, as it defines the rotation of the sensor on that axis.
 	\item The yaw angle, noted as $\lambda$, is the rotation of the sensor with respect to the $\varphi$ axis, so it has to be added to that coordinate.	
@@ -226,7 +226,7 @@ Taking all this into account, the final formulas to compute $(\vartheta_{cs}, \v
 	\label{eq:pinhole1}
 	\vartheta_{cs} &= \eta + \frac{\pi}{2} + \arctan{\frac{p_y}{\sqrt{p_x^2 + d^2}}}, \\
 	\label{eq:pinhole2}
-	\varphi_{cs} &= \lambda + \pi + \arctan{\frac{p_x}{d}}.,
+	\varphi_{cs} &= \lambda + \pi + \arctan{\frac{p_x}{d}},
 \end{align}
 where
 \[
@@ -290,7 +290,7 @@ where $a$ and $b$ are unknowns.
 Imposing the orthonormality property ($e_t$ has to be negative unitary to preserve the signature and, in particular, $e_t$ is perpendicular to $e_\varphi$), we can set up a system of equations to solve $a$ and $b$:
 \begin{align}
 	\label{eq:systemab}
-	g(e_t, e_t) &= -1 \\ \nonumber
+	g(e_t, e_t) &= -1, \\ \nonumber
 	g(e_t, e_\varphi) &= 0.
 \end{align}
 
@@ -469,7 +469,7 @@ The moment of the ray is then $f(n)$, that is,
 		\frac{\rho}{\sqrt{\Delta}} n^r \\
 		\rho n^t \\
 		\varpi n^\varphi
-	\end{pmatrix}
+	\end{pmatrix}.
 \end{equation}
 
 We know that Kerr is stationary, so $p_t$ is conserved (see \autoref{eq:conservedpt}). We will normalize it by defining

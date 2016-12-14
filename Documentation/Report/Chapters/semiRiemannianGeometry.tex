@@ -332,7 +332,7 @@ g_L(u,v) \defeq g_R(u,v) - 2  \frac{g_R(u, X_p)g_R(v,x_p)}{g_R(X_p,X_p)},
 \]
 where $u,v \in T_pM$ and $p \in M$.
 
-Note that \autoref{pro:onedimensional} can be generalized \cite[Prop. 4.3]{romero10}, \cite{greub72}
+Note that \autoref{pro:onedimensional} can be generalized \cite[Prop. 4.3]{romero10}, \cite{greub72}.
 
 \begin{proposition}
 	An $n$ dimensional manifold admits a Riemannian metric of index $s$, $0 < s < n$, if and only if it admits an $s$ dimensional distribution.
@@ -569,7 +569,7 @@ As our primary objective is to study the movement of light, this first small ste
 	We conclude that the \ac{ODE} system of order 2 given by
 	\begin{equation}
 	\label{eq:geodesic}
-		\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0 \quad k = 1, \dots, n
+		\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0, \quad k = 1, \dots, n,
 	\end{equation}
 	describes a necessary condition for the curves on $M$ to be geodesics.
 \end{remark}
@@ -654,7 +654,7 @@ Some interesting properties of the energy function are studied on the following 
 	\]
 	where $V$ is the variational field of $f$ and
 	\[
-		\frac{dc}{dt}(t_i^+) = \lim_{\substack{t \to t_i \\ t > t_i}} \frac{dc}{dt}(t), \quad \frac{dc}{dt}(t_i^-) = \lim_{\substack{t \to t_i \\ t < t_i}} \frac{dc}{dt}(t)
+		\frac{dc}{dt}(t_i^+) = \lim_{\substack{t \to t_i \\ t > t_i}} \frac{dc}{dt}(t), \quad \frac{dc}{dt}(t_i^-) = \lim_{\substack{t \to t_i \\ t < t_i}} \frac{dc}{dt}(t).
 	\]
 \end{proposition}
 The characterization of geodesics we are looking for comes as a consequence of \autoref{pro:energyprop}.
@@ -739,7 +739,7 @@ from where we can write
 If we swap the indices $h$ and $p$ on the last addend, the expression of this one term is somewhat more clear:
 \begin{equation}
 \label{eq:curvatureexpression}
-\nabla_{\pd{}{x^i}}\nabla_{\pd{}{x^j}} \pd{}{x^k} = \sum_h\left( \pd{}{x^i} \Gamma^h_{jk} + \sum_p \Gamma^p_{jk} \Gamma^h_{ip} \right) \pd{}{x^h}
+\nabla_{\pd{}{x^i}}\nabla_{\pd{}{x^j}} \pd{}{x^k} = \sum_h\left( \pd{}{x^i} \Gamma^h_{jk} + \sum_p \Gamma^p_{jk} \Gamma^h_{ip} \right) \pd{}{x^h}.
 \end{equation}
 
 From \autoref{eq:curvaturecomponents}, using \autoref{eq:curvatureexpression} and its analogous with $i$ and $j$ indices swapped, we can finally write the expression of the curvature tensor components:
@@ -862,7 +862,7 @@ Before finding an interesting characterization of the Killing vector fields, it 
 	Let $(M,g)$ be a semi-Riemannian manifold and let $X\in\mathfrak{X}(M)$ be a vector field on $M$. The \emph{Lie derivative of $g$ with respect to $X$} is a function acting on pairs of smooth vector fields $Y,Z \in \mathfrak{X}(M)$ defined by:
 	\begin{equation}
 	\label{eq:liederivative}
-		(L_Xg)(Y,Z) = Xg(Y,Z) - g([X,Y],Z) - g(Y,[X,Z])
+		(L_Xg)(Y,Z) = Xg(Y,Z) - g([X,Y],Z) - g(Y,[X,Z]).
 	\end{equation}
 \end{definition}
 
