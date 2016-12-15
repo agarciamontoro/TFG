@@ -46,8 +46,8 @@ __global__ void generate_image(void* devRayCoordinates, void* devStatus,
         Real r, theta, phi;
 
         r = rayCoords[0];
-        theta = rayCoords[1];
-        phi = rayCoords[2];
+        theta = fmod(rayCoords[1], 2*Pi);
+        phi = fmod(rayCoords[2], 2*Pi);
 
         // Variables to hold the texel coordinates
         int u, v, texel;

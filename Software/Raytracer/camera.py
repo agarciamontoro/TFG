@@ -82,7 +82,7 @@ class Camera:
         self._r = r
         self.r2 = r*r
         self._theta = theta
-        self.phi = phi
+        self._phi = phi
 
         # Define lens properties
         self.focalLength = focalLength
@@ -99,8 +99,11 @@ class Camera:
         # Compute the width and height of a pixel on physical units
         self.pixelWidth, self.pixelHeight = self.computePixelSize()
 
-        # Compute every property for the camera: metric, speed and engine
+        # Compute every property for the camera: metric, speed, engine
         self.update()
+
+        # Compile engine
+        self.engine = RayTracer(self)
 
         # Add camera to the Universe
         universe.cameras.add(self)
@@ -116,8 +119,8 @@ class Camera:
         # Compute the speed
         self.speed = self.computeSpeed()
 
-        # Add the RayTracer engine
-        self.engine = RayTracer(self)
+        # Recompile ray tracer in the next photo
+        self._reset = True
 
     def computePixelSize(self):
         """Compute the width and height of a pixel, taking into account the
@@ -221,6 +224,18 @@ class Camera:
         self.update()
 
     @property
+    def phi(self):
+        return self._phi
+
+    @phi.setter
+    def phi(self, newValue):
+        # Set phi angle
+        self._phi = newValue
+
+        # Compute again the value of the metric on the camera position
+        self.update()
+
+    @property
     def pitch(self):
         return self._pitch
 
@@ -256,7 +271,6 @@ class Camera:
         # Recompile engine
         self.engine = RayTracer(self)
 
-
     @property
     def sensorShape(self):
         return self._sensorShape
@@ -288,6 +302,10 @@ class Camera:
         self.engine = RayTracer(self)
 
     def shoot(self, finalTime=-150, diskPath=None, spherePath=None):
+        if self._reset:
+            self.engine = RayTracer(self)
+            self._reset = False
+
         raysStatus, raysCoordinates = self.engine.rayTrace(finalTime)
 
         texels = None

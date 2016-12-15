@@ -15,9 +15,9 @@
 
 // Declaration of the image parameters: number of rows and columns, as well as
 // the total amount of pixels.
-#define IMG_ROWS 8000
-#define IMG_COLS 8000
-#define NUM_PIXELS 64000000
+#define IMG_ROWS 900
+#define IMG_COLS 1600
+#define NUM_PIXELS 1440000
 
 
 // Bisect's constants
@@ -72,10 +72,10 @@
 #define __a2 0.998001
 
 // Camera constants
-#define __d 3
+#define __d 10
 #define __camR 40
-#define __camTheta 1.511
-#define __camPhi 0
+#define __camTheta 1.55185775186
+#define __camPhi 6.25
 #define __camBeta 0
 
 // Black hole constants
@@ -83,11 +83,11 @@
 #define __b2 2.07812987106
 
 // Kerr constants
-#define __ro 40.0000445525
+#define __ro 40.0000044739
 #define __delta 1520.998001
-#define __pomega 39.9415802793
-#define __alpha 0.974680288179
-#define __omega 3.11982510085e-05
+#define __pomega 40.0059208688
+#define __alpha 0.974680239351
+#define __omega 3.11983104018e-05
 
 // Camera rotation angles
 #define __pitch 0.0
