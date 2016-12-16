@@ -356,7 +356,7 @@ __device__ int bisect(Real* yOriginal, Real* data, Real step, Real x){
         // Check that the step size is not too small and that the horizon is
         // not too near. In both cases, set the ray's status to HORIZON and
         // stop the computation
-        if (0.1 * abs(h) <= abs(x0) * uround || (y0[0] - horizonRadius <= 1e-3)){
+        if (0.1 * abs(h) <= abs(x0) * uround || (y0[0] - horizonRadius <= 1e-2)){
             // Let the user know the computation stopped before xEnd
             status = HORIZON;
             break;

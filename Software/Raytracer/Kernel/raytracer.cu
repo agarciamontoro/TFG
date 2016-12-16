@@ -328,7 +328,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
             // collisions on the go with the following algorithm:
             //   -> 0. Check that the ray has not collided with the disk or
             //   with the horizon and that the current time has not exceeded
-            //   the final time.
+            //   the final time.s
             //   -> 1. Advance the ray a step, calling the main RK45 solver.
             //   -> 2. Test whether the ray has collided with the horizon.
             //          2.1 If the answer to the 2. test is negative: test
@@ -338,7 +338,7 @@ __global__ void kernel(Real x0, Real xend, void* devInitCond, Real h,
             //          the horizon).
             //          2.2. If the answer to the 2. test is positive: update
             //          the status of the ray to HORIZON.
-            status = SolverRK45(&x, xend, initCond, h, xend - x, data,
+            status = SolverRK45(&x, xend, initCond, h, 0.01, data,
                                 &iterations);
 
             // Update the global status variable with the new computed status

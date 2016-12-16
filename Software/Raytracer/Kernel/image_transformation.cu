@@ -46,7 +46,7 @@ __global__ void generate_image(void* devRayCoordinates, void* devStatus,
         Real r, theta, phi;
 
         r = rayCoords[0];
-        theta = fmod(rayCoords[1], 2*Pi);
+        theta = fmod(rayCoords[1], Pi);
         phi = fmod(rayCoords[2], 2*Pi);
 
         // Variables to hold the texel coordinates
@@ -76,12 +76,30 @@ __global__ void generate_image(void* devRayCoordinates, void* devStatus,
                 sphereTexture += texel * 3;
 
                 memcpy(image, sphereTexture, 3*sizeof(Real));
+
                 break;
 
             case HORIZON:
-                image[0] = 0;
-                image[1] = 0;
-                image[2] = 0;
+                // image[0] = 0;
+                // image[1] = 0;
+                // image[2] = 0;
+
+                int p1 = floor(fmod(theta+Pi, Pi) * 8.0 / (Pi));
+                // int p2 = floor(fmod(phi+2*Pi, 2*Pi) * 10.0 / (2*Pi));
+
+                image[0] = image[1] = image[2] = 0;
+
+                if( fmod(fmod(theta+Pi, Pi), 0.4) < 0.2 ){
+                    image[0] = 1;
+                    image[1] = 1;
+                    image[2] = 1;
+                }
+                else{
+                    // image[0] = phi/(2*Pi);
+                    // image[1] = 0.5;
+                    // image[2] = 1-phi/(2*Pi);
+                }
+
                 break;
         }
     }

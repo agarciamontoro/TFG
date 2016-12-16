@@ -87,6 +87,7 @@ class CongruenceSnapshot:
 
     def plot(self):
         plt.figure()
+        plt.axis('off')
 
         if self.texels is None:
             image = np.empty((self.congruenceMatrixRows,
@@ -107,6 +108,8 @@ class CongruenceSnapshot:
 
     def save(self, path):
         fig = plt.figure()
+        fig.subplots_adjust(left=0,right=1,bottom=0,top=1)
+        plt.axis('off')
 
         if self.texels is None:
             image = np.empty((self.congruenceMatrixRows,
