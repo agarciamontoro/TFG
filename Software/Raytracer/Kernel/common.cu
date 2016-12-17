@@ -74,8 +74,8 @@
 // Camera constants
 #define __d 10
 #define __camR 40
-#define __camTheta 1.55185775186
-#define __camPhi 6.25
+#define __camTheta 1.65609506389
+#define __camPhi 0.15
 #define __camBeta 0
 
 // Black hole constants
@@ -83,11 +83,11 @@
 #define __b2 2.07812987106
 
 // Kerr constants
-#define __ro 40.0000044739
+#define __ro 40.0000905466
 #define __delta 1520.998001
-#define __pomega 40.0059208688
-#define __alpha 0.974680239351
-#define __omega 3.11983104018e-05
+#define __pomega 39.8676152093
+#define __alpha 0.974680344214
+#define __omega 3.11981828491e-05
 
 // Camera rotation angles
 #define __pitch 0.0

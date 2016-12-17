@@ -86,7 +86,13 @@ class CongruenceSnapshot:
         ]
 
     def plot(self):
-        plt.figure()
+        fig = plt.figure(frameon=False)
+        fig.set_size_inches(self.congruenceMatrixCols,
+                            self.congruenceMatrixRows)
+
+        ax = plt.Axes(fig, [0., 0., 1., 1.])
+        ax.set_axis_off()
+        fig.add_axes(ax)
 
         if self.texels is None:
             image = np.empty((self.congruenceMatrixRows,
@@ -99,14 +105,20 @@ class CongruenceSnapshot:
 
                     image[row, col, :] = self.colors[status]
 
-            plt.imshow(image)
+            ax.imshow(image)
         else:
-            plt.imshow(self.texels)
+            ax.imshow(self.texels)
 
         plt.show()
 
     def save(self, path):
-        fig = plt.figure()
+        fig = plt.figure(frameon=False)
+        fig.set_size_inches(self.congruenceMatrixCols,
+                            self.congruenceMatrixRows)
+
+        ax = plt.Axes(fig, [0., 0., 1., 1.])
+        ax.set_axis_off()
+        fig.add_axes(ax)
 
         if self.texels is None:
             image = np.empty((self.congruenceMatrixRows,
@@ -119,11 +131,11 @@ class CongruenceSnapshot:
 
                     image[row, col, :] = self.colors[status]
 
-            plt.imshow(image)
+            ax.imshow(image)
         else:
-            plt.imshow(self.texels)
+            ax.imshow(self.texels)
 
-        fig.savefig(path, bbox_inches='tight')
+        fig.savefig(path, dpi=1)
         plt.close(fig)
 
 
