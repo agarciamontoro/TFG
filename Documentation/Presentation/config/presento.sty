@@ -17,10 +17,11 @@
 \definecolor{colordgray}{HTML}{795548} % dark gray for note
 \definecolor{colorhgray}{HTML}{212121} % heavy dark gray for normal text
 \definecolor{colorgreen}{HTML}{009688} % green
-\definecolor{colorlgray}{HTML}{FAFAFA} % background light gray
+\definecolor{colorlgray}{HTML}{FAFAFA} % backgr	ound light gray
 \definecolor{colorblue}{HTML}{0277BB} % blue
 \definecolor{colorsblue}{HTML}{236b8a} % steel blue
 \definecolor{colormetal}{HTML}{37474F}
+\definecolor{colorlmetal}{HTML}{283337}
 
 % font sizes
 \newcommand{\fontsizeone}{2.292em}
@@ -61,7 +62,7 @@
   \setcounter{totalfr}{\inserttotalframenumber}
   \hfill{
     \tikz{
-      \filldraw[fill=colorsblue, draw=colorsblue]  (0,0) -- (0.2,0) arc (0:{\value{framenumber}*(360/(\value{totalfr}-1))}:0.2) -- (0,0);      
+      \filldraw[fill=colorlmetal, draw=colorlmetal]  (0,0) -- (0.2,0) arc (0:{\value{framenumber}*(360/(\value{totalfr}-1))}:0.2) -- (0,0);      
       \node at (0,0) {\normalsize \color{colorlgray}\tiny{\insertframenumber}};
     }
   }

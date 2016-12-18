@@ -4,7 +4,7 @@
 
 \framecard{PROBLEMA \; ABORDADO}
 
-\framepic{gfx/presentation}
+% \framepic{gfx/presentation}
 
 \begin{frame}{Problema abordado}{Objetivos principales}
 	\begin{columns}
@@ -108,15 +108,17 @@
 
 \framecard{$G = T$}
 
+\framecard{$R_{\mu\nu} - \frac{1}{2}S g_{\mu\nu} = T_{\mu\nu}$}
+
 \framecard{ESPACIOTIEMPO KERR}
 
 \begin{frame}{Espaciotiempos relativistas}{Métrica de Kerr}
 	{\Large
 		\begin{align*}
 		ds^2 = &-dt^2 + \rho^2\left(\frac{dr^2}{\Delta} + d\vartheta^2\right) + \\
-		&+ \left(r^2 + a^2\right)\sin^2\vartheta d\varphi^2 + \\
+		&+ \left(r^2 + a^2\right)\textrm{\latolightfont sin}^2\vartheta d\varphi^2 + \\
 		\nonumber
-		&+ \frac{2r}{\rho^2}\left(a\sin^2\vartheta d\varphi - dt\right).
+		&+ \frac{2r}{\rho^2}\left(a\textrm{\latolightfont sin}^2\vartheta d\varphi - dt\right).
 		\end{align*}
 	}
 \end{frame}
@@ -143,10 +145,10 @@
 \begin{frame}{Geodésicas}{Enfoque hamiltoniano clásico}
 	\large
 	\begin{align*}
-		\rho^2 \dot{t} &=-( aE\sin^2\vartheta - L_z) + \frac{r^2+a^2}{\Delta}P, \\
+		\rho^2 \dot{t} &=-( aE\textrm{\latolightfont sin}^2\vartheta - L_z) + \frac{r^2+a^2}{\Delta}P, \\
 		\rho^2 \dot{r} &= \sqrt{R}, \\
 		\rho^2 \dot{\vartheta} &= \sqrt{\Theta}, \\
-		\rho^2 \dot{\varphi} &=-( aE - \frac{L_z}{\sin^2\vartheta}) + \frac{a}{\Delta}P.
+		\rho^2 \dot{\varphi} &=-( aE - \frac{L_z}{\textrm{\latolightfont sin}^2\vartheta}) + \frac{a}{\Delta}P.
 	\end{align*}
 \end{frame}
 
@@ -166,18 +168,123 @@
 %------------------- SET UP -------------------%
 %----------------------------------------------%
 
+\framecard{CONFIGURACIÓN}
+
+{\setbeamercolor{background canvas}{bg=white}
+	\begin{frame}[plain]{Configuracion}
+		\centering
+		\includegraphics[width=0.8\paperwidth]{gfx/pinhole}
+	\end{frame}
+}
+
+%\frameanimation{gfx/blech-}{1}{90}{20}
+
+%----------------------------------------------%
+%------------------- INFORM -------------------%
+%----------------------------------------------%
+
+\framecard{SOFTWARE}
+
+\begin{frame}{Software}{Algoritmo básico}
+	{
+	\tiny
+	\begin{algorithm}[H]
+		%\caption{High-level abstraction of the ray tracer}
+		\begin{algorithmic}[1]
+			\Function{Ray Tracer}{}
+			\State ODEsystem $\gets$ Kerr spacetime geodesics ODE
+			\State Camera $\gets$ Pinhole camera model
+			\State Geodesics $\gets \{\emptyset\}$
+			\For{pixel $p = (p_x, p_y)$ in the Camera sensor}
+			\State initCond $\gets$ initConditions($p_x$, $p_y$)
+			\State $\gamma_{xy} \gets$ solveIVP(ODEsystem, initCond)
+			\State Geodesics $\gets$ Geodesics $\cup$ $\gamma_{xy}$
+			\EndFor
+			\Return{Geodesics}
+			\EndFunction
+		\end{algorithmic}
+	\end{algorithm}
+	}
+\end{frame}
+
+\begin{frame}{Software}{Runge-Kutta}
+	\[
+	\Large
+	\begin{cases}
+		y_{n+1} &= y_n + h \sum\limits_{i=1}^s b_i k_i\\
+		y^*_{n+1} &= y_n + h \sum\limits_{i=1}^s b^*_i k_i,
+	\end{cases}
+	\]
+	\vspace{2mm}
+	\[
+		k_i = f(t_n + c_ih, y_n + h\sum_{j=1}^{i-1} a_{ij} k_j).
+	\]
+	
+\end{frame}
+
+\begin{frame}{Software}{Arquitectura GPU}
+	\centering
+	\includegraphics[width=0.6\paperwidth]{gfx/cores}
+\end{frame}
+
+\begin{frame}{Software}{Arquitectura GPU}
+	\centering
+	\includegraphics[width=0.9\paperwidth]{gfx/cudagrid}
+\end{frame}
+
+\begin{frame}{Software}{Arquitectura GPU}
+\centering
+\includegraphics[height=0.7\paperheight]{gfx/owncudagrid}
+\end{frame}
 
 %----------------------------------------------%
 %------------------ RESULTS -------------------%
 %----------------------------------------------%
 
+\framecard{RESULTADOS TÉCNICOS}
+
+\begin{frame}{Resultados técnicos}{Paso Runge-Kutta}
+	\centering
+	\includegraphics[width=0.8\paperwidth]{gfx/analytic}
+\end{frame}
+
+\begin{frame}{Resultados técnicos}{Paso Runge-Kutta}
+	\centering
+	\includegraphics[width=0.7\paperwidth]{gfx/kretschmann}
+\end{frame}
+
+\begin{frame}{Resultados técnicos}{Mejora con respecto a CPU}
+\centering
+\includegraphics[width=0.7\paperwidth]{gfx/speedup}
+\end{frame}
+
+\framecard{CONSTRUCCIÓN IMAGEN}
+
+\framepic{gfx/complete00}
+
+\framepic{gfx/complete01}
+
+\framepic{gfx/complete02}
+
+\framepic{gfx/complete03}
+
+\framepic{gfx/complete04}
+
+\framecard{CASO EUCLÍDEO}
+
 \framepic{gfx/euclidean01}
 
 \framepic{gfx/euclidean02}
 
+\framecard{ROTACIÓN}
 
+%\frameanimation{gfx/spin}{1}{50}{15}
 
+\framecard{SOMBRA}
 
+%\frameanimation{gfx/patchedShadow}{1}{63}{20}
+
+\framecard{CONCLUSIONES}
 
 
 

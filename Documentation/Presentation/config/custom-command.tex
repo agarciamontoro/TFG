@@ -20,7 +20,7 @@
 		\usebackgroundtemplate{%
 			\setbeamercolor{background canvas}{bg=black}
 			\tikz[overlay,remember picture] \node[opacity=1, at=(current page.center)] {
-				\animategraphics[loop,width=\paperwidth]{#4}{#1}{#2}{#3}
+				\animategraphics[loop,width=\paperwidth,autoplay]{#4}{#1}{#2}{#3}
 			};
 		}
 		\begin{frame}[plain]
@@ -35,3 +35,10 @@
 
 % Partial derivatives
 \newcommand*{\pd}[3][]{\ensuremath{\frac{\partial^{#1} #2}{\partial #3}}}
+
+% Letters
+\newcommand{\R}{\mathbb{R}}
+
+% Algorithms
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
