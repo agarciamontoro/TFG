@@ -1,0 +1,441 @@
+%\CheckSum{283}
+%
+% \iffalse
+%
+% File `gensymb.dtx'.
+% Copyright (c) 2003 Walter Schmidt
+%
+% This program may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.2
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.2 or later is part of all distributions of LaTeX
+% version 1999/12/01 or later.
+%
+% This program consists of the files gensymb.dtx and gensymb.ins
+%
+% \fi
+%
+% \iffalse
+%
+%<*driver>
+\ProvidesFile{gensymb.drv}
+%</driver>
+%<package>\ProvidesPackage{gensymb}
+  [2003/07/02 v1.0 (WaS)]
+%<*driver>
+\documentclass{ltxdoc}
+\OnlyDescription
+\usepackage{textcomp}
+\CodelineNumbered
+\begin{document}
+ \DocInput{gensymb.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \newcommand\Lopt[1]{\textsf{#1}}
+% \let\Lpack\Lopt
+% \GetFileInfo{gensymb.drv}
+%
+% \title{The \textsf{gensymb} package for \LaTeXe}
+% \author{Walter Schmidt\thanks{{\ttfamily w.a.schmidt@gmx.net}}}
+% \date{(\fileversion{} -- \filedate)}
+% \maketitle
+% \sloppy
+%
+% \section{The problem}
+% Typesetting units of measurement with \LaTeX{} is sometimes difficult.
+% Why?  For instance, most (but no all) typefaces have an 
+% upright \textmu{} and also a degree symbol, but
+% there is no obvious way to use these in math mode.  On the other hand,
+% an upright \textohm{} is part of all math fonts for \TeX,
+% but most text fonts are lacking the corresponding \cmd{\textohm}.  
+% Thus, it is not only impossible to use the
+% same notation in text and in formulas;
+% depending on the fonts used, it may even be impossible to
+% typeset units properly at all, if you are restricted to 
+% the means of `standard' \LaTeX.
+%
+% \section{The macro package}
+% The \Lpack{gensymb} package provides a number of `generic' macros,
+% which produce the same output in text and math mode:
+% \begin{verse}
+% \begin{tabular}{ccccc}
+%   \cmd{\degree}     &    
+%   \cmd{\celsius}    &    
+%   \cmd{\perthousand}& 
+%   \cmd{\ohm}        &
+%   \cmd{\micro}      \\
+%   \textdegree       &
+%   \textcelsius      &
+%   \textperthousand  &
+%   \textohm          &
+%   \textmu          \\           
+% \end{tabular}
+% \end{verse}
+% Thus, you can write, for instance:
+% \begin{verse}
+% |$ \lambda = 10.6\,\micro\mathrm{m} $|\\
+% |... a wavelength of 10.6\,\micro m|
+% \end{verse}
+% With the help of the package \Lpack{units}, you can even apply 
+% exactly the same notation in text and formulas:
+% \begin{verse}
+% |$ \lambda = \unit[10.6]{\micro m} $|\\
+% |... a wavelength of \unit[10.6]{\micro m}|
+% \end{verse}
+%
+% Under normal circumstances  you should use \Lpack{gensymb} in conjunction with
+% the \Lpack{textcomp} package.  In this case the above symbols
+% are taken from a text font using the  TS1 (text companion) 
+% encoding -- even in math. 
+% As a result, they will exhibit the style of the surrounding text or of the \cmd{\mathrm}
+% alphabet, respectively.
+%
+% When \Lpack{textcomp} is \emph{not} used (for instance, because your text fonts 
+% are not available with TS1 encoding), 
+% the \Lpack{gensymb} package tries to emulate the above symbols
+% using what is available in the math fonts.   
+% However, the symbols \textmu{} and \textperthousand{} cannot be faked,
+% and the package will issue appropriate warning messages.  
+% The option \Lopt{upmu} is a workaround to provide at least the \textmu{} -- see below.
+% 
+% The symbol \cmd{\ohm} is particular, too:  Loading the \Lpack{textcomp}
+% package does \emph{not ensure} that the text fonts actually include
+% an \textohm.  Unfortunately, many fonts don't.  \LaTeX{} cannot detect this
+% situation in advance, and the command \cmd{\ohm} will print some garbage
+% then -- possibly without any error message.
+% A workaround is to use the options \Lopt{Omega} or \Lopt{Upomega}
+% described below.  
+%
+% The default behavior of the \Lpack{gensymb} package can be modified
+% using the following options:
+% \begin{description} 
+% \item[\Lopt{upmu}] With this option, the \cmd{\micro} uses internally 
+% a math symbol with the name \cmd{\upmu}.
+% The responsibility to provide this macro lies with you; for instance,
+% load the package \Lpack{upgreek}\footnote{%
+% available from the same CTAN directory as \Lpack{gensymb}} or use a set
+% of math fonts which include an upright mu and make sure it is accessible as \cmd{\upmu}.
+% This option is useful, 
+% when your text fonts are not available with TS1 (text companion) encoding, 
+% or when their \cmd{\textmu} is  ugly or broken.  The drawback is, 
+% that the style of this \textmu{} will not vary with the surrounding font.
+% It is always upright  roman, regardless of whether 
+% the surrounding text is  sans serif, bold or whatever.
+%
+% \item[\Lopt{Omega}] makes \cmd{\ohm} always use the upright Greek Omega
+% from the current math font, regardless of whether \Lpack{textcomp} is loaded.
+% This makes sense, when there is no \textohm{} in your text font(s).
+% The option works always, but the style of the  Omega in text will
+% not vary then.
+%
+% Various packages provide an option \Lopt{slantedGreek} to make
+% uppercase Greek letters in formulas slanted.  You may safely use 
+% this option in conjunction with the \Lopt{Omega} option of the package
+% \Lpack{gensymb}: \cmd{\ohm} will be upright, though!
+% 
+% \addtocounter{footnote}{-1}
+% \item[\Lpack{Upomega}] A math symbol with the name \cmd{\Upomega} will
+% be used to for the \cmd{\ohm}.
+% The responsibility to provide this macro lies with you; for instance,
+% load the package \Lpack{upgreek}\footnotemark.
+% Again, the style of this \cmd{\ohm} in text never changes.  
+% The option may be useful, when the text font does not include a \cmd{\textomega}
+% of its own and the mathematical \cmd{\Omega} is not a suitable substitute,
+% for one reason or another.
+% \end{description}
+% 
+% \section{Examples}
+% \subsection*{The optimum case}
+% With text fonts providing \textmu{} as well as \textohm{}
+% in the text companion encoding, the default behavior of 
+% \Lpack{gensymb} is appropriate.
+% This holds, e.g., for the EC/TC fonts (i.e., Computer Modern with T1 
+% and TS1 encoding), Palatino, Lucida Bright, the Fourier fonts, 
+% and most font families from MicroPress:
+% \begin{verbatim}
+% \usepackage[T1]{fontenc}
+% \usepackage{textcomp}
+% \usepackage{gensymb}
+% \end{verbatim}
+%
+% \subsection*{The normal case}
+% Many commercial text fonts have a correct `micro' symbol, but no Omega.
+% In this case the package can be loaded with the \Lopt{Omega} option,
+% to make sure that the mathematical Omega is used instead:
+% \begin{verbatim}
+% \usepackage[T1]{fontenc}
+% \usepackage{textcomp}
+% \usepackage{mathptmx} % for instance
+% \usepackage[Omega]{gensymb}
+% \end{verbatim}
+% 
+% \subsection*{Using the `classical' CM fonts}
+% When you are restricted to the classical Computer Modern fonts with
+% OT1 encoding, you can still take the Omega from the math fonts,
+% but you need to take the upright mu from an an extra font such as
+% Euler Roman.
+% Notice, however, that \cmd{\perthousand} is not made available.
+% You may try \cmd{\permil} instead, which is provided in the
+% WASY fonts.
+% \begin{verbatim}
+% \usepackage[Euler]{upgreek}
+% \usepackage[Omega, upmu]{gensymb}
+% \usepackage{wasysym}
+% \let\perthousand=\permil
+% \end{verbatim}
+%
+% \subsection*{A special case}
+% Imagine that you are using the Bitstream Charter text fonts 
+% in conjunction with Euler-VM for math.\footnote{I do not actually
+% recommend this combination\dots}
+% Charter, like most typefaces from Bitstream, has a wrong mu symbol.
+% The missing Omega could be taken from the math font (Euler), but it would not go well 
+% with  Charter  in a combination such as M$\Omega$.
+% As a workaround, load the \Lpack{upgreek} package 
+% and take both \cmd{\micro} and \cmd{\ohm} from the `Adobe Symbol' font:
+% \begin{verbatim}
+% \usepackage[T1]{fontenc}
+% \usepackage{textcomp}
+% \usepackage{charter,eulervm}
+% \usepackage[Symbol]{upgreek}
+% \usepackage[Upomega, upmu]{gensymb}
+% \end{verbatim}
+%
+% \section{Using \Lpack{gensymb} together with other packages}
+% \begin{itemize}
+% \item
+% \Lpack{gensymb} goes well with the package \Lpack{units},
+% but it cannot be used in conjunction with the
+% package \Lpack{SIunits}, because the latter has its own means to typeset
+% prefixes.
+% \item
+% Using the package \Lpack{mathcomp} together with \Lpack{gensymb}
+% is possible, if you need the additional `math companion' symbols.
+% Both packages will use only one common math symbol font.
+% \end{itemize}
+%
+% \section{Known deficiencies}
+% The current version of the package does not work properly 
+% in conjunction with the LY1 font encoding.
+% This will possibly be fixed in a future release, if there is an actual need.
+%
+% \StopEventually{}
+% 
+% \section{Implementation}
+% 
+% The options are implemented using switches:
+%    \begin{macrocode}
+%<*package>
+\newif\ifgns@Upomega
+\newif\ifgns@Omega
+\newif\ifgns@upmu
+%    \end{macrocode}
+%    \begin{macrocode}
+\DeclareOption{Upomega}{\gns@Upomegatrue}
+\DeclareOption{Omega}{\gns@Omegatrue}
+\DeclareOption{upmu}{\gns@upmutrue}
+\ProcessOptions\relax
+%    \end{macrocode}
+% These are the generic commands:
+%    \begin{macrocode}
+\newcommand\celsius{}
+\newcommand\degree{}
+\newcommand\ohm{}
+%    \end{macrocode}
+% The following macros will be used later to actually define the generic commands.
+% We start with a macro to fake \cmd{\degree} and \cmd{\celsius} and to generate
+% a warning message for \cmd{\perthousand}:
+%    \begin{macrocode}
+\def\gns@usefakedsymbols{%
+\renewcommand{\degree}{\ensuremath{^\circ}}
+\DeclareRobustCommand{\celsius}{%
+  \ifmmode^\circ\mathrm{C}\else$^\circ$C\fi}
+\PackageInfo{gensymb}{%
+  Faking symbols for \protect\degree\space and \protect\celsius}
+\PackageWarningNoLine{gensymb}{%
+  Not defining \protect\perthousand}
+}
+%    \end{macrocode}
+% The following macro sets up a SymbolFont for the text companion symbols to be
+% used in math.  If \cmd{\tcmu} is already defined, we assume that the
+% \Lpack{mathcomp} package is already loaded, and that the `math companion'
+% symbols need not be defined once again:
+%    \begin{macrocode}
+\def\gns@setupmathcomp{%
+\expandafter\ifx\csname tcmu\endcsname\relax
+  \DeclareSymbolFont{gns@font}{TS1}{\familydefault}{m}{n}
+  \ifx\mv@bold\@undefined\else  
+    \SetSymbolFont{gns@font}{bold}{TS1}{\familydefault}{\bfdefault}{n}
+  \fi
+  \DeclareMathSymbol{\tccelsius}{\mathord}{gns@font}{137}     % {'211}
+  \DeclareMathSymbol{\tcdegree}{\mathord}{gns@font}{176}      % {'260}
+  \DeclareMathSymbol{\tcperthousand}{\mathord}{gns@font}{135} % {'207}
+  \DeclareMathSymbol{\tcmu}{\mathord}{gns@font}{181}          % {'265}
+  \DeclareMathSymbol{\tcohm}{\mathord}{gns@font}{87}          % {'127}
+  \PackageInfo{gensymb}{Math companion symbols declared}
+\else
+  \PackageInfo{gensymb}{Math companion symbols found}
+\fi
+}
+%    \end{macrocode}
+% A macro to define \cmd{\degree}, \cmd{\celsius} and \cmd{\perthousand}
+% so as to use text companion  symbols:
+%    \begin{macrocode}
+\def\gns@usetcsymbols{%
+\DeclareRobustCommand{\degree}{%
+  \ifmmode\tcdegree\else\textdegree\fi}
+\DeclareRobustCommand{\celsius}{%
+  \ifmmode\tccelsius\else\textcelsius\fi}
+\DeclareRobustCommand{\perthousand}{%
+  \ifmmode\tcperthousand\else\textperthousand\fi}
+\PackageInfo{gensymb}{Using text companion symbols for %
+  \protect\degree, \protect\celsius\space and \protect\perthousand}
+}
+%    \end{macrocode}
+%  A macro to define \cmd{\ohm} so as to use the math symbol \cmd{\Upomega}:
+%    \begin{macrocode}
+\def\gns@useUpomega{%
+  \expandafter\ifx\csname Upomega\endcsname\relax
+    \PackageError{gensymb}
+    {You have requested the option Upomega,\MessageBreak
+    but the command \protect\Upomega\space is undefined}
+    {Load the upgreek package additionally and try again!}
+  \fi
+  \DeclareRobustCommand{\ohm}{\ifmmode\Upomega\else$\Upomega$\fi}
+  \PackageInfo{gensymb}{Using \protect\Upomega\space for \protect\ohm}
+}
+%    \end{macrocode}
+%  A macro to define \cmd{\ohm} so as to use \cmd{\Omega} (or \cmd{\upOmega},
+%  if it is provided):
+%    \begin{macrocode}
+\def\gns@useOmega{%
+  \expandafter\ifx\csname upOmega\endcsname\relax
+   \DeclareRobustCommand{\ohm}{\ifmmode\Omega\else$\Omega$\fi}
+   \PackageInfo{gensymb}{Using \protect\Omega\space for \protect\ohm}
+  \else
+   \DeclareRobustCommand{\ohm}{\ifmmode\upOmega\else$\upOmega$\fi}
+   \PackageInfo{gensymb}{Using \protect\upOmega\space for \protect\ohm}
+  \fi
+}
+%    \end{macrocode}
+%  A macro to define \cmd{\ohm} so as to use the text companion symbol:
+%    \begin{macrocode}
+\def\gns@usetextohm{%
+  \DeclareRobustCommand{\ohm}{\ifmmode\tcohm\else\textohm\fi}
+  \PackageInfo{gensymb}{Using \protect\textohm\space for \protect\ohm}
+}
+%    \end{macrocode}
+%  A macro to define \cmd{\micro} so as to use the math symbol \cmd{\upmu}:
+%    \begin{macrocode}
+\def\gns@useupmu{%
+  \expandafter\ifx\csname upmu\endcsname\relax
+    \PackageError{gensymb}
+    {You have requested the option upmu,\MessageBreak
+    but the command \protect\upmu\space is undefined}
+    {Load the upgreek package additionally and try again!}
+  \fi
+  \DeclareRobustCommand{\micro}{\ifmmode\upmu\else$\upmu$\fi}
+  \PackageInfo{gensymb}{Using \protect\upmu\space for \protect\micro}
+}
+%    \end{macrocode}
+%  A macro to define \cmd{\micro} so as to use the text companion symbol:
+%    \begin{macrocode}
+\def\gns@usetextmu{%
+  \DeclareRobustCommand{\micro}{\ifmmode\tcmu\else\textmu\fi}
+  \PackageInfo{gensymb}{Using \protect\textmu\space for \protect\micro}
+}
+%    \end{macrocode}
+%  A macro to issue a warning, if \cmd{\micro} cannot be made available:
+%    \begin{macrocode}
+\def\gns@usenomu{%
+  \PackageWarningNoLine{gensymb}{%
+    Not defining \protect\micro}
+}
+%    \end{macrocode}
+% The actual work is executed AtBeginDocument, so that we can detect the
+% presence of the \Lpack{textcomp} package and the availability of
+% \cmd{\Upmu} and other commands, regardless of the sequence of loading the
+% packages.
+%    \begin{macrocode}
+\AtBeginDocument{%
+%    \end{macrocode}
+% First, we check for \Lpack{textcomp}.  If it is loaded, we set up the
+% text companion symbols for use in math and define \cmd{\degree}, \cmd{\celsius} 
+% and \cmd{\perthousand} so that they use these. Otherwise, the symbols are faked
+% as far as possible:
+%    \begin{macrocode}
+\@ifpackageloaded{textcomp}{\gns@setupmathcomp\gns@usetcsymbols}%
+  {\gns@usefakedsymbols}
+%    \end{macrocode}
+% Now we define \cmd{\ohm}.  In case the options \Lopt{Upomega}
+% or \Lopt{Omega} have been specified, behave acordingly.
+% Otherwise, use the text companion symbol, if available.
+% Default is to use the mathematical Omega:
+%    \begin{macrocode}
+\ifgns@Upomega
+  \gns@useUpomega
+\else
+\ifgns@Omega
+  \gns@useOmega
+\else
+\@ifpackageloaded{textcomp}%
+  {\gns@usetextohm}%
+  {\gns@useOmega}
+\fi\fi
+%    \end{macrocode}
+% Next, define \cmd{\micro}. In case the option \Lopt{upmu}
+% has been specified, behave acordingly.
+% Otherwise, use the text companion symbol, if available.
+% Default is not to provide \cmd{\micro} at all.
+%    \begin{macrocode}
+\ifgns@upmu
+  \gns@useupmu
+\else
+\@ifpackageloaded{textcomp}%
+  {\gns@usetextmu}%
+  {\gns@usenomu}
+\fi
+%    \end{macrocode}
+% Finally, we destroy the commands that are no longer needed:
+%    \begin{macrocode}
+\let\gns@usefakedsymbols\relax
+\let\gns@setupmathcomp\relax
+\let\gns@usetcsymbols\relax
+\let\gns@useUpomega\relax
+\let\gns@useOmega\relax
+\let\gns@usetextohm\relax
+\let\gns@useupmu\relax
+\let\gns@usenomu\relax
+\let\gns@usetextmu\relax
+%    \end{macrocode}
+%    \begin{macrocode}
+}
+%</package>
+%    \end{macrocode}
+%
+% The next line of code is only to prevent DocStrip from adding the
+% character table to all modules:
+%    \begin{macrocode}
+\endinput
+%    \end{macrocode}
+% \Finale
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+%%

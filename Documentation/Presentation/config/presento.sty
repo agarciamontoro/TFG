@@ -1,0 +1,137 @@
+\ProvidesPackage{config/presento}
+\mode<presentation>{\usefonttheme{professionalfonts}}
+
+% removing navigation symbols
+\setbeamertemplate{navigation symbols}{}
+
+% packages
+\usepackage{xcolor}
+\usepackage{fontspec}
+\usepackage{setspace}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{config/gensymb}
+
+% colors
+\definecolor{colororange}{HTML}{E65100} % orange
+\definecolor{colordgray}{HTML}{795548} % dark gray for note
+\definecolor{colorhgray}{HTML}{212121} % heavy dark gray for normal text
+\definecolor{colorgreen}{HTML}{009688} % green
+\definecolor{colorlgray}{HTML}{FAFAFA} % background light gray
+\definecolor{colorblue}{HTML}{0277BB} % blue
+\definecolor{colorsblue}{HTML}{236b8a} % steel blue
+\definecolor{colormetal}{HTML}{37474F}
+
+% font sizes
+\newcommand{\fontsizeone}{2.292em}
+\newcommand{\fontsizetwo}{1.217em}
+\newcommand{\fontsizethree}{0.875em}
+% line spaces
+\newcommand{\linespaceone}{1}
+
+% font families
+\newfontfamily{\montserratfont}[Path=fonts/,BoldFont=Montserrat-Bold]{Montserrat-Regular}
+\newfontfamily{\notosansfont}[Path=fonts/,BoldFont=NotoSans-Bold,ItalicFont=NotoSans-Italic,BoldItalicFont=NotoSans-BoldItalic,SmallCapsFont=AlegreyaSansSC-Regular]{NotoSans-Regular}
+\newfontfamily{\latolightfont}[Path=fonts/]{Lato-Lig}
+\newfontfamily{\inconsolatafont}[Path=fonts/]{Inconsolata}
+
+% beamer template changes
+\setbeamertemplate{frametitle}{
+ \noindent
+ \hspace{-1.22em}
+ \tikz[overlay,remember picture,baseline=0.3em]{
+ 	\fill[fill=colorlgray]  (-0.05,0.05) rectangle (0,0.8);
+    %\fill[fill=colorlgray]  (-0.3,0.05) rectangle (20,0);
+ }
+ %\latolightfont\color{colorlgray}~~\insertframetitle
+ \latolightfont\color{colorlgray}~~\large{\insertframetitle}
+ \vspace{0.1em}
+ 
+ \hspace{-0.5em}
+ \normalsize{\insertframesubtitle}
+}
+
+\setmainfont[Ligatures=TeX,Path=fonts/,BoldFont=NotoSans-Bold,ItalicFont=NotoSans-Italic,BoldItalicFont=NotoSans-BoldItalic,SmallCapsFont=AlegreyaSansSC-Regular]{NotoSans-Regular}
+\setsansfont[Ligatures=TeX,Path=fonts/,BoldFont=NotoSans-Bold,ItalicFont=NotoSans-Italic,BoldItalicFont=NotoSans-BoldItalic,SmallCapsFont=AlegreyaSansSC-Regular]{NotoSans-Regular}
+\setmonofont[Ligatures=TeX,Path=fonts/,SmallCapsFont=AlegreyaSansSC-Regular]{Inconsolata}
+
+% frame counter
+\newcounter{totalfr}
+\setbeamertemplate{footline}{
+  \setcounter{totalfr}{\inserttotalframenumber}
+  \hfill{
+    \tikz{
+      \filldraw[fill=colorsblue, draw=colorsblue]  (0,0) -- (0.2,0) arc (0:{\value{framenumber}*(360/(\value{totalfr}-1))}:0.2) -- (0,0);      
+      \node at (0,0) {\normalsize \color{colorlgray}\tiny{\insertframenumber}};
+    }
+  }
+  \hspace{1em}
+  \vspace*{1em}
+}
+
+% custom commands
+\newcommand{\hugetext}[1]{
+  {
+  \begin{spacing}{\linespaceone}
+   \fontsize{\fontsizeone}{\fontsizeone}{\montserratfont #1}
+  \end{spacing}
+  }
+}
+
+\newcommand{\largetext}[1]{
+ {\fontsize{\fontsizetwo}{\fontsizeone}\selectfont{#1}}
+}
+
+\newcommand{\setnote}[1]{
+ {\fontsize{\fontsizethree}{\fontsizeone}\selectfont\color{colordgray}{#1}}
+}
+
+\newcommand{\rtarrow}{$\color{white}{\longrightarrow}$}
+
+\newcommand{\itemR}{
+ \item[\rtarrow]
+}
+
+\newcommand{\framecard}[2][colormetal]{
+  {\setbeamercolor{background canvas}{bg=#1}
+    \begin{frame}[plain]
+	    \begin{tikzpicture}[remember picture,overlay]
+		    \node (title) [shape=rectangle, fill=white, minimum height=20mm, minimum width=\paperwidth, anchor=center] at (current page.center) {};
+		    \node at (title.center) {
+		    	\color{colormetal}
+		    	\huge\latolightfont{#2}
+		    };
+	    \end{tikzpicture}
+    \end{frame}
+    %\begin{frame}[plain]
+    %\vfill
+    %\begin{center}
+    % {#2}
+    %\end{center}
+    %\vfill
+    %\end{frame}
+  }
+}
+\newcommand{\framepic}[3][1]{
+  {
+    \usebackgroundtemplate{%
+    \setbeamercolor{background canvas}{bg=colormetal}
+    \tikz[overlay,remember picture] \node[opacity=#1, at=(current page.center)] {
+      \includegraphics[height=\paperheight]{#2}};
+    }
+    \begin{frame}[plain]
+    #3
+    \end{frame}
+  }
+}
+
+\newenvironment{baseitemize}
+  {\itemize[leftmargin=*]}
+  {\enditemize}
+
+\newenvironment{fullpageitemize}
+  {\itemize[nolistsep,itemsep=\fill,leftmargin=2em]}
+  {\vfill\enditemize}
+
+
+\usefonttheme[onlymath]{serif}

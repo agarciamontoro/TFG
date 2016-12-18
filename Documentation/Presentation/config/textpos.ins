@@ -1,0 +1,15 @@
+\input docstrip
+\preamble
+	Textpos: absolute positioning of text on the page
+\endpreamble
+\keepsilent
+\askforoverwritefalse
+
+\generate{\file{textpos.drv}{\from{textpos.dtx}{driver}}
+	  \file{textpos.sty}{\from{textpos.dtx}{package}}
+	  \file{textpos-example.tex}{\from{textpos.dtx}{example}}
+	  }
+
+\endbatchfile
+
+%% $Id$

@@ -1,0 +1,37 @@
+% custom packages
+\usepackage{config/textpos}
+\setlength{\TPHorizModule}{1cm}
+\setlength{\TPVertModule}{1cm}
+
+\newcommand\crule[1][black]{\textcolor{#1}{\rule{2cm}{2cm}}}
+
+\newcommand{\hugetextsc}[1]{
+  {
+  \begin{spacing}{\linespaceone}
+   \textsc{\fontsize{\fontsizeone}{\fontsizeone}{\notosansfont #1}}
+  \end{spacing}
+  }
+}
+
+\newcommand{\btVFill}{\vskip0pt plus 1filll}
+
+\newcommand{\frameanimation}[4]{
+	{
+		\usebackgroundtemplate{%
+			\setbeamercolor{background canvas}{bg=black}
+			\tikz[overlay,remember picture] \node[opacity=1, at=(current page.center)] {
+				\animategraphics[loop,width=\paperwidth]{#4}{#1}{#2}{#3}
+			};
+		}
+		\begin{frame}[plain]
+		\end{frame}
+	}
+}
+
+\usepackage{animate}
+\usepackage{graphicx}
+\usepackage{multimedia}
+\usepackage{media9}[2013/11/04]
+
+% Partial derivatives
+\newcommand*{\pd}[3][]{\ensuremath{\frac{\partial^{#1} #2}{\partial #3}}}

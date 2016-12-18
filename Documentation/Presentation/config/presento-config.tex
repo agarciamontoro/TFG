@@ -1,0 +1,35 @@
+% Sets the background color to be light gray and the default text color to be heavy dark gray.
+% Recommended for presenting with high quality projectors, since the high contrast of black-white is not advisable
+\setbeamercolor{background canvas}{bg=colormetal}
+\setbeamercolor{normal text}{fg=colorlgray}
+
+% personal data
+\newcommand{\myTitle}{
+	\begin{tikzpicture}[remember picture,overlay]
+		\node (title) [shape=rectangle, fill=white, minimum height=20mm, minimum width=\paperwidth, anchor=north west] at ([yshift=-8mm] current page.north west) {};
+		\node at (title.center) {
+			\color{colormetal}
+			\Large\latolightfont{GENERAL RELATIVITY RAYTRACER}
+		};
+		
+		\node (subtitle) [shape=rectangle, minimum width=\paperwidth, anchor=west] at ([yshift=5.9cm]current page.south west) {
+			\color{white}
+			\textsc{A Free Software Alternative}
+		};
+	\end{tikzpicture}
+}
+
+\newcommand{\myName}{
+	\color{white}
+	\fontsize{11}{10}\textsc{Alejandro García Montoro}
+}
+
+\newcommand{\myDetails}{
+	\setnote{\today}
+}
+
+%sty file
+\usepackage{config/presento}
+
+% custom command and packages
+\input{config/custom-command}

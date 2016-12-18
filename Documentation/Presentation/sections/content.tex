@@ -1,0 +1,249 @@
+%----------------------------------------------%
+%---------------- INTRODUCCIÓN ----------------%
+%----------------------------------------------%
+
+\framecard{PROBLEMA \; ABORDADO}
+
+\framepic{gfx/presentation}
+
+\begin{frame}{Problema abordado}{Objetivos principales}
+	\begin{columns}
+
+		\begin{column}{0.5\textwidth}
+			\centering \textsc{\Large Matemáticas}
+			\vspace{1mm}
+			\hrule
+			\vspace{3mm}
+			
+			\onslide<2->{Entender cómo se mueven los fotones en espaciotiempos relativistas.}
+		\end{column}
+
+		\begin{column}{0.5\textwidth}
+			\centering \textsc{\Large Informática}
+			\vspace{1mm}
+			\hrule
+			\vspace{3mm}
+			
+			\onslide<3->{Diseñar, implementar y analizar los resultados de un raytracer relativista.}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\framecard{MATEMÁTICA BÁSICA}
+
+\begin{frame}{Conceptos matemáticos básicos}
+	\large
+	\begin{fullpageitemize}
+		\item Espacios vectoriales lorentzianos
+		\pause
+		\item Álgebra tensorial
+		\pause
+		\item Geometría diferencial (semi-riemanniana)
+	\end{fullpageitemize}
+\end{frame}
+
+\begin{frame}{Conceptos matemáticos básicos}{Espacios vectoriales lorentzianos}	
+	Un \emph{producto lorentziano} $g$ en $V$ es una forma bilineal en $V$ simétrica, no degenerada y de índice 1.
+	\pause
+	\[
+		v \in (V,g) \textrm{ se dice } \pause\begin{cases}
+			\textrm{espacial} &\textrm{si } $g(v,v) > 0,\, v = 0$\\
+			\pause
+			\textrm{temporal} &\textrm{si } $g(v,v) < 0$ \\
+			\pause
+			\textrm{luminoso} &\textrm{si } $g(v,v) = 0,\, v \neq 0$.
+		\end{cases}
+	\]
+\end{frame}
+
+\begin{frame}{Conceptos matemáticos básicos}{Espacios vectoriales lorentzianos}
+	\centering
+	\includegraphics[height=0.7\paperheight]{gfx/timecones}
+\end{frame}
+
+\begin{frame}{Conceptos matemáticos básicos}{Álgebra tensorial}
+	Un \emph{tensor} $T$ de tipo $(r, s)$ en $V(K)$ es una función multilineal
+
+	\[
+		T \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r copias}} \times \underbrace{V \times \cdots \times V}_{\text{s copias}} \longrightarrow K.
+	\]
+	
+	\pause
+	
+	Una base de $\mathcal{T}_{(r,s)}(V)$ es
+	\[
+		\mathcal{B}_T = \{v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s}\},
+	\]
+	
+	\pause
+	donde las coordenadas las notamos como \[t^{i_1,\dots,i_r}_{j_1,\dots,j_s} = T(\varphi^{i_1}, \dots, \varphi^{i_r}, v_{j_1}, \dots, v_{j_s}).\]
+\end{frame}
+
+\begin{frame}{Conceptos matemáticos básicos}{Geometría diferencial}
+	Una \emph{variedad diferenciable} es un espacio topológico
+	\begin{itemize}
+		\item localmente euclídeo,
+		\pause
+		\item Hausdorff y
+		\pause
+		\item con una base topológica contable.	
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Conceptos matemáticos básicos}{Geometría diferencial}
+	\centering
+	\includegraphics[height=0.4\paperwidth]{gfx/planotangente}
+\end{frame}
+
+\begin{frame}{Conceptos matemáticos básicos}{Geometría semi-riemanniana}
+	\large
+	\begin{fullpageitemize}
+		\item Métrica lorentziana: $g_p \colon T_pM\times T_pM \to \mathbb{R}$.
+		\pause
+		\item Variedad lorentziana: $(M,g)$.
+		\pause
+		\item Espaciotiempo: $(M,g)$ de cuatro dimensiones orientada temporalmente.
+	\end{fullpageitemize}
+\end{frame}
+
+\framecard{$G = T$}
+
+\framecard{ESPACIOTIEMPO KERR}
+
+\begin{frame}{Espaciotiempos relativistas}{Métrica de Kerr}
+	{\Large
+		\begin{align*}
+		ds^2 = &-dt^2 + \rho^2\left(\frac{dr^2}{\Delta} + d\vartheta^2\right) + \\
+		&+ \left(r^2 + a^2\right)\sin^2\vartheta d\varphi^2 + \\
+		\nonumber
+		&+ \frac{2r}{\rho^2}\left(a\sin^2\vartheta d\varphi - dt\right).
+		\end{align*}
+	}
+\end{frame}
+
+\framepic{gfx/ergosfera}
+
+%----------------------------------------------%
+%----------------- GEODÉSICAS -----------------%
+%----------------------------------------------%
+
+\framecard{GEODÉSICAS}
+
+\begin{frame}{Geodésicas}{Ecuaciones clásicas}
+	{\Huge
+	\[
+		\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0
+	\]}
+	\vfill
+	\[
+		\Gamma^m_{ij} = \frac{1}{2} g^{km} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right)	
+	\]
+\end{frame}
+
+\begin{frame}{Geodésicas}{Enfoque hamiltoniano clásico}
+	\large
+	\begin{align*}
+		\rho^2 \dot{t} &=-( aE\sin^2\vartheta - L_z) + \frac{r^2+a^2}{\Delta}P, \\
+		\rho^2 \dot{r} &= \sqrt{R}, \\
+		\rho^2 \dot{\vartheta} &= \sqrt{\Theta}, \\
+		\rho^2 \dot{\varphi} &=-( aE - \frac{L_z}{\sin^2\vartheta}) + \frac{a}{\Delta}P.
+	\end{align*}
+\end{frame}
+
+\begin{frame}{Geodésicas}{Formulación variacional}
+	\large
+	\begin{align*}
+		\dot{r} &= \frac{\Delta}{\rho^2} p_r, \quad \dot{\vartheta} = \frac{1}{\rho^2}p_\vartheta, \quad
+		\dot{\varphi} = \pd{}{p_\varphi}\left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right), \\
+		\dot{p}_r &= - \pd{}{r} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right), \\
+		\dot{p}_\vartheta &= - \pd{}{\vartheta} \left( - \frac{\Delta}{2\rho^2}p_r^2 - \frac{1}{2\rho^2}p_\vartheta^2 + \left( \frac{R + \Delta\Theta}{2\Delta\rho^2} \right) \right).
+	\end{align*}
+	
+\end{frame}
+
+
+%----------------------------------------------%
+%------------------- SET UP -------------------%
+%----------------------------------------------%
+
+
+%----------------------------------------------%
+%------------------ RESULTS -------------------%
+%----------------------------------------------%
+
+\framepic{gfx/euclidean01}
+
+\framepic{gfx/euclidean02}
+
+
+
+
+
+
+
+
+
+
+%-----------------------------
+
+%\frameanimation{../../Software/Examples/anim_01_cinematographic}{1}{126}{20}
+%\frameanimation{../../Software/Examples/anim_04_cinematographic}{1}{32}{13}
+
+%\begin{frame}[plain]
+%	\movie[width=
+%	\paperwidth,borderwidth=10pt,poster,showcontrols]{\includegraphics[width=\paperwidth]{../../Software/Examples/anim_01_cinematographic001}}{out.avi}
+%\end{frame}
+
+
+%\begin{frame}
+%	\begin{center}
+%		\movie[width=\textwidth,showcontrols=true]
+%		{\includegraphics[width=\textwidth]{../../Software/Examples/anim_01_cinematographic001}}{out.avi}
+%	\end{center}
+%\end{frame}
+
+%\begin{frame}{sqf}
+%	
+%	\includemedia[
+%	width=0.6\linewidth,height=0.6\linewidth,
+%	activate=pageopen,
+%	transparent,
+%	addresource=prueba.mp4,
+%	flashvars={
+%		source=prueba.mp4     % same path as in addresource!
+%		&loop=true           % loop video
+%		&scaleMode=letterbox % preserve aspect ratio
+%	}
+%	]{}{VPlayer9.swf}
+%\end{frame}
+
+%\begin{frame}[plain]
+%	
+%	\includemedia[
+%	width=0.6\linewidth,height=0.6\linewidth,
+%	activate=pageopen,
+%	transparent,
+%	addresource=out.avi,
+%	flashvars={
+%		source=out.avi     % same path as in addresource!
+%		&loop=true           % loop video
+%		&scaleMode=letterbox % preserve aspect ratio
+%	}
+%	]{}{VPlayer9.swf}
+%\end{frame}
+
+%\begin{frame}[plain]
+%	\movie[width=
+%	\paperwidth,borderwidth=10pt,poster,showcontrols]{\includegraphics[width=\paperwidth]{../../Software/Examples/anim_01_cinematographic001}}{../../Software/Examples/out.mp4}
+%\end{frame}
+
+%{
+%	\usebackgroundtemplate{%
+%		\setbeamercolor{background canvas}{bg=black}
+%		\tikz[overlay,remember picture] \node[opacity=1, at=(current page.center)] {
+%			\movie[width=1.6cm,height=9cm,loop,poster,autostart]{}{../../Software/Examples/out.mov}
+%		};
+%	}
+%	\begin{frame}[plain]
+%	\end{frame}
+%}
