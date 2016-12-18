@@ -129,6 +129,14 @@ __device__ void computeComponent(Real* y, Real* f, Real* data){
     sum4 = + dZ * twoRho2Inv;
 
     f[4] = dRhoTimesRho*(sum1 + sum2 + sum3)*rho4Inv + sum4;
+
+
+    // // Euclidean version
+    // f[0] = pR;
+    // f[1] = pTheta / r2;
+    // f[2] = b / (r2 * sinT2);
+    // f[3] =  (pTheta2 + (b2 / sinT2)) /(r2 * r);
+    // f[4] =   ( b2 ) / ( r2* sinT2) * cosT/sinT;
 }
 
 #endif // __FUNCTIONS__

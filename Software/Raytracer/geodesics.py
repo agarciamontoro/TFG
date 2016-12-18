@@ -1,4 +1,5 @@
 from .Utils.draw import drawScene, drawGeodesic
+from math import gcd
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -77,6 +78,11 @@ class CongruenceSnapshot:
 
         self.congruenceMatrixRows = self.status.shape[0]
         self.congruenceMatrixCols = self.status.shape[1]
+
+        self.dpi = gcd(self.status.shape[0], self.status.shape[1])
+        self.imageSize = (self.status.shape[0]/self.dpi,
+                          self.status.shape[1]/self.dpi)
+
         self.numPixels = self.congruenceMatrixRows * self.congruenceMatrixCols
 
         self.colors = [
@@ -113,8 +119,7 @@ class CongruenceSnapshot:
 
     def save(self, path):
         fig = plt.figure(frameon=False)
-        fig.set_size_inches(self.congruenceMatrixCols,
-                            self.congruenceMatrixRows)
+        fig.set_size_inches(self.imageSize[1], self.imageSize[0])
 
         ax = plt.Axes(fig, [0., 0., 1., 1.])
         ax.set_axis_off()
@@ -135,7 +140,7 @@ class CongruenceSnapshot:
         else:
             ax.imshow(self.texels)
 
-        fig.savefig(path, dpi=1)
+        fig.savefig(path, dpi=self.dpi)
         plt.close(fig)
 
 

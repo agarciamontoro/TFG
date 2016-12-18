@@ -46,13 +46,15 @@ __global__ void generate_image(void* devRayCoordinates, void* devStatus,
         Real r, theta, phi;
 
         r = rayCoords[0];
-        theta = fmod(rayCoords[1], 2*Pi);
+        theta = fmod(rayCoords[1], Pi);
         phi = fmod(rayCoords[2], 2*Pi);
 
         // Variables to hold the texel coordinates
         int u, v, texel;
 
         Real rNormalized;
+
+        int p1, p2;
 
         switch(status){
             case DISK:
@@ -66,6 +68,17 @@ __global__ void generate_image(void* devRayCoordinates, void* devStatus,
 
                 memcpy(image, diskTexture, 3*sizeof(Real));
 
+                // p1 = rNormalized;
+                // p2 = floor(fmod(phi+2*Pi, 2*Pi) * 26.0 / (2*Pi));
+                //
+                // image[0] = image[1] = image[2] = 1;
+                //
+                // if((p1 ^ p2) & 1){
+                //     image[0] = 1;
+                //     image[1] = 0;
+                //     image[2] = 0;
+                // }
+
                 break;
 
             case SPHERE:
@@ -76,13 +89,39 @@ __global__ void generate_image(void* devRayCoordinates, void* devStatus,
                 sphereTexture += texel * 3;
 
                 memcpy(image, sphereTexture, 3*sizeof(Real));
+
+                // image[0] = image[1] = image[2] = 1;
+
+                // p1 =floor(fmod(theta+Pi, Pi) * 20.0 / (Pi));
+                // p2 = floor(fmod(phi+2*Pi, 2*Pi) * 20.0 / (2*Pi));
+                //
+                // image[1] = image[2] = 0;
+                //
+                // if((p1 ^ p2) & 1)
+                //     image[0] = 1;
+                // else{
+                //     image[0] = 1;
+                //     image[1] = image[2] = 1;
+                // }
+
                 break;
 
             case HORIZON:
                 image[0] = 0;
                 image[1] = 0;
                 image[2] = 0;
-                break;
+                // p1 =floor(fmod(theta+Pi, Pi) * 8.0 / (Pi));
+                // p2 = floor(fmod(phi+2*Pi, 2*Pi) * 10.0 / (2*Pi));
+                //
+                // image[0] = image[1] = image[2] = 0;
+                //
+                // if((p1 ^ p2) & 1){
+                //     image[0] = 1 - fmod(phi+2*Pi, 2*Pi) / (2*Pi);
+                //     image[1] = 0.5;
+                //     image[2] = fmod(phi+2*Pi, 2*Pi) / (2*Pi);
+                // }
+                //
+                // break;
         }
     }
 

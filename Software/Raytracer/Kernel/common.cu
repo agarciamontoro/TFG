@@ -72,10 +72,10 @@
 #define __a2 0.998001
 
 // Camera constants
-#define __d 10
-#define __camR 40
-#define __camTheta 1.65609506389
-#define __camPhi 0.15
+#define __d 5
+#define __camR 7.50309540755
+#define __camTheta 1.7
+#define __camPhi 3.1
 #define __camBeta 0
 
 // Black hole constants
@@ -83,16 +83,16 @@
 #define __b2 2.07812987106
 
 // Kerr constants
-#define __ro 40.0000905466
-#define __delta 1520.998001
-#define __pomega 39.8676152093
-#define __alpha 0.974680344214
-#define __omega 3.11981828491e-05
+#define __ro 7.50419938523
+#define __delta 42.2882508797
+#define __pomega 7.52332979103
+#define __alpha 0.857165462242
+#define __omega 0.00462526721841
 
 // Camera rotation angles
 #define __pitch 0.0
 #define __roll 0.0
-#define __yaw 0.0
+#define __yaw -1.55
 
 // SolverRK45 parameters
 #define rtoli 1e-06

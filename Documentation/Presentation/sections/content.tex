@@ -2,107 +2,104 @@
 %---------------- INTRODUCCIÓN ----------------%
 %----------------------------------------------%
 
-\framecard{PROBLEMA \; ABORDADO}
+\framecard{PROBLEM ANALYSIS}
 
-% \framepic{gfx/presentation}
-
-\begin{frame}{Problema abordado}{Objetivos principales}
+\begin{frame}{Problem Analysis}{Main Objectives}
 	\begin{columns}
 
 		\begin{column}{0.5\textwidth}
-			\centering \textsc{\Large Matemáticas}
+			\centering \textsc{\Large Mathematics}
 			\vspace{1mm}
 			\hrule
 			\vspace{3mm}
 			
-			\onslide<2->{Entender cómo se mueven los fotones en espaciotiempos relativistas.}
+			\onslide<2->{To understand the movement of photons in relativistic spacetimes.}
 		\end{column}
 
 		\begin{column}{0.5\textwidth}
-			\centering \textsc{\Large Informática}
+			\centering \textsc{\Large Computer Science}
 			\vspace{1mm}
 			\hrule
 			\vspace{3mm}
 			
-			\onslide<3->{Diseñar, implementar y analizar los resultados de un raytracer relativista.}
+			\onslide<3->{To design, implement and analyse the results of a relativistic raytracer.}
 		\end{column}
 	\end{columns}
 \end{frame}
 
-\framecard{MATEMÁTICA BÁSICA}
+\framecard{BASIC MATHEMATICS}
 
-\begin{frame}{Conceptos matemáticos básicos}
+\begin{frame}{Basic Mathematical Concepts}
 	\large
 	\begin{fullpageitemize}
-		\item Espacios vectoriales lorentzianos
+		\item Lorentzian vector spaces.
 		\pause
-		\item Álgebra tensorial
+		\item Tensor algebra.
 		\pause
-		\item Geometría diferencial (semi-riemanniana)
+		\item Differential (semi-Riemannian) geometry.
 	\end{fullpageitemize}
 \end{frame}
 
-\begin{frame}{Conceptos matemáticos básicos}{Espacios vectoriales lorentzianos}	
-	Un \emph{producto lorentziano} $g$ en $V$ es una forma bilineal en $V$ simétrica, no degenerada y de índice 1.
+\begin{frame}{Basic Mathematical Concepts}{Lorentzian Vector Spaces}	
+	A Lorentzian product $g$ in $V$ is a symmetric, non-degenerate, index 1 bilinear form in $V$.
 	\pause
 	\[
-		v \in (V,g) \textrm{ se dice } \pause\begin{cases}
-			\textrm{espacial} &\textrm{si } $g(v,v) > 0,\, v = 0$\\
+		v \in (V,g) \textrm{ is said to be } \pause\begin{cases}
+			\textrm{spacelike} &\textrm{if } $g(v,v) > 0,\, v = 0$\\
 			\pause
-			\textrm{temporal} &\textrm{si } $g(v,v) < 0$ \\
+			\textrm{timelike} &\textrm{if } $g(v,v) < 0$ \\
 			\pause
-			\textrm{luminoso} &\textrm{si } $g(v,v) = 0,\, v \neq 0$.
+			\textrm{lightlike} &\textrm{if } $g(v,v) = 0,\, v \neq 0$.
 		\end{cases}
 	\]
 \end{frame}
 
-\begin{frame}{Conceptos matemáticos básicos}{Espacios vectoriales lorentzianos}
+\begin{frame}{Basic Mathematical Concepts}{Lorentzian Vector Spaces}
 	\centering
 	\includegraphics[height=0.7\paperheight]{gfx/timecones}
 \end{frame}
 
-\begin{frame}{Conceptos matemáticos básicos}{Álgebra tensorial}
-	Un \emph{tensor} $T$ de tipo $(r, s)$ en $V(K)$ es una función multilineal
-
+\begin{frame}{Basic Mathematical Concepts}{Tensor Algebra}
+	A \emph{tensor} $T$ of type $(r, s)$ in $V(K)$ is a multilinear map
 	\[
-		T \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r copias}} \times \underbrace{V \times \cdots \times V}_{\text{s copias}} \longrightarrow K.
+		T \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r copies}} \times \underbrace{V \times \cdots \times V}_{\text{s copies}} \longrightarrow K.
 	\]
 	
 	\pause
 	
-	Una base de $\mathcal{T}_{(r,s)}(V)$ es
+	A basis of $\mathcal{T}_{(r,s)}(V)$ is
 	\[
 		\mathcal{B}_T = \{v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s}\},
 	\]
 	
 	\pause
-	donde las coordenadas las notamos como \[t^{i_1,\dots,i_r}_{j_1,\dots,j_s} = T(\varphi^{i_1}, \dots, \varphi^{i_r}, v_{j_1}, \dots, v_{j_s}).\]
+	where the coordinates are denoted by \[t^{i_1,\dots,i_r}_{j_1,\dots,j_s} = T(\varphi^{i_1}, \dots, \varphi^{i_r}, v_{j_1}, \dots, v_{j_s}).\]
 \end{frame}
 
-\begin{frame}{Conceptos matemáticos básicos}{Geometría diferencial}
-	Una \emph{variedad diferenciable} es un espacio topológico
+\begin{frame}{Basic Mathematical Concepts}{Differential Geometry}
+	A \emph{smooth manifold} $M$ is a topological space that satisfies:
 	\begin{itemize}
-		\item localmente euclídeo,
+		\item $M$ is locally euclidean.
 		\pause
-		\item Hausdorff y
+		\item $M$ is Hausdorff.
 		\pause
-		\item con una base topológica contable.	
+		\item $M$ has a countable topological basis.
 	\end{itemize}
 \end{frame}
 
-\begin{frame}{Conceptos matemáticos básicos}{Geometría diferencial}
+\begin{frame}{Basic Mathematical Concepts}{Differential Geometry}
 	\centering
 	\includegraphics[height=0.4\paperwidth]{gfx/planotangente}
 \end{frame}
 
-\begin{frame}{Conceptos matemáticos básicos}{Geometría semi-riemanniana}
+\begin{frame}{Basic Mathematical Concepts}{Semi-Riemannian Geometry}
 	\large
 	\begin{fullpageitemize}
-		\item Métrica lorentziana: $g_p \colon T_pM\times T_pM \to \mathbb{R}$.
+		\item Lorentzian metric: $g_p \colon T_pM\times T_pM \to \mathbb{R}$.
 		\pause
-		\item Variedad lorentziana: $(M,g)$.
+		\item Lorentzian manifold: $(M,g)$.
 		\pause
-		\item Espaciotiempo: $(M,g)$ de cuatro dimensiones orientada temporalmente.
+		\item Spacetime: a time oriented four dimensional $(M,g)$.
 	\end{fullpageitemize}
 \end{frame}
 
@@ -110,9 +107,9 @@
 
 \framecard{$R_{\mu\nu} - \frac{1}{2}S g_{\mu\nu} = T_{\mu\nu}$}
 
-\framecard{ESPACIOTIEMPO KERR}
+\framecard{KERR SPACETIME}
 
-\begin{frame}{Espaciotiempos relativistas}{Métrica de Kerr}
+\begin{frame}{Relativistic Spacetimes}{Kerr Metric}
 	{\Large
 		\begin{align*}
 		ds^2 = &-dt^2 + \rho^2\left(\frac{dr^2}{\Delta} + d\vartheta^2\right) + \\
@@ -129,9 +126,9 @@
 %----------------- GEODÉSICAS -----------------%
 %----------------------------------------------%
 
-\framecard{GEODÉSICAS}
+\framecard{GEODESICS}
 
-\begin{frame}{Geodésicas}{Ecuaciones clásicas}
+\begin{frame}{Geodesics}{Classic Equations}
 	{\Huge
 	\[
 		\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0
@@ -142,7 +139,7 @@
 	\]
 \end{frame}
 
-\begin{frame}{Geodésicas}{Enfoque hamiltoniano clásico}
+\begin{frame}{Geodesics}{Classic Hamiltonian Approach}
 	\large
 	\begin{align*}
 		\rho^2 \dot{t} &=-( aE\textrm{\latolightfont sin}^2\vartheta - L_z) + \frac{r^2+a^2}{\Delta}P, \\
@@ -152,7 +149,7 @@
 	\end{align*}
 \end{frame}
 
-\begin{frame}{Geodésicas}{Formulación variacional}
+\begin{frame}{Geodesics}{Variational Formulation}
 	\large
 	\begin{align*}
 		\dot{r} &= \frac{\Delta}{\rho^2} p_r, \quad \dot{\vartheta} = \frac{1}{\rho^2}p_\vartheta, \quad
@@ -168,10 +165,10 @@
 %------------------- SET UP -------------------%
 %----------------------------------------------%
 
-\framecard{CONFIGURACIÓN}
+\framecard{SET UP}
 
 {\setbeamercolor{background canvas}{bg=white}
-	\begin{frame}[plain]{Configuracion}
+	\begin{frame}[plain]{Set Up}
 		\centering
 		\includegraphics[width=0.8\paperwidth]{gfx/pinhole}
 	\end{frame}
@@ -185,7 +182,7 @@
 
 \framecard{SOFTWARE}
 
-\begin{frame}{Software}{Algoritmo básico}
+\begin{frame}{Software}{Basic Algorithm}
 	{
 	\tiny
 	\begin{algorithm}[H]
@@ -210,6 +207,11 @@
 \begin{frame}{Software}{Runge-Kutta}
 	\[
 	\Large
+	\begin{split}
+		\dot{y} &= f(t,y) \\
+		y(t_0) &= y_0
+	\end{split}
+	\rightarrow
 	\begin{cases}
 		y_{n+1} &= y_n + h \sum\limits_{i=1}^s b_i k_i\\
 		y^*_{n+1} &= y_n + h \sum\limits_{i=1}^s b^*_i k_i,
@@ -219,20 +221,51 @@
 	\[
 		k_i = f(t_n + c_ih, y_n + h\sum_{j=1}^{i-1} a_{ij} k_j).
 	\]
-	
 \end{frame}
 
-\begin{frame}{Software}{Arquitectura GPU}
+\begin{frame}{Software}{Runge-Kutta Step}
 	\centering
-	\includegraphics[width=0.6\paperwidth]{gfx/cores}
+	\includegraphics[width=0.8\paperwidth]{gfx/analytic}
 \end{frame}
 
-\begin{frame}{Software}{Arquitectura GPU}
+\begin{frame}{Software}{Basic Algorithm}
+{
+	\tiny
+	\begin{algorithm}[H]
+		%\caption{High-level abstraction of the ray tracer}
+		\begin{algorithmic}[1]
+			\Function{Ray Tracer}{}
+			\State ODEsystem $\gets$ Kerr spacetime geodesics ODE
+			\State Camera $\gets$ Pinhole camera model
+			\State Geodesics $\gets \{\emptyset\}$
+			\For{pixel $p = (p_x, p_y)$ in the Camera sensor}
+			\State initCond $\gets$ initConditions($p_x$, $p_y$)
+			\State $\gamma_{xy} \gets$ solveIVP(ODEsystem, initCond)
+			\State Geodesics $\gets$ Geodesics $\cup$ $\gamma_{xy}$
+			\EndFor
+			\Return{Geodesics}
+			\EndFunction
+		\end{algorithmic}
+	\end{algorithm}
+}
+\end{frame}
+
+\begin{frame}{Software}{GPU Architecture}
+	\centering
+	\includegraphics[width=0.6\paperwidth]{gfx/cores01}
+\end{frame}
+
+\begin{frame}{Software}{GPU Architecture}
+\centering
+\includegraphics[width=0.6\paperwidth]{gfx/cores02}
+\end{frame}
+
+\begin{frame}{Software}{GPU Architecture}
 	\centering
 	\includegraphics[width=0.9\paperwidth]{gfx/cudagrid}
 \end{frame}
 
-\begin{frame}{Software}{Arquitectura GPU}
+\begin{frame}{Software}{GPU Architecture}
 \centering
 \includegraphics[height=0.7\paperheight]{gfx/owncudagrid}
 \end{frame}
@@ -241,24 +274,23 @@
 %------------------ RESULTS -------------------%
 %----------------------------------------------%
 
-\framecard{RESULTADOS TÉCNICOS}
+\framecard{TECHNICAL RESULTS}
 
-\begin{frame}{Resultados técnicos}{Paso Runge-Kutta}
-	\centering
-	\includegraphics[width=0.8\paperwidth]{gfx/analytic}
-\end{frame}
-
-\begin{frame}{Resultados técnicos}{Paso Runge-Kutta}
+\begin{frame}{Technical Results}{Runge-Kutta Step}
 	\centering
 	\includegraphics[width=0.7\paperwidth]{gfx/kretschmann}
 \end{frame}
 
-\begin{frame}{Resultados técnicos}{Mejora con respecto a CPU}
+\begin{frame}{Technical Results}{Speed Up}
 \centering
 \includegraphics[width=0.7\paperwidth]{gfx/speedup}
 \end{frame}
 
-\framecard{CONSTRUCCIÓN IMAGEN}
+\framecard{RELATIVISTIC ABERRATION}
+
+\frameanimation{gfx/blech-}{1}{90}{20}
+
+\framecard{IMAGE CONSTRUCTION}
 
 \framepic{gfx/complete00}
 
@@ -270,25 +302,42 @@
 
 \framepic{gfx/complete04}
 
-\framecard{CASO EUCLÍDEO}
+\framecard{EUCLIDEAN CASE}
 
 \framepic{gfx/euclidean01}
 
 \framepic{gfx/euclidean02}
 
-\framecard{ROTACIÓN}
+\framecard{3D REPRESENTATION}
 
-%\frameanimation{gfx/spin}{1}{50}{15}
+\framepic{gfx/3D_01}
 
-\framecard{SOMBRA}
+\framepic{gfx/3D_02}
 
-%\frameanimation{gfx/patchedShadow}{1}{63}{20}
+\framepic{gfx/3D_03}
 
-\framecard{CONCLUSIONES}
+\framecard{SPIN}
 
+\frameanimation{gfx/spin}{1}{50}{15}
 
+\framecard{SHADOW}
 
+\frameanimation{gfx/patchedShadow}{1}{63}{20}
 
+\frameanimation{gfx/patchedShadowVertical}{1}{61}{20}
+
+\framecard{ANIMATIONS}
+
+\frameanimation{gfx/cinema01_}{1}{126}{20}
+
+\frameanimation{gfx/cinema02_}{1}{126}{20}
+
+\framecard{CONCLUSIONS}
+
+% templates at the end
+\input{../templates/end-template}
+
+\frameanimation{gfx/tomasFalsas/tf_}{1}{13}{1}
 
 
 %-----------------------------

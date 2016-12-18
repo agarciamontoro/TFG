@@ -6,20 +6,16 @@ from Raytracer import universe, Camera
 
 # Camera position
 camR = 40
-camTheta = 0.705493850862
+camTheta = 1.7
 camPhi = 0
 
 # Camera lens properties
-camFocalLength = 10
+camFocalLength = 5
 camSensorShape = (900, 1600)  # (Rows, Columns)
 camSensorSize = (9, 16)   # (Height, Width)
 
 # Set black hole spin
 universe.spin = .999
-
-# Set black hole's accretion disk radiuses
-# universe.accretionDisk.innerRadius = 2
-# universe.accretionDisk.outerRadius = 1
 
 # Create a camera
 camera = Camera(camR, camTheta, camPhi, camFocalLength, camSensorShape,
@@ -31,13 +27,14 @@ disk = "../../Data/Textures/adisk.png"
 suffix = 0
 amp = 1
 
-for angle in np.arange(0, 2 * np.pi, 0.05):
+for angle in np.arange(0, np.pi, 0.05):
     suffix += 1
 
     camera.phi = angle
-    camera.theta = (np.sin(angle)/2 + 0.5) * (np.pi - 2 * amp) + amp
+    camera.yaw = -angle / 2
+    camera.r = 45 - 38*(angle / (np.pi))
 
     print(camera.phi, camera.theta)
 
     texturedImage, _ = camera.shoot(diskPath=disk, spherePath=sphere)
-    texturedImage.save("pruebita" + "%03d" % suffix + ".png")
+    texturedImage.save("../../Documentation/Presentation/gfx/cinema02_" + "%d" % suffix + ".png")

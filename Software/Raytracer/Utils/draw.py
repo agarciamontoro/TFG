@@ -77,14 +77,14 @@ def drawBlackHole(ax):
                     edgecolors='white', linewidth=0.15)
 
     # Draw accretion disk
-    circle1 = Circle((0, 0), universe.accretionDisk.innerRadius,
-                     facecolor='none')
-    circle2 = Circle((0, 0), universe.accretionDisk.outerRadius,
-                     facecolor='none')
-    ax.add_patch(circle1)
-    ax.add_patch(circle2)
-    art3d.pathpatch_2d_to_3d(circle1, z=0, zdir='z')
-    art3d.pathpatch_2d_to_3d(circle2, z=0, zdir='z')
+    # circle1 = Circle((0, 0), universe.accretionDisk.innerRadius,
+    #                  facecolor='none')
+    # circle2 = Circle((0, 0), universe.accretionDisk.outerRadius,
+    #                  facecolor='none')
+    # ax.add_patch(circle1)
+    # ax.add_patch(circle2)
+    # art3d.pathpatch_2d_to_3d(circle1, z=0, zdir='z')
+    # art3d.pathpatch_2d_to_3d(circle2, z=0, zdir='z')
 
 
 def drawGeodesic(ax, coordinates, colour):
@@ -96,6 +96,7 @@ def drawGeodesic(ax, coordinates, colour):
 
 
 def drawScene(ax):
-    drawAxes(ax)
+    # drawAxes(ax)
     drawBlackHole(ax)
     drawCameras(ax)
+    # drawErgoSphere(ax)
