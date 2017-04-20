@@ -1,0 +1,173 @@
+\chapter{Solution Implementation}
+\label{chapter:implementation}
+
+This chapter covers the implementation details, the technologies used, the different decisions made and the reasons that led us to make them.
+
+In short, the software developed is a Python package that implements a general relativity ray tracer using the library \ac{CUDA} as the back-end, generating images of a Kerr black hole from close distances.
+
+The primary requirement when designing and implementing the software has been the \emph{ease of use}. The Python package exposes a minimal yet powerful public \ac{API}, abstracting all \ac{CUDA}-related code and letting the user configure the properties of the black hole and the cameras placed near it.
+
+\section{Technologies Used}
+
+The base code, exposed to the final user and with an easy to understand \ac{API}, is written in Python. The reason to choose this language is that it is widely used in the scientific community, and whose rise on these fields is increasing. Furthermore, it let us write simple understandable code withouth losing the power of the \ac{OOP}.
+
+The \ac{CUDA} code is written in \ac{CUDA}-C, an extension of the well-known C language that permits to manage the \ac{GPU} and to establish a communication between the host (the \ac{CPU}) and the device (the \ac{GPU}). This is the most difficult code, highly optimised and where the ray tracer kernel and \ac{RK} solver are implemented.
+
+In order to glue together the Python package and the \ac{CUDA} kernel, the PyCUDA library is used.
+
+Finally, Sphinx has been used to manage the documentation of the package, letting the user access the Python docstrings on the objects defined. The C code has been documented using Doxygen, whose output is takes as an input by Sphinx in order to generate a complete documentation.
+
+\subsection{Python Package}
+
+The Python package is organised in four main files:
+\begin{enumerate}
+	\item \lstinline{universe.py}: defines a \lstinline{Universe} class, and exposes an instance of it to the package. This instace, called \lstinline{universe}, has all the general information about the spacetime, namely the black hole's spin and the accretion disk radius.
+	\item \lstinline{camera.py}: defines a \lstinline{Camera} class, that contains all the necessary information that characterise it: the sensor size in physical units, the sensor resolution, the roll, pitch and yaw angles and its position with respect to the black hole centre. Internally, the \lstinline{Camera} class has an attribute called \lstinline{engine}, which is an instance of the \lstinline{RayTracer} class. The \lstinline{Camera} class is in charge of computing the $\alpha$, $\omega$ and $\varpi$ quantities, that defines the value of the Kerr metric on the point where the camera is placed.
+	\item \lstinline{raytracer.py}: defines a \lstinline{RayTracer} class, which implements the PyCUDA calls to the \ac{CUDA} kernels. From the user perspective, it is the class that solves the \ac{ODE} system, although it delegates this work on the \ac{CUDA} methods.
+	\item \lstinline{geodesics.py}: defines a main \lstinline{Congruence} class, which is a set of solved geodesics with their position at every computed time. There are two more classes defined in this file: \lstinline{GeodesicSnapshot}, which is a slice of the \lstinline{Congruence} containing the position of all computed geodesics at a single instant and \lstinline{Geodesic}, which is a slice of \lstinline{Congruence} containing one single geodesic with its position at all computed times.
+\end{enumerate}
+
+The workflow when using this package as a user would be: import the \lstinline{universe} instance and the \lstinline{Camera} class from the package, define as much cameras as desired and configure their properties, configure the spin of the black hole and the accretion disk through the \lstinline{universe} instance if the default values are not wanted and call the method \lstinline{shoot()} from an instance of the camera. This returns a \lstinline{CongruenceSnapshot} instance that can be plotted with its method \lstinline{plot()}.
+
+\subsection{CUDA}
+
+All \ac{CUDA} related files are stored in a directory inside the package. There are four main files inside that directory:
+\begin{enumerate}
+	\item \lstinline{raytracer.cu}: defines two kernels, \lstinline{setInitialConditions} and \lstinline{kernel}. They are explained with detail in \autoref{sec:cuda}.
+	\item \lstinline{solvers.cu}: implements the \ac{RK} solver along with the automatic step size computation algorithm.
+	\item \lstinline{image_transformation.cu}: defines a third kernel, \lstinline{generate_image}, that manages the texture maps. See \autoref{sec:cuda} for more details.
+	\item \lstinline{functions.cu}: implements the right hand side of the \ac{ODE} system; \ie, the $f(y)$ function.
+\end{enumerate}
+
+\subsection{PyCUDA}
+
+The interface between Python and \ac{CUDA} is implemented in the Python class \lstinline{RayTracer}. This class uses the PyCUDA module to configure the device, to manage the memory transactions between host and device and to execute the kernels on the device when the user on the host requests it.
+
+\subsection{Documentation: Sphinx and Doxygen}
+
+The documentation of the software has been made with Sphinx on the Python code and with Doxygen in the C code.
+
+This let us set up a workflow where we document the objects and methods and then we generate different outputs. For example, Sphinx can render HTML documents, and a web page was designed in order to publish a good documentation that can be consulted from everywhere. This web page is not finished, and it is not included in the final code, but \autoref{fig:screenshot} shows an example screenshot of what it looks like.
+
+\begin{figure}[bth]
+	\myfloatalign
+	\includegraphics[width=\linewidth]{gfx/documentationscreenshot}
+	\caption[Screenshot of the still unfinished web page]{Screenshot of the still unfinished web page.}
+	\label{fig:screenshot}
+\end{figure}
+
+\section{Algorithm Implementation}
+
+This section covers the implementation details for some of the most complex blocks on the code.
+
+\section{CUDA Parallelization}
+\label{sec:cuda}
+
+\ac{CUDA} is a powerful library that abstracts the interaction with the \ac{GPU} in order to let the user implement general purpose programs on it.
+
+\ac{CUDA} abstracts all kinds of \acp{GPU} in a hierarchy to manage instructions and shared memory. A list with the main levels on the hierarchy follows:
+\begin{itemize}
+	\item \emph{Thread}: the minimal unit managed by the \ac{GPU}. It is a set of data and instructions that is handled by a single processing unit of the \ac{GPU}. It has its own local memory, the fastest of all the memories defined by \ac{CUDA}, and is only accessible by the thread itself.
+	\item \emph{Warp}: a logical set of 32 threads that execute the same instruction at the same time on different data. Although the consideration of the warps can be omitted by developers, a good design that takes this into account can increase the performance highly, as a warp takes advantage of the spatial locality of data, optimising accesses to memory.
+	\item \emph{Block}: a three dimensional (although one can omit any of the dimensions) matrix where every element is a thread. All threads in a block can access a section of the memory, called \emph{shared memory}, which is much faster than the global memory. Every thread has a unique per-block identifier.
+	\item \emph{Grid}: a three dimensional (although one can omit any of the dimensions) matrix where every element is a block. The memory accessible by all threads in all blocks is called the \emph{global memory}, and it is the slowest one. Every block has a unique identifier within the grid.
+\end{itemize}
+
+The \ac{CUDA} device is configured once at the beginning of the program as a set of threads, uniquely identified by their block indices and thread indices relative to the blocks.
+
+\begin{figure}[bth]
+	\myfloatalign
+	\includegraphics[width=.8\linewidth]{gfx/cudagrid}
+	\caption[$2\times3$ grid with $16\times16$ blocks]{$2\times3$ grid with $16\times16$ blocks}
+	\label{fig:cudagrid}
+\end{figure}
+
+An example configuration of the \ac{CUDA} device can be seen on \autoref{fig:cudagrid}, where 6 two dimensional blocks are arranged on the grid in two rows and three columns. Every block has 256 threads, arranged on a 16$\times$16 matrix.
+
+The shape of the \ac{CUDA} grid and blocks are customizable by the user, but the warps are automatically created by \ac{CUDA}, picking up always sets of successive 32 threads, going first through the $X$ axis, then through the $Y$ axis and finally through the $Z$ axis.
+
+This section will study how the grid and blocks are shaped on our software and the implemented parallelized code, as well as some fine-tuning techniques used to speed up the computations.
+
+\subsection{Device Setup}
+
+The configuration of the grid for a ray tracer seems natural. As we are working with images, which are simply two dimensional matrices, the grid will be shaped as a two dimensional matrix, where every thread will compute the geodesic corresponding to a pixel.
+
+The important question now is how to configure the pixels between the blocks; \ie, how to define the number of blocks per column and per row in the grid.
+
+The simplest answer is to define one dimensional blocks of a fixed size that extend along the rows of the image. The very first implementation of the ray tracer used this configuration, but the speed up against the \ac{CPU} implementation was very poor.
+
+The branch divergence was guilty of the poor performance: along a row of the image, the behaviour of the corresponding geodesics is very different, and the so-called \emph{warp divergence} occurs: in a warp, which in this configuration is defined along the rows of the image, all threads execute the same instruction at the same time; if the control flow varies between the threads in a warp, some of them will be idle, which causes a great loss of parallel efficiency.
+
+This is avoided by designing a configuration that ensures, or at least that facilitates, that all the threads in a warp execute the same exact code without branch divergence. In our case, this means that the geodesics hitting the pixels in a warp should have followed a nearby path.
+
+However, without knowing a priori the origin of the geodesics, we can only guess which pixels will have similar geodesics. The configuration design follows then this sensible guess: \emph{nearby pixels are hit by geodesics with nearby origins}.
+
+From this assumption, we designed warps as squared as possible, configuring the blocks to have an integer number of warps. This resulted in the following configuration:
+\begin{enumerate}
+	\item Each block has $8\times8$ threads; \ie, two warps of $8\times4$ threads are located per block. See \autoref{fig:warpconf}.
+	\begin{figure}[bth]
+		\myfloatalign
+		\includegraphics[width=.5\linewidth]{gfx/warpconf.png}
+		\caption[Raytracer block configuration]{Raytracer block configuration}
+		\label{fig:warpconf}
+	\end{figure}
+	\item The grid size is dynamically computed using the image size provided by the user. The number of rows and columns of the grid are computed with the following formulas:
+	\begin{equation*}
+	G_C = \left \lfloor{\frac{I_C - 1}{B_C} + 1}\right \rfloor, \qquad
+	G_R = \left \lfloor{\frac{I_R - 1}{B_R} + 1}\right \rfloor,
+	\end{equation*}
+	where $G_C$ and $G_R$ are the number of blocks per column and per row, $I_C$ and $I_R$ are the columns and rows of pixels of the image and $B_C = B_R = 8$ are the number of columns and rows of a block. These formulas ensure we have enough threads to compute each pixel. The remaining threads, which do not have any geodesic to compute, will be idle during all the program execution.
+\end{enumerate}
+
+\subsection{CUDA Kernels}
+
+The main function executed by \ac{CUDA} on the \ac{GPU} is called the \emph{kernel}. Our implementation has three kernels, where every thread is identified with a pixel via its unique identifier in the \ac{CUDA} device. The kernels are:
+\begin{enumerate}
+	\item \lstinline{setInitialConditions()}: it is the kernel to compute the initial conditions for every pixel, as designed in \autoref{sec:initcond}. From the pixel coordinates, it computes the corresponding pair $(\vartheta_{cs}, \varphi_{cs})$.
+	\item  \lstinline{kernel()}: it is the main kernel. It receives the initial conditions for every pixel and the final time until which the \ac{ODE} system will be integrated. It computes the origin of each geodesic, \ie, the pair $(\vartheta', \varphi')$, using the design described at \autoref{sec:numerical}, while continuously checking for collisions with the accretion disk.
+	\item \lstinline{generate_image()}: it is an auxiliary kernel to map textures into the images. It receives the origin of the geodesic corresponding to each pixel in the image and maps it to a pixel in the provided texture.
+\end{enumerate}
+
+\subsection{Optimizations}
+
+The computational bottleneck of the ray tracer is the \ac{ODE} solver. In particular, the computation of the right hand side of the system ---in terms of the \autoref{sec:numerical}, the function $f(y,t)$---, which involves a lot of operations, some of them really expensive, as the \lstinline{sin()} and \lstinline{cos()} functions.
+
+This chunk of code has been highly optimised, pre-computing all repeated operations and using efficient implementations such as the \lstinline{sincos()} function. The derivatives on equations \ref{eq:eqsmotionp}, \ref{eq:eqsmotionpr} and \ref{eq:eqsmotionpt} have been expressed in their most elementary terms and all common quantities between them have been also pre-computed. To optimise the memory access time, the thread's local memory has been used whenever it was possible.
+
+Furthermore, a specific issue has been taking into account: the \ac{ILP}. It is clear that a single thread cannot keep the \ac{GPU} busy, so the device schedules threads and instructions in such a way that the \ac{GPU} is always busy.
+
+One way of helping the \ac{CUDA} scheduler to maximize the device occupancy is to design the code optimising the \ac{ILP}. For example, imagine the following three lines of code:
+
+\begin{lstlisting}
+	int rho = a + b;
+	int theta = c + d;
+	int m = rho * theta;
+\end{lstlisting}
+
+It is clear that the third one depends on the other two to be executed. However, the first two lines can be run in parallel. The scheduler then can run these two operations on different processor in order to speed up the computation.
+
+All the ray tracer implementation is coded in such a way that independent instructions are together, whereas dependent ones are as far as possible one of the other. This let the scheduler issue instructions in parallel without having to wait for dependent computations to finish.
+
+In particular, the code of the computation of $f(y,t)$ has been deeply studied in order to maximize the \ac{ILP}.
+
+\subsection{Initial Conditions Computation}
+
+The initial conditions computation is implemented as a kernel on the \lstinline{raytracer.cu} file.
+
+It receives a pointer to two allocated sections of memory in the device: one to store the output of the initial conditions and another to store the output of the computation of the conserved quantities $b$ and $q$.
+
+Each thread solve the formulas obtained in \autoref{sec:pinhole}: equations \ref{eq:pinhole1} and \ref{eq:pinhole2} and the ones obtained in \autoref{sec:initcond}, and store the computed values in the pointed sections of the memory.
+
+\subsection{Ray Tracing}
+
+The ray tracing kernel implements the main logic of the software: it executes the \ac{RK} solver while continuously checking for collisions with either the disk or the black hole, following the design on \autoref{sec:numerical}.
+
+It receives a pointer to an allocated section of the memory where the initial conditions of the system are stored. After solving the \ac{ODE} system, it rewrites this buffer to provide the user with the final \ac{BL} coordinates of the considered geodesics.
+
+An auxiliary buffer is used in order to known if a given geodesic has hit the disk, has fallen into the black hole or if it points to the celestial sphere.
+
+\subsection{Texture Mapping}
+
+The texture mapping is a simple kernel implemented in the \lstinline{image_transformation.cu} file. It receives the final computed solution of the \ac{ODE} system, a pointer to a section of the memory where the textures pixels are assumed to be stored along with the size of the textures and a pointer to another previously allocated section of memory where the final pixels of the image will be stored.
+
+It then computes the texture mapping and outputs the result to the final image.

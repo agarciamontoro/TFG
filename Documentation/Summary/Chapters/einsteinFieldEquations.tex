@@ -1,0 +1,138 @@
+\chapter{Geometric Description of Gravity}
+\label{chapter:einstein}
+
+Before Einstein developed its general relativity theory, the gravity was understood as a force acting on bodies. The most interesting idea on Einstein's work was to change this approach and consider the gravity as a consequence of the geometric nature of the spacetime. Therefore, the curvature of the spacetime is the only origin of what we perceive as gravity, and all forces related to it vanish: hence, a particle in free fall near a celestial body does not have any acceleration caused by the gravity, which is not a force. In fact, the particles near celestial bodies such as black holes that are not under any other force, are characterised by the geodesics; \ie, by its null acceleration.
+
+This chapter introduces some notions to slightly understand the surface of these ideas. All results and lines of reasoning are extracted from \cite[Ch. 4]{sachs77}.
+
+\section{Einstein Tensor of a Metric}
+
+\begin{definition}[Einstein tensor]
+	Let $(M,g)$ be a spacetime. The symmetric 2-covariant tensor field
+	\[
+		G \defeq \operatorname{Ric}-\frac{1}{2}Sg,
+	\]
+	where Ric is the Ricci tensor of $g$ and $S$ the scalar curvature of $g$, is called the \emph{Einstein tensor of $g$}.
+\end{definition}
+
+It can be proved (\cite{sachs77}) that $G$, the Einstein tensor of $g$, satisfies the following:
+
+\begin{enumerate}
+	\item We have
+	\begin{equation}
+		\label{eq:tracegs}
+		\operatorname{trace}_gG=-S,
+	\end{equation}
+	and so
+	\[
+		\mathrm{Ric}=G-(1/2)(\mathrm{trace}_gG)g,
+	\] where $\operatorname{trace}_gG$ denotes the contraction of the $(1,1)$-tensor field $g$-equivalent to $G$. Therefore, to have $G$ is equivalent to have $Ric$, and both tensors have the same physical information.
+	\item If for any symmetric 2-covariant tensor field $T$, we define \[G_k:=T+k(\mathrm{trace}_gT)g,\] for a fixed $k\in \mathbb{R}$, then the map $T \longmapsto G_k$ is involutive if and only if $k=0$ or $k=-\frac{1}{2}$.
+	\item $\mathrm{Ric}=\lambda\,g$ if and only if $G=-\lambda\,g$. A spacetime such that Ric is proportional to the metric tensor $g$, or equivalently, $G$ is proportional to $g$, is called an \emph{Einstein spacetime}.
+\end{enumerate}
+
+\section{Stress-Energy Tensors}
+\label{sec:stressenergy}
+
+\begin{definition}[Stress-energy tensor]
+	A \emph{stress-energy tensor} on a spacetime $M$ is a symmetric 2-covariant tensor field $T$ such that
+	\begin{equation}
+	\label{eq:stress}
+		T(V,V) \geq 0
+	\end{equation}
+	for any timelike vector $V \in T_p M \; \forall p \in M$.
+\end{definition}
+
+Note that a continuity argument (see \autoref{sec:toporemarks}) shows that inequality \ref{eq:stress} also holds true if $V$ is a lightlike vector on $T_p M$.
+
+It is commonly argued that the mathematical way to express that gravity attracts on average is
+\begin{equation}
+	\operatorname{Ric} (V,V) \geq 0
+\end{equation}
+for any timelike tangent vector $V \in T_p M$ and for all $p \in M$; that is, the Ricci tensor of a physically realistic spacetime must be an stress-energy tensor. This assumption restricts the familiy of Lorentzian metrics that can be physically significant.
+
+\section{Einstein Field Equation}
+
+Consider a stress-energy tensor $T$ on a spacetime $(M,g)$ such that
+\begin{enumerate}
+	\item The function \begin{equation}
+		\label{eq:stressderived}
+		T - \frac{1}{2}(\operatorname{trace}_g T) g
+	\end{equation} is also a stress-energy tensor.
+	\item $T$ satisfies the conservation law \begin{equation}
+		\label{eq:div0}
+		\operatorname{div} \widehat{T} = 0,
+	\end{equation}
+	where $\widehat{T}$ is the 2-contravariant tensor field $g$-equivalent to $T$.
+\end{enumerate}
+
+We say that the spacetime $(M,g)$ obeys the Einstein field equation with respect to $T$ (using the terminology of \cite[Sec. 6.2]{sachswu77}) if
+\begin{equation}
+	\label{eq:einstein}
+	G  = T,
+\end{equation}
+where $G$ is the Einstein tensor of $g$, that is,
+\begin{equation}
+	\label{eq:einstein2}
+	\Ric - \frac{1}{2}Sg = T.
+\end{equation}
+
+From \autoref{eq:tracegs}, we know
+\[
+	\operatorname{trace}_g T = -S,
+\]
+so we can rewrite \autoref{eq:einstein2} as follows:
+\begin{equation}
+	\label{eq:einstein3}
+	T - \frac{1}{2}(\operatorname{trace}_g T)g = \Ric.
+\end{equation}
+
+Therefore, assumption \ref{eq:stressderived} agrees with the timelike convergent condition \cite[p. 123]{sachs77}, which express, using the Ricci tensor, that gravitational effects are on average attractive.
+
+On the other hand, assumption \ref{eq:div0} is mandatory, as we know that the Einstein tensor $G$ satisfies
+\[
+	\operatorname{div} \hat{G} = 0.
+\]
+
+Einstein field equation (\autoref{eq:einstein} or \autoref{eq:einstein2}) postulated how matter and radiation in a region of the universe can be described by a Lorentzian metric $g$.
+
+In fact, \autoref{eq:einstein} is similar to the Poisson equation,
+\[
+	\Delta\phi = k\rho,
+\]
+where $k>0$ is a universal constant, $\rho$ is the function describing the density of matter and $\phi$ is the potential function.
+
+This equation postulated, in the pre-relativistic physics, how matter can be described by a potential function.
+
+Note that if we know $\phi$, then the corresponding gravitational field is 
+\[
+	-\nabla \phi,
+\]
+where $\nabla$ denotes the usual gradient for functions on an open subset of the Euclidean space $\R^3$.
+
+Then, the gravitational force, $F$, acting on a mass $m$, is obtained as follows:
+\[
+	F = -m\nabla\phi.
+\]
+
+We see then that, roughly speaking, $F$ had the same role in the old physics as the curvature tensor has now in Relativity.
+
+Imagine now the trivial stress-energy tensor
+\[
+	T = 0.
+\]
+
+If $(M,g)$ obeys the Einstein field equation with respect to $T = 0$, then, using \autoref{eq:einstein3}, we realize that
+\[
+	Ric = 0.
+\]
+
+Assume now that $(M,g)$ obeys the Einstein field equation
+\begin{equation}
+	\label{eq:absence}
+	Ric = 0.
+\end{equation}
+
+Then, it is trivial that $T=0$.
+
+We can conclude that the mathematical way of expressing the absence of matter and radiation on the spacetime is the one shown on \autoref{eq:absence}, which is called the \emph{vacuum Einstein field equation}.

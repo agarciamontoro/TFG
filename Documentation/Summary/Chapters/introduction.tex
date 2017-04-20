@@ -1,0 +1,28 @@
+\chapter{General Description}
+
+This work aimed to study how the light moves on the surroundings of black holes, developing a tool that uses this information to generate images of what an observer would see when getting closer to a body of this kind.
+
+This problem is well-known \cite{oneill83} \cite{oneill95}, and has been widely studied. The main problem is that we do not usually have analytic expressions for the paths followed by photons, which force us to work with numerical solutions.
+
+There are a lot of research groups studying different processes near black holes, as the formation of jets and accretion disks. It is important, then, to have a general-purpose, robust, stable and well documented code that let the scientists obtain the results they need. There are several numerical implementations \cite{thorne15} \cite{chan13} that solve this problem, but they are either privative, are not well documented or are not adapted with a general purpose. The scientific community would take advantage of a code with such characteristics, and so the main goal of this work was to implement it.
+
+The addressed problem was divided into two sub problems:
+\begin{enumerate}
+	\item To understand how the light moves near a black hole, particularly on a Kerr spacetime, with all the mathematics and physics needed. This yielded an \ac{ODE} system with no analytic solution.
+	\item To implement a software, in particular a ray tracer, that numerically solves the equations for the photons trajectories obtained with the previous work.
+\end{enumerate}
+
+The understanding of this problem involved a solid mathematical background on differential and semi-Riemannian geometry, it needed of an introduction to the general relativity theory and a good understanding of the movement of photons on relativistic spacetimes. The necessary concepts and results on these fields were widely studied.
+
+Furthermore, the implemented solution was parallelized using \ac{GPU} techniques, obtaining a code that was up to 125 times faster than non-parallelized solutions. The \ac{GPU} architecture was studied on the work and the software design was made with the hardware specific issues in mind.
+
+The work was organised in three main parts:
+\begin{enumerate}
+	\item Mathematics: in this part, all the needed mathematical background was studied, from basic concepts as the tensor algebra to the more advanced topics as the semi-Riemannian geometry.
+	\item General Relativity: this part focused on the concepts particular to the general relativity theory, studying the concept of spacetime and obtaining the equations for the photons trajectories near Kerr black holes.
+	\item Computer Science: the last part covered the computational solution to the problem of finding the path followed by light in the surroundings of a black hole. It described the design, studying \ac{GPGPU} techniques, describing the implemented solution and the results obtained.
+\end{enumerate}
+
+These parts are summarised here in the three following chapters, that give an overall idea of the content detailed in the work. This summary will not contain the proofs of the mathematical results ---they can be found in the work--- nor all the details of every concept; however, this summary intends to give the reader an overall idea of the developed work.
+
+The source code of the software and its documentation, as well as the sources of this document, can be found on \href{https://github.com/agarciamontoro/TFG}{its public repository}\footnote{\url{https://github.com/agarciamontoro/TFG}}.

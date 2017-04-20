@@ -1,0 +1,558 @@
+\chapter{Introduction to Differential Geometry}
+\label{chapter:diffgeom}
+
+\section{Differentiable Manifolds}
+
+Roughly speaking, a manifold is a topological space that, locally, looks like the Euclidean space $\R^n$. This similitude is essential, and will let us control the manifold as if we were working in the Euclidean space; generally, the definitions concerning manifolds and the properties proved from them will be based on the known properties of $\R^n$.
+
+The following definition specifies the formal concept of a topological manifold:
+
+\begin{definition}[N-dimensional topological manifold]
+    Let $M^n$ be an $n$-dimensional topological space. The space $M^n$ is called a topological manifold if the following properties are satisfied:
+    \begin{enumerate}
+        \item $M^n$ is locally homeomorphic to $\R^n$. \label{def:manifold:homeo}
+        \item $M^n$ is a Hausdorff space. \label{def:manifold:haussdorf}
+        \item $M^n$ has a countable topological basis. \label{def:manifold:basis}
+    \end{enumerate}
+\end{definition}
+
+The first property states that, for every point $p \in M^n$, there exists an open neighbourhood $U \subset M^n$ of $p$ and a homeomorphism
+\[
+    h \colon U \to V,
+\]
+
+with $V \subset \R^n$ an open set.
+
+One could think that the Hausdorff property is redundant, as the local homeomorphism may imply this topological characteristic. This is not true, and the usual counterexample is the line with two origins.
+
+Let $M = \R \cup p$ be the union of the real line and a point $p \notin \R$. Define a topology in this space with $\R \subset M$ as an open set and the neighbourhoods of $p$ being the sets $(U \setminus \{0\}) \cup \{p\}$, where $U$ is a neighbourhood of $0 \in \R$. This space is locally Euclidean but not Hausdorff: the intersection of any two neighbourhoods of the points $0 \in \R$ and $p$ is non-empty.
+
+\begin{figure}[bth]
+    \myfloatalign
+    \begin{tikzpicture}
+      \draw[thick] (-5,0) -- (-0.05,0);
+      \draw[very thick,<->] (-1,0) -- (-0.05,0);
+      \draw[fill] (0,0) circle [radius=0.05];
+      \node[below] at (0,0) {0};
+      \draw[thick] (0.05,0) -- (5,0);
+      \draw[very thick,<->] (0.05,0) -- (1,0);
+      \node[right] at (5,0) {$\R$};
+
+      \draw[fill,Maroon] (0,0.5) circle [radius=0.05];
+      \node[right,Maroon] at (0,0.5) {$p$};
+    \end{tikzpicture}
+    \caption[Line with two origins]{Line with two origins.}
+    \label{fig:2origin}
+\end{figure}
+
+The last property of the definition will be proven key in our study, as it will let us define metrics on the manifold.
+
+\subsection{Charts}
+
+The main characteristic of the manifolds, its resemblance to the Euclidean space, have to be exploited in order to understand the nature of the mathematical object.
+
+The conceptual space where the manifolds live is an abstract place whose study is difficult from our Euclidean perspective.
+
+The idea of the manifold will be understood, then, by breaking it up and lowering the pieces to the real word; \ie, the Euclidean space.
+
+The essential tool to make this happen will be the coordinate charts. These tools are like prisms to see the manifold from the Euclidean perspective, and they will let us grasp the nature of the ideal concept of a manifold.
+
+\begin{definition}[Coordinate chart]
+    A \emph{coordinate chart} ---or \emph{coordinate system}--- in a topological manifold $M^n$ is a homeomorphism $h \colon U \to V$ from an open subset of the manifold $U \subset M$ onto an open subset of the Euclidean space $V \subset \R^n$.
+
+    We call $U$ a \emph{coordinate neighbourhood} in $M$.
+\end{definition}
+
+One single chart may not cover the whole manifold. In order to completely understand it, we need a set of charts that describe it completely.
+
+\begin{definition}[Coordinate atlas]
+    Let
+    \[
+    A = \{h_\alpha \colon U_\alpha \to V_\alpha / \alpha \in I\}
+    \]
+    be a set of coordinate charts in a topological manifold $M^n$, where $I$ is a family of indices and the open subsets $U_\alpha \subset M$ are the corresponding coordinate neighbourhoods.
+
+    $A$ is said to be an \emph{atlas} of M if every point is covered with a coordinate neighbourhood; \ie, if $\cup_{\alpha \in I} U_\alpha = M$.
+\end{definition}
+
+% Examples?
+
+\subsection{Differentiable Structures}
+
+The concept of manifold is quite general and includes a vast set of examples. We can impose, however, some properties on the smoothness of the manifold to restrict the objects we will work with.
+
+This section introduces the notion of differentiable structure, whose definition is key in the later description of differentiable manifolds, the core concept of this chapter.
+
+The first question in this study is the following: a chart describes perfectly a single piece of the manifold, but what happens when the domains of a pair of charts overlap? The following two definitions specify the concepts involved in this question.
+
+% TODO: Add the usual conmutative diagram for the transition maps
+
+\begin{definition}[Transition map]
+    Let $M^n$ be a manifold and $(U, \phi)$, $(V, \psi)$ a pair of coordinate charts in $M^n$ with overlapping domains, that is:
+    \[
+        U \cap V \neq \emptyset.
+    \]
+
+    The homeomorphism between the open sets of the Euclidean space $\R^n$,
+    \[
+        \psi \circ \phi^{-1} \colon \phi(U \cap V) \to \psi(U \cap V),
+    \]
+    is called a \emph{transition map}.
+\end{definition}
+
+\begin{definition}[Smooth overlap]
+    Two charts $(U, \phi)$, $(V, \psi)$ are said to overlap smoothly if their domains are disjoint ---\ie, if $U \cap V  = \emptyset$--- or if the transition map $\psi \circ \phi^{-1}$ is a diffeomorphism.
+\end{definition}
+
+The description of two charts that overlap smoothly can be naturally extended to the concept of smooth atlas, which will make possible to do calculus on the manifold.
+
+\begin{definition}[Smooth coordinate atlas]
+    An atlas $A$ is said to be smooth if every pair of charts in $A$ overlap smoothly.
+\end{definition}
+
+But what happens if we define two different atlases in the manifold? Will the calculus depend on this choice? Fortunately, we can find, for each manifold, one particular atlas that contain every other atlas defined there. It is formally described in the following definition and its uniqueness is proved in \autoref{prop:max-atlas-uniq}.
+
+\begin{definition}[Complete atlas]
+    A \emph{complete atlas} ---or \emph{maximal atlas}--- on $M^n$ is a smooth atlas that contains each coordinate chart in $M^n$ that overlaps smoothly with every coordinate chart in $M^n$.
+\end{definition}
+
+\begin{proposition}[Complete atlas uniqueness]
+    Let $M^n$ be a topological manifold.
+
+    \begin{itemize}
+        \item Every smooth atlas on $M^n$ is contained in a complete atlas.
+        \item Two smooth atlas on $M^n$ determine the same complete atlas if and only if its union is a smooth atlas.
+    \end{itemize}
+    \label{prop:max-atlas-uniq}
+\end{proposition}
+
+
+\begin{proof}
+ 	Let $A$ be a smooth atlas on $M^n$ and define $A'$ as the set of all $n$-dimensional coordinate charts that overlaps smoothly with every chart on $A$. We are going to see that $A'$ is a complete atlas.
+ 	
+ 	It is trivial to see that $A'$ is an atlas, since $A \subset A'$ and $A$ is an atlas. The smoothness of the atlas is a consequence of the fact that smoothness is a local property. Finally, it is clear that $A'$ is complete as, by definition, if a chart overlaps smoothly with every element of $A'$, then it belongs to $A'$.
+ 	
+ 	If the union of two atlases is a smooth atlas, it is clear that the atlas defined before is the same complete atlas for both of them. Equivalently, if two atlas determine the same complete atlas, their charts smoothly overlap with every other chart on the complete atlas, and therefore their union is a smooth atlas.
+\end{proof}
+
+\begin{definition}[Differentiable manifold]
+	A \emph{differentiable manifold} is a pair $(M, A)$, where $M$ is a topological manifold and $A$ is a complete atlas.
+\end{definition}
+
+\begin{example}
+	The concept of differentiable manifold is, probably, the most important idea throughout all this work. Let us see then some examples in order to better understand that these spaces we will work with are not that abstract ---although they can be---.
+	
+	\begin{enumerate}
+		\item The Euclidean space $\R^n$ is a differentiable manifold considering the identity map as its atlas.
+		\item Every \emph{smooth surface}\footnote{We consider the definition of smooth surface seen in a basic course of curves and surfaces: a subset of $\R^3$ such that every point is covered by the image of a differentiable map whose restriction to an open subset containing the point is an homeomorphism and whose differential is a monomorphism.} of $\R^3$ is an example of a differentiable manifold. As a subset of $\R^3$, the local homeomorphism, the Hausdorff property and the countable basis are trivial. Furthermore, the definition of smooth surface gives us for free the complete atlas.
+		\item The sphere $S^n$ is an $n$-dimensional differentiable manifold. As an atlas we can consider the union of the two stereographic projections onto $\R^n$ from the north and south poles.
+	\end{enumerate}
+\end{example}
+
+\subsection{Differentiable Maps}
+
+The concept of differentiable maps on manifolds is the first one in which we are going to generalize concepts from the Euclidean space using the local homeomorphism.
+
+The idea is simple: we know how to build differentiable maps between open sets of $\R^n$, so we are going to define differentiability between manifolds going through the images of the coordinate neighbourhoods of the points.
+
+As the differentiability is a local concept, being the manifolds locally Euclidean is enough to generalize it.
+
+\begin{definition}
+	Let $F \colon M \to N$ be a map between two differentiable manifolds: $M$ and $N$. F is said to be \emph{differentiable} or \emph{smooth} if the following conditions are satisfied:
+	\begin{enumerate}
+		\item There is a chart $(U, \varphi)$ for every point $p \in M$ and another one, $(V, \psi)$ for its image, $F(p) \in N$, such that $p \in U$, $F(p) \in V$ and $F(U) \subset V$.
+		\item The map $\psi \circ F \circ \varphi^{-1} : \varphi(U) \to \psi(V)$ is differentiable in the usual sense.
+	\end{enumerate}
+\end{definition}
+
+This definition includes also the case in which $M$, $N$ or even both of them are the euclidean spaces $\R^m$ and $\R^n$. There is no ambiguity between this and the euclidean definition of smoothness, as one can take the identity map as coordinate chart when one of the manifolds is an euclidean space and the usual definition will be found.
+
+From this definition it is trivial to prove that, if a family of smooth maps covers a manifold with the maps being equal where their images overlap, a unique smooth function that is equal to each individual map on its image can be built.
+
+Furthermore, it is easy to see that the identity of a manifold, the coordinate charts and the composition of smooth functions are smooth. Smoothness also implies continuity.
+
+As well as the definition of smoothness, the definition of diffeomorphism can be generalized to manifolds, being \autoref{def:diffeo} its formal expression.
+
+\begin{definition}[Diffeomorphism]
+	\label{def:diffeo}
+	A function $f \colon M \to N$ between two manifolds is said to be a \emph{diffeomorphism} if it is a smooth bijective map with its inverse being also smooth.
+	
+	When there exists such map, $M$ and $N$ are said to be diffeomorphic.
+\end{definition}
+
+\subsection{Tangent Space}
+
+Once we know what a differentiable function is, the next step we need to take in order to set up a proper place to do calculus on manifolds is to define the differential.
+
+First, let us remember some concepts about regular surfaces on $\R^3$. Let $S, S'$ be two regular surfaces on $\R^3$ and let $f \colon S \to S'$ be a differentiable map between them. The differential of $f$ on $p \in S$ was defined as a function that transforms tangent vectors to the first surface into tangent vectors to the second,
+\[
+	(df)_p \colon T_p S \to T_{f(p)} S'.
+\]
+
+What can we learn from this? Our goal is to define the differential of a differentiable map between \emph{manifolds}. It would be ideal that it generalizes the notion we already have about differentials on surfaces, so it is mandatory to first generalize the concept of tangent plane.
+
+The tangent plane to a regular surface on one of its points $p$ is, as we know, the vector subspace of all the tangent vectors to the point. This vector space was shown to be isomorphic to the space of directional derivatives on $p$. Instead of trying to generalize the concept of tangent vector, the idea we will follow is to extend the notion of directional derivatives, building the new \emph{tangent plane}-like space from these.
+
+The usual directional derivative is a linear map that satisfies the Leibniz rule, so we are going to define a tangent vector to a manifold as an axiomatization of this concept: the derivation.
+
+From now on, we will note the set of all the smooth real-valued functions on a manifold $M$ as $\mathcal{F}(M)$:
+\[
+\mathcal{F}(M) \defeq \{f \colon M \to \R \,/\, \textrm{f is smooth} \}.
+\]
+
+\begin{definition}[Derivation]
+	Let $p$ be a point on a manifold $M$. A \emph{derivation} at $p$ is a map
+	\[
+		D_p \colon \mathcal{F}(M) \to \R
+	\]
+	that is linear and leibnizian; \ie, that satisfies the following properties:
+	\begin{enumerate}
+		\item $D_p(af + bg) = aD_p(f) + bD_p(g)$, where $a,b \in \R$ and $f,g \in \mathcal{F}(M)$.
+		\item $D_p(fg) = D_p(f)g(p) + f(p)D_p(g)$, where $f,g \in \mathcal{F}(M)$.
+	\end{enumerate}
+\end{definition}
+
+Taking into account the one-to-one correspondence between tangent vectors and derivations on the euclidean case ---the directional derivative is actually a derivation---, the idea of the generalization of tangent vector on \autoref{def:tangentvector} is more clear now.
+
+\begin{definition}[Tangent vector]
+	\label{def:tangentvector}
+	Let $M$ be a manifold and $p \in M$ one of its points. A \emph{tangent vector to M on p} is a derivation at p.
+\end{definition}
+
+It is trivial to see that the directional derivative is a tangent vector to the well-known manifold $\R^n$. Being this \emph{derivation --- tangent vector} duality clear, it is now natural to arrive to \autoref{def:tangentspace}.
+
+\begin{definition}[Tangent space]
+	\label{def:tangentspace}
+	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{tangent space to $M$ at $p$}, noted as $T_p M$, is the set of all tangent vectors to $M$ on $p$; \ie, the family of derivations at $p$.
+\end{definition}
+
+As for every vector space, we can define its dual version.
+\begin{definition}[Cotangent space]
+	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{cotangent space to $M$ at $p$}, denoted as $T_p M^*$ is the dual space of the vector space $T_p M$.
+	
+	The elements $\omega \in T_p M^*$ are called \emph{covectors} on $p$.
+\end{definition}
+
+\begin{remark}
+	\label{rem:derivedbases}
+	$T_p M$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x = (x^1, \dots, x^n) \colon U \to M$ is a chart that covers $p$, then (\cite[p. 8]{docarmo79}) $\{ \frac{\partial}{\partial x^1}\bigr|_p, \dots, \frac{\partial}{\partial x^n}\bigr|_p\}$ is its associated basis on $T_p M$, where
+	\[
+	\frac{\partial}{\partial x^i}\bigr|_p (f) = \pd{f}{x^j}(p)
+	\]
+	is usually noted as $\partial_i \bigr|_p$.
+	
+	Equivalently, the basis for the cotangent space $T_p^* M$ is the dual of the preceding one, $\{dx^1\bigr|_p, \dots, dx^n\bigr|_p\}$, where the elements are the dual versions of the previous components, that is, the covectors that satisfy
+	\[
+		dx^i\bigr|_p\left(\partial_j \bigr|_p\right) = \delta^i_j.
+	\]
+\end{remark}
+
+The extension of the idea of differential is now straightforward: we have just to remember how the differential on the euclidean case can be defined from derivations and repeat the nearly exact same definition on manifolds.
+
+\begin{definition}[Differential or pushforward]
+	Let $M$ and $N$ be two manifolds and let $F \colon M \to N$ be a smooth map.
+	
+	Consider, for each $p \in M$, the function
+	\begin{align*}
+		dF \colon T_p M &\to T_{F(p)} M \\
+		X &\mapsto dF(X),
+	\end{align*}
+	that maps each tangent vector to $M$ at $p$, $X$, to a tangent vector to $N$ at $F(p)$, $F_*X$, defined as follows:
+	\begin{align*}
+		dF(X) \colon \mathcal{F}(M) &\to \R \\
+		f &\mapsto X(f \circ F).					
+	\end{align*}
+
+	The function $dF$ is the differential of $F$ at $p$, which is also known as the \emph{pushforward} of $p$ by $F$.
+		   																	
+\end{definition}
+
+On the $\R^3$ surfaces scenario, it is not odd to define tangent vectors using their close relation with the curves on the surface. In order to obtain a better understanding of the manifolds tangent space, let us see what a curve on a manifold is and how a tangent vector on a point can be identified with them.
+
+\begin{definition}[Curve on a manifold]
+	% Roldan, 21
+	Let $M$ be a manifold and $I \subset R$ an open set on $\R$. A \emph{curve on $M$} is a continuous map
+	\[
+		\gamma \colon I \to M.
+	\]
+\end{definition}
+
+Every smooth curve is differentiable in the manifold sense, and having understood the duality between derivations and tangent vectors, we can naturally obtain the tangent vector to a curve on an instant $t_0\in I$ by applying the definition we just saw.
+
+\begin{proposition}[Tangent vector to a curve]
+	\label{pro:tangcurve}
+	The tangent vector to a curve $\gamma \colon I \to M$ on an instant $t_0 \in I$, noted as $\gamma'(t_0) \in T_{\gamma(t_0)} M$ is the pushforward of $t$ by $\gamma$; \ie, the tangent vector to $M$ defined as
+	\begin{align*}
+		\gamma'(t_0) \colon \mathcal{F}(M) &\to \R \\
+		f &\mapsto \frac{d}{dt} \left( f \circ \gamma \right) (t_0).
+	\end{align*}
+\end{proposition}
+
+\autoref{pro:tangcurve} tells us how to assign a vector from the tangent space of a manifold $M$ to every curve $\gamma$ on it, but is there a curve that could be assigned to every tangent vector on $M$?; \ie, is every element of the tangent space to $M$ the tangent vector of a curve? The following result answers this question.
+
+\begin{theorem}
+	% Roldan, 22
+	Let $p$ be a point on a manifold $M$. There exists, for every $X \in T_p M$, a smooth curve on $M$ whose tangent vector is $X$.
+\end{theorem}
+
+\begin{proof}
+	If $\varphi$ is the manifold chart that covers $p$ and $X = (X^1, \dots, X^n)$ are the coordinates of an element of the tangent space, then we can define
+	\[
+		\gamma(t) = \varphi^{-1}(tX^1, \dots, tX^n)
+	\]
+	in such a way that it is smooth on $\gamma(0) = p$ and that its tangent vector is $\gamma'(0) = X$.
+\end{proof}
+
+\section{Vector Fields}
+
+In our journey to understand geometry on manifolds, one key step is to generalize what we called directional derivative in the euclidean spaces. The directional derivative of a function on a point gives us information on how the function changes when moving in the given direction; the concept of geodesic will need of this idea, but first we have to set up some definitions and technical results.
+
+Let us start, then, by generalizing the concept of vector field to manifolds. As in the euclidean sense, we can define a \emph{vector field} on a manifold $M$ as a correspondence $X$ that maps every point $p$ on the manifold to a vector $X(p)$ in the tangent space $T_p M$.
+
+To formalize this concept, we should first define the set of the tangent spaces at every point of the manifold, which is the target set of the map we just described. This definition can be found on \cite[p. 26]{oneill83} and \cite[p. 13]{docarmo79}
+
+\begin{definition}[Tangent bundle]
+	Let $M$ be a smooth manifold and let $A = \{(U_\alpha, h_\alpha)\}$ be a smooth atlas on $M$.
+	
+	Consider now the set
+	\[
+		TM = \bigcup_{p \in M} T_p M,
+	\]
+	where the projection $\pi \colon TM \to M$ maps every tangent vector $v$ to $p$, the manifold point such that $v \in T_p M$.
+
+	We can furnish $TM$ with the atlas $A' = \{(\pi^{-1}(U_\alpha), h'_\alpha)\}$, where $h'_\alpha$ defines the coordinates of every point $v \in TM$, as the union of the coordinates of $p (= \pi(v))$ in $U_\alpha$ with the coordinates of $v$ in the associated basis of $T_p M$; \ie, if $(x^1, \dots, x^n)$ are the coordinate functions that assign every point $p \in M$ to its coordinates on $\R^n$, the coordinates of the elements of $TM$ are
+	\[
+		(x^1 \circ \pi, \dots, x^n \circ \pi, d{x^1}, \dots, d{x^n}),
+	\]
+	where $dx^i \colon \pi^{-1}(U_\alpha) \to \R$ are the coordinate functions of the tangent space, given by $dx^i(v) = v(x^i)$.
+	
+	$TM$ is called the tangent bundle of $M$.
+\end{definition}
+
+It can be proved ---see \cite[Example 2.1]{docarmo79} or \cite[pp. 26, 27]{oneill83}--- that $A'$ is, indeed, an atlas and, therefore, that the tangent bundle of every smooth manifold of dimension $n$ is in turn a smooth manifold of dimension $2n$.
+
+\begin{remark}[Cotangent bundle]
+	The dual version of the tangent bundle, the \emph{cotangent bundle}, can also be defined, and has the expected properties. It is defined as
+	\[
+		T^*M = \bigcup_{p \in M} T_p M^*.
+	\]
+\end{remark}
+
+This recently defined space is the target set of what we described as a vector field. \autoref{def:vectorfield} formalizes this idea.
+
+\begin{definition}[Vector field]
+	\label{def:vectorfield}
+	A \emph{vector field} $X$ in a smooth manifold $M$ is a map
+	\[
+		X \colon M \mapsto TM
+	\]
+	that assigns to any point $p \in M$ a vector $X(p) \in T_p M$, often noted as $X_p$.
+\end{definition}
+
+\begin{definition}[Covector field]
+	A \emph{one-form}, or \emph{covector field}, $\Theta$ on a smooth manifold $M$ is the object dual to a vector field; \ie, a function
+	\[
+		\Theta \colon M \mapsto T^*M
+	\]
+	that maps every point $p \in M$ to a covector $\Theta(p) \in T_pM^*$, often noted as $\Theta_p$.
+\end{definition}
+
+From now on, we will note the set of smooth vector fields on $M$ as $\mathfrak{X}(M)$; equivalently, $\mathfrak{X}^*(M)$ will denote the set of all smooth one-forms on $M$.
+
+If $X \in \mathfrak{X}(M)$ and $\Theta \in \mathfrak{X}^*(M)$, we will usually denote its coordinates as
+\[
+	X = \sum x^i \partial_i, \quad \Theta = \sum \vartheta_i dx^i,
+\]
+where the vector fields $\partial_i$, which map each $p$ to $\partial_i\bigr|_p$, form a basis of $\mathfrak{X}(M)$ and the one-forms $dx^i$, which map each $p$ to $dx^i \bigr|_p$, are the components of its dual basis. As usual, we have the relation 
+\[
+	dx^i\left(\partial_j\right) = \delta^i_j.
+\]
+
+The coordinates can be computed as $x^i\bigr|_p = X_p(x^i)$ and $\vartheta_i\bigr|_p = \Theta_p(\partial_i)$.
+
+Another interesting way to look at the vector fields and their dual version, shown on \cite[p. 23]{docarmo79}, consists on considering again the idea of the vectors as directional derivatives: a vector field $X$ on $p$ is then a map that receives a smooth function $f$ on $M$ and gives us another function on $M$, noted as $Xf$ and defined as follows:
+\[
+	(Xf)(p) = X_p(f).
+\]
+
+One can define an interesting operation on vector fields considering them as derivations: the bracket operation.
+
+\begin{definition}[Bracket operation]
+	Let $V$ and $W$ be vector fields on $M$.
+	
+	The bracket operation on $V$ and $W$, noted as $[V, W]$ is the vector field defined as
+	\[
+		[V, W] = VW - WV,
+	\]
+	which is an application that maps every $f \in \mathcal{F}(M)$ to the function $V(Wf) - W(Vf)$.
+\end{definition}
+
+The proof that $[V,W]$ is indeed a vector field can be found at \cite[p. 24]{docarmo79}.
+
+Going ahead with the generalization of euclidean concepts to the manifolds, we can define what a vector field along a curve is:
+
+\begin{definition}[Vector field along a curve]
+	Let $c \colon I \to M$ be a curve on a manifold defined on the open subset $I \subset \R$. A \emph{vector field along the curve $c$}, $V$, is a function
+	\[
+	V \colon I \mapsto TM
+	\]
+	that maps every instant $t \in I$ to a vector $X(c(t)) \in T_{c(t)} M$, where $X$ is a vector field.
+\end{definition}
+
+\begin{example}
+	One of the most interesting examples of vector fields along a curve is the velocity of the curve itself. Let $\gamma \colon I \to \M$ be a smooth curve on $M$. The application that maps every instant to the tangent vector to the curve at that instant,
+	\begin{align*}
+		\gamma' \colon I &\to TM \\
+		t &\mapsto \gamma'(t),
+	\end{align*}
+	where $\gamma'(t)$ is defined on \autoref{pro:tangcurve}, is a vector field along $\gamma$.
+\end{example}
+
+\section{Tensor Fields}
+
+Just as we introduce the concept of vector fields on \autoref{def:vectorfield}, a similar concept arises now: the tensor fields.
+
+We are going to introduce this concept following the line of reasoning on \cite[Ch. 2]{oneill83}.
+
+\begin{definition}[Tensor field]
+	A tensor field $A$ on a manifold $M$ $r$ times contravariant and $s$ times covariant is a classic tensor on the vector space $\mathfrak{X}(M)$, whose scalar field is $\mathfrak{F}(M)$, the set of smooth real valued functions on $M$:
+	\[
+		A \colon \underbrace{\mathfrak{X}^*(M) \times \dots \times \mathfrak{X}^*(M)}_{\text{r copies}} \times \underbrace{\mathfrak{X}(M) \times \dots \times \mathfrak{X}(M)}_{\text{s copies}} \to \mathfrak{F}(M).
+	\]
+	
+	As usual, we denote by $\tensors_{(r,s)}(M)$ the set of all tensor fields of type $(r,s)$ on a manifold $M$.
+\end{definition}
+
+It is interesting to study that the name we gave to this concept is not random: indeed, we can see a tensor field $A$ as a proper \emph{field}, in which every point of the manifold is mapped to a tensor.
+
+The basis of this idea comes from the following result, whose proof can be studied on \cite[Ch. 2, Proposition 2]{oneill83}.
+
+\begin{proposition}
+	Let $p \in M$ be a point on a manifold $M$ and $A \in \tensors_{(r,s)}(M)$ a tensor field.
+	
+	Let $\theta^i$ and $\bar{\theta}^i$ be covector fields for every $i \in \{1, \dots, r\}$, and such that
+	\[
+		\theta^i_{|_p} = \bar{\theta}^i_{|_p} \quad \forall i \in \{1, \dots, r\}.
+	\]
+	
+	Similarly, let $X_i$ and $\bar{X}_i$ be vector fields for every $i \in \{1, \dots, s\}$, and such that
+	\[
+		X_{i|_p} = \bar{X}_{i|_p} \quad \forall i \in \{1, \dots, s\}.
+	\]
+	
+	Then,
+	\[
+		A(\theta^1, \dots, \theta^r, X_1, \dots, X_s)(p) = A(\bar{\theta}^1, \dots, \bar{\theta}^r, \bar{X}_1, \dots, \bar{X}_s)(p).
+	\]
+\end{proposition}
+
+This result lets us consider each tensor field $A \in \tensors_{(r,s)}(M)$ as the following field on $M$, which is denoted in the same exact way:
+\begin{align*}
+	A \colon M &\to \tensors_{(r,s)}(M) \\
+	p &\mapsto A_p \colon \underbrace{T_p M^* \times \dots \times T_p M^*}_{\text{r copies}} \times \underbrace{T_p M \times \dots \times T_p M}_{\text{s copies}} \to \R,
+\end{align*}
+where the tensor $A_p$, now defined on the tangent and cotangent space, is the following mapping:
+\[
+	(\alpha^1, \dots, \alpha^r, x_1, \dots, x_s) \xmapsto{A_p} A(\theta^1, \dots, \theta^r, X_1, \dots, X_s),
+\]
+where $\theta^i$ is any covector field such that $\theta^i_{|_p} = \alpha^i$ and $X_i$ is any vector field such that $X_{i|_p} = x_i$ for every $i \in \{1, \dots, n\}$.
+
+The operation involving tensors, the definition of the tensor components, the tensor contraction and all other classic results thoroughly studied in \autoref{chapter:tensoralgebra}  hold also here for the tensor fields on a manifold.
+
+\section{Affine Connections}
+\label{sec:affineconnections}
+
+In this section we will define a connection on a manifold, which in turn will give us the tools to generalize the concept of directional derivative arriving to the definition of covariant derivative.
+
+The following definitions and results can be found at \cite[Ch. 2, Section 2]{docarmo79} and \cite[pp. 59-67]{oneill83}.
+
+\begin{definition}[Affine connection]
+	\label{def:affineconnection}
+	% doCarmo, 41
+	An affine connection $\nabla$ on a smooth manifold $M$ is a map
+	\[
+	\nabla \colon \mathfrak{X}(M) \times \mathfrak{X}(M) \to \mathfrak{X}(M),
+	\]
+	noted as $(X, Y) \xrightarrow{\nabla}\nabla_X Y$, that satisfies the following properties:
+	\begin{enumerate}
+		\item $\nabla_{fX + gY} Z = f\nabla_X Z + g\nabla_Y Z$,
+		\item $\nabla_X(Y+Z) = \nabla_X Y + \nabla_X Z$,
+		\item $\nabla_X (fY) = f\nabla_XY + (Xf) Y$,
+	\end{enumerate}
+	where $X,Y,Z \in \mathfrak{X}(M)$ and $f,g \in \mathcal{F}(M)$.
+\end{definition}
+
+On \cite[Chapter 2, Remark 2.3]{docarmo79} we can see how the last property of \autoref{def:affineconnection} lets us show that the affine connection is a local concept. Consider a coordinate system $(x^1, \dots, x^n)$ around $p$ and describe the vector fields $X, Y$ as follows:
+\[
+X = \sum_i x^i X_i, \qquad Y = \sum_j y^j X_j,
+\]
+where $X_i = \frac{\partial}{\partial x^i}$. Then, we can write
+\[
+\nabla_x Y = \sum_i x^i \nabla_{X^i}\left(\sum_j y^j X_j \right) = \sum_{ij} x^i y^j \nabla_{X^i} X_j + \sum_{ij} x^i (X_i y^j) X_j.
+\]
+
+As $(\nabla_{X^i} X_j)_p \in T_p M$, and using that $\{X_1(p), \dots, X_n(p)\}$ is a basis of $T_p M$, we can write the coordinate expression of $\nabla_{X^i} X_j$ as follows:
+\[
+\nabla_{X^i} X_j = \sum_k \Gamma^k_{ij} X_k,
+\]
+where the functions $\Gamma^k_{ij}$ are necessarily differentiable. Finally, we can write
+\[
+\nabla_X Y = \sum_k \left( \sum_{ij} x^i y^j \Gamma^k_{ij} + X(y^k) \right) X_k.
+\]
+
+This shows that $\nabla_X Y(p)$ depends on $x^i(p)$, $y^k(p)$ and the derivatives $X(y^k)(p)$.
+
+This is a somewhat technical definition, but as shown in \autoref{pro:covariantderivative}, it provides us with the concept of covariant derivative, which will be shown to be a generalization of the directional derivative on $\R^n$.
+
+\begin{proposition}[Covariant derivative]
+	\label{pro:covariantderivative}
+	% doCarmo, 42
+	Let $M$ be a smooth manifold with an affine connection $\nabla$ and let $c \colon I \to M$ be a smooth curve. Then there is a unique function that maps each vector field $V$ along $c$ onto another vector field along $c$, called \emph{covariant derivative of $V$ along $c$}, and noted as $\frac{DV}{dt}$, that satisfies the following properties:
+	\begin{enumerate}
+		\item $\frac{D}{dt}(V+W) = \frac{DV}{dt} + \frac{DW}{dt}$.
+		\item $\frac{D}{dt}(fV) = \frac{df}{dt}V + f\frac{DV}{dt}$.
+		\item If $V$ is described as $V(t) = X(c(t))$, where $X \in \mathfrak{X}(M)$, then \[\frac{DV}{dt} = \nabla_{\frac{dc}{dt}} X.\]
+	\end{enumerate}
+	where $W$ is another vector field along $C$ and $f \in \mathcal{F}(M)$.
+\end{proposition}
+
+\autoref{pro:covariantderivative} gives us an actual derivation on vector fields along smooth curves. The concept of connection, whose definition may appear artificial at first, shows now its interest: it provides us with a way of derivating vectors along curves; \ie, we have now the possibility to consider the concept of \emph{acceleration} on curves on manifolds.
+
+\begin{proof}[Proof of \autoref{pro:covariantderivative}]
+	Assuming the existence of such a map, considering the local coordinates of $V$ and using the properties that define the covariant derivative, one can prove that it is unique.
+	
+	Let $x \colon U \subset \R^n \to M$ be a coordinate chart that assigns the local expression $(x^1(t), \dots, x^n(t))$ to the curve $c$. If we note $X_i = \pd{}{x^i}$ and write the field $V$ locally as $V = \sum_j v^j X_j$, applying all three properties of the covariant derivative we conclude that
+	\begin{equation}
+		\label{eq:covariantderivative}
+		\frac{DV}{dt} = \sum_j \frac{d v^j}{dt} X_j + \sum_{i,j} \frac{d x^i}{dt} v^j \nabla_{X_i} X_j,
+	\end{equation}
+	that is, the covariant derivative is unique.
+	
+	On the other hand, defining the covariant derivative as in \autoref{eq:covariantderivative}, its existence and the satisfaction of the defined properties is straightforward.
+\end{proof}
+
+The remaining technical details of the previous reasoning can be found on \cite[p. 43]{docarmo79}, from where this proof was taken.
+
+\begin{definition}[Parallel vector field]
+	% doCarmo, 44
+	% oNeill, 66
+	Let $M$ be a smooth manifold furnished with an affine connection $\nabla$. A vector field $V$ along a curve $c \colon I \to M$ is called \emph{parallel} whenever $\frac{DV}{dt} = 0$ for every $t \in I$.
+\end{definition}
+
+\begin{proposition}[Parallel transport]
+	% doCarmo, 44
+	% oNeill, 66
+	Let $M$ be a smooth manifold furnished with an affine connection $\nabla$. Let $c \colon I \to M$ be a smooth curve on $M$ and $V_0$ a tangent vector to $M$ on $c(t_0)$; \ie, $V_0 \in T_{c(t_0)} M$.
+	
+	Then, there exists a unique parallel vector field $V$ along $c$ such that $V(t_0) = V_0$. We call $V$ the \emph{parallel transport of $V(t_0)$ along $c$}.
+\end{proposition}
+
+\begin{proof}
+	For the sake of simplicity, suppose that the theorem is proved for the case in which $c(I)$ is contained in a local coordinate neighbourhood.
+	
+	A compactness argument shows that for every $t_1 \in I$, the segment $c([t_0, t_1]) \subset M$ can be covered by a finite number of coordinate neighbourhoods. Using the previous hypothesis, there exists a vector field $V$ satisfying the proposition properties in each of the neighbourhoods.
+	
+	From uniqueness, the definitions of each $V$ agree on the non-empty intersections. Therefore, we can define a $V$ satisfying the properties in all $[t_0, t_1]$.
+	
+	The proof of the result for when $c(I)$ is contained in a local coordinate neighbourhood does not add anything interesting to our study, so we omit it here. It can be found on \cite[Ch. 2, Prop. 2.6]{docarmo79}.
+\end{proof}

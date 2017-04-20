@@ -1,0 +1,730 @@
+\chapter{Tensor Algebra}
+\label{chapter:tensoralgebra}
+
+This chapter covers some basic tools needed in the further development of this work. Although basic, its knowledge is crucial in a lot of fields, and its interest for the study of the Geometry will unveil in the following chapters.
+
+Nearly all definitions, results and ideas are based on \cite[Chapters 6 and 9]{romero86}.
+
+\section{The Notion of Tensor}
+
+\begin{definition}[Multilinear map]
+	\label{def:multilinear}
+    Let $V_1, V_2, \dots, V_r$ and $W$ be vector spaces over the same field $K$. A multilinear ---$r$ times linear--- map from $V_1 \times V_2 \cdots \times V_r$ to $W$ is a map
+    \[
+        T \colon V_1 \times V_2 \cdots \times V_r \longrightarrow W
+    \]
+    that is linear in each of its components; \ie, that verifies the following conditions:
+    \begin{enumerate}
+        \item $\begin{aligned}[t]
+	        T(x_1, \dots, x_i+x_i', \dots, x_r) = &T(x_1, \dots, x_i, \dots, x_r) + \\&T(x_1, \dots, x_i', \dots, x_r),
+        \end{aligned}$
+        \item $T(x_1, \dots, a x_i, \dots, x_r) = aT(x_1, \dots, x_i, \dots, x_r)$,
+    \end{enumerate}
+    for every $i \in \{1, 2, \dots, r\}$, where $x_j$ is an arbitrary vector in $V_j$ and $a \in K$.
+\end{definition}
+
+Before going ahead with the definition of tensor, we must remember the concept of dual space.
+
+Given a vector space $V$ over a field $K$, its \emph{dual space} is the vector space defined as
+\[
+	V^* \defeq \Hom_K(V,K);
+\]
+that is, $V^*$ is the set of all linear maps $\varphi : V \to K$.
+
+There are some interesting results concerning dual spaces that will be important in the understanding of the notion of tensor.
+
+First of all, it is known that if $V$ is finite-dimensional, the dimensions of $V$ and $V^*$ are the same and, given a base of $V$, $B = \{v_1, \dots, v_n\}$, its \emph{dual basis} is built as $B^* = \{\varphi^1, \dots, \varphi^n\}$\footnote{From now on, Latin letters with subscripts will denote vectors, whereas Greek letters with superscripts will denote one-forms.}, where
+\[
+	\varphi^i(v_j) = \delta^i_j.
+\]
+
+Furthermore, the theorem for the double dual space (\cite[Th. 4.3]{nomizu79}) tells us that there exists a natural isomorphism between $V$ and its double dual space, $V^{**}$, when $V$ is finite-dimensional. This isomorphism assigns, to every vector $v \in V$, a function that maps every one-form into its evaluation on $v$:
+\begin{align}
+	\label{eq:naturaliso}
+	\psi \colon V &\longrightarrow V^{**} \\
+	v &\longmapsto \psi_v \colon \begin{aligned}[t]
+		V^* &\longrightarrow K \\
+		\varphi &\longmapsto \varphi(v).
+	\end{aligned} \nonumber
+\end{align}
+
+With the concepts of multilinear maps and dual spaces we can now build the definition of tensor, core concept of this section.
+
+\begin{definition}[Tensor]
+	\label{def:tensor}
+	Let $V$ be a vector space over a field $K$, being $V^*$ its dual space. A tensor $r$ ($\geq 0$) times contravariant and $s$ ($\geq 0$) times covariant ---\ie, a tensor of type $(r,s)$--- is a multilinear map
+	\[
+		T \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r copies}} \times \underbrace{V \times \cdots \times V}_{\text{s copies}} \longrightarrow K.
+	\]
+	Tensors of type $(0,s)$ are said to be \emph{covariant}, whereas tensors of type $(r,0)$ are called \emph{contravariant}.
+
+	The \emph{order} of the tensor is defined as the sum $r+s$.
+\end{definition}
+
+\begin{example}
+	\label{ex:tensors}
+	The following examples show how interesting the notion of tensor is, as it can include a vast selection of mathematical objects under the same concept; for example, we will see that both vectors and one-forms are tensors.
+
+	Let $V$ be an $n$-dimensional vector space and $V^*$ its dual space.
+	\begin{enumerate}
+		\item Let $\varphi \in V^*$; \ie,  $\varphi \colon V \to K$ is a one-form. From \autoref{def:tensor} it is clear that $\varphi$ is a tensor of type $(0,1)$ over $V$.
+		\item Let $v \in V$ be a vector. Using the natural isomorphism between $V$ and its double dual space, the vector $v$ can be identified with $\psi_v \colon V^* \to K$, and thus we can understand $v$ as a tensor of type $(1,0)$.
+		\item Consider now $f \in \End_K V$ and let $T_f \colon V^* \times V \to K$ be the map defined as $T_f(\varphi, v) \defeq \varphi(f(v))$. It is clear that $T_f$ is a tensor of type $(1,1)$. Moreover, if we consider $f$ to be the identity map $1_V$, then $T_{1_V}$ is the tensor that maps every pair of (vector, one-form) to the evaluation of the one-form on the vector; \ie, is the tensor associated to the natural isomorphism between $V$ and $V^{**}$.
+		\item Common operations in several mathematical fields can also be seen as tensors. For example, the inner product can be defined as a tensor of type $(0,2)$ as follows:
+		\begin{align*}
+			T \colon V \times V &\to K\\
+			(v,w) &\mapsto \sum_{i=1}^n v_i w_i.
+		\end{align*}
+		In general, every bilinear form is a $(0,2)$ tensor. This follows from the definition of bilinear form, which satisfies all conditions in \autoref{def:tensor}.
+	\end{enumerate}
+\end{example}
+
+\section{Tensor Basic Operations}
+
+\subsection{Tensor Addition and Product by a Scalar}
+Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear that both $\tensors_{1,0}(V) = V^*$ and $\tensors_{0,1}(V) = V^{**}$ are vector spaces over K. A natural question arises: is $\tensors_{r,s(V)}$ a vector space for arbitrary $r$ and $s$? The following result gives us the answer we are looking for.
+
+\begin{theorem}
+	Let $T, T' \in \tensors_{r,s}(V)$ be two tensors of type $(r,s)$ and $a \in K$ a scalar. Consider the following operations:
+	\begin{itemize}
+		\item $\begin{aligned}[t]
+			(T+T') (\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) \defeq &T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) +\\
+			&T'(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s),
+		\end{aligned}$
+		\item $(a T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) \defeq a T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)$,
+	\end{itemize}
+	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r\}$ and $v_j \in V$ for all $j \in \{1,\dots,s\}$.
+
+	The set $\tensors_{r,s}(V)$ with the preceding operations is a vector space.
+\end{theorem}
+
+\begin{proof}
+	It is clear, from \autoref{def:tensor}, that $T+T', aT \in \tensors_{r,s}(V)$, given the linearity in each of the components of both $T$ and $T'$.
+	These operations satisfy the following properties:
+	\begin{enumerate}
+		\item $(T+T') + T'' = T + (T'+T'')$.
+		\item There exists a \emph{null tensor} $T_0 \in \tensors_{r,s}(V)$, defined as \[T_0(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = 0, \forall \varphi^i \in V^*, \forall v_i \in V,\] such that $T_0 + T = T + T_0 = T \;\forall T \in \tensors_{r,s}(V)$.
+		\item For each $T\in\tensors_{r,s}(V)$ there exists an \emph{opposite tensor} $-T$ defined as \[(-T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) = - T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)\] that satisfies $T + (-T) = -T + T = 0$.
+		\item $T + T' = T' + T$.
+	\end{enumerate}
+	This provides $\tensors_{r,s}(V)$ with abelian goup structure. The following properties finally show that $\tensors_{r,s}(V)$ is a vector space:
+	\begin{enumerate}
+		\item $a(T+T') = aT+ aT', \;\;\forall a \in K, \;\forall T,T' \in \tensors_{r,s}(V)$.
+		\item $(a+b)T = aT + bT, \;\;\forall a,b \in K, \;\forall T \in \tensors_{r,s}(V)$.
+		\item $(ab)T = a(bT), \;\;\forall a,b \in K, \;\forall T \in \tensors_{r,s}(V)$.
+		\item $1T = T, \;\;\forall T \in \tensors_{r,s}(V)$, where $1$ is the unity in $K$.
+	\end{enumerate}
+\end{proof}
+
+\subsection{Tensor Product}
+
+Now that we know that $\tensors_{r,s}(V)$ is a vector space, it will be important to study its dimension. Before going down that road, let us define the tensor product, concept upon which we will be able to build a basis for $\tensors_{r,s}(V)$.
+
+\begin{definition}[Tensor product]
+	Let $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. The \emph{tensor product} \[T \otimes T' \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r+r' copies}} \times \underbrace{V \times \cdots \times V}_{\text{s+s' copies}}\] is defined as follows:
+	\begin{align*}
+		&(T \otimes T')(\varphi^1, \dots, \varphi^{r+r'}, v_1, \dots, v_{s+s'}) \defeq \\
+		&T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) T(\varphi^{r+1}, \dots, \varphi^{r+r'}, v_{s+1}, \dots, v_{s+s'}),
+	\end{align*}
+	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r+r'\}$ and $v_j \in V$ for all $j \in \{1,\dots,s+s'\}$.
+\end{definition}
+
+It is easy to prove that $T \otimes T' \in \tensors_{r+r',s+s'}(V)$ for every $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. However, the proof is long and cumbersome to write, and it can be found in almost every elementary book on tensor algebra (\cite{romero86}, \cite{nomizu79}).
+
+Furthermore, we can see that, given $T \in \tensors_{r,s}(V)$, $T' \in \tensors_{r',s'}(V)$ and $T'' \in \tensors_{r'',s''}(V)$:
+\begin{align*}
+	(T \otimes T') \otimes T'' &\in \tensors_{r+r'+r'', s+s'+s''}(V),\\
+	T \otimes (T' \otimes T'') &\in \tensors_{r+r'+r'', s+s'+s''}(V)
+\end{align*}
+and that the following equality holds:
+\[
+	(T \otimes T') \otimes T'' = T \otimes (T' \otimes T'').
+\]
+In fact, the application
+\begin{align*}
+	\tensors_{r,s}(V) \times \tensors_{r',s'}(V) &\longrightarrow \tensors_{r+r',s+s'}(V) \\
+	(T,T') &\longmapsto T \otimes T'
+\end{align*}
+is a bilinear map.
+
+As a particular example, we can define the tensor product between two tensors of type $(1,0)$ and $(0,1)$ as the following tensor:\footnote{This is an abuse of notation, as we are writing $v$ ---a letter used for vectors of $V$--- to describe an element of $V^{**}$.}
+\[
+	v \otimes \varphi \in \tensors_{1,1}(V),
+\]
+which maps every pair $(\psi, w)$ to the scalar $\psi(v)\varphi(w)$.
+
+Upon this concept, and using the known properties of the dual vector space and its basis, we can state and prove a theorem that builds a basis for every $\tensors_{r,s}(V)$.
+
+\begin{theorem}
+	Let $V$ be an $n$-dimensional vector space over a field $K$. Let $\mathcal{B} = \{v_1, \dots, v_n\}$ be a basis of $V$ and $\mathcal{B^*} = \{\varphi^1, \dots, \varphi^n\}$ be  its dual basis. Then,
+	\begin{align*}
+		\mathcal{B}_T = \{v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s} \textrm{ , } &\textrm{where every index moves} \\
+		&\textrm{independently from $1$ to $n$}\},
+	\end{align*}
+	is a basis of $\tensors_{r,s}(V)$. As a consequence, $\dim_K\tensors_{r,s}(V) = n^{r+s}$.
+\end{theorem}
+
+\begin{proof}
+	%First of all, let us note $t^{i_1,\dots,i_r}_{j_1,\dots,j_s} \defeq T(\varphi^{i_1}, \dots, \varphi^{i_r}, v_{j_1}, \dots, v_{j_r}) \in K$.
+
+	In order to prove that $\mathcal{B}_T$ is a linear span of $\tensors_{r,s}(V)$, let us consider $T\in\tensors_{r,s}(V)$. Then, if
+	\begin{align*}
+		\psi^1& = \sum_{i_1 = 1}^n a_{i_1}^1 \varphi^{i_1},\quad \cdots,\quad \psi^r = \sum_{i_r = 1}^n a_{i_r}^r \varphi^{i_r} \textrm{ and} \\
+		w_1 &= \sum_{j_1 = 1}^n b^{j_1}_1 v_{j_1},\quad \cdots,\quad w_s = \sum_{j_s = 1}^n b^{j_s}_s v_{j_s},
+	\end{align*}
+	we can write
+	\[
+		T(\psi^1, \dots, \psi^r, w_1, \dots, w_s) = \sum_{\substack{i_1,\dots,i_s\\j_1,\dots,j_r}} a_{i_1}^1 \cdots a_{i_r}^r b^{j_1}_1 \dots b^{j_s}_s t_{j_1, \dots, j_s}^{i_1, \dots, i_r},
+	\]
+	where $t_{j_1, \dots, j_s}^{i_1, \dots, i_r} \defeq T(\varphi^{i_1}, \dots, \varphi^{i_r}, v_{j_1}, \dots, v_{j_s})$.
+
+	Following this reasoning ---see \cite{romero86} for the details---, we can finally write
+	\[
+		T = \sum_{\substack{i_1,\dots,i_s\\j_1,\dots,j_r}} t_{j_1, \dots, j_s}^{i_1, \dots, i_r} \left( v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s} \right),
+	\]
+	which proves that $\mathcal{B}_T$ spans $\tensors_{r,s}(V)$.
+
+	To prove that $\mathcal{B}_T$ is linearly independent, consider a linear combination of the elements in $\mathcal{B}_T$ that equals the null tensor,
+	\begin{equation}
+		\label{eq:nullcomb}
+		\sum_{\substack{k_1,\dots,k_r\\l_1,\dots,l_s}} a^{k_1,\dots,k_r}_{l_1,\dots,l_s} \left( v_{k_1} \otimes \dots \otimes v_{k_r} \otimes \varphi^{l_1} \otimes \dots \otimes \varphi^{l_s} \right) = T_0.
+	\end{equation}
+	Evaluating both sides of \autoref{eq:nullcomb} on the corresponding elements of the bases $\mathcal{B}$ and $\mathcal{B}^*$ we obtain the equality
+	\[
+		\sum_{\substack{k_1,\dots,k_r\\l_1,\dots,l_s}} a^{k_1,\dots,k_r}_{l_1,\dots,l_s} \left( \delta^{i_1}_{k_1} \dots \delta^{i_r}_{k_r} \delta^{l_1}_{j_1} \dots \delta^{l_s}_{j_s} \right) = 0,
+	\]
+	from which it is clear that $a^{i_1,\dots,i_r}_{j_1,\dots,j_s} = 0$ for every index.
+\end{proof}
+
+Two particularly important examples of the above theorem let us grasp the duality between vectors and one-forms.
+
+Let $V$ be a vector space with dimension $n$, with basis $B = \{v_1, \dots, v_n\}$ and dual basis $B^* = \{\varphi^i, \dots, \varphi^n\}$.
+
+We know that $\tensors_{1,0}(V) = V^{**}$, and we can write each vector $v \in V \simeq V^{**}$ as
+\[
+v = \sum_{i=1}^n b^i v_i,
+\]
+where each coordinate is the projection of the vector using the corresponding one-form: $b^i = \varphi^i(v)$.
+
+Similarly, we can consider $\tensors_{0,1}(V) = V^*$. Each of its elements, $\psi \in V^*$, can be written in terms of the tensor basis $\mathcal{B}_{\tensors_{0,1}(V)} = B^*$:
+\[
+	\psi = \sum_{j=1}^n a_j \varphi^j,
+\]
+Note here that the coordinates are retrieved evaluating the form in each element of the basis $B$: $a_j = \psi(v_j)$.
+
+This shows that both evaluating a one-form on the elements of the basis $B$ and projecting a vector with the elements of the basis $B^*$ can be seen as dual operations: both of them give the coordinates of the corresponding element on the corresponding basis.
+
+The notion of tensor help us to understand this duality: we now see both elements as the \emph{same} mathematical entity, where both operations are expressed in different bases with the corresponding change of coordinates.
+
+\section{Change of Bases on $\tensors_{r,s}(V)$}
+
+We now want to study how the coordinates of a tensor change when we change the basis of $\tensors_{r,s}(V)$.
+
+First of all, we must remember the relationship between the change of basis on a vector space $V$ and the corresponding change of basis in its dual space, $V^*$.
+
+Let $B = (v_1, \dots, v_n)$ and $B' = (v_1', \dots, v_n')$ be two bases of $V(K)$, and suppose that the change of coordinates is given by
+\[
+v_j = \sum_{i=1}^n a_j^i v'_i.
+\]
+
+It is known that ---see \cite[p. 162]{romero86}---, if $B^* = (\varphi^1, \dots, \varphi^n)$ and $B'^* = (\varphi'^1, \dots, \varphi'^n)$ are the dual bases of the two preceding ones, the elements of the bases are related in the \emph{opposite} way as before:
+\begin{equation}
+	\label{eq:changeV*}
+	\varphi'^i = \sum_{j=1}^n a_j^i \varphi^j \textrm{, where } a_j^i \in K.
+\end{equation}
+
+Furthermore, we can see that
+\begin{equation}
+	\label{eq:changeV}
+	v_j' = \sum_{j=1}^n b_j^i v_j,
+\end{equation}
+
+where $b_j^i$ is the element placed on the $i$-th row, $j$-th column of  the inverse matrix of $(a^i_j)$.
+
+This change of bases in $V$ and $V^*$  is key to understand \autoref{pro:changeT}, which tells us how  the coordinates of a tensor change when we change the basis of $\tensors_{r,s}(V)$.
+
+\begin{proposition}
+	\label{pro:changeT}
+	Let $B$, $B'$ and $B^*$, $B'^*$ the bases of $V$ and $V^*$ described above and consider two ordered bases of $\tensors_{r,s}(V)$ obtained from
+	\begin{align*}
+		\mathcal{B}_T = \{v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s} \textrm{ , } &\textrm{where every index moves} \\
+		&\textrm{independently from $1$ to $n$}  \}
+	\end{align*}
+	and
+	\begin{align*}
+		\mathcal{B}'_T = \{v'_{i_1} \otimes \dots \otimes v'_{i_r} \otimes \varphi'^{j_1} \otimes \dots \otimes \varphi'^{j_s} \textrm{ , } &\textrm{where every index moves} \\
+		&\textrm{independently from $1$ to $n$}  \}.
+	\end{align*}
+
+	Then, the analytic expression of the change of coordinates of a tensor $T \in \tensors_{r,s}(V)$ is the following:
+	\begin{align*}
+		t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} = \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r},
+	\end{align*}
+	where the coefficients are the ones defined in \autoref{eq:changeV*} and \autoref{eq:changeV}.
+\end{proposition}
+
+\begin{proof}
+	Considering the change of bases in $V$ and $V^*$, the proof is direct, using the definition of the coordinates of a tensor $T \in \tensors_{r,s}(V)$:
+	\begin{align*}
+		t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} &= T(\varphi'^{k_1}, \dots, \varphi'^{k_r}, v_{l_1}', \dots, v_{l_s}')  = \\
+		&= T(\sum a_{i_1}^{k_1}\varphi^{i_1}, \dots, \sum a_{i_r}^{k_r}\varphi{i_r}, \sum b_{l_1}^{j_1} v_{j_1}, \dots, \sum b_{l_s}^{j_s} v_{j_s}) = \\
+		&= \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} T(\varphi^{k_1}, \dots, \varphi^{k_r}, v_{l_1}, \dots, v_{l_s}) = \\
+		&= \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r}.
+	\end{align*}
+\end{proof}
+
+\subsection*{Tensors of Order 2}
+\label{sub:order2}
+
+We can study now the particular examples of tensors of order 2. From now on, let $V$ be an $n$-dimensional vector space, $V^*$ its dual space and $\mathcal{B} = (v_1, \dots, v_n)$ and $\mathcal{B^*} = (\varphi^1, \dots, \varphi^n)$ their respective bases.
+
+Let us first consider $\tensors_{(2,0)}$, which is a vector space of dimension $n^2$. Let
+\[
+	\mathcal{B}_T = \{v_i \otimes v_j \textrm{, where } i,j \in \{1,\dots,n\}\}
+\]
+be one of its bases. We can now write a generic tensor $T\in\tensors_{2,0}$ as follows:
+\[
+	T = \sum_{i,j=1}^n t^{ij} v_i \otimes v_j,
+\]
+where $t^{ij} = T(\varphi^i, \varphi^j)$.
+
+Let $\mathcal{B}' = (v_1', \dots, v_n')$ and $\mathcal{B}'^* = (\varphi'^1, \dots, \varphi'^n)$ be two new bases of $V$ and $V^*$.
+
+Following \autoref{pro:changeT}, we know that $T = \sum_{i,j=1}^n t^{ij} v_i \otimes v_j = \sum_{k,l=1}^n t'^{kl} v_k' \otimes v_l'$, where
+\[
+	t'^{kl} = \sum_{i,j=1}^n a^k_i a^l_j t^{ij}.
+\]
+
+This expression can be written with matrix notation:
+\begin{equation}
+	\label{eq:tensors20}
+	\left( t'^{kl} \right) = \mathbf{A} \left( t^{ij} \right) \mathbf{A}^t,
+\end{equation}
+where $\mathbf{A} \defeq \left(a_j^i\right)$ is the matrix whose elements are the ones defined in \autoref{eq:changeV*}; that is, the change of basis matrix in the dual space:
+\[
+	\mathbf{A} = M(1_v, \mathcal{B}'^*, \mathcal{B}^*).
+\]
+
+We can follow a similar reasoning for $\tensors_{(0,2)}$, considering
+\[
+\mathcal{B}_T = \{\varphi^i \otimes \varphi^j \textrm{, where } i,j \in \{1,\dots,n\}\}
+\]
+one of its bases. A generic tensor $T\in\tensors_{0,2}$ can be written in a similar way:
+\[
+T = \sum_{i,j=1}^n t_{ij} \varphi^i \otimes \varphi^j,
+\]
+where $t_{ij} = T(v_i, v_j)$.
+
+The expression of the change of coordinates is now
+\[
+	t'_{kl} = \sum_{i,j=1}^n b_k^i b_l^j t_{ij},
+\]
+where $\mathbf{B} \defeq \left( b^i_j \right)$ is the inverse matrix of $\mathbf{A}$, as shown in \autoref{eq:changeV}. This expression, written in matrix notation, is similar to \autoref{eq:tensors20}:
+\begin{equation}
+	\label{eq:tensors02}
+	\left( t'_{kl} \right) = \mathbf{B} \left( t_{ij} \right) \mathbf{B}^t.
+\end{equation}
+
+For $r = s = 1$, the study is even more interesting. Considering
+\[
+	\mathcal{B}_T = \{v_i \otimes \varphi^j \textrm{, where } i,j \in \{1,\dots,n\}\},
+\]
+a generic tensor $T\in\tensors_{1,1}$ is written as follows:
+\[
+T = \sum_{i,j=1}^n t^i_j v_i \otimes \varphi^j,
+\]
+where $t^i_j = T(\varphi^i, v_j)$.
+
+The expression of the change of coordinates is again similar to the previous ones:
+\[
+	t'^k_{\phantom{'}l} = \sum_{i,j = 1}^n a^k_i b_l^j  t^i_j \quad \forall k,l \in \{1,2,\dots,n\}.
+\]
+
+The matrix notation is now somewhat different:
+\begin{equation}
+	\label{eq:tensors11}
+	(t'^k_{\phantom{'}l}) = \mathbf{A} (t^i_j) \mathbf{A}^{-1}.
+\end{equation}
+
+This last expression is very interesting, as it tells us that the \emph{matrices} of the coordinates of $T$ in both bases of $\tensors_{1,1}(V)$ are similar, not congruent as in \autoref{eq:tensors20} or \autoref{eq:tensors02}.
+
+Remember now the third item in \autoref{ex:tensors}: it established a relationship between $\tensors_{1,1}(V)$ and $\End_K V$, that is now clear again: we see that \autoref{eq:tensors11} is not only the change of coordinates of a tensor, but also the expression of the change of the basis matrix of the corresponding endomorphism.
+
+This is not surprising as both spaces are isomorphic, with a \emph{natural} isomorphism between them:
+\begin{theorem}
+	The map
+	\begin{align*}
+		\End_K V &\longrightarrow \tensors_{1,1}(V)\\
+		f &\longmapsto T_f,
+	\end{align*}
+	where $T_f(\varphi, v) = \varphi(f(v)) \; \forall \varphi \in V^* \; \forall v \in V$, is an isomorphism.
+\end{theorem}
+\begin{proof}
+	It is obvious to see that $T_{f+f'} = T_f +T_{f'}$ and that $T_{af} = aT_f$, which tells us that the map is linear.
+
+	Suppose now that $T_f = T_0$; \ie, $\varphi(f(v)) = 0 \; \forall \varphi \in V^* \; \forall v \in V$. This implies immediately that $f(v) = 0 \; \forall v \in V$, as it is known that if $\psi(w) = 0$ for every $\psi \in V$, then $w = 0$. This shows that $f$ is the zero mapping, which proves that the map is one-to-one.
+\end{proof}
+
+Note that whereas all the three vector spaces studied ---$\tensors_{2,0}$, $\tensors_{0,2}$ and $\tensors_{1,1}$--- are isomorphic between them ---they all have the same dimension: 2---, the natural isomorphism with $\End_K(V)$ is only found with $\tensors_{1,1}$.
+
+\begin{remark}
+	This natural identification between tensors in $\tensors_{1,1}$ and operators is key in the physics literature, as one can talk either about operators over a vector space or about tensors $(1,1)$.
+
+	But how can we identify a tensor and its corresponding operator in practice? Let us see it: consider $f \in \End_K(V)$ defined, using a basis $\mathcal{B} = (v_1, \dots, v_n)$ of $V$, as
+	\[
+		f(v_j) = \sum_{i=1}^n a^i_j v_i
+	\]
+	and its corresponding tensor defined as
+	\[
+		T_f = \sum_{i,j=1}^n t^i_j v_i \otimes \varphi^j.
+	\]
+
+	A really quick proof shows that both coordinates $a^i_j$ and $t^i_j$ are exactly the same!
+	\[
+		t^i_j = T_f(\varphi^i, v_j) = \varphi^i(f(v_j)) = a^i_j.
+	\]
+\end{remark}
+
+\section{Tensor Contraction}
+
+We can study another way of obtaining new tensors from old ones. The operation we are going to define is motivated by the following property of the $(1,1)$ tensors.
+
+Consider a tensor $T \in \tensors_{(1,1)}(V)$ and two basis of $\tensors_{(1,1)}(V)$: $\mathcal{B} = \{v_j \otimes \varphi^i\}$ and $\mathcal{B}' = \{v'_j \otimes \varphi'^i\}$, where both indices move independently from 1 to $n$. If the components of the tensor on the two different bases are the following:
+\[
+	t^i_j = T(\varphi^i, v_j) \quad t'^i_j = T(\varphi'^i, v'_j),
+\]
+with the expression of coordinate change being
+\[
+	t'^k_{\phantom{'}l} = \sum_{i,j = 1}^n a^k_i b_l^j  t^i_j \quad \forall k,l \in \{1,2,\dots,n\}.
+\]
+
+From the previous expression it is straightforward to see that \cite[p. 198]{romero86} the sum of the coordinates with the same index is invariant under a change of basis. Indeed:
+\begin{align*}
+	\sum_k t'^k_k = \sum_{i,j,k} a^k_i b_k^j  t^i_j = \sum_{i,j} \left( \sum_k a^k_i b_k^j \right) t^i_j = \sum_{i,j} \delta_i^j t^i_j = \sum_i t^i_i.
+\end{align*}
+
+Considering the tensor $T$ as an operator, it is clear that this invariant scalar (a $(0,0)$ tensor) is the trace. We then have a map
+\[
+	C \colon \tensors_{(1,1)}(V) \to \tensors_{(0,0)}(V)
+\]
+defined as $C(T) = \sum_i T(\varphi^i, v_i)$.
+
+The generalization of this map to other tensor types is what we call tensor contraction.
+
+\begin{definition}[Tensor contraction]
+	Let $T \in \tensors_{(r,s)}(V)$, where $r,s > 0$. The contraction of $T$ with respect to the $i$-th contravariant slot and $j$-th covariant slot is the image of $T$ by the application
+	\begin{align*}
+		C^i_j \colon \tensors_{(r,s)}(V) &\to \tensors_{(r-1,s-1)}(V) \\
+		T &\mapsto C^i_j T,
+	\end{align*}
+	where $C^i_j T$ maps each tuple of one-forms and vectors 
+	\[
+		(\psi^1, \dots, \psi^{r-1}, w_1, \dots, w_{s-1}),
+	\]
+	to the value
+	\[
+		\sum_k T(\psi^1, \dots, \underbrace{\varphi^k}_{i\textrm{-th slot}}, \dots, \psi^{r-1}, w_1, \dots, \underbrace{v_k}_{j\textrm{-th slot}}, \dots, w_{s-1}),
+	\]
+	where $\{v_i\}$ is a basis of $V$ and $\{\varphi^i\}$ its dual basis.
+\end{definition}
+
+It can be proved ---see \cite[Prop. 6.12]{romero86}--- that $C^i_j T$ is a tensor. As it does not depend on the choice of the basis, the concept of contraction is well-defined.
+
+It is interesting to note that the coordinates of $C^i_j T$ are obtained making equal the $i$-th contravariant, $j$-th covariant coordinate and summing in that index ---see \cite[Prop. 6.14]{romero86} for a more detailed explanation---:
+\[
+	C^i_j T = \left( \sum_m t^{k_1, \dots, k_{i-1}, m, k_{i+1}, \dots, k_r}_{l_1, \dots, l_{j-1}, m, l_{j+1}, \dots, l_s} \right).
+\]
+
+
+\section{Alternative Definition of Tensor: the Physics Approach}
+
+Equations \ref{eq:tensors20}, \ref{eq:tensors02} and \ref{eq:tensors11} can be interpreted otherwise, as they can be used to build an alternative definition of tensor.
+
+This reinterpretation first needs a new concept to be developed, multidimensional arrays, that will be used to represent tensors by their coordinates on a certain basis.
+
+\begin{definition}[Multidimensional array]
+	Let $K$ be a field and $s, r$ and $n$ non-negative integers. A \emph{multidimensional array} of type $(r,s)$ and order $n$ is an ordered set of $n^{r+s}$ $K$-scalars, which we will note as
+	\[
+	\left( t^{k_1, \dots, k_r}_{l_1, \dots, l_s} \right),
+	\]
+	with every index moving independently from 1 to $n$ and $t^{k_1, \dots, k_r}_{l_1, \dots, l_s} \in K$ for every $k_1, \dots, k_r, l_1, \dots, l_r \in \{1, \dots, n\}$.
+\end{definition}
+
+It is clear that multidimensional arrays are actually square matrices when $r = s = 1$. This shows that we are working not with a brand new definition but actually with a generalization of the well-known concept; we can generalize other ideas involving square matrices to multidimensional arrays.
+
+For example, we can define an equivalence relation on the set of all multidimensional arrays of type $(r,s)$ and order $n$ as follows: we will say that $\left( t_{j_1,\dots,j_s}^{i_1,\dots,i_r} \right)$ and $\left( t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} \right)$ are similar when there is a matrix $\mathbf{A} = \left(a^j_i\right) \in Gl(n,K)$ such that
+\[
+	t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} = \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r},
+\]
+where $\mathbf{B} \defeq \left( b^i_j\right)$ represents, as usual, the matrix $\mathbf{A}^{-1}$.
+
+It is clear, from \autoref{pro:changeT}, that multidimensional arrays that represent the same tensor are always similar. The other implication is also true.
+
+\begin{proposition}
+	\label{pro:multisimilar}
+	Let $\left( t_{j_1,\dots,j_s}^{i_1,\dots,i_r} \right)$ and $\left( t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} \right)$ be two similar multidimensional arrays of type $(r,s)$ and order $n$, and let $V$ be an $n$-dimensional vector space, $V^*$ its dual and $B = (v_1, \dots, v_n)$, $B^* = (\varphi^1, \varphi^n)$ their corresponding bases.
+	
+	If $T$ is the unique tensor of type $(r,s)$ over $V$ defined as
+	\[
+	T = \sum t_{j_1,\dots,j_s}^{i_1,\dots,i_r} v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s},
+	\]
+	then there exists a unique basis of V, $B' = (v_1', \dots, v_n')$ ---with its dual basis being $B = (\varphi'^1, \dots, \varphi'^n)$--- such that
+	\[
+	T = \sum t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} v'_{k_1} \otimes \dots \otimes v'_{k_r} \otimes \varphi'^{l_1} \otimes \dots \otimes \varphi'^{l_s}.
+	\]
+\end{proposition}
+
+In order to prove \autoref{pro:multisimilar}, one can follow the same ideas used to check that similar matrices represent the same linear applications; see, for example, \cite[p. 145]{romero86}.
+
+Propositions \ref{pro:changeT} and \ref{pro:multisimilar} allows us to define a tensor in the following way:
+
+\begin{definition}[Tensor --- alternative version]
+	A tensor of type $(r,s)$ and order $n$ over $V$ is an application that maps each ordered basis of $V$ to a multidimensional array of type $(r,s)$ and order $n$,
+	\[
+		B = (v_1, \dots, v_n) \mapsto \left( t_{j_1,\dots,j_s}^{i_1,\dots,i_r} \right),
+	\]
+	such that if it maps 
+	\[
+		B' = (v'_1, \dots, v'_n) \mapsto \left( t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} \right),
+	\]
+	then
+	\[
+	t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} = \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r},
+	\]
+	where $(a_i^1, a_i^2, \dots, a_i^n)$ are the coordinates of $v'_i$ on $B$ for all $i \in \{1, \dots, n\}$ and $\mathbf{B} \defeq (b^i_j)$ is the inverse of $\mathbf{A} \defeq (a^i_j)$.
+\end{definition}
+
+The study on tensors of order 2 on page \pageref{sub:order2} becomes clearer with the preceding definition, as we see now that a $(1,1)$ tensor is an application that maps every ordered basis of $V$, $B=(v_1, \dots, v_n)$, to a square matrix of order n,
+\[
+	\begin{pmatrix}
+	t^1_1 & t^1_2 & \cdots & t^1_n \\
+	t^2_1 & t^2_2 & \cdots & t^2_n \\
+	\vdots & \vdots & \ddots & \vdots \\
+	t^n_1 & t^n_2 & \cdots & t^n_n \\
+	\end{pmatrix},
+\]
+such that for every pair of different bases, the coordinate matrices are similar.
+
+What is a vector, then, in this new language? It is nothing else ---remember that we can identify vectors and tensors $(1,0)$--- than an application that maps ordered bases onto ordered collections of $n$ numbers ---given that $n$ is the dimension of the vector space---; what we always called coordinates of the vector are now seen as the result of applying a map ---the vector itself--- to a basis. Same exact concept, brand new vision.
+	
+\section{Type-Changing}
+
+In physics, the usage of tensors of order 2 over $\R^3$ is made without explicitly saying nothing about its covariance or contravariance. This can be made only on those vector spaces that are adorned with a metric, which gives us the possibility to build isomorphisms between dual spaces and induce them between tensor spaces.
+
+From now on, let us consider the metric vector space $(V, g)$, where $V$ is an $n$-dimensional vector space over $\R$ and $g \colon V \times V \to \R$ is a nondegenerate metric; i.e., $g$ is a nondegenerate symmetric $(0,2)$-tensor.
+
+This addition to the naked vector space we have had until now will let us find an isomorphism between $V$ and its dual, $V^*$ without using bases; however, this is not a \emph{natural} isomorphism as the one seen on \autoref{eq:naturaliso}, as long as we need the metric in order to build it.
+
+\begin{proposition}
+	\label{pro:musical}
+	Let $v \in V$ and $\varphi \in V^*$ be a vector and a one-form.
+	
+	Consider now the one-form $v^\flat \colon V \to \R$ defined by $v^\flat(w) = g(v, w)$ and the vector $\varphi^\sharp \in V$ implicitly defined by $g(\varphi^\sharp, w) = \varphi(w) \;\forall w \in V$. Then:
+	\begin{enumerate}
+		\item $v^\flat \in V^*$ and $\varphi^\sharp \in V$.
+		\item $\begin{aligned}[t]
+			\flat \colon &V \to V^* \\
+			&v \mapsto v^\flat
+		\end{aligned}$ and $\begin{aligned}[t]
+			\sharp \colon &V^* \to V \\
+			&\varphi \mapsto \sharp^\flat
+		\end{aligned}$ are linear.
+		\item $\flat \circ \sharp = 1_{V^*}$ and $\sharp \circ \flat = 1_V$.
+	\end{enumerate}	
+\end{proposition}
+
+This proposition, whose trivial proof can be found on \cite[Proposition 9.30]{romero86}, lets us define the so-called musical isomorphisms, that give us the possibility to completely identify $V$ and $V^*$ ---this identification depends on the metric $g$---:
+
+\begin{definition}[Musical isomorphisms]
+	The isomorphisms $\flat \colon V \to V^*$ and $\sharp \colon V^* \to V$, defined on \autoref{pro:musical}, are called \emph{musical isomorphisms induced by g}. We call $\flat$ \emph{flat} and $\sharp$ \emph{sharp}.
+\end{definition}
+
+These isomorphisms also allow us to translate geometrical objects from $V$ to $V^*$; particularly, we can see the induced metric $g^*$ on $V^*$.
+
+\begin{proposition}
+	The application $g^*$ that maps every $\varphi, \psi \in V^*$ on $g^*(\varphi,\psi) = g(\varphi^\sharp, \psi^\sharp)$ is a metric on $V^*$. Furthermore, $g^*$ is the only metric that allows $\flat$ and $\sharp$ to be isometries.
+\end{proposition}
+
+\begin{proof}
+	Let us see that $g^*$ is a metric; \ie that it is bilinear and symmetric: the fact that $g^*$ is bilinear comes from the facts that $g$ is bilinear and $\sharp$ is linear; using that $g$ is symmetric, we can write $g^*(\varphi, \psi) = g(\varphi^\sharp, \psi^\sharp) = g(\psi^\sharp, \varphi^\sharp) = g^*(\psi, \varphi)$, which proves that $g^*$ is symmetric.
+	
+	$\flat$ is an isometry ---and such is $\sharp$--- given that
+	\begin{equation}
+		\label{proof:isometry}
+		g^*(v^\flat, w^\flat) = g\left(\left(v^\flat\right)^\sharp, \left(w^\flat\right)^\sharp\right) = g(v, w).
+	\end{equation}
+
+	If $g'$ is another metric that allows $\flat$ to be an isometry, then \[g'(v^\flat, w^\flat) = g(v, w).\] But using \autoref{proof:isometry} we see that $g^*(v^\flat, w^\flat) = g'(v^\flat, w^\flat)$. Given that $\flat$ is one\nobreakdash-to\nobreakdash-one we conclude that $g' = g^*$.
+\end{proof}
+
+The metrics $g$ and $g^*$ allow us to establish a connection between the coordinates of $v$ and $v^\flat$ and between the coordinates of $\varphi$ and $\varphi^\sharp$.
+
+Let us consider $B = (v_1, \dots, v_n)$ and $B^* = (\varphi^1, \dots, \varphi^n)$ ordered bases of $V$ and its dual.
+
+Let $(a^1, \dots, a^n)$ be the coordinates of $v \in V$ in $B$ and let $(b_1, \dots, b_n)$ be the coordinates of $v^\flat \in V^*$ in $B^*$. It is easy to see that
+\begin{equation}
+	\label{eq:coordV}
+	b_j = \sum_{k=1}^n g(v_j, v_k) a^k \;\; \forall j \in \{1,2,\dots,n\}.
+\end{equation}
+
+Similary, if $(c_1, \dots, c_n)$ are the coordinates of $\varphi \in V^*$ in $B^*$ and $(d^1, \dots, d^n)$ are the coordinates of $\varphi^\sharp \in V$ in B, then we can write
+\begin{equation}
+	\label{eq:coordV*}
+	d^j = \sum_{k=1}^n g^*(\varphi^j, \varphi^k) c_k \;\; \forall j \in \{1,2,\dots,n\}.
+\end{equation}
+
+From this equations we can easily see that
+\[
+	M_{B^*}(g^*) = M_B(g)^{-1},
+\]
+where $M_B(g)$ is the matrix associated to the bilinear form $g$ on the basis $B$.
+
+Finally, we can see that if $B$ is an orthonormal basis of $(V,g)$, then $B^*$ is an orthonormal basis of $(V,g^*)$ and the previous expressions are even easier: $b_j = a^j$ and $d^j = c_j$.
+
+Going back to the beginning of this section, we will see now how we could build isomorphisms between all tensors of order 2. \autoref{theo:tensoriso} can be, of course, generalized in oder to find isomorphisms between all tensors of order $p \in \N$.
+
+\begin{theorem}
+	\label{theo:tensoriso}
+	Let $T\in\tensors_{(0,2)}(V)$ be a $(0,2)$-tensor. If we consider $T'$ and $T''$, defined as
+	\[	
+	\begin{aligned}
+	T' \colon V^* \times V &\to \R \\
+	(\varphi, v) &\mapsto T(\varphi^\sharp, v)
+	\end{aligned} \;\;\;\textrm{ and }\;\;
+	\begin{aligned}
+	T'' \colon V^* \times V^* &\to \R \\
+	(\varphi, \psi) &\mapsto T(\varphi^\sharp, \psi^\sharp)
+	\end{aligned}
+	\]
+	then:
+	\begin{enumerate}
+		\item $T'\in\tensors_{(1,1)}(V)$ and $T''\in\tensors_{(2,0)}(V)$.
+		\item The application that maps $T \mapsto T'$ ---resp. $T \mapsto T''$--- is an isomorphism between $\tensors_{(0,2)}(V)$ and $\tensors_{(1,1)}(V)$ ---resp. between $\tensors_{(0,2)}(V)$ and $\tensors_{(2,0)}(V)$---.
+	\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+	The linearity of the musical isomorphisms assures the linearity on each component of the functions $T'$ and $T''$, which proves 1.
+	
+	Given that $\tensors_{(1,1)}$ and $\tensors_{(0,2)}$ have the same dimension, to prove that $T \mapsto T'$ is an isomorphism we just need to prove that the map $T \mapsto T'$ is injective. But this comes as a direct consequence of the fact that $\sharp$ is bijective. The proof for $T \mapsto T''$ is similar.
+	
+	For more details, see the proof of \cite[Th. 9.33]{romero86}.
+\end{proof}
+
+\begin{proposition}
+	\label{pro:musicalcoord}
+	Let $B = (v_1, \dots, v_n)$ be an ordered basis of $(V,g)$ and let $B^* = (\varphi^1, \dots, \varphi^n)$ be its dual basis. Consider a tensor $T\in\tensors_{(0,2)}(V)$ that is defined as follows:
+	\[
+		T = \sum_{i,j}^{n} t_{ij} \varphi^i \otimes \varphi^j.
+	\]
+	
+	Then, if the tensors $T'$ and $T''$ from \autoref{theo:tensoriso} have the coordinates
+	\[
+		T' = \sum_{i,j}^{n} t'^i_j v_i \otimes \varphi^j
+		\quad \textrm{and} \quad
+		T'' = \sum_{i,j}^{n} t''^{ij} v_i \otimes v_j,
+	\]
+	the expressions that relate the tensors are given as
+	\[
+		t'^i_j = \sum_{k=1}^n g^*(\varphi^k, \varphi^i) t_{kj}
+		\quad \textrm{and} \quad
+		t''^{ij} = \sum_{k,l = 1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) t_{kl}.
+	\]
+\end{proposition}
+
+\begin{proof}
+	Given that
+	\[
+		(\varphi^i)^\sharp = \sum_k d^k v_k = \sum_k (\sum_l g^*(\varphi^k, \varphi^l) c_l) v_k = \sum_k g^*(\varphi^k, \varphi^i) v_k,
+	\]
+	it is easy to conclude the first expression:
+	\begin{align*}
+		t'^i_j &= T'(\varphi^i, v_j) = T((\varphi^i)^\sharp, v_j) = T(\sum_k g^*(\varphi^k, \varphi^i) v_k, v_j) = \\
+		&= \sum_{k=1}^n g^*(\varphi^k, \varphi^i) T(v_k, v_j) = \sum_k g^*(\varphi^k, \varphi^i) t_{kj}.
+	\end{align*}
+
+	The second one is very similar:
+	\begin{align*}
+		t''^{ij} &= T''(\varphi^i, \varphi^j) = T((\varphi^i)^\sharp, (\varphi^j)^\sharp) = \\
+		&= T(\sum_k g^*(\varphi^k, \varphi^i) v_k, \sum_l g^*(\varphi^l, \varphi^j) v_l) = \\
+		&= \sum_{k,l=1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) T(v_k, v_l) = \\
+		&= \sum_{k,l=1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) t_{kl}.
+	\end{align*}
+\end{proof}
+
+\begin{remark}
+	From now on, in order to ease the notation, we will write the value of the metric in the elements of the basis as follows:
+	\begin{align*}
+		g_{ij} &\defeq g(v_i, v_j), \\
+		g^{ij} &\defeq g^*(\varphi^i, \varphi^j).
+	\end{align*}
+\end{remark}
+
+\begin{remark}
+	\label{rem:raiselower}
+	Of course, these two expressions can be \emph{inverted} in order to obtain the coordinates of a $(0,2)$-tensor from the coordinates of tensors of type $(1,1)$ or $(2,0)$. Multiplying conveniently by the metric we obtain the inverted expressions. Consider the first expression, $t'^i_j = \sum_{k=1}^n g^*(\varphi^k, \varphi^i) t_{kj}$, multiply by $g_{il}$ and sum over $i$:
+	\begin{align*}
+		t'^i_j &= \sum_{k=1}^n g^{ki} t_{kj}, \\
+		\sum_{i=1}^n g_{il} t'^i_j &= \sum_{k=1}^n \left(\sum_{i=1}^n g_{il} g^{ki}\right) t_{kj}, \\
+		\sum_{i=1}^n g_{il} t'^i_j &= \sum_{k=1}^n \delta^k_l t_{kj}, \\
+		\sum_{i=1}^n g_{il} t'^i_j &= t_{lj}.
+	\end{align*}
+	
+	We can obtain the inverted version of the second expression in a similar way, now multiplying by $g_{im} g_{jp}$ and summing over $i$ and $j$:
+	\begin{align*}
+		t''^{ij} &= \sum_{k,l = 1}^n g^{ki} g^{lj} t_{kl}, \\
+		\sum_{i,j=1}^n g_{im} g_{jp} t''^{ij} &= \sum_{i,j,k,l = 1}^n \left( g_{im} g^{ki} \right) \left( g_{jp} g^{lj} \right) t_{kl}, \\
+		\sum_{i,j=1}^n g_{im} g_{jp} t''^{ij} &= \sum_{k,l = 1}^n \delta_m^k \delta_p^l t_{kl}, \\
+		\sum_{i,j=1}^n g_{im} g_{jp} t''{ij} &= t_{mp}. \\
+	\end{align*}
+
+	Fixing the indices to look nicer and leaving out the primes ---which is somehow an abuse of the notation, but that cannot lead to any errors--- we have the final expressions for both changes:
+	\[
+		t_{ij} = \sum_{k=1}^n g_{ki} t^k_j
+		\quad \textrm{and} \quad
+		t_{ij} = \sum_{k,l=1}^n g_{ki} g_{lj} t^{kl}.
+	\]
+\end{remark}
+
+Although we have seen \autoref{pro:musicalcoord} for tensors of order 2, the result is easily generalized to tensors of any other order. This provides us with a great tool to identify tensors of the same order through the musical isomorphisms.
+
+This whole identification, which is in practice a technique consisting of multiplying by the metric in order to obtain the same tensor with a different type ---as shown in \autoref{rem:raiselower}--- is a well-known operation called \emph{raise and lower indices}. This operation will become extremely important on the differential geometry discussion, which will be key to this work.
+
+But before going ahead, let us ease even more the identification between tensors. Let us consider again the example of tensors of order 2, but now with $B$ as an orthonormal basis; we know from previous discussions that, in this case, $B^*$ is also orthonormal; \ie, the metric on the elements of the basis is
+\[
+	g^{ij} = \delta^i_j.
+\]
+
+Then, the expressions for the change of coordinates, following the notation of \autoref{rem:raiselower}, are even easier:
+\[
+	t^i_j = t_{ij} = t^{ij}.
+\]
+
+We can finish this section with an interesting example on the use of the musical isomorphisms.
+
+\begin{example}
+	Let $T \in \tensors_{1,3}(V)$ be a $(1,3)$-tensor. From \autoref{theo:tensoriso} we know we can define $\tilde{T} \in \tensors_{(0,4)}(V)$ from $T$ as follows:
+	\[
+		\tilde{T}(w_1, w_2, w_3, w_4) = T(w_1^\flat, w_2, w_3, w_4).
+	\]
+	
+	In terms of components, we can write $T$ using a basis of $\tensors_{1,3}(V)$, namely $\{v_m \otimes \varphi^i \otimes \varphi^j \otimes \varphi^k\}$, where every index moves independently from 1 to $n$. If we denote its coordinates as $t^m_{jkl}$, its expression is
+	\[
+		T = \sum_{j,k,l,m}^n t^m_{jkl} v_m \otimes \varphi^i \otimes \varphi^j \otimes \varphi^k.
+	\]
+	
+	We can do the same with the tensor $\tilde{T}$ which will have its own coordinates $\tilde{t}_{ijkl}$ on a basis $\{\varphi^i \otimes \varphi^i \otimes \varphi^j \otimes \varphi^k\}$ of $\tensors_{0,4}(V)$:
+	\[
+	T = \sum_{i,j,k,l}^n \tilde{t}_{ijkl} \varphi^i \otimes \varphi^i \otimes \varphi^j \otimes \varphi^k.
+	\]
+	
+	Let us finish this example with the most interesting equation we can obtain, the expression of the $\tilde{T}$ coordinates in terms of the coordinates of $T$. We just have to lower an index, as seen at \autoref{rem:raiselower}:
+	\[
+		\tilde{t}_{ijkl} = \sum_{m=1}^n g_{im} t^m_{jkl}.
+	\]
+	Using the Einstein summation convention and assuming the coordinates are the same, the expression is even cleaner:
+	\[
+	t_{ijkl} = g_{im} t^m_{jkl}.
+	\]
+	
+\end{example}

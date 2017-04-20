@@ -1,0 +1,2142 @@
+\chapter{Mathematics}
+\label{chapter:mathematicss}
+
+This chapter follows the ideas on \cite{romero10}, which set up the basic background needed to understand what we will call later a spacetime, the main mathematical object in which we will develop our work.
+
+Before going down that road we need to know what a Lorentzian vector space is and the basic concepts that we can build upon it.
+
+\section{Lorentzian Vector Spaces}
+
+\subsection{Basic Definitions}
+
+\begin{definition}[Lorentzian product and vector space]
+	\label{def:lorentzianprod}
+	Let $V$ be an $n$-dimensional vector space on $\R$, with $n \geq 2$.
+	
+	A \emph{Lorentzian product on $V$} is a non-degenerate symmetric bilinear form on $V$ with index 1; that is, a bilinear form
+	\[
+	g \colon V \times V \to \R
+	\]
+	that satisfies the following:
+	\begin{enumerate}
+		\item $g$ is symmetric: $g(u, v) = g(v, u)$.
+		\item $g$ is non-degenerate: if $g(u, v) = 0 \;\; \forall v \in V$, then $\Rightarrow u = 0$.
+		\item $g$ has index 1: the maximum dimension of a subspace $W$ in which $g(u,u) \leq 0 \; \forall u \in W$ ---where equality holds if and only if $u = 0$--- is 1.
+	\end{enumerate}
+	
+	The vector space $V$ furnished with such a Lorentzian product is called a \emph{Lorentzian vector space}.
+\end{definition}
+
+As usual, we will say that two vectors are \emph{orthogonal} on $(V,g)$ whenever $g(u,v) = 0$.
+
+From now on until the end of this chapter, let us consider $(V,g)$ a Lorentzian vector space.
+
+When such a Lorentzian product is added to a vector space, its elements can be classified depending on the value of its squared product.
+
+\begin{definition}[Classification of vectors on Lorentzian vector spaces]
+	A vector $v \in V$ is said to be:
+	\begin{itemize}
+		\item \emph{spacelike} if $g(v,v) > 0$ or $v = 0$,
+		\item \emph{timelike} if $g(v,v) < 0$ or
+		\item \emph{null} or \emph{lightlike} if $g(v,v) = 0$ with $v \neq 0$.
+	\end{itemize}
+\end{definition}
+
+\begin{definition}[Light cone]
+	The \emph{light cone of $V$} is the subset of all null vectors.
+\end{definition}
+
+The study of the Lorentzian vector spaces will be based on \autoref{lem:lorentzspan}, which classifies, for each timelike vector, all elements of $(V,g)$ on two orthogonal subsets.
+
+\begin{lemma}
+	\label{lem:lorentzspan}
+	Let $v \in V$ be a timelike vector. Then, we can split the vector space as follows:
+	\[
+	V = \langle v \rangle \oplus v^\perp,
+	\]
+	where $v^\perp \defeq \{u \in V / g(u,v) = 0\} = \langle v \rangle^\perp$.
+	
+	Furthermore, $g_{\mid_{v^\perp}}$ is positive definite and $g_{\mid_{\langle v \rangle}}$ is negative definite; \ie, $g_{\mid_{v^\perp}}$ and $-g_{\mid_{\langle v \rangle}}$ are Euclidean products.
+\end{lemma}
+
+
+\begin{remark}\label{classic_Schwarz}
+	The positive definite subspaces of a Lorentzian vector space are in fact Euclidean spaces; in particular, the Schwarz inequality holds in $v^\perp$, with $v$ a timelike vector:
+	\begin{equation}
+	\label{eq:schwarz}
+	\lvert g(u,w) \rvert \leq \sqrt{g(u,u)} \sqrt{g(w,w)} \quad \forall u,w \in v^\perp,
+	\end{equation}
+	with equality if and only if $u$ and $w$ are linearly dependent.
+\end{remark}
+
+Then, it is trivial that two timelike vectors are never orthogonal. An interesting result appears when we study what happens with two orthogonal null vectors.
+
+From \cite[Cor. 1.1.5]{sachs77}, \cite[p. 155]{oneill83}, we can see:
+
+\begin{proposition} Let $x,y \in V$ be two null vectors. Then
+	\[
+	$g(x,y)=0$ \Leftrightarrow $x$ \textrm{ and } $y$ \textrm{ are linearly dependent}.
+	\]
+\end{proposition}
+
+
+\subsection{Time Cones}
+
+From now on, $\mathcal{T}(V,g)$ will denote the set of all timelike vectors on $(V,g)$.
+
+\begin{definition}[Time cone]
+	Let $v\in \mathcal{T}(V,g)$ be a timelike vector. The \emph{time cone defined by $v$} is the set
+	\[
+	C(v)=\{u\in\mathcal{T}(V,g)\, : \, g(u,v)<0 \}.
+	\]
+\end{definition}
+
+It is clear that $C(v)$ is not empty, as $v$ itself lays on its own time cone.
+
+Furthermore, as no two timelike vectors can be orthogonal, $g(v,w) \neq 0$ for each $w \in \mathcal{T}(V,g)$; \ie, either $w\in C(v)$ or $w\in C(-v)$. This let us describe $\mathcal{T}(V,g)$ as a union of two time cones for each timelike vector:
+\[
+\mathcal{T}(V,g) = C(v) \cup C(-v) \quad \forall v\in \mathcal{T}(V,g).
+\]
+
+The following result characterizes when two timelike vectors lie in the same time cone.
+
+It is interesting to know when two timelike vectors lie in the same time cone. \autoref{lem:timecone}, based on \cite[Lemma 5.29]{oneill83}, gives us the answer.
+
+\begin{lemma}\label{lem:timecone}
+	Given $u,v\in \mathcal{T}(V,g)$, they belong to the same time cone if and only if $g(u,v)<0$.
+\end{lemma}
+
+\begin{corollary}\label{convexity}
+	Let $w\in\mathcal{T}(V,g)$, $u,v\in C(w)$ and $a,b\in \R$ with $a,b\geq 0$ and $a^2+b^2 \neq 0$. Then, we have $au+bv\in C(w)$.
+\end{corollary}
+
+This corollary lets us conclude that time cones are convex subsets of $V$. Furthermore, it is important to realize that if $u\in C(v)$ then $C(u)=C(v)$.
+
+\autoref{classic_Schwarz} showed that the Schwarz inequality holds on the orthogonal space of any timelike vector. This result is not true if we consider any pair of vectors, but what happens when we focus on timelike vectors? Some interesting results will appear.
+
+\section{Wrong-Way Inequalities}
+
+First of all, we can obtain the so-called \emph{wrong-way Schwarz inequality} ---see \cite[Prop. 5.30]{oneill83}--- when considering only timelike vectors.
+
+\begin{proposition}[Wrong-way Schwarz inequality]
+	\label{pro:wrongway}
+	Let $u,v \in \mathcal{T}(V,g)$ be a pair of timelike vectors. Then, its product satisfies the following:
+	\[
+	\lvert g(u,v) \vert \geq \sqrt{-g(u,u)}\sqrt{-g(v,v)},
+	\]
+	with equality holding if and only if $u$ and $v$ are linearly dependent.
+\end{proposition}
+
+We can obtain another wrong-way inequality. As a consequence of \autoref{pro:wrongway} and using \autoref{lem:timecone}, the so-called \emph{wrong-way Minkowski inequality} is found ---see \cite[Cor. 5.31]{oneill83}---.
+
+\begin{corollary}[Wrong-way Minkowski inequality]
+	\label{Minkowski}
+	Let $u,v \in \mathcal{T}(V,g)$ be two timelike vectors that lie in the same time cone. Then:
+	\[
+	\sqrt{-g(u+v,u+v)} \geq \sqrt{-g(u,u)}+\sqrt{-g(v,v)},
+	\]
+	where the equality holds if and only if $u$ and $v$ are linearly dependent.
+\end{corollary}
+
+We can now formalize the notion of angle between two timelike vectors.
+
+Indeed, let $u, v \in \mathcal{T}(V,g)$ be two timelike vectors that lie in the same time cone. From \autoref{lem:timecone} and \autoref{pro:wrongway}, we know that
+\[
+-g(u,v) \geq \sqrt{-g(u,u)}\sqrt{-g(v,v)},
+\]
+and therefore, there exists a unique $\theta \in \R$, $\theta \geq 0$, such that
+\[
+\cosh \theta =\frac{-g(u,v)}{\sqrt{-g(u,u)}\sqrt{-g(v,v)}}.
+\]
+
+$\theta$ is called the \emph{hyperbolic angle} between $u$ and $v$.
+
+\subsection{Time Orientation on Lorentzian Vector Spaces}
+
+This last section on Lorentzian vector spaces introduces an important concept: time orientation. We need some previous concepts before formalizing this idea.
+
+\begin{definition}[Orthonormal basis of $(V,g)$]
+	Let $B = (v_1, \dots, v_n)$ be a basis of $V$. $B$ is said to be \emph{orthonormal} when
+	\begin{itemize}
+		\item any two different vectors on $B$ are $g$-orthogonal,
+		\item each $v_i$, with $i \in \{1,\dots,n-1\}$, is unitary spacelike and
+		\item $v_n$ is unitary timelike.
+	\end{itemize}
+	
+	Note that the matrix of $g$ on the basis $B$ is
+	\[
+	M_B(g) = \begin{pmatrix}
+	I_{n-1} & 0  \\
+	0 & -1
+	\end{pmatrix}.
+	\]
+\end{definition}
+
+Let $B = (v_1, \dots, v_n)$ and $B' = (v'_1, \dots, v'_n)$ be two orthonormal basis of $(V,g)$. We say that $B$ and $B'$ define the same \emph{time orientation} of $(V,g)$ when
+\[
+g(v_n, v'_n) < 0;
+\]
+that is, when both $v_n$ and $v'_n$ lie in the same time cone of $(V,g)$.
+
+This defines two equivalence classes on the set of orthonormal bases: the class defined by $B=(v_1,..,v_{n-1},v_n)$ and the class defined by $\tilde{B}=(v_1,..,v_{n-1},-v_n)$.
+
+\begin{definition}[Time orientation]
+	\label{def:vstimeorientation}
+	A \emph{time orientation} on $(V,g)$ is each one of the two equivalence classes defined by $B$ and $\tilde{B}$.
+\end{definition}
+
+Furthermore, we note that a time orientation on $(V,g)$ is given by each time cone of $(V,g)$.
+
+Although the classical orientations on $V$ does not depend on $g$, it is important to realize that the notion of time orientation is a metric concept, that is, it is defined using the Lorentzian product $g$.
+
+However, a time orientation does not change if we replace $g$ by a conformally related Lorentzian product $ag$, with $a\in \R$, $a>0$.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Tensor Algebra}
+\label{chapter:tensoralgebra}
+
+This chapter covers some basic tools needed in the further development of this work. Although basic, its knowledge is crucial in a lot of fields, and its interest for the study of the Geometry will unveil in the following chapters.
+
+Nearly all definitions, results and ideas are based on \cite[Chapters 6 and 9]{romero86}.
+
+\subsection{The Notion of Tensor}
+
+\begin{definition}[Multilinear map]
+	\label{def:multilinear}
+	Let $V_1, V_2, \dots, V_r$ and $W$ be vector spaces over the same field $K$. A multilinear ---$r$ times linear--- map from $V_1 \times V_2 \cdots \times V_r$ to $W$ is a map
+	\[
+	T \colon V_1 \times V_2 \cdots \times V_r \longrightarrow W
+	\]
+	that is linear in each of its components; \ie, that verifies the following conditions:
+	\begin{enumerate}
+		\item $\begin{aligned}[t]
+		T(x_1, \dots, x_i+x_i', \dots, x_r) = &T(x_1, \dots, x_i, \dots, x_r) + \\&T(x_1, \dots, x_i', \dots, x_r),
+		\end{aligned}$
+		\item $T(x_1, \dots, a x_i, \dots, x_r) = aT(x_1, \dots, x_i, \dots, x_r)$,
+	\end{enumerate}
+	for every $i \in \{1, 2, \dots, r\}$, where $x_j$ is an arbitrary vector in $V_j$ and $a \in K$.
+\end{definition}
+
+Before going ahead with the definition of tensor, we must remember the concept of dual space.
+
+Given a vector space $V$ over a field $K$, its \emph{dual space} is the vector space defined as
+\[
+V^* \defeq \Hom_K(V,K);
+\]
+that is, $V^*$ is the set of all linear maps $\varphi : V \to K$.
+
+There are some interesting results concerning dual spaces that will be important in the understanding of the notion of tensor.
+
+First of all, it is known that if $V$ is finite-dimensional, the dimensions of $V$ and $V^*$ are the same and, given a base of $V$, $B = \{v_1, \dots, v_n\}$, its \emph{dual basis} is built as $B^* = \{\varphi^1, \dots, \varphi^n\}$\footnote{From now on, Latin letters with subscripts will denote vectors, whereas Greek letters with superscripts will denote one-forms.}, where
+\[
+\varphi^i(v_j) = \delta^i_j.
+\]
+
+Furthermore, the theorem for the double dual space (\cite[Th. 4.3]{nomizu79}) tells us that there exists a natural isomorphism between $V$ and its double dual space, $V^{**}$, when $V$ is finite-dimensional. This isomorphism assigns, to every vector $v \in V$, a function that maps every one-form into its evaluation on $v$:
+\begin{align}
+\label{eq:naturaliso}
+\psi \colon V &\longrightarrow V^{**} \\
+v &\longmapsto \psi_v \colon \begin{aligned}[t]
+V^* &\longrightarrow K \\
+\varphi &\longmapsto \varphi(v).
+\end{aligned} \nonumber
+\end{align}
+
+With the concepts of multilinear maps and dual spaces we can now build the definition of tensor, core concept of this section.
+
+\begin{definition}[Tensor]
+	\label{def:tensor}
+	Let $V$ be a vector space over a field $K$, being $V^*$ its dual space. A tensor $r$ ($\geq 0$) times contravariant and $s$ ($\geq 0$) times covariant ---\ie, a tensor of type $(r,s)$--- is a multilinear map
+	\[
+	T \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r copies}} \times \underbrace{V \times \cdots \times V}_{\text{s copies}} \longrightarrow K.
+	\]
+	Tensors of type $(0,s)$ are said to be \emph{covariant}, whereas tensors of type $(r,0)$ are called \emph{contravariant}.
+	
+	The \emph{order} of the tensor is defined as the sum $r+s$.
+\end{definition}
+
+\begin{example}
+	\label{ex:tensors}
+	The following examples show how interesting the notion of tensor is, as it can include a vast selection of mathematical objects under the same concept; for example, we will see that both vectors and one-forms are tensors.
+	
+	Let $V$ be an $n$-dimensional vector space and $V^*$ its dual space.
+	\begin{enumerate}
+		\item Let $\varphi \in V^*$; \ie,  $\varphi \colon V \to K$ is a one-form. From \autoref{def:tensor} it is clear that $\varphi$ is a tensor of type $(0,1)$ over $V$.
+		\item Let $v \in V$ be a vector. Using the natural isomorphism between $V$ and its double dual space, the vector $v$ can be identified with $\psi_v \colon V^* \to K$, and thus we can understand $v$ as a tensor of type $(1,0)$.
+		\item Consider now $f \in \End_K V$ and let $T_f \colon V^* \times V \to K$ be the map defined as $T_f(\varphi, v) \defeq \varphi(f(v))$. It is clear that $T_f$ is a tensor of type $(1,1)$. Moreover, if we consider $f$ to be the identity map $1_V$, then $T_{1_V}$ is the tensor that maps every pair of (vector, one-form) to the evaluation of the one-form on the vector; \ie, is the tensor associated to the natural isomorphism between $V$ and $V^{**}$.
+		\item Common operations in several mathematical fields can also be seen as tensors. For example, the inner product can be defined as a tensor of type $(0,2)$ as follows:
+		\begin{align*}
+		T \colon V \times V &\to K\\
+		(v,w) &\mapsto \sum_{i=1}^n v_i w_i.
+		\end{align*}
+		In general, every bilinear form is a $(0,2)$ tensor. This follows from the definition of bilinear form, which satisfies all conditions in \autoref{def:tensor}.
+	\end{enumerate}
+\end{example}
+
+\subsection{Tensor Basic Operations}
+
+\subsubsection*{Tensor Addition and Product by a Scalar}
+Let $\tensors_{r,s}(V)$ be the set of all tensors of type $(r,s)$. It is clear that both $\tensors_{1,0}(V) = V^*$ and $\tensors_{0,1}(V) = V^{**}$ are vector spaces over K. A natural question arises: is $\tensors_{r,s(V)}$ a vector space for arbitrary $r$ and $s$? The following result gives us the answer we are looking for.
+
+\begin{theorem}
+	Let $T, T' \in \tensors_{r,s}(V)$ be two tensors of type $(r,s)$ and $a \in K$ a scalar. Consider the following operations:
+	\begin{itemize}
+		\item $\begin{aligned}[t]
+		(T+T') (\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) \defeq &T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) +\\
+		&T'(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s),
+		\end{aligned}$
+		\item $(a T)(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) \defeq a T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s)$,
+	\end{itemize}
+	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r\}$ and $v_j \in V$ for all $j \in \{1,\dots,s\}$.
+	
+	The set $\tensors_{r,s}(V)$ with the preceding operations is a vector space.
+\end{theorem}
+
+\subsubsection*{Tensor Product}
+
+Now that we know that $\tensors_{r,s}(V)$ is a vector space, it will be important to study its dimension. Before going down that road, let us define the tensor product, concept upon which we will be able to build a basis for $\tensors_{r,s}(V)$.
+
+\begin{definition}[Tensor product]
+	Let $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. The \emph{tensor product} \[T \otimes T' \colon \underbrace{V^* \times \cdots \times V^*}_{\text{r+r' copies}} \times \underbrace{V \times \cdots \times V}_{\text{s+s' copies}}\] is defined as follows:
+	\begin{align*}
+	&(T \otimes T')(\varphi^1, \dots, \varphi^{r+r'}, v_1, \dots, v_{s+s'}) \defeq \\
+	&T(\varphi^1, \dots, \varphi^r, v_1, \dots, v_s) T(\varphi^{r+1}, \dots, \varphi^{r+r'}, v_{s+1}, \dots, v_{s+s'}),
+	\end{align*}
+	where $\varphi^i \in V^*$ for all $i \in \{1,\dots,r+r'\}$ and $v_j \in V$ for all $j \in \{1,\dots,s+s'\}$.
+\end{definition}
+
+It is easy to prove that $T \otimes T' \in \tensors_{r+r',s+s'}(V)$ for every $T \in \tensors_{r,s}(V)$ and $T' \in \tensors_{r',s'}(V)$. However, the proof is long and cumbersome to write, and it can be found in almost every elementary book on tensor algebra (\cite{romero86}, \cite{nomizu79}).
+
+Furthermore, we can see that, given $T \in \tensors_{r,s}(V)$, $T' \in \tensors_{r',s'}(V)$ and $T'' \in \tensors_{r'',s''}(V)$:
+\begin{align*}
+(T \otimes T') \otimes T'' &\in \tensors_{r+r'+r'', s+s'+s''}(V),\\
+T \otimes (T' \otimes T'') &\in \tensors_{r+r'+r'', s+s'+s''}(V)
+\end{align*}
+and that the following equality holds:
+\[
+(T \otimes T') \otimes T'' = T \otimes (T' \otimes T'').
+\]
+In fact, the application
+\begin{align*}
+\tensors_{r,s}(V) \times \tensors_{r',s'}(V) &\longrightarrow \tensors_{r+r',s+s'}(V) \\
+(T,T') &\longmapsto T \otimes T'
+\end{align*}
+is a bilinear map.
+
+As a particular example, we can define the tensor product between two tensors of type $(1,0)$ and $(0,1)$ as the following tensor:\footnote{This is an abuse of notation, as we are writing $v$ ---a letter used for vectors of $V$--- to describe an element of $V^{**}$.}
+\[
+v \otimes \varphi \in \tensors_{1,1}(V),
+\]
+which maps every pair $(\psi, w)$ to the scalar $\psi(v)\varphi(w)$.
+
+Upon this concept, and using the known properties of the dual vector space and its basis, we can state and prove a theorem that builds a basis for every $\tensors_{r,s}(V)$.
+
+\begin{theorem}
+	Let $V$ be an $n$-dimensional vector space over a field $K$. Let $\mathcal{B} = \{v_1, \dots, v_n\}$ be a basis of $V$ and $\mathcal{B^*} = \{\varphi^1, \dots, \varphi^n\}$ be  its dual basis. Then,
+	\begin{align*}
+	\mathcal{B}_T = \{v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s} \textrm{ , } &\textrm{where every index moves} \\
+	&\textrm{independently from $1$ to $n$}\},
+	\end{align*}
+	is a basis of $\tensors_{r,s}(V)$. As a consequence, $\dim_K\tensors_{r,s}(V) = n^{r+s}$.
+\end{theorem}
+
+Two particularly important examples of the above theorem let us grasp the duality between vectors and one-forms.
+
+Let $V$ be a vector space with dimension $n$, with basis $B = \{v_1, \dots, v_n\}$ and dual basis $B^* = \{\varphi^i, \dots, \varphi^n\}$.
+
+We know that $\tensors_{1,0}(V) = V^{**}$, and we can write each vector $v \in V \simeq V^{**}$ as
+\[
+v = \sum_{i=1}^n b^i v_i,
+\]
+where each coordinate is the projection of the vector using the corresponding one-form: $b^i = \varphi^i(v)$.
+
+Similarly, we can consider $\tensors_{0,1}(V) = V^*$. Each of its elements, $\psi \in V^*$, can be written in terms of the tensor basis $\mathcal{B}_{\tensors_{0,1}(V)} = B^*$:
+\[
+\psi = \sum_{j=1}^n a_j \varphi^j,
+\]
+Note here that the coordinates are retrieved evaluating the form in each element of the basis $B$: $a_j = \psi(v_j)$.
+
+This shows that both evaluating a one-form on the elements of the basis $B$ and projecting a vector with the elements of the basis $B^*$ can be seen as dual operations: both of them give the coordinates of the corresponding element on the corresponding basis.
+
+The notion of tensor help us to understand this duality: we now see both elements as the \emph{same} mathematical entity, where both operations are expressed in different bases with the corresponding change of coordinates.
+
+\subsection{Change of Bases on $\tensors_{r,s}(V)$}
+
+We now want to study how the coordinates of a tensor change when we change the basis of $\tensors_{r,s}(V)$.
+
+First of all, we must remember the relationship between the change of basis on a vector space $V$ and the corresponding change of basis in its dual space, $V^*$.
+
+Let $B = (v_1, \dots, v_n)$ and $B' = (v_1', \dots, v_n')$ be two bases of $V(K)$, and suppose that the change of coordinates is given by
+\[
+v_j = \sum_{i=1}^n a_j^i v'_i.
+\]
+
+It is known that ---see \cite[p. 162]{romero86}---, if $B^* = (\varphi^1, \dots, \varphi^n)$ and $B'^* = (\varphi'^1, \dots, \varphi'^n)$ are the dual bases of the two preceding ones, the elements of the bases are related in the \emph{opposite} way as before:
+\begin{equation}
+\label{eq:changeV*}
+\varphi'^i = \sum_{j=1}^n a_j^i \varphi^j \textrm{, where } a_j^i \in K.
+\end{equation}
+
+Furthermore, we can see that
+\begin{equation}
+\label{eq:changeV}
+v_j' = \sum_{j=1}^n b_j^i v_j,
+\end{equation}
+
+where $b_j^i$ is the element placed on the $i$-th row, $j$-th column of  the inverse matrix of $(a^i_j)$.
+
+This change of bases in $V$ and $V^*$  is key to understand \autoref{pro:changeT}, which tells us how  the coordinates of a tensor change when we change the basis of $\tensors_{r,s}(V)$.
+
+\begin{proposition}
+	\label{pro:changeT}
+	Let $B$, $B'$ and $B^*$, $B'^*$ the bases of $V$ and $V^*$ described above and consider two ordered bases of $\tensors_{r,s}(V)$ obtained from
+	\begin{align*}
+	\mathcal{B}_T = \{v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s} \textrm{ , } &\textrm{where every index moves} \\
+	&\textrm{independently from $1$ to $n$}  \}
+	\end{align*}
+	and
+	\begin{align*}
+	\mathcal{B}'_T = \{v'_{i_1} \otimes \dots \otimes v'_{i_r} \otimes \varphi'^{j_1} \otimes \dots \otimes \varphi'^{j_s} \textrm{ , } &\textrm{where every index moves} \\
+	&\textrm{independently from $1$ to $n$}  \}.
+	\end{align*}
+	
+	Then, the analytic expression of the change of coordinates of a tensor $T \in \tensors_{r,s}(V)$ is the following:
+	\begin{align*}
+	t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} = \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r},
+	\end{align*}
+	where the coefficients are the ones defined in \autoref{eq:changeV*} and \autoref{eq:changeV}.
+\end{proposition}
+
+\subsubsection*{Tensors of Order 2}
+\label{sub:order2}
+
+We can study now the particular examples of tensors of order 2. From now on, let $V$ be an $n$-dimensional vector space, $V^*$ its dual space and $\mathcal{B} = (v_1, \dots, v_n)$ and $\mathcal{B^*} = (\varphi^1, \dots, \varphi^n)$ their respective bases.
+
+Let us first consider $\tensors_{(2,0)}$, which is a vector space of dimension $n^2$. Let
+\[
+\mathcal{B}_T = \{v_i \otimes v_j \textrm{, where } i,j \in \{1,\dots,n\}\}
+\]
+be one of its bases. We can now write a generic tensor $T\in\tensors_{2,0}$ as follows:
+\[
+T = \sum_{i,j=1}^n t^{ij} v_i \otimes v_j,
+\]
+where $t^{ij} = T(\varphi^i, \varphi^j)$.
+
+Let $\mathcal{B}' = (v_1', \dots, v_n')$ and $\mathcal{B}'^* = (\varphi'^1, \dots, \varphi'^n)$ be two new bases of $V$ and $V^*$.
+
+Following \autoref{pro:changeT}, we know that $T = \sum_{i,j=1}^n t^{ij} v_i \otimes v_j = \sum_{k,l=1}^n t'^{kl} v_k' \otimes v_l'$, where
+\[
+t'^{kl} = \sum_{i,j=1}^n a^k_i a^l_j t^{ij}.
+\]
+
+This expression can be written with matrix notation:
+\begin{equation}
+\label{eq:tensors20}
+\left( t'^{kl} \right) = \mathbf{A} \left( t^{ij} \right) \mathbf{A}^t,
+\end{equation}
+where $\mathbf{A} \defeq \left(a_j^i\right)$ is the matrix whose elements are the ones defined in \autoref{eq:changeV*}; that is, the change of basis matrix in the dual space:
+\[
+\mathbf{A} = M(1_v, \mathcal{B}'^*, \mathcal{B}^*).
+\]
+
+We can follow a similar reasoning for $\tensors_{(0,2)}$, considering
+\[
+\mathcal{B}_T = \{\varphi^i \otimes \varphi^j \textrm{, where } i,j \in \{1,\dots,n\}\}
+\]
+one of its bases. A generic tensor $T\in\tensors_{0,2}$ can be written in a similar way:
+\[
+T = \sum_{i,j=1}^n t_{ij} \varphi^i \otimes \varphi^j,
+\]
+where $t_{ij} = T(v_i, v_j)$.
+
+The expression of the change of coordinates is now
+\[
+t'_{kl} = \sum_{i,j=1}^n b_k^i b_l^j t_{ij},
+\]
+where $\mathbf{B} \defeq \left( b^i_j \right)$ is the inverse matrix of $\mathbf{A}$, as shown in \autoref{eq:changeV}. This expression, written in matrix notation, is similar to \autoref{eq:tensors20}:
+\begin{equation}
+\label{eq:tensors02}
+\left( t'_{kl} \right) = \mathbf{B} \left( t_{ij} \right) \mathbf{B}^t.
+\end{equation}
+
+For $r = s = 1$, the study is even more interesting. Considering
+\[
+\mathcal{B}_T = \{v_i \otimes \varphi^j \textrm{, where } i,j \in \{1,\dots,n\}\},
+\]
+a generic tensor $T\in\tensors_{1,1}$ is written as follows:
+\[
+T = \sum_{i,j=1}^n t^i_j v_i \otimes \varphi^j,
+\]
+where $t^i_j = T(\varphi^i, v_j)$.
+
+The expression of the change of coordinates is again similar to the previous ones:
+\[
+t'^k_{\phantom{'}l} = \sum_{i,j = 1}^n a^k_i b_l^j  t^i_j \quad \forall k,l \in \{1,2,\dots,n\}.
+\]
+
+The matrix notation is now somewhat different:
+\begin{equation}
+\label{eq:tensors11}
+(t'^k_{\phantom{'}l}) = \mathbf{A} (t^i_j) \mathbf{A}^{-1}.
+\end{equation}
+
+This last expression is very interesting, as it tells us that the \emph{matrices} of the coordinates of $T$ in both bases of $\tensors_{1,1}(V)$ are similar, not congruent as in \autoref{eq:tensors20} or \autoref{eq:tensors02}.
+
+Remember now the third item in \autoref{ex:tensors}: it established a relationship between $\tensors_{1,1}(V)$ and $\End_K V$, that is now clear again: we see that \autoref{eq:tensors11} is not only the change of coordinates of a tensor, but also the expression of the change of the basis matrix of the corresponding endomorphism.
+
+This is not surprising as both spaces are isomorphic, with a \emph{natural} isomorphism between them:
+\begin{theorem}
+	The map
+	\begin{align*}
+	\End_K V &\longrightarrow \tensors_{1,1}(V)\\
+	f &\longmapsto T_f,
+	\end{align*}
+	where $T_f(\varphi, v) = \varphi(f(v)) \; \forall \varphi \in V^* \; \forall v \in V$, is an isomorphism.
+\end{theorem}
+
+Note that whereas all the three vector spaces studied ---$\tensors_{2,0}$, $\tensors_{0,2}$ and $\tensors_{1,1}$--- are isomorphic between them ---they all have the same dimension: 2---, the natural isomorphism with $\End_K(V)$ is only found with $\tensors_{1,1}$.
+
+\begin{remark}
+	This natural identification between tensors in $\tensors_{1,1}$ and operators is key in the physics literature, as one can talk either about operators over a vector space or about tensors $(1,1)$.
+	
+	But how can we identify a tensor and its corresponding operator in practice? Let us see it: consider $f \in \End_K(V)$ defined, using a basis $\mathcal{B} = (v_1, \dots, v_n)$ of $V$, as
+	\[
+	f(v_j) = \sum_{i=1}^n a^i_j v_i
+	\]
+	and its corresponding tensor defined as
+	\[
+	T_f = \sum_{i,j=1}^n t^i_j v_i \otimes \varphi^j.
+	\]
+	
+	A really quick proof shows that both coordinates $a^i_j$ and $t^i_j$ are exactly the same!
+	\[
+	t^i_j = T_f(\varphi^i, v_j) = \varphi^i(f(v_j)) = a^i_j.
+	\]
+\end{remark}
+
+\subsection{Tensor Contraction}
+
+We can study another way of obtaining new tensors from old ones. The operation we are going to define is motivated by the following property of the $(1,1)$ tensors.
+
+Consider a tensor $T \in \tensors_{(1,1)}(V)$ and two basis of $\tensors_{(1,1)}(V)$: $\mathcal{B} = \{v_j \otimes \varphi^i\}$ and $\mathcal{B}' = \{v'_j \otimes \varphi'^i\}$, where both indices move independently from 1 to $n$. If the components of the tensor on the two different bases are the following:
+\[
+t^i_j = T(\varphi^i, v_j) \quad t'^i_j = T(\varphi'^i, v'_j),
+\]
+with the expression of coordinate change being
+\[
+t'^k_{\phantom{'}l} = \sum_{i,j = 1}^n a^k_i b_l^j  t^i_j \quad \forall k,l \in \{1,2,\dots,n\}.
+\]
+
+From the previous expression it is straightforward to see that \cite[p. 198]{romero86} the sum of the coordinates with the same index is invariant under a change of basis. Indeed:
+\begin{align*}
+\sum_k t'^k_k = \sum_{i,j,k} a^k_i b_k^j  t^i_j = \sum_{i,j} \left( \sum_k a^k_i b_k^j \right) t^i_j = \sum_{i,j} \delta_i^j t^i_j = \sum_i t^i_i.
+\end{align*}
+
+Considering the tensor $T$ as an operator, it is clear that this invariant scalar (a $(0,0)$ tensor) is the trace. We then have a map
+\[
+C \colon \tensors_{(1,1)}(V) \to \tensors_{(0,0)}(V)
+\]
+defined as $C(T) = \sum_i T(\varphi^i, v_i)$.
+
+The generalization of this map to other tensor types is what we call tensor contraction.
+
+\begin{definition}[Tensor contraction]
+	Let $T \in \tensors_{(r,s)}(V)$, where $r,s > 0$. The contraction of $T$ with respect to the $i$-th contravariant slot and $j$-th covariant slot is the image of $T$ by the application
+	\begin{align*}
+	C^i_j \colon \tensors_{(r,s)}(V) &\to \tensors_{(r-1,s-1)}(V) \\
+	T &\mapsto C^i_j T,
+	\end{align*}
+	where $C^i_j T$ maps each tuple of one-forms and vectors 
+	\[
+	(\psi^1, \dots, \psi^{r-1}, w_1, \dots, w_{s-1}),
+	\]
+	to the value
+	\[
+	\sum_k T(\psi^1, \dots, \underbrace{\varphi^k}_{i\textrm{-th slot}}, \dots, \psi^{r-1}, w_1, \dots, \underbrace{v_k}_{j\textrm{-th slot}}, \dots, w_{s-1}),
+	\]
+	where $\{v_i\}$ is a basis of $V$ and $\{\varphi^i\}$ its dual basis.
+\end{definition}
+
+It can be proved ---see \cite[Prop. 6.12]{romero86}--- that $C^i_j T$ is a tensor. As it does not depend on the choice of the basis, the concept of contraction is well-defined.
+
+It is interesting to note that the coordinates of $C^i_j T$ are obtained making equal the $i$-th contravariant, $j$-th covariant coordinate and summing in that index ---see \cite[Prop. 6.14]{romero86} for a more detailed explanation---:
+\[
+C^i_j T = \left( \sum_m t^{k_1, \dots, k_{i-1}, m, k_{i+1}, \dots, k_r}_{l_1, \dots, l_{j-1}, m, l_{j+1}, \dots, l_s} \right).
+\]
+
+
+\subsection{Alternative Definition of Tensor: the Physics Approach}
+
+Equations \ref{eq:tensors20}, \ref{eq:tensors02} and \ref{eq:tensors11} can be interpreted otherwise, as they can be used to build an alternative definition of tensor.
+
+This reinterpretation first needs a new concept to be developed, multidimensional arrays, that will be used to represent tensors by their coordinates on a certain basis.
+
+\begin{definition}[Multidimensional array]
+	Let $K$ be a field and $s, r$ and $n$ non-negative integers. A \emph{multidimensional array} of type $(r,s)$ and order $n$ is an ordered set of $n^{r+s}$ $K$-scalars, which we will note as
+	\[
+	\left( t^{k_1, \dots, k_r}_{l_1, \dots, l_s} \right),
+	\]
+	with every index moving independently from 1 to $n$ and $t^{k_1, \dots, k_r}_{l_1, \dots, l_s} \in K$ for every $k_1, \dots, k_r, l_1, \dots, l_r \in \{1, \dots, n\}$.
+\end{definition}
+
+It is clear that multidimensional arrays are actually square matrices when $r = s = 1$. This shows that we are working not with a brand new definition but actually with a generalization of the well-known concept; we can generalize other ideas involving square matrices to multidimensional arrays.
+
+For example, we can define an equivalence relation on the set of all multidimensional arrays of type $(r,s)$ and order $n$ as follows: we will say that $\left( t_{j_1,\dots,j_s}^{i_1,\dots,i_r} \right)$ and $\left( t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} \right)$ are similar when there is a matrix $\mathbf{A} = \left(a^j_i\right) \in Gl(n,K)$ such that
+\[
+t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} = \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r},
+\]
+where $\mathbf{B} \defeq \left( b^i_j\right)$ represents, as usual, the matrix $\mathbf{A}^{-1}$.
+
+It is clear, from \autoref{pro:changeT}, that multidimensional arrays that represent the same tensor are always similar. The other implication is also true.
+
+\begin{proposition}
+	\label{pro:multisimilar}
+	Let $\left( t_{j_1,\dots,j_s}^{i_1,\dots,i_r} \right)$ and $\left( t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} \right)$ be two similar multidimensional arrays of type $(r,s)$ and order $n$, and let $V$ be an $n$-dimensional vector space, $V^*$ its dual and $B = (v_1, \dots, v_n)$, $B^* = (\varphi^1, \varphi^n)$ their corresponding bases.
+	
+	If $T$ is the unique tensor of type $(r,s)$ over $V$ defined as
+	\[
+	T = \sum t_{j_1,\dots,j_s}^{i_1,\dots,i_r} v_{i_1} \otimes \dots \otimes v_{i_r} \otimes \varphi^{j_1} \otimes \dots \otimes \varphi^{j_s},
+	\]
+	then there exists a unique basis of V, $B' = (v_1', \dots, v_n')$ ---with its dual basis being $B = (\varphi'^1, \dots, \varphi'^n)$--- such that
+	\[
+	T = \sum t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} v'_{k_1} \otimes \dots \otimes v'_{k_r} \otimes \varphi'^{l_1} \otimes \dots \otimes \varphi'^{l_s}.
+	\]
+\end{proposition}
+
+In order to prove \autoref{pro:multisimilar}, one can follow the same ideas used to check that similar matrices represent the same linear applications; see, for example, \cite[p. 145]{romero86}.
+
+Propositions \ref{pro:changeT} and \ref{pro:multisimilar} allows us to define a tensor in the following way:
+
+\begin{definition}[Tensor --- alternative version]
+	A tensor of type $(r,s)$ and order $n$ over $V$ is an application that maps each ordered basis of $V$ to a multidimensional array of type $(r,s)$ and order $n$,
+	\[
+	B = (v_1, \dots, v_n) \mapsto \left( t_{j_1,\dots,j_s}^{i_1,\dots,i_r} \right),
+	\]
+	such that if it maps 
+	\[
+	B' = (v'_1, \dots, v'_n) \mapsto \left( t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} \right),
+	\]
+	then
+	\[
+	t'^{k_1,\dots,k_r}_{\phantom{'}l_1,\dots,l_s} = \sum a_{i_1}^{k_1} \cdots a_{i_k}^{k_r} b_{l_1}^{j_1} \cdots b_{l_s}^{j_s} t_{j_1,\dots,j_s}^{i_1,\dots,i_r},
+	\]
+	where $(a_i^1, a_i^2, \dots, a_i^n)$ are the coordinates of $v'_i$ on $B$ for all $i \in \{1, \dots, n\}$ and $\mathbf{B} \defeq (b^i_j)$ is the inverse of $\mathbf{A} \defeq (a^i_j)$.
+\end{definition}
+
+The study on tensors of order 2 on page \pageref{sub:order2} becomes clearer with the preceding definition, as we see now that a $(1,1)$ tensor is an application that maps every ordered basis of $V$, $B=(v_1, \dots, v_n)$, to a square matrix of order n,
+\[
+\begin{pmatrix}
+t^1_1 & t^1_2 & \cdots & t^1_n \\
+t^2_1 & t^2_2 & \cdots & t^2_n \\
+\vdots & \vdots & \ddots & \vdots \\
+t^n_1 & t^n_2 & \cdots & t^n_n \\
+\end{pmatrix},
+\]
+such that for every pair of different bases, the coordinate matrices are similar.
+
+What is a vector, then, in this new language? It is nothing else ---remember that we can identify vectors and tensors $(1,0)$--- than an application that maps ordered bases onto ordered collections of $n$ numbers ---given that $n$ is the dimension of the vector space---; what we always called coordinates of the vector are now seen as the result of applying a map ---the vector itself--- to a basis. Same exact concept, brand new vision.
+
+\subsection{Type-Changing}
+
+In physics, the usage of tensors of order 2 over $\R^3$ is made without explicitly saying nothing about its covariance or contravariance. This can be made only on those vector spaces that are adorned with a metric, which gives us the possibility to build isomorphisms between dual spaces and induce them between tensor spaces.
+
+From now on, let us consider the metric vector space $(V, g)$, where $V$ is an $n$-dimensional vector space over $\R$ and $g \colon V \times V \to \R$ is a nondegenerate metric; i.e., $g$ is a nondegenerate symmetric $(0,2)$-tensor.
+
+This addition to the naked vector space we have had until now will let us find an isomorphism between $V$ and its dual, $V^*$ without using bases; however, this is not a \emph{natural} isomorphism as the one seen on \autoref{eq:naturaliso}, as long as we need the metric in order to build it.
+
+\begin{proposition}
+	\label{pro:musical}
+	Let $v \in V$ and $\varphi \in V^*$ be a vector and a one-form.
+	
+	Consider now the one-form $v^\flat \colon V \to \R$ defined by $v^\flat(w) = g(v, w)$ and the vector $\varphi^\sharp \in V$ implicitly defined by $g(\varphi^\sharp, w) = \varphi(w) \;\forall w \in V$. Then:
+	\begin{enumerate}
+		\item $v^\flat \in V^*$ and $\varphi^\sharp \in V$.
+		\item $\begin{aligned}[t]
+		\flat \colon &V \to V^* \\
+		&v \mapsto v^\flat
+		\end{aligned}$ and $\begin{aligned}[t]
+		\sharp \colon &V^* \to V \\
+		&\varphi \mapsto \sharp^\flat
+		\end{aligned}$ are linear.
+		\item $\flat \circ \sharp = 1_{V^*}$ and $\sharp \circ \flat = 1_V$.
+	\end{enumerate}	
+\end{proposition}
+
+This proposition, whose trivial proof can be found on \cite[Proposition 9.30]{romero86}, lets us define the so-called musical isomorphisms, that give us the possibility to completely identify $V$ and $V^*$ ---this identification depends on the metric $g$---:
+
+\begin{definition}[Musical isomorphisms]
+	The isomorphisms $\flat \colon V \to V^*$ and $\sharp \colon V^* \to V$, defined on \autoref{pro:musical}, are called \emph{musical isomorphisms induced by g}. We call $\flat$ \emph{flat} and $\sharp$ \emph{sharp}.
+\end{definition}
+
+These isomorphisms also allow us to translate geometrical objects from $V$ to $V^*$; particularly, we can see the induced metric $g^*$ on $V^*$.
+
+\begin{proposition}
+	The application $g^*$ that maps every $\varphi, \psi \in V^*$ on $g^*(\varphi,\psi) = g(\varphi^\sharp, \psi^\sharp)$ is a metric on $V^*$. Furthermore, $g^*$ is the only metric that allows $\flat$ and $\sharp$ to be isometries.
+\end{proposition}
+
+The metrics $g$ and $g^*$ allow us to establish a connection between the coordinates of $v$ and $v^\flat$ and between the coordinates of $\varphi$ and $\varphi^\sharp$.
+
+Let us consider $B = (v_1, \dots, v_n)$ and $B^* = (\varphi^1, \dots, \varphi^n)$ ordered bases of $V$ and its dual.
+
+Let $(a^1, \dots, a^n)$ be the coordinates of $v \in V$ in $B$ and let $(b_1, \dots, b_n)$ be the coordinates of $v^\flat \in V^*$ in $B^*$. It is easy to see that
+\begin{equation}
+\label{eq:coordV}
+b_j = \sum_{k=1}^n g(v_j, v_k) a^k \;\; \forall j \in \{1,2,\dots,n\}.
+\end{equation}
+
+Similary, if $(c_1, \dots, c_n)$ are the coordinates of $\varphi \in V^*$ in $B^*$ and $(d^1, \dots, d^n)$ are the coordinates of $\varphi^\sharp \in V$ in B, then we can write
+\begin{equation}
+\label{eq:coordV*}
+d^j = \sum_{k=1}^n g^*(\varphi^j, \varphi^k) c_k \;\; \forall j \in \{1,2,\dots,n\}.
+\end{equation}
+
+From this equations we can easily see that
+\[
+M_{B^*}(g^*) = M_B(g)^{-1},
+\]
+where $M_B(g)$ is the matrix associated to the bilinear form $g$ on the basis $B$.
+
+Finally, we can see that if $B$ is an orthonormal basis of $(V,g)$, then $B^*$ is an orthonormal basis of $(V,g^*)$ and the previous expressions are even easier: $b_j = a^j$ and $d^j = c_j$.
+
+Going back to the beginning of this section, we will see now how we could build isomorphisms between all tensors of order 2. \autoref{theo:tensoriso} can be, of course, generalized in oder to find isomorphisms between all tensors of order $p \in \N$.
+
+\begin{theorem}
+	\label{theo:tensoriso}
+	Let $T\in\tensors_{(0,2)}(V)$ be a $(0,2)$-tensor. If we consider $T'$ and $T''$, defined as
+	\[	
+	\begin{aligned}
+	T' \colon V^* \times V &\to \R \\
+	(\varphi, v) &\mapsto T(\varphi^\sharp, v)
+	\end{aligned} \;\;\;\textrm{ and }\;\;
+	\begin{aligned}
+	T'' \colon V^* \times V^* &\to \R \\
+	(\varphi, \psi) &\mapsto T(\varphi^\sharp, \psi^\sharp)
+	\end{aligned}
+	\]
+	then:
+	\begin{enumerate}
+		\item $T'\in\tensors_{(1,1)}(V)$ and $T''\in\tensors_{(2,0)}(V)$.
+		\item The application that maps $T \mapsto T'$ ---resp. $T \mapsto T''$--- is an isomorphism between $\tensors_{(0,2)}(V)$ and $\tensors_{(1,1)}(V)$ ---resp. between $\tensors_{(0,2)}(V)$ and $\tensors_{(2,0)}(V)$---.
+	\end{enumerate}
+\end{theorem}
+
+\begin{proposition}
+	\label{pro:musicalcoord}
+	Let $B = (v_1, \dots, v_n)$ be an ordered basis of $(V,g)$ and let $B^* = (\varphi^1, \dots, \varphi^n)$ be its dual basis. Consider a tensor $T\in\tensors_{(0,2)}(V)$ that is defined as follows:
+	\[
+	T = \sum_{i,j}^{n} t_{ij} \varphi^i \otimes \varphi^j.
+	\]
+	
+	Then, if the tensors $T'$ and $T''$ from \autoref{theo:tensoriso} have the coordinates
+	\[
+	T' = \sum_{i,j}^{n} t'^i_j v_i \otimes \varphi^j
+	\quad \textrm{and} \quad
+	T'' = \sum_{i,j}^{n} t''^{ij} v_i \otimes v_j,
+	\]
+	the expressions that relate the tensors are given as
+	\[
+	t'^i_j = \sum_{k=1}^n g^*(\varphi^k, \varphi^i) t_{kj}
+	\quad \textrm{and} \quad
+	t''^{ij} = \sum_{k,l = 1}^n g^*(\varphi^k, \varphi^i) g^*(\varphi^l, \varphi^j) t_{kl}.
+	\]
+\end{proposition}
+
+\begin{remark}
+	From now on, in order to ease the notation, we will write the value of the metric in the elements of the basis as follows:
+	\begin{align*}
+	g_{ij} &\defeq g(v_i, v_j), \\
+	g^{ij} &\defeq g^*(\varphi^i, \varphi^j).
+	\end{align*}
+\end{remark}
+
+\begin{remark}
+	\label{rem:raiselower}
+	Of course, these two expressions can be \emph{inverted} in order to obtain the coordinates of a $(0,2)$-tensor from the coordinates of tensors of type $(1,1)$ or $(2,0)$. Multiplying conveniently by the metric we obtain the inverted expressions. Consider the first expression, $t'^i_j = \sum_{k=1}^n g^*(\varphi^k, \varphi^i) t_{kj}$, multiply by $g_{il}$ and sum over $i$:
+	\begin{align*}
+	t'^i_j &= \sum_{k=1}^n g^{ki} t_{kj}, \\
+	\sum_{i=1}^n g_{il} t'^i_j &= \sum_{k=1}^n \left(\sum_{i=1}^n g_{il} g^{ki}\right) t_{kj}, \\
+	\sum_{i=1}^n g_{il} t'^i_j &= \sum_{k=1}^n \delta^k_l t_{kj}, \\
+	\sum_{i=1}^n g_{il} t'^i_j &= t_{lj}.
+	\end{align*}
+	
+	We can obtain the inverted version of the second expression in a similar way, now multiplying by $g_{im} g_{jp}$ and summing over $i$ and $j$:
+	\begin{align*}
+	t''^{ij} &= \sum_{k,l = 1}^n g^{ki} g^{lj} t_{kl}, \\
+	\sum_{i,j=1}^n g_{im} g_{jp} t''^{ij} &= \sum_{i,j,k,l = 1}^n \left( g_{im} g^{ki} \right) \left( g_{jp} g^{lj} \right) t_{kl}, \\
+	\sum_{i,j=1}^n g_{im} g_{jp} t''^{ij} &= \sum_{k,l = 1}^n \delta_m^k \delta_p^l t_{kl}, \\
+	\sum_{i,j=1}^n g_{im} g_{jp} t''{ij} &= t_{mp}. \\
+	\end{align*}
+	
+	Fixing the indices to look nicer and leaving out the primes ---which is somehow an abuse of the notation, but that cannot lead to any errors--- we have the final expressions for both changes:
+	\[
+	t_{ij} = \sum_{k=1}^n g_{ki} t^k_j
+	\quad \textrm{and} \quad
+	t_{ij} = \sum_{k,l=1}^n g_{ki} g_{lj} t^{kl}.
+	\]
+\end{remark}
+
+Although we have seen \autoref{pro:musicalcoord} for tensors of order 2, the result is easily generalized to tensors of any other order. This provides us with a great tool to identify tensors of the same order through the musical isomorphisms.
+
+This whole identification, which is in practice a technique consisting of multiplying by the metric in order to obtain the same tensor with a different type ---as shown in \autoref{rem:raiselower}--- is a well-known operation called \emph{raise and lower indices}. This operation will become extremely important on the differential geometry discussion, which will be key to this work.
+
+But before going ahead, let us ease even more the identification between tensors. Let us consider again the example of tensors of order 2, but now with $B$ as an orthonormal basis; we know from previous discussions that, in this case, $B^*$ is also orthonormal; \ie, the metric on the elements of the basis is
+\[
+g^{ij} = \delta^i_j.
+\]
+
+Then, the expressions for the change of coordinates, following the notation of \autoref{rem:raiselower}, are even easier:
+\[
+t^i_j = t_{ij} = t^{ij}.
+\]
+
+We can finish this section with an interesting example on the use of the musical isomorphisms.
+
+\begin{example}
+	Let $T \in \tensors_{1,3}(V)$ be a $(1,3)$-tensor. From \autoref{theo:tensoriso} we know we can define $\tilde{T} \in \tensors_{(0,4)}(V)$ from $T$ as follows:
+	\[
+	\tilde{T}(w_1, w_2, w_3, w_4) = T(w_1^\flat, w_2, w_3, w_4).
+	\]
+	
+	In terms of components, we can write $T$ using a basis of $\tensors_{1,3}(V)$, namely $\{v_m \otimes \varphi^i \otimes \varphi^j \otimes \varphi^k\}$, where every index moves independently from 1 to $n$. If we denote its coordinates as $t^m_{jkl}$, its expression is
+	\[
+	T = \sum_{j,k,l,m}^n t^m_{jkl} v_m \otimes \varphi^i \otimes \varphi^j \otimes \varphi^k.
+	\]
+	
+	We can do the same with the tensor $\tilde{T}$ which will have its own coordinates $\tilde{t}_{ijkl}$ on a basis $\{\varphi^i \otimes \varphi^i \otimes \varphi^j \otimes \varphi^k\}$ of $\tensors_{0,4}(V)$:
+	\[
+	T = \sum_{i,j,k,l}^n \tilde{t}_{ijkl} \varphi^i \otimes \varphi^i \otimes \varphi^j \otimes \varphi^k.
+	\]
+	
+	Let us finish this example with the most interesting equation we can obtain, the expression of the $\tilde{T}$ coordinates in terms of the coordinates of $T$. We just have to lower an index, as seen at \autoref{rem:raiselower}:
+	\[
+	\tilde{t}_{ijkl} = \sum_{m=1}^n g_{im} t^m_{jkl}.
+	\]
+	Using the Einstein summation convention and assuming the coordinates are the same, the expression is even cleaner:
+	\[
+	t_{ijkl} = g_{im} t^m_{jkl}.
+	\]
+	
+\end{example}
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Introduction to Differential Geometry}
+\label{chapter:diffgeom}
+
+\subsection{Differentiable Manifolds}
+
+Roughly speaking, a manifold is a topological space that, locally, looks like the Euclidean space $\R^n$. This similitude is essential, and will let us control the manifold as if we were working in the Euclidean space; generally, the definitions concerning manifolds and the properties proved from them will be based on the known properties of $\R^n$.
+
+The following definition specifies the formal concept of a topological manifold:
+
+\begin{definition}[N-dimensional topological manifold]
+	Let $M^n$ be an $n$-dimensional topological space. The space $M^n$ is called a topological manifold if the following properties are satisfied:
+	\begin{enumerate}
+		\item $M^n$ is locally homeomorphic to $\R^n$. \label{def:manifold:homeo}
+		\item $M^n$ is a Hausdorff space. \label{def:manifold:haussdorf}
+		\item $M^n$ has a countable topological basis. \label{def:manifold:basis}
+	\end{enumerate}
+\end{definition}
+
+The first property states that, for every point $p \in M^n$, there exists an open neighbourhood $U \subset M^n$ of $p$ and a homeomorphism
+\[
+h \colon U \to V,
+\]
+
+with $V \subset \R^n$ an open set.
+
+One could think that the Hausdorff property is redundant, as the local homeomorphism may imply this topological characteristic. This is not true, and the usual counterexample is the line with two origins.
+
+Let $M = \R \cup p$ be the union of the real line and a point $p \notin \R$. Define a topology in this space with $\R \subset M$ as an open set and the neighbourhoods of $p$ being the sets $(U \setminus \{0\}) \cup \{p\}$, where $U$ is a neighbourhood of $0 \in \R$. This space is locally Euclidean but not Hausdorff: the intersection of any two neighbourhoods of the points $0 \in \R$ and $p$ is non-empty.
+
+\begin{figure}[bth]
+	\myfloatalign
+	\begin{tikzpicture}
+	\draw[thick] (-5,0) -- (-0.05,0);
+	\draw[very thick,<->] (-1,0) -- (-0.05,0);
+	\draw[fill] (0,0) circle [radius=0.05];
+	\node[below] at (0,0) {0};
+	\draw[thick] (0.05,0) -- (5,0);
+	\draw[very thick,<->] (0.05,0) -- (1,0);
+	\node[right] at (5,0) {$\R$};
+	
+	\draw[fill,Maroon] (0,0.5) circle [radius=0.05];
+	\node[right,Maroon] at (0,0.5) {$p$};
+	\end{tikzpicture}
+	\caption[Line with two origins]{Line with two origins.}
+	\label{fig:2origin}
+\end{figure}
+
+The last property of the definition will be proven key in our study, as it will let us define metrics on the manifold.
+
+\subsubsection*{Charts}
+
+The main characteristic of the manifolds, its resemblance to the Euclidean space, have to be exploited in order to understand the nature of the mathematical object.
+
+The conceptual space where the manifolds live is an abstract place whose study is difficult from our Euclidean perspective.
+
+The idea of the manifold will be understood, then, by breaking it up and lowering the pieces to the real word; \ie, the Euclidean space.
+
+The essential tool to make this happen will be the coordinate charts. These tools are like prisms to see the manifold from the Euclidean perspective, and they will let us grasp the nature of the ideal concept of a manifold.
+
+\begin{definition}[Coordinate chart]
+	A \emph{coordinate chart} ---or \emph{coordinate system}--- in a topological manifold $M^n$ is a homeomorphism $h \colon U \to V$ from an open subset of the manifold $U \subset M$ onto an open subset of the Euclidean space $V \subset \R^n$.
+	
+	We call $U$ a \emph{coordinate neighbourhood} in $M$.
+\end{definition}
+
+One single chart may not cover the whole manifold. In order to completely understand it, we need a set of charts that describe it completely.
+
+\begin{definition}[Coordinate atlas]
+	Let
+	\[
+	A = \{h_\alpha \colon U_\alpha \to V_\alpha / \alpha \in I\}
+	\]
+	be a set of coordinate charts in a topological manifold $M^n$, where $I$ is a family of indices and the open subsets $U_\alpha \subset M$ are the corresponding coordinate neighbourhoods.
+	
+	$A$ is said to be an \emph{atlas} of M if every point is covered with a coordinate neighbourhood; \ie, if $\cup_{\alpha \in I} U_\alpha = M$.
+\end{definition}
+
+% Examples?
+
+\subsubsection{Differentiable Structures}
+
+The concept of manifold is quite general and includes a vast set of examples. We can impose, however, some properties on the smoothness of the manifold to restrict the objects we will work with.
+
+This section introduces the notion of differentiable structure, whose definition is key in the later description of differentiable manifolds, the core concept of this chapter.
+
+The first question in this study is the following: a chart describes perfectly a single piece of the manifold, but what happens when the domains of a pair of charts overlap? The following two definitions specify the concepts involved in this question.
+
+% TODO: Add the usual conmutative diagram for the transition maps
+
+\begin{definition}[Transition map]
+	Let $M^n$ be a manifold and $(U, \phi)$, $(V, \psi)$ a pair of coordinate charts in $M^n$ with overlapping domains, that is:
+	\[
+	U \cap V \neq \emptyset.
+	\]
+	
+	The homeomorphism between the open sets of the Euclidean space $\R^n$,
+	\[
+	\psi \circ \phi^{-1} \colon \phi(U \cap V) \to \psi(U \cap V),
+	\]
+	is called a \emph{transition map}.
+\end{definition}
+
+\begin{definition}[Smooth overlap]
+	Two charts $(U, \phi)$, $(V, \psi)$ are said to overlap smoothly if their domains are disjoint ---\ie, if $U \cap V  = \emptyset$--- or if the transition map $\psi \circ \phi^{-1}$ is a diffeomorphism.
+\end{definition}
+
+The description of two charts that overlap smoothly can be naturally extended to the concept of smooth atlas, which will make possible to do calculus on the manifold.
+
+\begin{definition}[Smooth coordinate atlas]
+	An atlas $A$ is said to be smooth if every pair of charts in $A$ overlap smoothly.
+\end{definition}
+
+But what happens if we define two different atlases in the manifold? Will the calculus depend on this choice? Fortunately, we can find, for each manifold, one particular atlas that contain every other atlas defined there. It is formally described in the following definition and its uniqueness is proved in \autoref{prop:max-atlas-uniq}.
+
+\begin{definition}[Complete atlas]
+	A \emph{complete atlas} ---or \emph{maximal atlas}--- on $M^n$ is a smooth atlas that contains each coordinate chart in $M^n$ that overlaps smoothly with every coordinate chart in $M^n$.
+\end{definition}
+
+\begin{proposition}[Complete atlas uniqueness]
+	Let $M^n$ be a topological manifold.
+	
+	\begin{itemize}
+		\item Every smooth atlas on $M^n$ is contained in a complete atlas.
+		\item Two smooth atlas on $M^n$ determine the same complete atlas if and only if its union is a smooth atlas.
+	\end{itemize}
+	\label{prop:max-atlas-uniq}
+\end{proposition}
+
+\begin{definition}[Differentiable manifold]
+	A \emph{differentiable manifold} is a pair $(M, A)$, where $M$ is a topological manifold and $A$ is a complete atlas.
+\end{definition}
+
+\begin{example}
+	The concept of differentiable manifold is, probably, the most important idea throughout all this work. Let us see then some examples in order to better understand that these spaces we will work with are not that abstract ---although they can be---.
+	
+	\begin{enumerate}
+		\item The Euclidean space $\R^n$ is a differentiable manifold considering the identity map as its atlas.
+		\item Every \emph{smooth surface}\footnote{We consider the definition of smooth surface seen in a basic course of curves and surfaces: a subset of $\R^3$ such that every point is covered by the image of a differentiable map whose restriction to an open subset containing the point is an homeomorphism and whose differential is a monomorphism.} of $\R^3$ is an example of a differentiable manifold. As a subset of $\R^3$, the local homeomorphism, the Hausdorff property and the countable basis are trivial. Furthermore, the definition of smooth surface gives us for free the complete atlas.
+		\item The sphere $S^n$ is an $n$-dimensional differentiable manifold. As an atlas we can consider the union of the two stereographic projections onto $\R^n$ from the north and south poles.
+	\end{enumerate}
+\end{example}
+
+\subsubsection*{Differentiable Maps}
+
+The concept of differentiable maps on manifolds is the first one in which we are going to generalize concepts from the Euclidean space using the local homeomorphism.
+
+The idea is simple: we know how to build differentiable maps between open sets of $\R^n$, so we are going to define differentiability between manifolds going through the images of the coordinate neighbourhoods of the points.
+
+As the differentiability is a local concept, being the manifolds locally Euclidean is enough to generalize it.
+
+\begin{definition}
+	Let $F \colon M \to N$ be a map between two differentiable manifolds: $M$ and $N$. F is said to be \emph{differentiable} or \emph{smooth} if the following conditions are satisfied:
+	\begin{enumerate}
+		\item There is a chart $(U, \varphi)$ for every point $p \in M$ and another one, $(V, \psi)$ for its image, $F(p) \in N$, such that $p \in U$, $F(p) \in V$ and $F(U) \subset V$.
+		\item The map $\psi \circ F \circ \varphi^{-1} : \varphi(U) \to \psi(V)$ is differentiable in the usual sense.
+	\end{enumerate}
+\end{definition}
+
+This definition includes also the case in which $M$, $N$ or even both of them are the euclidean spaces $\R^m$ and $\R^n$. There is no ambiguity between this and the euclidean definition of smoothness, as one can take the identity map as coordinate chart when one of the manifolds is an euclidean space and the usual definition will be found.
+
+From this definition it is trivial to prove that, if a family of smooth maps covers a manifold with the maps being equal where their images overlap, a unique smooth function that is equal to each individual map on its image can be built.
+
+Furthermore, it is easy to see that the identity of a manifold, the coordinate charts and the composition of smooth functions are smooth. Smoothness also implies continuity.
+
+As well as the definition of smoothness, the definition of diffeomorphism can be generalized to manifolds, being \autoref{def:diffeo} its formal expression.
+
+\begin{definition}[Diffeomorphism]
+	\label{def:diffeo}
+	A function $f \colon M \to N$ between two manifolds is said to be a \emph{diffeomorphism} if it is a smooth bijective map with its inverse being also smooth.
+	
+	When there exists such map, $M$ and $N$ are said to be diffeomorphic.
+\end{definition}
+
+\subsubsection*{Tangent Space}
+
+Once we know what a differentiable function is, the next step we need to take in order to set up a proper place to do calculus on manifolds is to define the differential.
+
+First, let us remember some concepts about regular surfaces on $\R^3$. Let $S, S'$ be two regular surfaces on $\R^3$ and let $f \colon S \to S'$ be a differentiable map between them. The differential of $f$ on $p \in S$ was defined as a function that transforms tangent vectors to the first surface into tangent vectors to the second,
+\[
+(df)_p \colon T_p S \to T_{f(p)} S'.
+\]
+
+What can we learn from this? Our goal is to define the differential of a differentiable map between \emph{manifolds}. It would be ideal that it generalizes the notion we already have about differentials on surfaces, so it is mandatory to first generalize the concept of tangent plane.
+
+The tangent plane to a regular surface on one of its points $p$ is, as we know, the vector subspace of all the tangent vectors to the point. This vector space was shown to be isomorphic to the space of directional derivatives on $p$. Instead of trying to generalize the concept of tangent vector, the idea we will follow is to extend the notion of directional derivatives, building the new \emph{tangent plane}-like space from these.
+
+The usual directional derivative is a linear map that satisfies the Leibniz rule, so we are going to define a tangent vector to a manifold as an axiomatization of this concept: the derivation.
+
+From now on, we will note the set of all the smooth real-valued functions on a manifold $M$ as $\mathcal{F}(M)$:
+\[
+\mathcal{F}(M) \defeq \{f \colon M \to \R \,/\, \textrm{f is smooth} \}.
+\]
+
+\begin{definition}[Derivation]
+	Let $p$ be a point on a manifold $M$. A \emph{derivation} at $p$ is a map
+	\[
+	D_p \colon \mathcal{F}(M) \to \R
+	\]
+	that is linear and leibnizian; \ie, that satisfies the following properties:
+	\begin{enumerate}
+		\item $D_p(af + bg) = aD_p(f) + bD_p(g)$, where $a,b \in \R$ and $f,g \in \mathcal{F}(M)$.
+		\item $D_p(fg) = D_p(f)g(p) + f(p)D_p(g)$, where $f,g \in \mathcal{F}(M)$.
+	\end{enumerate}
+\end{definition}
+
+Taking into account the one-to-one correspondence between tangent vectors and derivations on the euclidean case ---the directional derivative is actually a derivation---, the idea of the generalization of tangent vector on \autoref{def:tangentvector} is more clear now.
+
+\begin{definition}[Tangent vector]
+	\label{def:tangentvector}
+	Let $M$ be a manifold and $p \in M$ one of its points. A \emph{tangent vector to M on p} is a derivation at p.
+\end{definition}
+
+It is trivial to see that the directional derivative is a tangent vector to the well-known manifold $\R^n$. Being this \emph{derivation --- tangent vector} duality clear, it is now natural to arrive to \autoref{def:tangentspace}.
+
+\begin{definition}[Tangent space]
+	\label{def:tangentspace}
+	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{tangent space to $M$ at $p$}, noted as $T_p M$, is the set of all tangent vectors to $M$ on $p$; \ie, the family of derivations at $p$.
+\end{definition}
+
+As for every vector space, we can define its dual version.
+\begin{definition}[Cotangent space]
+	Let $M$ be a manifold and $p \in M$ one of its points. The \emph{cotangent space to $M$ at $p$}, denoted as $T_p M^*$ is the dual space of the vector space $T_p M$.
+	
+	The elements $\omega \in T_p M^*$ are called \emph{covectors} on $p$.
+\end{definition}
+
+\begin{remark}
+	\label{rem:derivedbases}
+	$T_p M$ is a vector space with the usual definitions of function addition and product by a scalar, and if $x = (x^1, \dots, x^n) \colon U \to M$ is a chart that covers $p$, then (\cite[p. 8]{docarmo79}) $\{ \frac{\partial}{\partial x^1}\bigr|_p, \dots, \frac{\partial}{\partial x^n}\bigr|_p\}$ is its associated basis on $T_p M$, where
+	\[
+	\frac{\partial}{\partial x^i}\bigr|_p (f) = \pd{f}{x^j}(p)
+	\]
+	is usually noted as $\partial_i \bigr|_p$.
+	
+	Equivalently, the basis for the cotangent space $T_p^* M$ is the dual of the preceding one, $\{dx^1\bigr|_p, \dots, dx^n\bigr|_p\}$, where the elements are the dual versions of the previous components, that is, the covectors that satisfy
+	\[
+	dx^i\bigr|_p\left(\partial_j \bigr|_p\right) = \delta^i_j.
+	\]
+\end{remark}
+
+The extension of the idea of differential is now straightforward: we have just to remember how the differential on the euclidean case can be defined from derivations and repeat the nearly exact same definition on manifolds.
+
+\begin{definition}[Differential or pushforward]
+	Let $M$ and $N$ be two manifolds and let $F \colon M \to N$ be a smooth map.
+	
+	Consider, for each $p \in M$, the function
+	\begin{align*}
+	dF \colon T_p M &\to T_{F(p)} M \\
+	X &\mapsto dF(X),
+	\end{align*}
+	that maps each tangent vector to $M$ at $p$, $X$, to a tangent vector to $N$ at $F(p)$, $F_*X$, defined as follows:
+	\begin{align*}
+	dF(X) \colon \mathcal{F}(M) &\to \R \\
+	f &\mapsto X(f \circ F).					
+	\end{align*}
+	
+	The function $dF$ is the differential of $F$ at $p$, which is also known as the \emph{pushforward} of $p$ by $F$.
+	
+\end{definition}
+
+On the $\R^3$ surfaces scenario, it is not odd to define tangent vectors using their close relation with the curves on the surface. In order to obtain a better understanding of the manifolds tangent space, let us see what a curve on a manifold is and how a tangent vector on a point can be identified with them.
+
+\begin{definition}[Curve on a manifold]
+	% Roldan, 21
+	Let $M$ be a manifold and $I \subset R$ an open set on $\R$. A \emph{curve on $M$} is a continuous map
+	\[
+	\gamma \colon I \to M.
+	\]
+\end{definition}
+
+Every smooth curve is differentiable in the manifold sense, and having understood the duality between derivations and tangent vectors, we can naturally obtain the tangent vector to a curve on an instant $t_0\in I$ by applying the definition we just saw.
+
+\begin{proposition}[Tangent vector to a curve]
+	\label{pro:tangcurve}
+	The tangent vector to a curve $\gamma \colon I \to M$ on an instant $t_0 \in I$, noted as $\gamma'(t_0) \in T_{\gamma(t_0)} M$ is the pushforward of $t$ by $\gamma$; \ie, the tangent vector to $M$ defined as
+	\begin{align*}
+	\gamma'(t_0) \colon \mathcal{F}(M) &\to \R \\
+	f &\mapsto \frac{d}{dt} \left( f \circ \gamma \right) (t_0).
+	\end{align*}
+\end{proposition}
+
+\autoref{pro:tangcurve} tells us how to assign a vector from the tangent space of a manifold $M$ to every curve $\gamma$ on it, but is there a curve that could be assigned to every tangent vector on $M$?; \ie, is every element of the tangent space to $M$ the tangent vector of a curve? The following result answers this question.
+
+\begin{theorem}
+	% Roldan, 22
+	Let $p$ be a point on a manifold $M$. There exists, for every $X \in T_p M$, a smooth curve on $M$ whose tangent vector is $X$.
+\end{theorem}
+
+\subsection{Vector Fields}
+
+In our journey to understand geometry on manifolds, one key step is to generalize what we called directional derivative in the euclidean spaces. The directional derivative of a function on a point gives us information on how the function changes when moving in the given direction; the concept of geodesic will need of this idea, but first we have to set up some definitions and technical results.
+
+Let us start, then, by generalizing the concept of vector field to manifolds. As in the euclidean sense, we can define a \emph{vector field} on a manifold $M$ as a correspondence $X$ that maps every point $p$ on the manifold to a vector $X(p)$ in the tangent space $T_p M$.
+
+To formalize this concept, we should first define the set of the tangent spaces at every point of the manifold, which is the target set of the map we just described. This definition can be found on \cite[p. 26]{oneill83} and \cite[p. 13]{docarmo79}
+
+\begin{definition}[Tangent bundle]
+	Let $M$ be a smooth manifold and let $A = \{(U_\alpha, h_\alpha)\}$ be a smooth atlas on $M$.
+	
+	Consider now the set
+	\[
+	TM = \bigcup_{p \in M} T_p M,
+	\]
+	where the projection $\pi \colon TM \to M$ maps every tangent vector $v$ to $p$, the manifold point such that $v \in T_p M$.
+	
+	We can furnish $TM$ with the atlas $A' = \{(\pi^{-1}(U_\alpha), h'_\alpha)\}$, where $h'_\alpha$ defines the coordinates of every point $v \in TM$, as the union of the coordinates of $p (= \pi(v))$ in $U_\alpha$ with the coordinates of $v$ in the associated basis of $T_p M$; \ie, if $(x^1, \dots, x^n)$ are the coordinate functions that assign every point $p \in M$ to its coordinates on $\R^n$, the coordinates of the elements of $TM$ are
+	\[
+	(x^1 \circ \pi, \dots, x^n \circ \pi, d{x^1}, \dots, d{x^n}),
+	\]
+	where $dx^i \colon \pi^{-1}(U_\alpha) \to \R$ are the coordinate functions of the tangent space, given by $dx^i(v) = v(x^i)$.
+	
+	$TM$ is called the tangent bundle of $M$.
+\end{definition}
+
+It can be proved ---see \cite[Example 2.1]{docarmo79} or \cite[pp. 26, 27]{oneill83}--- that $A'$ is, indeed, an atlas and, therefore, that the tangent bundle of every smooth manifold of dimension $n$ is in turn a smooth manifold of dimension $2n$.
+
+\begin{remark}[Cotangent bundle]
+	The dual version of the tangent bundle, the \emph{cotangent bundle}, can also be defined, and has the expected properties. It is defined as
+	\[
+	T^*M = \bigcup_{p \in M} T_p M^*.
+	\]
+\end{remark}
+
+This recently defined space is the target set of what we described as a vector field. \autoref{def:vectorfield} formalizes this idea.
+
+\begin{definition}[Vector field]
+	\label{def:vectorfield}
+	A \emph{vector field} $X$ in a smooth manifold $M$ is a map
+	\[
+	X \colon M \mapsto TM
+	\]
+	that assigns to any point $p \in M$ a vector $X(p) \in T_p M$, often noted as $X_p$.
+\end{definition}
+
+\begin{definition}[Covector field]
+	A \emph{one-form}, or \emph{covector field}, $\Theta$ on a smooth manifold $M$ is the object dual to a vector field; \ie, a function
+	\[
+	\Theta \colon M \mapsto T^*M
+	\]
+	that maps every point $p \in M$ to a covector $\Theta(p) \in T_pM^*$, often noted as $\Theta_p$.
+\end{definition}
+
+From now on, we will note the set of smooth vector fields on $M$ as $\mathfrak{X}(M)$; equivalently, $\mathfrak{X}^*(M)$ will denote the set of all smooth one-forms on $M$.
+
+If $X \in \mathfrak{X}(M)$ and $\Theta \in \mathfrak{X}^*(M)$, we will usually denote its coordinates as
+\[
+X = \sum x^i \partial_i, \quad \Theta = \sum \vartheta_i dx^i,
+\]
+where the vector fields $\partial_i$, which map each $p$ to $\partial_i\bigr|_p$, form a basis of $\mathfrak{X}(M)$ and the one-forms $dx^i$, which map each $p$ to $dx^i \bigr|_p$, are the components of its dual basis. As usual, we have the relation 
+\[
+dx^i\left(\partial_j\right) = \delta^i_j.
+\]
+
+The coordinates can be computed as $x^i\bigr|_p = X_p(x^i)$ and $\vartheta_i\bigr|_p = \Theta_p(\partial_i)$.
+
+Another interesting way to look at the vector fields and their dual version, shown on \cite[p. 23]{docarmo79}, consists on considering again the idea of the vectors as directional derivatives: a vector field $X$ on $p$ is then a map that receives a smooth function $f$ on $M$ and gives us another function on $M$, noted as $Xf$ and defined as follows:
+\[
+(Xf)(p) = X_p(f).
+\]
+
+One can define an interesting operation on vector fields considering them as derivations: the bracket operation.
+
+\begin{definition}[Bracket operation]
+	Let $V$ and $W$ be vector fields on $M$.
+	
+	The bracket operation on $V$ and $W$, noted as $[V, W]$ is the vector field defined as
+	\[
+	[V, W] = VW - WV,
+	\]
+	which is an application that maps every $f \in \mathcal{F}(M)$ to the function $V(Wf) - W(Vf)$.
+\end{definition}
+
+The proof that $[V,W]$ is indeed a vector field can be found at \cite[p. 24]{docarmo79}.
+
+Going ahead with the generalization of euclidean concepts to the manifolds, we can define what a vector field along a curve is:
+
+\begin{definition}[Vector field along a curve]
+	Let $c \colon I \to M$ be a curve on a manifold defined on the open subset $I \subset \R$. A \emph{vector field along the curve $c$}, $V$, is a function
+	\[
+	V \colon I \mapsto TM
+	\]
+	that maps every instant $t \in I$ to a vector $X(c(t)) \in T_{c(t)} M$, where $X$ is a vector field.
+\end{definition}
+
+\begin{example}
+	One of the most interesting examples of vector fields along a curve is the velocity of the curve itself. Let $\gamma \colon I \to \M$ be a smooth curve on $M$. The application that maps every instant to the tangent vector to the curve at that instant,
+	\begin{align*}
+	\gamma' \colon I &\to TM \\
+	t &\mapsto \gamma'(t),
+	\end{align*}
+	where $\gamma'(t)$ is defined on \autoref{pro:tangcurve}, is a vector field along $\gamma$.
+\end{example}
+
+\subsection{Tensor Fields}
+
+Just as we introduce the concept of vector fields on \autoref{def:vectorfield}, a similar concept arises now: the tensor fields.
+
+We are going to introduce this concept following the line of reasoning on \cite[Ch. 2]{oneill83}.
+
+\begin{definition}[Tensor field]
+	A tensor field $A$ on a manifold $M$ $r$ times contravariant and $s$ times covariant is a classic tensor on the vector space $\mathfrak{X}(M)$, whose scalar field is $\mathfrak{F}(M)$, the set of smooth real valued functions on $M$:
+	\[
+	A \colon \underbrace{\mathfrak{X}^*(M) \times \dots \times \mathfrak{X}^*(M)}_{\text{r copies}} \times \underbrace{\mathfrak{X}(M) \times \dots \times \mathfrak{X}(M)}_{\text{s copies}} \to \mathfrak{F}(M).
+	\]
+	
+	As usual, we denote by $\tensors_{(r,s)}(M)$ the set of all tensor fields of type $(r,s)$ on a manifold $M$.
+\end{definition}
+
+It is interesting to study that the name we gave to this concept is not random: indeed, we can see a tensor field $A$ as a proper \emph{field}, in which every point of the manifold is mapped to a tensor.
+
+The basis of this idea comes from the following result, whose proof can be studied on \cite[Ch. 2, Proposition 2]{oneill83}.
+
+\begin{proposition}
+	Let $p \in M$ be a point on a manifold $M$ and $A \in \tensors_{(r,s)}(M)$ a tensor field.
+	
+	Let $\theta^i$ and $\bar{\theta}^i$ be covector fields for every $i \in \{1, \dots, r\}$, and such that
+	\[
+	\theta^i_{|_p} = \bar{\theta}^i_{|_p} \quad \forall i \in \{1, \dots, r\}.
+	\]
+	
+	Similarly, let $X_i$ and $\bar{X}_i$ be vector fields for every $i \in \{1, \dots, s\}$, and such that
+	\[
+	X_{i|_p} = \bar{X}_{i|_p} \quad \forall i \in \{1, \dots, s\}.
+	\]
+	
+	Then,
+	\[
+	A(\theta^1, \dots, \theta^r, X_1, \dots, X_s)(p) = A(\bar{\theta}^1, \dots, \bar{\theta}^r, \bar{X}_1, \dots, \bar{X}_s)(p).
+	\]
+\end{proposition}
+
+This result lets us consider each tensor field $A \in \tensors_{(r,s)}(M)$ as the following field on $M$, which is denoted in the same exact way:
+\begin{align*}
+A \colon M &\to \tensors_{(r,s)}(M) \\
+p &\mapsto A_p \colon \underbrace{T_p M^* \times \dots \times T_p M^*}_{\text{r copies}} \times \underbrace{T_p M \times \dots \times T_p M}_{\text{s copies}} \to \R,
+\end{align*}
+where the tensor $A_p$, now defined on the tangent and cotangent space, is the following mapping:
+\[
+(\alpha^1, \dots, \alpha^r, x_1, \dots, x_s) \xmapsto{A_p} A(\theta^1, \dots, \theta^r, X_1, \dots, X_s),
+\]
+where $\theta^i$ is any covector field such that $\theta^i_{|_p} = \alpha^i$ and $X_i$ is any vector field such that $X_{i|_p} = x_i$ for every $i \in \{1, \dots, n\}$.
+
+The operation involving tensors, the definition of the tensor components, the tensor contraction and all other classic results thoroughly studied in \autoref{chapter:tensoralgebra}  hold also here for the tensor fields on a manifold.
+
+\subsection{Affine Connections}
+\label{sec:affineconnections}
+
+In this section we will define a connection on a manifold, which in turn will give us the tools to generalize the concept of directional derivative arriving to the definition of covariant derivative.
+
+The following definitions and results can be found at \cite[Ch. 2, Section 2]{docarmo79} and \cite[pp. 59-67]{oneill83}.
+
+\begin{definition}[Affine connection]
+	\label{def:affineconnection}
+	% doCarmo, 41
+	An affine connection $\nabla$ on a smooth manifold $M$ is a map
+	\[
+	\nabla \colon \mathfrak{X}(M) \times \mathfrak{X}(M) \to \mathfrak{X}(M),
+	\]
+	noted as $(X, Y) \xrightarrow{\nabla}\nabla_X Y$, that satisfies the following properties:
+	\begin{enumerate}
+		\item $\nabla_{fX + gY} Z = f\nabla_X Z + g\nabla_Y Z$,
+		\item $\nabla_X(Y+Z) = \nabla_X Y + \nabla_X Z$,
+		\item $\nabla_X (fY) = f\nabla_XY + (Xf) Y$,
+	\end{enumerate}
+	where $X,Y,Z \in \mathfrak{X}(M)$ and $f,g \in \mathcal{F}(M)$.
+\end{definition}
+
+On \cite[Chapter 2, Remark 2.3]{docarmo79} we can see how the last property of \autoref{def:affineconnection} lets us show that the affine connection is a local concept. Consider a coordinate system $(x^1, \dots, x^n)$ around $p$ and describe the vector fields $X, Y$ as follows:
+\[
+X = \sum_i x^i X_i, \qquad Y = \sum_j y^j X_j,
+\]
+where $X_i = \frac{\partial}{\partial x^i}$. Then, we can write
+\[
+\nabla_x Y = \sum_i x^i \nabla_{X^i}\left(\sum_j y^j X_j \right) = \sum_{ij} x^i y^j \nabla_{X^i} X_j + \sum_{ij} x^i (X_i y^j) X_j.
+\]
+
+As $(\nabla_{X^i} X_j)_p \in T_p M$, and using that $\{X_1(p), \dots, X_n(p)\}$ is a basis of $T_p M$, we can write the coordinate expression of $\nabla_{X^i} X_j$ as follows:
+\[
+\nabla_{X^i} X_j = \sum_k \Gamma^k_{ij} X_k,
+\]
+where the functions $\Gamma^k_{ij}$ are necessarily differentiable. Finally, we can write
+\[
+\nabla_X Y = \sum_k \left( \sum_{ij} x^i y^j \Gamma^k_{ij} + X(y^k) \right) X_k.
+\]
+
+This shows that $\nabla_X Y(p)$ depends on $x^i(p)$, $y^k(p)$ and the derivatives $X(y^k)(p)$.
+
+This is a somewhat technical definition, but as shown in \autoref{pro:covariantderivative}, it provides us with the concept of covariant derivative, which will be shown to be a generalization of the directional derivative on $\R^n$.
+
+\begin{proposition}[Covariant derivative]
+	\label{pro:covariantderivative}
+	% doCarmo, 42
+	Let $M$ be a smooth manifold with an affine connection $\nabla$ and let $c \colon I \to M$ be a smooth curve. Then there is a unique function that maps each vector field $V$ along $c$ onto another vector field along $c$, called \emph{covariant derivative of $V$ along $c$}, and noted as $\frac{DV}{dt}$, that satisfies the following properties:
+	\begin{enumerate}
+		\item $\frac{D}{dt}(V+W) = \frac{DV}{dt} + \frac{DW}{dt}$.
+		\item $\frac{D}{dt}(fV) = \frac{df}{dt}V + f\frac{DV}{dt}$.
+		\item If $V$ is described as $V(t) = X(c(t))$, where $X \in \mathfrak{X}(M)$, then \[\frac{DV}{dt} = \nabla_{\frac{dc}{dt}} X.\]
+	\end{enumerate}
+	where $W$ is another vector field along $C$ and $f \in \mathcal{F}(M)$.
+\end{proposition}
+
+\autoref{pro:covariantderivative} gives us an actual derivation on vector fields along smooth curves. The concept of connection, whose definition may appear artificial at first, shows now its interest: it provides us with a way of derivating vectors along curves; \ie, we have now the possibility to consider the concept of \emph{acceleration} on curves on manifolds.
+
+\begin{definition}[Parallel vector field]
+	% doCarmo, 44
+	% oNeill, 66
+	Let $M$ be a smooth manifold furnished with an affine connection $\nabla$. A vector field $V$ along a curve $c \colon I \to M$ is called \emph{parallel} whenever $\frac{DV}{dt} = 0$ for every $t \in I$.
+\end{definition}
+
+\begin{proposition}[Parallel transport]
+	% doCarmo, 44
+	% oNeill, 66
+	Let $M$ be a smooth manifold furnished with an affine connection $\nabla$. Let $c \colon I \to M$ be a smooth curve on $M$ and $V_0$ a tangent vector to $M$ on $c(t_0)$; \ie, $V_0 \in T_{c(t_0)} M$.
+	
+	Then, there exists a unique parallel vector field $V$ along $c$ such that $V(t_0) = V_0$. We call $V$ the \emph{parallel transport of $V(t_0)$ along $c$}.
+\end{proposition}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Semi-Riemannian Geometry}
+\label{chapter:semiriemannian}
+
+This section introduces the notion of \emph{spacetime}, a mathematical object with a really interesting meaning in physics, as it will model the geometry of the Universe.
+
+All results, proofs, and examples are mainly extracted from \cite{romero10}, which develops an interesting line of reasoning to grasp the nature of the concept.
+
+Before going down that road, we will need some basic concepts, such as the Lorentzian manifolds and the time orientation we can define on them. From this we will be ready to define what a spacetime is, whose properties will be studied.
+
+\section{Lorentzian and Riemannian Manifolds}
+
+From now on, let $M$ be a connected $n$-dimensional smooth manifold, with $n\geq2$.
+
+\begin{definition}[Lorentzian metric tensor]
+	A \emph{Lorentzian metric $g$} in $M$ is a symmetric 2 times covariant tensor field
+	\[
+	g \colon M \to \tensors_{(0,2)}(M)
+	\]
+	such that
+	\[
+	g_p \colon T_pM \times T_pM \to \R
+	\]
+	is a Lorentzian product (see \autoref{def:lorentzianprod}) for all $p \in M$.
+\end{definition}
+
+\begin{definition}[Lorentzian manifold]
+	$M$ is said to be a \emph{Lorentzian manifold} if it is furnished with a Lorentzian metric $g$. Lorentzian manifolds are usually noted as the pair $(M,g)$.
+\end{definition}
+
+Any metric tensor can be described giving its value on the elements of a basis; \ie, if $(x^1, \dots, x^n)$ is a coordinate system, the components of the metric tensor are
+\[
+g_{ij} = g(\partial_i, \partial_j),
+\]
+and therefore the metric tensor can be recovered as
+\[
+g = \sum g_{ij} dx^i \otimes dx^j.
+\]
+
+Another way of describing the metric tensor \cite[p. 13]{oneill95} is via its \emph{line element}, usually noted as $ds^2$, which gives at each point $p\in M$ the associated quadratic form of $g_p$; \ie, the value of $ds^2$ on a vector field $X$ is simply $g(X,X)$. One can define the line element in a more clear way by means of a coordinate system.
+\begin{definition}[Line element]
+	The \emph{line element} of a metric tensor $g$ is
+	\[
+	ds^2 = g_{\alpha\beta} dx^\alpha dx^\beta.
+	\]
+\end{definition}
+
+The line element fully identifies the metric tensor, which can be easily reconstructed from it.
+
+The classical Koszul formula asserts that if a manifold admits a symmetric 2 times covariant tensor field such that $g_p$ is non-degenerate for every $p \in M$, then $M$ has a Levi-Civita connection $\nabla$.  This follows from \autoref{eq:koszul}, that defines $\nabla$ from the non-degeneracy property; note that we could even define Christoffel symbols $\Gamma^i_{jkl}$ from the non-degeneration.
+
+From the connectedness of $M$, we can assure that there exists a piecewise smooth curve for every pair of points $p_0, p_1 \in M$,
+\[
+\gamma \colon [a,b] \to M,
+\]
+where $a < b$, such that
+\[
+\gamma(a) = p_0, \qquad \gamma(b) = p_1.
+\]
+
+From the existence of $\gamma$, we directly have the parallel transport
+\[
+P^\gamma_{a,b} \colon T_{p_0}M \to T_{p_1}M,
+\]
+where we use the notation on \cite[Prop 3.19]{oneill83} which is a linear isometry between $(T_{p_0}M, g_{p_0})$ and $(T_{p_1}M, g_{p_1})$. This assures that
+\[
+\operatorname{index}(g_{p_0}) = \operatorname{index}(g_{p_1}).
+\]
+As $p_0$ and $p_1$ are two arbitrary points, the index of the metric on each point as a bilinear form is constant. Therefore, we can define the \emph{index of a Lorentzian metric $g$} as the index of the tensor assigned to any of the points on the $M$.
+
+\begin{definition}[Semi-Riemannian metric]
+	A \emph{semi-Riemannian metric} is a non-degenerate symmetric 2 times covariant tensor field $g$.
+\end{definition}
+
+The index of $g$ classifies the semi-Riemannian metrics:
+\begin{enumerate}
+	\item If $\operatorname{index}(g) = 0$, $g$ is a Riemannian metric.
+	\item If $\operatorname{index}(g) = 1$, $g$ is a Lorentzian metric.
+	\item If $\operatorname{index}(g) = s$, $0 < s < n$, $g$ is an indefinite Riemannian metric.
+\end{enumerate}
+
+This definitions produce the associated definitions on manifolds:
+\begin{definition}[Semi-Riemannian manifold]
+	A semi-Riemannian manifold (resp. Riemannian, indefinite Riemannian) is a pair $(M,g)$, where $g$ is a semi-Riemannian manifold (resp. Riemannian, indefinite Riemannian).
+\end{definition}
+
+\subsection{Time Orientation on Lorentzian Manifolds}
+
+Roughly speaking, a time orientation is a map that assigns one of the two time cones defined on the tangent space to a point on a manifold; \ie, is a map that assigns a time orientation (as defined in \autoref{def:vstimeorientation}) in $T_pM$ for every $p \in M$. Let us formalize this concept a little bit more.
+
+Let $(M,g)$ be a Lorentzian manifold and let us denote, for every $p \in T_pM$, the set with the two times cones defined on $(T_p M, g)$ as $C_p(M,g)$. The union of all this sets, denoted by $C(M,g)$ is then a collection of two-possibilities for every point on a manifold:
+\[
+C(M,g) = \bigcup_{p \in M} C_p(M,g).
+\]
+
+\begin{definition}[Time Orientation]
+	A \emph{time orientation} on $(M,g)$ is a map
+	\[
+	\tau \colon M \to C(M,g)
+	\]
+	that satisfies:
+	\begin{itemize}
+		\item $\tau(p) \in C_p(M,g)$ for every $p \in M$.
+		\item There exists an open neighbourhood $U$ for every $p_0 \in M$ and a vector field $X \in \mathfrak{X}(U)$ such that
+		\[
+		X_p \in \tau(p), \quad \forall p \in U.
+		\]
+	\end{itemize}
+	
+	A Lorentzian manifold $(M,g)$ is said to be \emph{time orientable} if it admits a time orientation. In this case, there exists two time oriented Lorentzian manifolds:
+	\[
+	(M,g,\tau) \quad\textrm{and}\quad (M,g,\tau'),
+	\]
+	where $\tau'(p)$ is the opposite time cone of $\tau(p)$ for every $p\in M$.
+\end{definition}
+
+We can define some terms, using the notation on \cite[p. 33]{oneill95}, regarding the time orientation:
+\begin{enumerate}
+	\item The selected time cones when we time-orient a manifold are called \emph{future time cones}, whereas the other ones are known as \emph{past time cones}.
+	\item A timelike tangent vector is called \emph{future-pointing} if it lays in a future time cone. It is called past-pointing in any other case.
+	\item The light cone in the boundary of the future time cones is called \emph{future light cone}, whose vectors are future-pointing.
+	\item A curve that is either lightlike or timelike is called a \emph{causal} curve, and it is future-pointing if all its tangent vectors are future-pointing.
+\end{enumerate}
+
+The previous definitions let us understand the notion of spacetime:
+
+\begin{definition}[Spacetime]
+	A \emph{spacetime} is a four dimensional time oriented Lorentzian manifold.
+\end{definition}
+
+It is interesting to know which manifolds have time orientations, and the following proposition characterizes this fact.
+
+\begin{proposition}
+	\label{pro:timeorientable}
+	A Lorentzian manifold $(M,g)$ is time orientable if and only if there exists a vector field $Y \in \mathcal{M}$ such that $g(Y,Y) < 0$.
+\end{proposition}
+
+Before proving this proposition, it is mandatory to know the concept of partition of unity, which is now introduced.
+
+A collection $\mathcal{L}$ of subsets of a space $S$ is locally finite provided each point of $S$ has a neighbourhood that meets only finitely many elements of $\mathcal{L}$. Let $\{f_\alpha \colon \alpha \in A\}$ be a collection of smooth functions on a manifold $M$ such that $\{\operatorname{supp} f_\alpha \colon \alpha \in A\}$ is locally finite. Then the sum $\sum_\alpha f_\alpha$ is a well-defined smooth function on $M$ , since on some neighbourhood of each point all but a finite number of $f_\alpha$ are identically zero.
+
+\begin{definition}[Smooth partition of unity]
+	A \emph{smooth partition of unity} on a manifold $M$ is a collection $\{f_\alpha \colon \alpha \in A\}$ of functions $f_\alpha \in \mathfrak{F}(M)$ such that
+	\begin{enumerate}
+		\item $0 \leq f_\alpha \leq 1 \quad \forall \alpha \in A$.
+		\item $\{\operatorname{supp} f_\alpha \colon \alpha \in A\}$ is locally finite.
+		\item $\sum_\alpha f_\alpha = 1$.
+	\end{enumerate}
+	
+	The partition is said to be \emph{subordinate} to an open covering $\mathfrak{C}$ of $M$ provided each set $\operatorname{supp} f_\alpha$ is contained in some element of $\mathfrak{C}$.
+\end{definition}
+
+Partitions of unity are an indispensable tool for assembling locally defined  objects into a global object (or decomposing a global object into a sum of local objects). For such purposes  partitions of unity with "small" supports are needed.
+
+It is interesting to know what a time oriented Lorentzian manifold could look like. Therefore, and for the sake of completion, we copy here the excellent set of examples in \cite[Example 3.2]{romero10}.
+
+\begin{example}
+	~		
+	\begin{enumerate}
+		\item Let $\L^n$ be the $n$-dimensional Lorentz-Minkowski space, i.e. $\L^n$ is $\R^n$ endowed with the Lorentzian metric $g=dx_1^2+...+dx_{n-1}^2-dx_n^2$, where $(x_1,..,x_n)$ is the usual coordinate system of $\R^n$. The coordinate vector field $\partial/\partial x_n$ is unitary timelike and hence, \autoref{pro:timeorientable}, $\L ^n$ is time orientable.
+		\item Let $\S_1^n$ be the $n$-dimensional De Sitter space; i.e. $\S_1^n =\{p \in \L^{n+1} \, :\, g(p,p)=1 \}$, where $g$ denotes the Lorentzian metric of $\L^{n+1}$. For each $p \in \S_1^n$, we have $T_p\S_1^n=\{v \in \L^{n+1} \, : \, g(p,v)=0\}$
+		and denote by $g_p$ the restriction of $g$ to $T_p\S_1^n$, which is Lorentzian because $\L^{n+1}=T_p\S_1^n \oplus \langle p \rangle$, the direct sum is also $g$-orthogonal and $p$ is spacelike. Observe that a vector field on $\S_1^n$ can be contemplated as a smooth map
+		\[
+		X : \S_1^n \longrightarrow \L^{n+1}
+		\]
+		such that at each point $p \in \S_1^n$ we have $X_p$ is $g$-orthogonal to $p$. Thus, if we put $p=(y,t)\in \S_1^n$, $y \in \R^n$, $t \in \R$, then $X_p=(\frac{t}{1+t^2}\,y,1)$ is a well-defined timelike vector field on $\S_1^n$. Therefore, \autoref{pro:timeorientable}, the Lorentzian manifold $\S_1^n$ is time orientable.
+		\item Let $\H_1^n$ be the $n$-dimensional anti De Sitter space; i.e. $\H_1^n =\{p \in \R^{n+1} \, :\, g'(p,p)=-1 \}$, where $g'=dx_1^2+...+dx_{n-1}^2-dx_n^2-dx_{n+1}^2$ and $(x_1,..,x_n,x_{n+1})$ is the usual coordinate system of $\R^{n+1}$. The semi-Riemannian metric $g'$ on $\R^{n+1}$ has index 2 and $\R^{n+1}_2$ will denote $(\R^{n+1},g')$. For each $p \in \H_1^n$, we have $T_p\H_1^n=\{v \in \R^{n+1} \, : \, g'(p,v)=0\}$ and denote by $g'_p$ the restriction of $g'$ to $T_p\H_1^n$, which is Lorentzian because $\R^{n+1}_2=T_p\H_1^n \oplus \langle p \rangle$, the direct sum is also $g'$-orthogonal and $p$ satisfies $g'(p,p)=-1$. The vector field
+		\[
+		X : \H_1^n \longrightarrow \R^{n+1}_2
+		\]
+		given by $X_p=(0,t,-s)$ for $p=(y,s,t)$, $y \in R^{n-1}$, $s,t\in \R$, is timelike everywhere.
+		
+		Therefore, \autoref{pro:timeorientable}, the Lorentzian manifold $\H_1^n$ is time orientable.
+	\end{enumerate}
+\end{example}
+
+A more interesting characterization of time oriented Lorentzian manifolds is the following one, whose geometric approximation is clearer.
+
+\begin{corollary}
+	\label{cor:timeorientable2}
+	A Lorentzian manifold $(M,g)$ is time orientable if and only if, for every $p \in M$,
+	\[
+	g(P^\gamma_{a,b}(v), v) < 0 \quad \forall v \textrm{ timelike vector on } (T_pM, g_p),
+	\]
+	where $\gamma$ is any piecewise smooth curve defined on $[a,b]$ such that $\gamma(a) = \gamma(b) = p$.
+\end{corollary}
+
+It is known that each closed piecewise smooth curve on $M$ is null homotopic by means of a piecewise smooth homotopy whenever $M$ is assumed to be simply connected. Using \autoref{cor:timeorientable2}, the following result holds.
+
+\begin{corollary}
+	\label{cor:simplyconnected}
+	If $M$ is simply connected, $(M,g)$ is time orientable.
+\end{corollary}
+
+One interesting question arises now: are there Lorentzian manifolds that are \emph{non} time orientable? The following example, transcribed from \cite[Example 3.5]{romero10}, \cite[Example 1.2.3]{sachs77}, describes a well-known object that satisfies this requirement: a Lorentzian cylinder.
+
+\begin{example}
+	Let $g$ be the Lorentzian metric on $\R^2$ given by
+	\begin{align*}
+	g\Big(\,\frac{\partial}{\partial x},\,\frac{\partial}{\partial x}\,\Big)_{(x,y)}=-g\Big(\,\frac{\partial}{\partial y},\,\frac{\partial}{\partial y}\,\Big)_{(x,y)} &= \cos 2y,\\
+	\quad g\Big(\,\frac{\partial}{\partial x},\,\frac{\partial}{\partial y}\,\Big)_{(x,y)}&= \sin 2y.
+	\end{align*}
+	
+	Observe that
+	\[
+	\mathrm{det}\left(
+	\begin{array}{cc}
+	\cos 2y & \hspace*{4mm}\sin 2y  \\
+	\sin 2y & -\cos 2y
+	\end{array} \right) = -1 < 0
+	\]
+	everywhere, which implies that $g$ is Lorentzian. The map $f : \R^2 \longrightarrow \R^2$, defined by $f(x,y)=(x,y+\pi)$, is clearly an isometry of $(\R^2,g)$. Put $M:=\R^2 / \Z$, where the action of $\Z$ on $\R^2$ is defined via $f$ as follows
+	\[
+	\big(m,(x,y)\big) \mapsto f^m(x,y)=(x,y+m\pi).
+	\]
+	Then $M$ is a cylinder and the metric $g$ may be induced to a Lorentzian metric ${\tilde g}$ in $M$. We want to show that $(M,{\tilde g})$ is not time orientable. If we choose a time cone at $(0,0)$ then along the axis $x=0$ it changes its position in the counter-clockwise rotation sense. Note that $(0,0)$ and $(0,\pi)$ represent the same point of $M$ but the time cones at these points are not compatible with the equivalence relation in $\R^2$ induced by $f$. Note that $Y=-\sin y \frac{\partial}{\partial x} + \cos y \frac{\partial}{\partial y}$ is a timelike vector field on $(\R^2,g)$ (of course, $(\R^2,g)$ is time orientable from \autoref{cor:simplyconnected}) which satisfies $Y_{(0,0)}=\frac{\partial}{\partial y}\mid_{(0,0)}$ and $Y_{(0,\pi)}=-\frac{\partial}{\partial y}\mid_{(0,\pi)}$.
+	
+	Taking into account that $df_{(0,0)}Y_{(0,0)}=-Y_{(0,\pi)}$, $Y$ cannot be induced on $M$. On the other hand, assume there exists ${\tilde X}\in \mathfrak{X}(M)$ such that ${\tilde g}({\tilde X},{\tilde X})<0$ and let $X\in \mathfrak{X}(\R^2)$, $g(X,X)<0$, which projects onto ${\tilde X}$. Necessarily $df_{(x,y)}X_{(x,y)}=X_{(x,y+\pi)}$ and $g(Y_{(x,y)},X_{(x,y)})\neq 0$ for all $(x,y)\in \R^2$.
+	
+	Therefore, either $g(Y,X)>0$ or $g(Y,X)<0$ everywhere. But this is incompatible with
+	\begin{align*}
+	g\left(Y_{(0,\pi)},X_{(0,\pi)}\right) &= -g\left(df_{(0,0)}Y_{(0,0)},df_{(0,0)}X_{(0,0)}\right)=\\
+	&= -g\left(Y_{(0,0)},X_{(0,0)}\right).
+	\end{align*}
+\end{example}
+
+%Previous example shows a (connected) orientable manifold $M$ which admits a Lorentzian metric ${\tilde g}$ such that $(M,{\tilde g})$ is not time orientable. It is possible to have a time orientable Lorentzian manifold $(N,g)$ where $N$ is not (topologically) orientable. Even more, it is also easy to construct a non time orientable Lorentzian manifold $(P,g')$ such that $P$ is not (topologically) orientable.
+%
+%As in the non orientable case, a Lorentzian manifold $(M,g)$ which is not time orientable admits a double Lorentzian covering manifold $({\hat M},{\hat g})$ which is time orientable. Note that $({\hat M}, {\hat g})$ and $(M,g)$ have the same local geometry, but the first one possesses a globally defined timelike vector field and the second one does not.
+
+\subsection{One Dimensional Distributions}
+
+Similar to the question of when can a Lorentzian manifold admit a time orientation, a more elemental question can be asked: given a manifold $M$, can we always construct a Lorentzian metric on it?
+
+In general, the answer is negative, but we can find some interesting characterizations.
+
+First of all, let us define what a one dimensional distribution is
+\begin{definition}[$n$ dimensional distribution]
+	An \emph{$n$ dimensional distribution} on a manifold $M$ is a map that assigns an $n$ dimensional subspace $\mathcal{D}_p$ of $T_pM$ to each $p \in M$, such that there exists an open neighbourhood $U$ of $p$ and $n$ independent vector fields $X_1, \dots, X_n \in \mathfrak{X}(U)$ satisfying
+	\[
+	\mathcal{D}_p = \langle X_1(q), \dots, X_n(q) \rangle \quad \forall q \in U.
+	\]
+\end{definition}
+
+We can now formulate a result from \cite{greub72}, that shows that characterization we were looking for.
+
+\begin{proposition}
+	\label{pro:onedimensional}
+	$M$ admits a Lorentzian metric if and only if it admits a one dimensional distribution.
+\end{proposition}
+
+Starting from a Riemannian metric on $M$, which can always be constructed \cite{romero10}, one can build a Lorentzian metric even without a one dimensional distribution; however, the existence of a vector field $X \in \mathfrak{X}(M)$ such that $X_p \neq 0$ for any $p \in M$ is needed.
+
+Suppose then that $g_R$ is a Riemannian metric on $M$ and $X$ a vector field satisfying the previous property; then, we can construct $g_L$, a Lorentzian metric on $M$ as follows:
+\[
+g_L(u,v) \defeq g_R(u,v) - 2  \frac{g_R(u, X_p)g_R(v,x_p)}{g_R(X_p,X_p)},
+\]
+where $u,v \in T_pM$ and $p \in M$.
+
+Note that \autoref{pro:onedimensional} can be generalized \cite[Prop. 4.3]{romero10}, \cite{greub72}.
+
+\begin{proposition}
+	An $n$ dimensional manifold admits a Riemannian metric of index $s$, $0 < s < n$, if and only if it admits an $s$ dimensional distribution.
+\end{proposition}
+
+It is known, \cite[p. 205]{romero10}, that if $M$ is non-compact, then it admits a non-vanishing vector field. One way to obtain such field is to consider the gradient with respect to any Riemannian metric of a smooth function with no critical points. From this, we can conclude that $M$ admits a Lorentzian metric.
+
+Equivalently, $M$ admits a one dimensional distribution if and only if its Euler-Poincaré characteristic function, $\mathcal{X}(M)$ is zero. Therefore, any $(2n + 1)$ dimensional compact orientable manifold admits a Lorentzian metric.
+
+In fact, the following topological result holds.
+\begin{proposition}
+	If $M$ is compact, then it admits a non-vanishing vector field if and only if $\mathcal{X}(M)=0$.
+\end{proposition}
+
+From \cite{romero10} we know that on a simply connected manifold, being or not compact, each one dimensional distribution can be obtained from a global non-vanishing vector field $X \in \mathfrak{X}(M)$. The other implication is not true in general, as \autoref{ex:nonvanishing} from \cite[pp. 205-206]{romero10} and \cite{greub72} shows.
+
+\begin{remark}[Lie groups]
+	Before describing the example, let us remember that a \emph{Lie group} is a group $G$ that is also a differentiable manifold, and such that the map
+	\begin{align*}
+	G \times G &\to G \\
+	(a,b) &\mapsto ab^{-1}
+	\end{align*}
+	is differentiable---see \cite[p. 38]{kobnom63}.
+	
+	We denote by $L_a$ (resp. $R_a$) the left (resp. right) translation of $G$ by the element $a\in G$, that is:
+	\begin{align*}
+	L_a \colon G \to G \\
+	x &\mapsto ax
+	\end{align*}
+	and
+	\begin{align*}
+	R_a \colon G &\to G \\
+	x &\mapsto xa.
+	\end{align*}
+	
+	Both $L_a$ and $R_a$ are diffeomorphisms on $G$.
+	
+	A vector field $X$ on $G$ is called left invariant (resp. right invariant) if $(dL_a)_b X_b = X_{L_a(b)}$ (resp. $(dR_a)_b X_b = X_{R_a(b)}$) for all $a,b \in G$.
+	
+	Given $v \in T_e G$ there exists a unique left invariant vector field $X$ on $G$ such that $X_e = v$. In fact, $X_a \defeq (dL_a)_e(a) \; \forall a \in G$ (analogously for a right invariant vector field). Note that $v \neq 0$ implies $X_a \neq 0$ for all $a \in G$. Even more, if $\{v_1, \dots, v_n\}$ is a basis of $T_e G$, then there exists a set of left invariant vector fields $\{X_1, \dots, X_n\}$ such that $X_i(w) = v_i, 1 \leq i \leq n$, and  $\{X_1(a), \dots, X_n(a)\}$ is a basis of $T_a G$ for all $a \in G$.
+	
+	Therefore, $G$ admits a global basis of $\mathfrak{X}(G)$. In this case, $G$ is said to be \emph{parallelizable} \cite[Ch. 1, Sec. 4]{kobnom63}.
+\end{remark}
+
+We can describe now the example of a one dimensional distribution that cannot be lifted to a global non-vanishing vector field.
+
+\begin{example}
+	\label{ex:nonvanishing}
+	Consider the special orthogonal group of order 3, $SO(3)$, and put $M=\S^{1}\times SO(3)$. Both $\S^1$ and $SO(3)$ are Lie groups.
+	
+	$M$ is a 4-dimensional compact Lie group. Moreover it is parallelizable, and therefore every vector field $X\in\mathfrak{X}(M)$ can be contemplated as a smooth map $$X:M\rightarrow \R^{4}$$ and, by fixing a diffeomorphism $\psi:\R P^{3}\rightarrow SO(3)$, a $1$-dimensional distribution $\mathfrak{D}$ can be seen as a smooth map $$\mathfrak{D}:M\rightarrow SO(3).$$
+	
+	In particular, the canonical projection on the second factor $\mathfrak{D}_2$ defines a natural $1$-dimensional distribution on $M=\S^{1}\times SO(3)$. If we assume that $\mathfrak{D}_2$ lifts to a vector field $X$ without any zero, then, taking into account that $\R^{4}-\{0\}$ is simply connected, one easily shows that $SO(3)$ would be also simply connected, which is not true. Hence $\mathfrak{D}_2$ cannot be lifted to a global vector field on $\S^{1}\times SO(3)$.
+\end{example}
+
+\subsection{Semi-Riemannian Connections}
+
+On \autoref{sec:affineconnections}, we studied connections on general manifolds, regardless of the addition of a metric. However, the existence of an interesting connection is naturally assured when one adds a semi-Riemannian metric to the manifold: the Levi-Civita connection, whose interest will be shown along this section.
+
+This section follows the line of reasoning on \cite[Ch. 2, Section 3]{docarmo79}.
+
+\begin{definition}[Metric compatible connection]
+	% doCarmo, 45
+	Let $M$ be a smooth manifold furnished with an affine connection $\nabla$ and a semi-Riemannian metric $g$.
+	
+	The connection is said to be compatible with the metric when, for every smooth curve $c$ and for every pair of vector fields $P, P'$ along $c$, the product of the vector fields is constant:
+	\[
+	g(P, P') = constant.
+	\]
+\end{definition}
+
+This definition will let us compute the derivative of the vector fields product using the Leibniz rule, as shown in the following proposition.
+
+\begin{proposition}[Derivative of the metric on vector fields]
+	% doCarmo, 45
+	\label{pro:compatibleleibniz}
+	Let $M$ be a semi-Riemannian manifold furnished with a connection $\nabla$ compatible with the metric $g$. Let $c \colon I \to M$ be a smooth curve and $V$ and $W$ two vector fields along $c$. Then, the Leibniz rule is satisfied when computing the derivative of the vector fields product; that is:
+	\[
+	\frac{d}{dt}g(V,W) = g(\frac{DV}{dt}, W) + g(V, \frac{DW}{dt}), t \in I.
+	\]
+\end{proposition}
+
+See \cite[Ch. 2, Section 3, Proposition 3.2]{docarmo79} for the proof, which is omitted here because it does not add anything interesting to our purposes.
+
+In fact, we can redefine what a connection compatible with a metric is using \autoref{pro:compatibleleibniz}.
+
+\begin{corollary}[Compatible connection redefinition]
+	% doCarmo, 46
+	An affine connection on a semi-Riemannian manifold $M$ is compatible with a metric $g$ if and only if
+	\[
+	X(g(Y,Z)) = g(\nabla_X Y, Z) + g(Y, \nabla_X Z), \quad X, Y, Z \in \mathfrak{X}(M).
+	\]
+\end{corollary}
+
+\begin{definition}[Symmetric connection]
+	% doCarmo, 46
+	An affine connection $\nabla$ on a smooth manifold $M$ is said to be symmetric if
+	\[
+	\nabla_X Y - \nabla_Y X = [X, Y] \quad \forall X,Y \in \mathfrak{X}(M).
+	\]
+\end{definition}
+
+The name chosen for this property may not be clear at first sight, but it is not in vain: if we consider a coordinate system $(U,x)$, the symmetric connections satisfy
+\[
+\nabla_{X_i} X_j - \nabla_{X_j} X_i = [X_i, X_j] = 0,
+\]
+which is equivalent to the symmetric expression
+\[
+\Gamma^k_{ij} = \Gamma^k_{ji}.
+\]
+
+Note that $\Gamma^k_{ij}$ and $\Gamma^k_{ji}$ are not equal in general. This happens only when $X_i = \pd{}{x^i}$ as we assume here. In this case, the Schwarz lemma shows us that $[X_i, X_j] = 0$; \ie, that $\frac{\partial^2 f}{\partial x^i \partial x^j} = \frac{\partial^2 f}{\partial x^j \partial x^i}$.
+
+We can now state the main theorem for this section, which, paraphrasing Barret O'Neill \cite[p. 60]{oneill83}, it is said to be the miracle of semi-Riemannian geometry.
+
+\begin{theorem}[Levi-Civita connection]
+	\label{theo:levicivita}
+	% doCarmo, 47
+	There exists, for every semi-Riemannian manifold $M$, a unique affine connection $\nabla$ satisfying the following properties:
+	\begin{enumerate}
+		\item $\nabla$ is symmetric.
+		\item $\nabla$ is compatible with the semi-Riemannian metric.
+	\end{enumerate}
+	
+	The connection $\nabla$ is known as the \emph{Levi-Civita connection}.
+\end{theorem}
+
+\begin{remark}[Christoffel symbols, covariant and usual derivatives]
+	% doCarmo, 48
+	When considering a coordinate system $(U,x)$, the functions $\Gamma^k_{ij}$ defined before with the expression $\nabla_{x^i}X_j = \sum_k \Gamma^k_{ij} X_k$ are known as the \emph{coefficients of the connection} $\nabla$ on $U$ or, more commonly, as the \emph{Christoffel symbols of the connection}.
+	
+	From \autoref{eq:koszul} we can write
+	\[
+	\sum_l \Gamma^l_{ij}g_{lk} = \frac{1}{2} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right).
+	\]
+	
+	Taking into account the fact that $g_{km}$ has an inverse, namely $g^{km}$, and using the Einstein summation convention, we obtain the classic expression of the Christoffel symbols of the Levi-Civita connection:
+	\begin{equation}
+	\label{eq:christoffel}
+	\Gamma^m_{ij} = \frac{1}{2} g^{km} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right).
+	\end{equation}
+	
+	We can reformulate \autoref{eq:covariantderivative} in terms of the Christoffel symbols, obtaining the covariant derivative classical expression using again the Einstein notation:
+	\begin{equation}
+	\label{eq:finalcovder}
+	\frac{DV}{dt} = X_k \left( \frac{dv^k}{dt} + \Gamma^k_{ij} v^j \frac{d x^i}{dt} \right).
+	\end{equation}
+\end{remark}
+
+There is still one question left: is the covariant derivative an actual generalization of the directional derivative on the euclidean space $\R^n$? If we inspect \autoref{eq:finalcovder} we realize that the only difference between directional and covariant derivatives is the term where the Christoffel symbols appear. But it is straightforward to see that these terms vanishes when the metric $g$ is euclidean; from \autoref{eq:christoffel}, and using that $g^{ij} = \delta^i_j$ for every $i,j \in \{1, \dots, n\}$:
+\begin{align*}
+\Gamma^m_{ij} &= \frac{1}{2} g^{km} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right) = \\
+&= \frac{1}{2} \sum_k g^{km} \left( \pd{}{x^i} g_{jk} + \pd{}{x^j} g_{ki} - \pd{}{x^k}g_{ij} \right) = \\
+&= \frac{1}{2} \sum_k \delta^k_m \left( \pd{}{x^i} \delta^j_k + \pd{}{x^j} \delta^k_i - \pd{}{x^k} \delta^i_j \right) = \\
+&= 0.
+\end{align*}
+
+We can conclude what we state at the beginning of this section: when restricted to the euclidean spaces, the covariant derivative and the directional derivative agree.
+
+\subsection{Geodesics}
+
+From now on, let $M$ be a semi-Riemannian manifold.
+
+\subsubsection*{Basic Definition}
+
+\begin{definition}[Geodesic]
+	% doCarmo, 52
+	Let $\gamma \colon I \to M$ be a curve on $M$. $\gamma$ is said to be a \emph{geodesic on $M$} when
+	\[
+	\frac{D}{dt}\left(\frac{d\gamma}{dt}\right) = 0 \quad \forall t \in I,
+	\]
+	that is, the vector field $\gamma'$ is parallel.
+\end{definition}
+
+It is a common abuse of notation, using that the covariant derivative is an actual derivation, to write that a curve $\gamma$ on $M$ is a geodesic when $\gamma'' = 0$.
+
+One milestone on the development of this work is to obtain the equations that characterise geodesics: these kind of equations will let us apply a numerical algorithm in order to obtain positions of particles moving on manifolds. We will see later that a spacetime can be modelled as a 4-dimensional manifold whose geodesics will tell us the path light follows.
+
+As our primary objective is to study the movement of light, this first small step in understanding what a geodesic is and what equation it satisfies is very important.
+
+\begin{remark}[Differential equations satisfied by a geodesic]
+	% doCarmo, 53
+	Therefore, let us see the local equations satisfied by a geodesic $\gamma$ on a coordinate system $(U,x)$ around $\gamma(t_0)$, $t_0 \in I$.
+	
+	Let $\gamma(t) = (x^1(t), \dots, x^n(t)$ be the coordinates of the curve on $U$. Using the expression of the covariant derivative and assuming $\gamma$ is a geodesic; \ie, that its velocity vector field is parallel, we can write:
+	\[
+	0 = \pd{}{x^k} \left( \frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} \right).
+	\]
+	
+	We conclude that the \ac{ODE} system of order 2 given by
+	\begin{equation}
+	\label{eq:geodesic}
+	\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0, \quad k = 1, \dots, n,
+	\end{equation}
+	describes a necessary condition for the curves on $M$ to be geodesics.
+\end{remark}
+
+\subsubsection*{Variational Characterization of Geodesics}
+
+When working with geodesics, its natural, elegant definition, although really interesting for theoretical purposes, is not practical. This section aims to find a characterization that let us study geodesics.
+
+First of all, we need to define some more concepts on curves.
+
+\begin{definition}[Variation {\cite[Ch. 9, Definition 2.1]{docarmo79}}]
+	Let $c \colon [0,1] \to M$ be a piecewise smooth curve on a semi-Riemannian manifold $M$. A \emph{variation of $c$} is a continuous map
+	\[
+	f \colon (-\varepsilon, \varepsilon) \times [0,1] \to M
+	\]
+	that satisfies:
+	\begin{enumerate}
+		\item $f(0,t) = c(t), \quad t\in[0,1]$.
+		\item There is a partition of $[0,1]$, $0 = t_0 < t_1 < \dots < t_{k+1} = 1$, such that $f_{|(-\varepsilon, \varepsilon) \times [t_i,t_{i+1}]}$ is smooth for every $i = 0, 1, \dots, k$.
+	\end{enumerate}
+	
+	The variation is said to be \emph{proper} if $f(s,0) = c(0)$ and $f(s,1) = c(1)$ for every $s \in (-\varepsilon, \varepsilon)$.
+\end{definition}
+
+\begin{definition}[Variational of $c$]
+	Let $f$ be a variation of a piecewise smooth curve $c$ on a semi-Riemannian manifold $M$, and fix an arbitrary $s \in (-\varepsilon, \varepsilon)$.
+	
+	The curve
+	\begin{align*}
+	f_s \colon [0,1] &\to M \\
+	t &\mapsto f_s(t) \defeq f(s,t)
+	\end{align*}
+	is called a variational of $c$.
+\end{definition}
+
+The family of curves $\{f_s\}_{s\in (-\varepsilon, \varepsilon)}$ trivially includes $f_0 = c$, and so it can be considered as a set of close curves to $c$ if $\varepsilon > 0$ is sufficiently small.
+
+Furthermore, it is clear that the variation is proper if every curve on this family have the same initial point $c(0)$ and the same final point $c(1)$.
+
+\begin{definition}[Transverse curve of variation]
+	Let $f$ be a variation of a piecewise smooth curve $c$ on a semi-Riemannian manifold $M$, and fix an arbitrary $t \in [0,1]$.
+	
+	The curve
+	\begin{align*}
+	f_t \colon (-\varepsilon, \varepsilon) &\to M \\
+	s &\mapsto f_t(s) \defeq f(s,t)
+	\end{align*}
+	is called a transverse curve of $f$.
+\end{definition}
+
+The velocity vector of $f_t$ is
+\[
+V(t) \defeq \pd{f}{s}(0,t),
+\]
+which defines a piecewise smooth vector field along $c$: the so-called \emph{variational field} of $f$.
+
+Furthermore, if $f$ is a proper variation, the velocity satisfies $V(0) = 0$ and $V(1) = 0$.
+
+We can define now a quantity minimized by geodesics, in order to find a characterization with which we can work. In a semi-Riemannian manifold, this quantity will be the energy.
+
+\begin{definition}[Energy of a variation]
+	\label{def:energy}
+	Let $f$ be a variation of a smooth curve $c$ on a manifold $M$
+	
+	The \emph{energy of $f$} is defined as
+	\begin{align*}
+	E_f \colon (-\varepsilon, \varepsilon) &\to \R \\
+	s &\mapsto E_f(s) \defeq \int_0^1 g \left( \pd{f}{t}(s,t), \pd{f}{t}(s,t) \right) dt,
+	\end{align*}
+	where $g$ is a metric on $M$ and $\pd{f}{t}(s,t)$ denotes the velocity of $f_s$ on the instant $t$.
+\end{definition}
+
+Some interesting properties of the energy function are studied on the following proposition, which will help us to find the characterization we are looking for.
+
+\begin{proposition}
+	\label{pro:energyprop}
+	Let $c \colon [0,1] \to M$ a piecewise smooth curve and let $f \colon (-\varepsilon, \varepsilon) \times [0,1] \to M$ be a proper variation of $c$.
+	
+	The energy of $f$, $E_f \colon (-\varepsilon, \varepsilon) \to \R$ satisfies:
+	\[
+	\frac{1}{2} E'_f(0) = - \int_0^1 g\left( V(t), \frac{D}{dt}\left(\frac{dc}{dt}\right) \right)dt - \sum_{i=1}^k g \left( V(t_i), \frac{dc}{dt}(t_i^+) - \frac{dc}{dt}(t_i^-) \right),
+	\]
+	where $V$ is the variational field of $f$ and
+	\[
+	\frac{dc}{dt}(t_i^+) = \lim_{\substack{t \to t_i \\ t > t_i}} \frac{dc}{dt}(t), \quad \frac{dc}{dt}(t_i^-) = \lim_{\substack{t \to t_i \\ t < t_i}} \frac{dc}{dt}(t).
+	\]
+\end{proposition}
+The characterization of geodesics we are looking for comes as a consequence of \autoref{pro:energyprop}.
+
+\begin{proposition}
+	\label{pro:variationalgeodesic}
+	A piecewise smooth curve $c \colon [0,1] \to M$ is a geodesic if and only if
+	\[
+	\frac{dE_f}{ds}(0) = 0 \quad \textrm{ for every $f$, proper variation of $c$}.
+	\]
+\end{proposition}
+
+The proofs of \autoref{pro:energyprop} and \autoref{pro:variationalgeodesic} will be omitted, as they are long to write and do not add anything interesting regarding the scope of this work. They can be found on \cite[Ch. 9, Prop. 2.4]{docarmo79} and in \cite[Ch. 9, Prop. 2.5]{docarmo79}.
+
+Geodesics are, in short, the critical points of the energy of every proper variation.
+
+\subsection{Curvature}
+
+\begin{lemma}
+	Let $M$ be a semi-Riemannian manifold with Levi-civita connection $\nabla$. The function
+	\begin{align*}
+	R \colon \mathfrak{X}(M) \times \mathfrak{X}(M) \times \mathfrak{X}(M) &\to \mathfrak{X}(M) \\
+	(X, Y, Z) &\mapsto R(X,Y)Z,
+	\end{align*}
+	defined as
+	\[
+	R(X,Y)Z = \nabla_X \nabla_Y Z - \nabla_Y \nabla_X Z - \nabla_{[X,Y]} Z,
+	\]
+	is a $(1,3)$ tensor field on $M$ called the \emph{Riemannian curvature of M}.
+\end{lemma}
+
+The Riemannian curvature can be considered as an $\R$-multilinear function ay any $p\in M$ working on individual tangent vectors.
+
+\begin{remark}[Curvature tensor on tangent vectors]	
+	If $u,v,w \in T_pM$ and $U,V,W \in \mathfrak{X}(\Omega)$, where $\Omega$ is some open neighbourhood of $p$ such that
+	\[
+	U_p = u, \qquad V_p = v, \qquad W_p = w,
+	\]
+	then $\left( R(U,V)W \right) _p$ does not depend on the local extensions of the tangent vectors at $p\in M$ \cite[p. 38]{oneill83}, and therefore we can define
+	\begin{align*}
+	R \colon T_p M \times T_p M  \times T_p M  &\to T_p M \\
+	(u,v,w) &\mapsto R(u,v)w \defeq \left(R(U,V)W\right)_p.
+	\end{align*}
+	In particular, for any $u,v \in T_p M$ we have a linear operator
+	\[
+	R(u,v) \colon T_p M  \to T_p M \\
+	\]
+	sending each $w\in T_pM$ to $R(u,v)w \in T_p M$, which is called the \emph{curvature operator} defined by $u,v\in T_p M$.
+\end{remark}
+
+Let us compute the expression of the curvature tensor components. Consider that its coordinate expression is:
+\begin{equation}
+\label{eq:curvaturecomponents}
+R\left( \pd{}{x^i}, \pd{}{x^j} \right)\pd{}{x^k} = \sum_l R^l_{ijk} \pd{}{x^l}.
+\end{equation}
+
+Using the curvature tensor definition and the Schwarz lemma, that tells us that $[\pd{}{x^i}, \pd{}{x^j}] = 0$, the tensor has the expression
+\[
+R\left( \pd{}{x^i}, \pd{}{x^j} \right)\pd{}{x^k} = \nabla_{\pd{}{x^i}} \nabla_{\pd{}{x^j}} \pd{}{x^k} - \nabla_{\pd{}{x^j}} \nabla_{\pd{}{x^i}} \pd{}{x^k}.
+\]
+
+Let us compute the first term in details; the second one will have the same expression with swapped indices $i$ and $j$. Using the Christoffel symbols, we have
+\[
+\nabla_{\pd{}{x^j}} \pd{}{x^k} = \sum_h \Gamma^h_{jk} \pd{}{x^h},
+\]
+from where we can write
+\begin{align*}
+\nabla_{\pd{}{x^i}} \left( \nabla_{\pd{}{x^j}} \pd{}{x^k} \right) &= \sum_h \nabla_{\pd{}{x^i}} \Gamma^h_{jk} \pd{}{x^h} = \\
+&= \sum_h \pd{}{x^i} \Gamma^h_{jk} \pd{}{x^h} + \sum_h \Gamma^h_{jk} \nabla_{\pd{}{x^i}} \pd{}{x^h} =\\
+&= \sum_h \pd{}{x^i} \left( \Gamma^h_{jk} \right) \pd{}{x^h} + \sum_{h,p} \Gamma^h_{jk} \Gamma^p_{ih} \pd{}{x^p}.
+\end{align*}
+
+If we swap the indices $h$ and $p$ on the last addend, the expression of this one term is somewhat more clear:
+\begin{equation}
+\label{eq:curvatureexpression}
+\nabla_{\pd{}{x^i}}\nabla_{\pd{}{x^j}} \pd{}{x^k} = \sum_h\left( \pd{}{x^i} \Gamma^h_{jk} + \sum_p \Gamma^p_{jk} \Gamma^h_{ip} \right) \pd{}{x^h}.
+\end{equation}
+
+From \autoref{eq:curvaturecomponents}, using \autoref{eq:curvatureexpression} and its analogous with $i$ and $j$ indices swapped, we can finally write the expression of the curvature tensor components:
+\[
+R^l_{ijk} = \pd{}{x^i} \Gamma^l_{jk} - \pd{}{x^j} \Gamma^l_{ik} + \sum_p \left( \Gamma^p_{jk} \Gamma^l_{ip} - \Gamma^p_{ik} \Gamma^l_{jp} \right).
+\]
+
+The following identities are the symmetries of $R$:
+
+\begin{proposition}
+	If $u,v,w,z \in T_p M$, then
+	\begin{enumerate}
+		\item $R(u,v) = -R(v,u)$ as operators on $T_p M$.
+		\item $g(R(u,v)w, z) = -g(R(u,v)z, w)$.
+		\item $R(u,v)w +R(v,w)u + R(w,u)v = 0$ (\emph{first Bianchi identity}).
+		\item $g(R(u,v)w,z)  = g(R(w,z)u, v)$.
+	\end{enumerate}
+\end{proposition}
+
+These symmetries of $R$ lead to a less obvious symmetry of its covariant derivative $\nabla R$, called the \emph{second Bianchi identity}. First, let us recall that $\nabla R$ is the $(1,4)$-tensor field defined by
+\begin{align*}
+\left( \nabla_U R \right)(X,Y)Z = &\nabla_U(R(X,Y)Z) - R(\nabla_U X, Y)Z - \\
+&-R(X, \nabla_U Y)Z - R(X,Y) \nabla_U Z
+\end{align*}
+for all $U,X,Y,Z \in \mathfrak{X}(M)$.
+
+\begin{definition}[Ricci tensor]
+	The Ricci tensor $\Ric$ of a semi-Riemannian metric $g$ is defined as the following contraction of the Riemann curvature tensor $R$ of $g$:
+	\[
+	\Ric(X,Y) \defeq \operatorname{trace}(V \mapsto R(V, X)Y ),
+	\]
+	that is, $\Ric(X,Y) =  \sum_i \omega^i (R(X_i, X)Y)$; where $\{X_i\}$ is a local basis of vector fields and $\{\omega^i\}$ is its dual basis of one-forms.
+\end{definition}
+
+Therefore, for a coordinate system $(x_1, \dots, x_n)$ we have
+\[
+\Ric = \sum_{j,k} \Ric\left( \pd{}{x^j},\pd{}{x^j}  \right) dx^j \otimes dx^k,
+\]
+where the components $\Ric(\pd{}{x^j}, \pd{}{x^k})$ of $\Ric$ are given by
+\[
+\Ric(\pd{}{x^j}, \pd{}{x^k}) = \sum_i dx^i \left( R(\pd{}{x^i}, \pd{}{x^j})\pd{}{x^k} \right) = \sum_i R^i_{ijk}.
+\]
+
+Equivalently,
+\[
+\Ric(X,Y)  = \sum_{i,h} g^{ih} g(R(\pd{}{x^i}, X)Y, \pd{}{x^h}).
+\]
+
+\begin{definition}[Scalar curvature]
+	\label{def:scalarcurvature}
+	The \emph{scalar curvature} $S$ of $g$ is the contraction of the $(1,1)$ tensor field $g$-equivalent to the Ricci tensor. In terms of coordinates:
+	\[
+	S = \sum_{i,j} g^{ij}(\Ric)_{ij} = \sum_{i,j,k} g^{ij} R^k_{kij}.
+	\]
+\end{definition}
+
+From the second identity of Bianchi we get \cite[p. 88]{oneill83}
+\[
+\nabla S = 2 \operatorname{div} \widehat{\Ric},
+\]
+where $\nabla S$ is the gradient of the scalar curvature, $\widehat{\Ric}$ is the contravariant tensor field $g$-equivalent to $\Ric$ and $\operatorname{div}$ is the divergence acting on symmetric $(2,0)$ tensor fields.
+
+\subsection{Killing Vector Fields}
+
+This section is based on the study of Killing vector fields developed on \cite[pp. 250-252]{oneill83}.
+
+\begin{definition}[Integral curve]
+	Let $M$ be a smooth manifold and consider a vector field $X \in \mathfrak{X}(M)$.
+	An integral curve of $X$ is a curve
+	\[
+	\gamma \colon I \to M,
+	\]
+	where $I$ is an open interval of $\R$ with $0 \in I$, such that
+	\begin{equation}
+	\label{eq:integralcurve}
+	\gamma'(t) = X_{\gamma(t)} \quad \forall t \in I,
+	\end{equation}
+	that is, the vector field $X$ assigns to every point of the curve its own velocity at that instant.
+\end{definition}
+
+\begin{lemma}
+	Let $p_0 \in M$ be a point on a smooth manifold. There exists a unique (maximal) integral curve of $X\in\mathfrak{X}(M)$, $\gamma \colon I \to M$, such that
+	\begin{equation}
+	\label{eq:initcond}
+	\gamma(0) = p_0.
+	\end{equation}
+\end{lemma}
+
+We are now able to see that an integral curve starting at a point on $M$ can be seen as the solution to the \ac{ODE} described by \autoref{eq:integralcurve} restricted to the initial conditions given by \autoref{eq:initcond}.
+
+\begin{lemma}
+	Consider a vector field $X \in \mathfrak{X}(M)$ and a point $p_0 \in M$. Then, there exists $U$, an open neighbourhood of $p_0$ at $M$, a number $\varepsilon > 0$ and a smooth function
+	\[
+	\varphi \colon (-\varepsilon, \varepsilon) \times U \to M,
+	\]
+	such that for any $q \in U$, the map
+	\[
+	t \mapsto \varphi(t,q)
+	\]
+	is the integral curve of $X$ starting at $q$; \ie, $\varphi$ is the general solution of the \ac{ODE} \ref{eq:integralcurve}.
+	
+	The solution $\{\varphi_t\}_{t \in (-\varepsilon, \varepsilon)}$ is known as \emph{a local flow of $X$}.
+\end{lemma}
+
+\begin{definition}[Killing vector field]
+	Let $(M,g)$ be a semi-Riemannian manifold, and consider a vector field $X\in\mathfrak{X}(M)$.
+	
+	$X$ is said to be a Killing vector field if every local flow $\{\varphi_t\}$ of $X$ satisfies that
+	\[
+	\varphi_t \colon U \to \varphi_t(U)
+	\]
+	is an isometry.
+\end{definition}
+
+When $X$ is a Killing vector field, $g$ does not change under the action of any flow of $X$; \ie, $\varphi^*_t g = g$.
+
+Before finding an interesting characterization of the Killing vector fields, it is necessary to introduce an important concept: the Lie derivative.
+
+\begin{definition}[Lie derivative]
+	Let $(M,g)$ be a semi-Riemannian manifold and let $X\in\mathfrak{X}(M)$ be a vector field on $M$. The \emph{Lie derivative of $g$ with respect to $X$} is a function acting on pairs of smooth vector fields $Y,Z \in \mathfrak{X}(M)$ defined by:
+	\begin{equation}
+	\label{eq:liederivative}
+	(L_Xg)(Y,Z) = Xg(Y,Z) - g([X,Y],Z) - g(Y,[X,Z]).
+	\end{equation}
+\end{definition}
+
+\begin{proposition}[Killing vector fields characterisation]
+	\label{pro:Killingchar}
+	A vector field $X \in \mathfrak{X}(M)$ on a semi-Riemannian manifold $(M,g)$ is a Killing vector field if and only if
+	\[
+	L_X g = 0,
+	\]
+	where $L_X$ is the Lie derivative with respect to $X$.
+\end{proposition}
+
+We can rewrite the Lie derivative to better work with it. Using \autoref{eq:leviX} and the identity $[X,Y] = \nabla_X Y - \nabla_Y X$, \autoref{eq:liederivative} is equivalent to
+\begin{equation}
+\label{liederivative2}
+(L_Xg)(Y,Z) = g(\nabla_Y X, Z)) + g(Y, \nabla_Z X).
+\end{equation}
+
+Using this definition of Lie derivative and \autoref{pro:Killingchar}, we can now conclude that $X \in \mathfrak{X}(M)$ is a Killing vector field if and only if
+\begin{equation}
+\label{eq:liecharacterisation}
+g(\nabla_Y X, Z) + g(Y, \nabla_Z X) = 0 \quad \forall X,Y\in\mathfrak{X}(M).
+\end{equation}
+
+\begin{proposition}
+	Let $X\in\mathfrak{X}(M)$ be a Killing vector field on a semi-Riemannian manifold $(M,g)$ and considet $\gamma$ a geodesic on $M$. Then,
+	\[
+	g(\gamma'(t), X_{\gamma(t)}) = c,
+	\]
+	where $c\in\R$ depends only on $\gamma$.
+\end{proposition}

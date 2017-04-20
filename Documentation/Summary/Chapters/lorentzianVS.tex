@@ -1,0 +1,244 @@
+\chapter{Lorentzian Vector Spaces}
+\label{chapter:lorentzian}
+
+This chapter follows the ideas on \cite{romero10}, which set up the basic background needed to understand what we will call later a spacetime, the main mathematical object in which we will develop our work.
+
+Before going down that road we need to know what a Lorentzian vector space is and the basic concepts that we can build upon it.
+
+\section{Basic Definitions}
+
+\begin{definition}[Lorentzian product and vector space]
+	\label{def:lorentzianprod}
+	Let $V$ be an $n$-dimensional vector space on $\R$, with $n \geq 2$.
+	
+	A \emph{Lorentzian product on $V$} is a non-degenerate symmetric bilinear form on $V$ with index 1; that is, a bilinear form
+	\[
+		g \colon V \times V \to \R
+	\]
+	that satisfies the following:
+	\begin{enumerate}
+		\item $g$ is symmetric: $g(u, v) = g(v, u)$.
+		\item $g$ is non-degenerate: if $g(u, v) = 0 \;\; \forall v \in V$, then $\Rightarrow u = 0$.
+		\item $g$ has index 1: the maximum dimension of a subspace $W$ in which $g(u,u) \leq 0 \; \forall u \in W$ ---where equality holds if and only if $u = 0$--- is 1.
+	\end{enumerate}
+
+	The vector space $V$ furnished with such a Lorentzian product is called a \emph{Lorentzian vector space}.
+\end{definition}
+
+As usual, we will say that two vectors are \emph{orthogonal} on $(V,g)$ whenever $g(u,v) = 0$.
+
+From now on until the end of this chapter, let us consider $(V,g)$ a Lorentzian vector space.
+
+When such a Lorentzian product is added to a vector space, its elements can be classified depending on the value of its squared product.
+
+\begin{definition}[Classification of vectors on Lorentzian vector spaces]
+	A vector $v \in V$ is said to be:
+	\begin{itemize}
+		\item \emph{spacelike} if $g(v,v) > 0$ or $v = 0$,
+		\item \emph{timelike} if $g(v,v) < 0$ or
+		\item \emph{null} or \emph{lightlike} if $g(v,v) = 0$ with $v \neq 0$.
+	\end{itemize}
+\end{definition}
+
+\begin{definition}[Light cone]
+	The \emph{light cone of $V$} is the subset of all null vectors.
+\end{definition}
+
+The study of the Lorentzian vector spaces will be based on \autoref{lem:lorentzspan}, which classifies, for each timelike vector, all elements of $(V,g)$ on two orthogonal subsets.
+
+\begin{lemma}
+	\label{lem:lorentzspan}
+	Let $v \in V$ be a timelike vector. Then, we can split the vector space as follows:
+	\[
+		V = \langle v \rangle \oplus v^\perp,
+	\]
+	where $v^\perp \defeq \{u \in V / g(u,v) = 0\} = \langle v \rangle^\perp$.
+	
+	Furthermore, $g_{\mid_{v^\perp}}$ is positive definite and $g_{\mid_{\langle v \rangle}}$ is negative definite; \ie, $g_{\mid_{v^\perp}}$ and $-g_{\mid_{\langle v \rangle}}$ are Euclidean products.
+\end{lemma}
+
+\begin{proof}
+	As $\langle v \rangle$ is non degenerate, so is $v^\perp$. Then, $V = \langle v \rangle + v^\perp$ is a direct sum.
+	
+	See \cite[Lemma 5.26]{oneill83} for details.
+\end{proof}
+
+\begin{remark}\label{classic_Schwarz}
+	The positive definite subspaces of a Lorentzian vector space are in fact Euclidean spaces; in particular, the Schwarz inequality holds in $v^\perp$, with $v$ a timelike vector:
+    \begin{equation}
+	    \label{eq:schwarz}
+        \lvert g(u,w) \rvert \leq \sqrt{g(u,u)} \sqrt{g(w,w)} \quad \forall u,w \in v^\perp,
+    \end{equation}
+    with equality if and only if $u$ and $w$ are linearly dependent.
+\end{remark}
+
+Then, it is trivial that two timelike vectors are never orthogonal. An interesting result appears when we study what happens with two orthogonal null vectors.
+
+From \cite[Cor. 1.1.5]{sachs77}, \cite[p. 155]{oneill83}, we can see:
+
+\begin{proposition} Let $x,y \in V$ be two null vectors. Then
+	\[
+		$g(x,y)=0$ \Leftrightarrow $x$ \textrm{ and } $y$ \textrm{ are linearly dependent}.
+	\]
+\end{proposition}
+
+\begin{proof}
+    From \autoref{lem:lorentzspan} we can write $V=\langle v \rangle \oplus v^{\perp},$ with $g(v,v)=-1$. Therefore, there exists $a,b \in \R\setminus\{0\}$ and $u,w \in v^\perp$ such that:
+    \begin{align*}
+        x=av+u, \quad u\neq 0, \quad g(u,u)=a^2,\\
+        y=bv+w, \quad w\neq 0, \quad g(v,v)=b^2.
+    \end{align*}
+    If $g(x,y)=0$ then $\lvert g(u,w) \rvert = \sqrt{g(u,u)}\sqrt{g(w,w)}$ and therefore, from \autoref{eq:schwarz}, $u=kw$ for some $k\in \R$. In fact, $k=a/b$. The converse is trivial.
+\end{proof}
+
+\section{Time Cones}
+
+From now on, $\mathcal{T}(V,g)$ will denote the set of all timelike vectors on $(V,g)$.
+
+\begin{definition}[Time cone]
+	Let $v\in \mathcal{T}(V,g)$ be a timelike vector. The \emph{time cone defined by $v$} is the set
+	\[
+	C(v)=\{u\in\mathcal{T}(V,g)\, : \, g(u,v)<0 \}.
+	\]
+\end{definition}
+
+It is clear that $C(v)$ is not empty, as $v$ itself lays on its own time cone.
+
+Furthermore, as no two timelike vectors can be orthogonal, $g(v,w) \neq 0$ for each $w \in \mathcal{T}(V,g)$; \ie, either $w\in C(v)$ or $w\in C(-v)$. This let us describe $\mathcal{T}(V,g)$ as a union of two time cones for each timelike vector:
+\[
+\mathcal{T}(V,g) = C(v) \cup C(-v) \quad \forall v\in \mathcal{T}(V,g).
+\]
+
+The following result characterizes when two timelike vectors lie in the same time cone.
+
+It is interesting to know when two timelike vectors lie in the same time cone. \autoref{lem:timecone}, based on \cite[Lemma 5.29]{oneill83}, gives us the answer.
+
+\begin{lemma}\label{lem:timecone}
+Given $u,v\in \mathcal{T}(V,g)$, they belong to the same time cone if and only if $g(u,v)<0$.
+\end{lemma}
+
+\begin{proof}
+    By definition, if $g(u,v)<0$, then $u\in C(v)$, and therefore $u$ and $v$ belong to the time cone defined by $v$.
+    
+    Assume now that $u$ and $v$ belong to a same time cone defined by a $w \in V$ such that $g(w,w) = -1$. Using \autoref{lem:lorentzspan} we can write
+    \begin{align*}
+        u=aw+y, \quad y\in w^{\perp}, \quad a=-g(u,w)>0,\\
+        v=bw+z, \quad z\in w^{\perp}, \quad b=-g(v,w)>0.
+    \end{align*}
+    Taking into account
+    \[
+	    \sqrt{g(y,y)}<a \quad \mathrm{and} \quad \sqrt{g(z,z)}<b,
+    \]
+    we have
+    \[
+	    g(u,v)\leq -ab+ \lvert g(y,z) \rvert \leq -ab + \sqrt{g(y,y)}\sqrt{g(z,z)}<-ab+ab=0.
+    \]
+\end{proof}
+
+\begin{corollary}\label{convexity}
+Let $w\in\mathcal{T}(V,g)$, $u,v\in C(w)$ and $a,b\in \R$ with $a,b\geq 0$ and $a^2+b^2 \neq 0$. Then, we have $au+bv\in C(w)$.
+\end{corollary}
+
+\begin{proof}
+    As $g(au+bv,w)=a g(u,w)+ b g(v,w)<0$, \autoref{lem:timecone} proves the result.
+\end{proof}
+
+This corollary lets us conclude that time cones are convex subsets of $V$. Furthermore, it is important to realize that if $u\in C(v)$ then $C(u)=C(v)$.
+
+\autoref{classic_Schwarz} showed that the Schwarz inequality holds on the orthogonal space of any timelike vector. This result is not true if we consider any pair of vectors, but what happens when we focus on timelike vectors? Some interesting results will appear.
+
+\section{Wrong-Way Inequalities}
+
+First of all, we can obtain the so-called \emph{wrong-way Schwarz inequality} ---see \cite[Prop. 5.30]{oneill83}--- when considering only timelike vectors.
+
+\begin{proposition}[Wrong-way Schwarz inequality]
+	\label{pro:wrongway}
+    Let $u,v \in \mathcal{T}(V,g)$ be a pair of timelike vectors. Then, its product satisfies the following:
+    \[
+        \lvert g(u,v) \vert \geq \sqrt{-g(u,u)}\sqrt{-g(v,v)},
+    \]
+    with equality holding if and only if $u$ and $v$ are linearly dependent.
+\end{proposition}
+
+\begin{proof}
+    Using \autoref{lem:lorentzspan}, we know there exists $a \in \R$ and $x \in v^\perp$ such that $u=av+x$, and therefore
+    \[
+        g(u,v)^2=a^2g(v,v)^2, \quad \quad g(u,u)=a^2g(v,v)+g(x,x)<0,
+    \]
+    which gives
+    \[
+        g(u,v)^2=\{g(u,u)-g(x,x)\}g(v,v) \geq g(u,u)g(v,v).
+    \]
+    The equality holds if and only if $g(x,x)=0$, \ie, if and only if $x=0$, which means $u=av$.
+\end{proof}
+
+
+We can obtain another wrong-way inequality. As a consequence of \autoref{pro:wrongway} and using \autoref{lem:timecone}, the so-called \emph{wrong-way Minkowski inequality} is found ---see \cite[Cor. 5.31]{oneill83}---.
+
+\begin{corollary}[Wrong-way Minkowski inequality]
+	\label{Minkowski}
+    Let $u,v \in \mathcal{T}(V,g)$ be two timelike vectors that lie in the same time cone. Then:
+    \[
+        \sqrt{-g(u+v,u+v)} \geq \sqrt{-g(u,u)}+\sqrt{-g(v,v)},
+    \]
+    where the equality holds if and only if $u$ and $v$ are linearly dependent.
+\end{corollary}
+
+We can now formalize the notion of angle between two timelike vectors.
+
+Indeed, let $u, v \in \mathcal{T}(V,g)$ be two timelike vectors that lie in the same time cone. From \autoref{lem:timecone} and \autoref{pro:wrongway}, we know that
+\[
+-g(u,v) \geq \sqrt{-g(u,u)}\sqrt{-g(v,v)},
+\]
+and therefore, there exists a unique $\theta \in \R$, $\theta \geq 0$, such that
+\[
+\cosh \theta =\frac{-g(u,v)}{\sqrt{-g(u,u)}\sqrt{-g(v,v)}}.
+\]
+
+$\theta$ is called the \emph{hyperbolic angle} between $u$ and $v$.
+
+\section{Time Orientation on Lorentzian Vector Spaces}
+
+This last section on Lorentzian vector spaces introduces an important concept: time orientation. We need some previous concepts before formalizing this idea.
+
+\begin{definition}[Orthonormal basis of $(V,g)$]
+	Let $B = (v_1, \dots, v_n)$ be a basis of $V$. $B$ is said to be \emph{orthonormal} when
+	\begin{itemize}
+		\item any two different vectors on $B$ are $g$-orthogonal,
+		\item each $v_i$, with $i \in \{1,\dots,n-1\}$, is unitary spacelike and
+		\item $v_n$ is unitary timelike.
+	\end{itemize}
+
+	Note that the matrix of $g$ on the basis $B$ is
+	\[
+		M_B(g) = \begin{pmatrix}
+			I_{n-1} & 0  \\
+			0 & -1
+		\end{pmatrix}.
+	\]
+\end{definition}
+
+Let $B = (v_1, \dots, v_n)$ and $B' = (v'_1, \dots, v'_n)$ be two orthonormal basis of $(V,g)$. We say that $B$ and $B'$ define the same \emph{time orientation} of $(V,g)$ when
+\[
+	g(v_n, v'_n) < 0;
+\]
+that is, when both $v_n$ and $v'_n$ lie in the same time cone of $(V,g)$.
+
+This defines two equivalence classes on the set of orthonormal bases: the class defined by $B=(v_1,..,v_{n-1},v_n)$ and the class defined by $\tilde{B}=(v_1,..,v_{n-1},-v_n)$.
+
+\begin{definition}[Time orientation]
+	\label{def:vstimeorientation}
+	A \emph{time orientation} on $(V,g)$ is each one of the two equivalence classes defined by $B$ and $\tilde{B}$.
+\end{definition}
+
+Furthermore, we note that a time orientation on $(V,g)$ is given by each time cone of $(V,g)$.
+
+Although the classical orientations on $V$ does not depend on $g$, it is important to realize that the notion of time orientation is a metric concept, that is, it is defined using the Lorentzian product $g$.
+
+However, a time orientation does not change if we replace $g$ by a conformally related Lorentzian product $ag$, with $a\in \R$, $a>0$.
+
+\section{Topological Remarks}
+\label{sec:toporemarks}
+
+We end this section making some topological remarks. If $V$ is an $n$-dimensional vector space and $B$ is a basis of $V$, then we have a linear isomorphism $$b_B : V \longrightarrow \R^n,$$ defined by $b_B(v)=(a_1,..,a_n)$, where $(a_1,..,a_n)$ are the coordinates of $v$ in $B$. By using $b_B$ a topology $\mathfrak{T}_B$ can be defined in $V$ in such a way that the $\mathfrak{T}_B$-open subsets of $V$ are $b_B^{-1}(O)$, where $O$ is an open subset of $\R^n$. It is not difficult to see that $\mathfrak{T}_B = \mathfrak{T}_{B'}$ for any basis $B,B'$ of $V$. Endowed with this topology, the function $V \longrightarrow \R$, given by $v \mapsto g(v,v)$ is continuous. Hence, $\mathcal{T}(V,g)$ is an open subset of $V$ and each time cone is also an open subset of $V$. Moreover, the set of nonzero spacelike vectors $\{v\in V \, : \, g(v,v)>0 \}$ is an open subset of $V$ and the light cone with the zero vector $\{v\in V \, : \, g(v,v)=0 \}$ is a closed subset of $V$. Finally, every null vector can be obtained as the limit of a sequence of timelike vectors as well of spacelike vectors (or both types of vectors). Thus, $\{v\in V \, : \, g(v,v)<0 \} \cup \{v\in V \, : \, g(v,v)>0 \}$
+is a dense subset of $V$.
