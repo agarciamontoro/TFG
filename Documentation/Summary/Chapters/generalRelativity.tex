@@ -1,145 +1,33 @@
 \chapter{General Relativity}
 \label{chapter:general-relativity}
 
+The part summarised in this chapter introduced some notions to understand the main idea of general relativity theory; \ie, that gravity is indeed a consequence of the geometric nature of the spacetime and that the trajectories of particles near celestial bodies, such as black holes, that are not under any other force are characterised by the geodesics ---their null acceleration---.
 
 \section{Geometric Description of Gravity}
 \label{chapter:einstein}
 
-Before Einstein developed its general relativity theory, the gravity was understood as a force acting on bodies. The most interesting idea on Einstein's work was to change this approach and consider the gravity as a consequence of the geometric nature of the spacetime. Therefore, the curvature of the spacetime is the only origin of what we perceive as gravity, and all forces related to it vanish: hence, a particle in free fall near a celestial body does not have any acceleration caused by the gravity, which is not a force. In fact, the particles near celestial bodies such as black holes that are not under any other force, are characterised by the geodesics; \ie, by its null acceleration.
-
-This chapter introduces some notions to slightly understand the surface of these ideas. All results and lines of reasoning are extracted from \cite[Ch. 4]{sachs77}.
-
 \subsection{Einstein Tensor of a Metric}
 
-\begin{definition}[Einstein tensor]
-	Let $(M,g)$ be a spacetime. The symmetric 2-covariant tensor field
-	\[
-	G \defeq \operatorname{Ric}-\frac{1}{2}Sg,
-	\]
-	where Ric is the Ricci tensor of $g$ and $S$ the scalar curvature of $g$, is called the \emph{Einstein tensor of $g$}.
-\end{definition}
+Let $(M,g)$ be a spacetime. The symmetric 2-covariant tensor field $G \defeq \operatorname{Ric}-\frac{1}{2}Sg$, where Ric is the Ricci tensor of $g$ and $S$ the scalar curvature of $g$, is called the \emph{Einstein tensor of $g$}.
 
-It can be proved (\cite{sachs77}) that $G$, the Einstein tensor of $g$, satisfies the following:
-
-\begin{enumerate}
-	\item We have
-	\begin{equation}
-	\label{eq:tracegs}
-	\operatorname{trace}_gG=-S,
-	\end{equation}
-	and so
-	\[
-	\mathrm{Ric}=G-(1/2)(\mathrm{trace}_gG)g,
-	\] where $\operatorname{trace}_gG$ denotes the contraction of the $(1,1)$-tensor field $g$-equivalent to $G$. Therefore, to have $G$ is equivalent to have $Ric$, and both tensors have the same physical information.
-	\item If for any symmetric 2-covariant tensor field $T$, we define \[G_k:=T+k(\mathrm{trace}_gT)g,\] for a fixed $k\in \mathbb{R}$, then the map $T \longmapsto G_k$ is involutive if and only if $k=0$ or $k=-\frac{1}{2}$.
-	\item $\mathrm{Ric}=\lambda\,g$ if and only if $G=-\lambda\,g$. A spacetime such that Ric is proportional to the metric tensor $g$, or equivalently, $G$ is proportional to $g$, is called an \emph{Einstein spacetime}.
-\end{enumerate}
-
-\subsection{Stress-Energy Tensors}
-\label{sec:stressenergy}
-
-\begin{definition}[Stress-energy tensor]
-	A \emph{stress-energy tensor} on a spacetime $M$ is a symmetric 2-covariant tensor field $T$ such that
-	\begin{equation}
-	\label{eq:stress}
-	T(V,V) \geq 0
-	\end{equation}
-	for any timelike vector $V \in T_p M \; \forall p \in M$.
-\end{definition}
-
-Note that a continuity argument (see \autoref{sec:toporemarks}) shows that inequality \ref{eq:stress} also holds true if $V$ is a lightlike vector on $T_p M$.
-
-It is commonly argued that the mathematical way to express that gravity attracts on average is
-\begin{equation}
-\operatorname{Ric} (V,V) \geq 0
-\end{equation}
-for any timelike tangent vector $V \in T_p M$ and for all $p \in M$; that is, the Ricci tensor of a physically realistic spacetime must be an stress-energy tensor. This assumption restricts the familiy of Lorentzian metrics that can be physically significant.
+A \emph{stress-energy tensor} on $M$ is a symmetric 2-covariant tensor field $T$ such that $T(V,V) \geq 0$ for any timelike vector $V \in T_p M \; \forall p \in M$.
 
 \subsection{Einstein Field Equation}
 
-Consider a stress-energy tensor $T$ on a spacetime $(M,g)$ such that
-\begin{enumerate}
-	\item The function \begin{equation}
-	\label{eq:stressderived}
-	T - \frac{1}{2}(\operatorname{trace}_g T) g
-	\end{equation} is also a stress-energy tensor.
-	\item $T$ satisfies the conservation law \begin{equation}
-	\label{eq:div0}
-	\operatorname{div} \widehat{T} = 0,
-	\end{equation}
-	where $\widehat{T}$ is the 2-contravariant tensor field $g$-equivalent to $T$.
-\end{enumerate}
+Consider a stress-energy tensor $T$ on $(M,g)$ such that $T - \frac{1}{2}(\operatorname{trace}_g T) g$ is also a stress-energy tensor and that $T$ satisfies the conservation law $\operatorname{div} \widehat{T} = 0$, where $\widehat{T}$ is the 2-contravariant tensor field $g$-equivalent to $T$.
 
 We say that the spacetime $(M,g)$ obeys the Einstein field equation with respect to $T$ (using the terminology of \cite[Sec. 6.2]{sachswu77}) if
-\begin{equation}
-\label{eq:einstein}
-G  = T,
-\end{equation}
-where $G$ is the Einstein tensor of $g$, that is,
-\begin{equation}
-\label{eq:einstein2}
-\Ric - \frac{1}{2}Sg = T.
-\end{equation}
 
-From \autoref{eq:tracegs}, we know
-\[
-\operatorname{trace}_g T = -S,
-\]
-so we can rewrite \autoref{eq:einstein2} as follows:
 \begin{equation}
 \label{eq:einstein3}
 T - \frac{1}{2}(\operatorname{trace}_g T)g = \Ric.
 \end{equation}
 
-Therefore, assumption \ref{eq:stressderived} agrees with the timelike convergent condition \cite[p. 123]{sachs77}, which express, using the Ricci tensor, that gravitational effects are on average attractive.
+Einstein field equation postulated how matter and radiation in a region of the universe can be described by a Lorentzian metric $g$.
 
-On the other hand, assumption \ref{eq:div0} is mandatory, as we know that the Einstein tensor $G$ satisfies
-\[
-\operatorname{div} \hat{G} = 0.
-\]
+If $(M,g)$ obeys the Einstein field equation with respect to $T = 0$, then, we know that $Ric = 0$. Assume now that $(M,g)$ obeys the Einstein field equation $Ric = 0$. Then, it is trivial that $T=0$.
 
-Einstein field equation (\autoref{eq:einstein} or \autoref{eq:einstein2}) postulated how matter and radiation in a region of the universe can be described by a Lorentzian metric $g$.
-
-In fact, \autoref{eq:einstein} is similar to the Poisson equation,
-\[
-\Delta\phi = k\rho,
-\]
-where $k>0$ is a universal constant, $\rho$ is the function describing the density of matter and $\phi$ is the potential function.
-
-This equation postulated, in the pre-relativistic physics, how matter can be described by a potential function.
-
-Note that if we know $\phi$, then the corresponding gravitational field is 
-\[
--\nabla \phi,
-\]
-where $\nabla$ denotes the usual gradient for functions on an open subset of the Euclidean space $\R^3$.
-
-Then, the gravitational force, $F$, acting on a mass $m$, is obtained as follows:
-\[
-F = -m\nabla\phi.
-\]
-
-We see then that, roughly speaking, $F$ had the same role in the old physics as the curvature tensor has now in Relativity.
-
-Imagine now the trivial stress-energy tensor
-\[
-T = 0.
-\]
-
-If $(M,g)$ obeys the Einstein field equation with respect to $T = 0$, then, using \autoref{eq:einstein3}, we realize that
-\[
-Ric = 0.
-\]
-
-Assume now that $(M,g)$ obeys the Einstein field equation
-\begin{equation}
-\label{eq:absence}
-Ric = 0.
-\end{equation}
-
-Then, it is trivial that $T=0$.
-
-We can conclude that the mathematical way of expressing the absence of matter and radiation on the spacetime is the one shown on \autoref{eq:absence}, which is called the \emph{vacuum Einstein field equation}.
+We can conclude that the \emph{vacuum Einstein field equation} is the mathematical way of expressing the absence of matter and radiation on the spacetime.
 
 
 
@@ -162,175 +50,29 @@ We can conclude that the mathematical way of expressing the absence of matter an
 \section{Kerr Spacetime}
 \label{chapter:kerr}
 
-After all the mathematical background, the study of the new concepts properties and the physical introduction, we are ready to introduce the Kerr spacetime, a spacetime that models one of the most interesting and still unknown celestial bodies: the black holes.
+The Kerr metric is an exact solution of the vacuum Einstein field equation that models a spacetime with an axially symmetric black hole rotating about an axis through its centre. The coordinate chart we used to describe each event occuring on the spacetime's manifold was defined by the \ac{BL} coordinates and the Kerr spacetime was parametrized by its angular momentum, $a \neq 0$; \ie, how fast its rotation is.
 
-The Kerr black hole is the centre (both metaphorically and literally) of our model: it is a celestial body, sometimes known as a black star, so massive that it warps the spacetime in such a way that even the light cannot escape the spacetime curvature. These theoretical objects are the main line of investigation of both students and renowned experts.
-
-This chapter tries to define it, comment on some properties and extract the necessary information we will need to build the ray tracer. A deep study of the Kerr spacetime, however, is far beyond the scope of this work, so the origin of the metric tensor will not be described and the proofs of the results will be omitted, although the main references will be given.
-
-Let us set up some terminology, described in \cite[Def. 1.6.2, 1.6.3]{oneill95} in order to understand the following pages.
-
-\begin{definition}[Timelike particle]
-	A future-pointing timelike curve $\alpha$ in a spacetime is known as a \emph{timelike (or material) particle}. Its mass is defined as $m = \vert \alpha' \vert$.
-\end{definition}
-
-\begin{definition}[Lightlike particle]
-	A \emph{lightlike (or null) particle} $\gamma$ in a spacetime is a future-pointing lightlike geodesic. It is trivial to see that its mass is zero.
-\end{definition}
-
-\begin{definition}[Causal particle]
-	A \emph{causal particle} in a spacetime is either a material particle or a lightlike particle.
-\end{definition}
-
-The tangent vector of a causal particle $\gamma$, noted as $\mathbf{p} = \gamma'$, is known as the \emph{energy-momentum four vector}, simply called \emph{momentum}.
-
-Throughout all the chapter we choose natural units; \ie, we set the speed of light and the mass to the unity. This is the usual way of working in physics, and it will ease the notation of the following equations.
-
-\subsection{Kerr Metric}
-
-The Kerr metric is an exact solution of the vacuum Einstein field equation, that models a spacetime with an axially symmetric black hole rotating \footnote{It is important to note here that the black hole does not actually rotate: the Kerr metric is a solution to the vacuum Einstein field equation, so no mass is located on the spacetime. When we talk about the mass of the black hole, we are really talking about the mass of the colliding star that formed it. However, as the black hole curves the spacetime in such a way that any particle falling into it is forced to rotate, we can picture this as the rotation of the black hole itself.} about an axis through its centre.
-
-The coordinate chart we are going to use to describe each event occuring on the spacetime's manifold is defined by the \ac{BL} coordinates, whose four components are noted as $(t, r, \vartheta, \varphi)$.
-
-The basis for the tangent space of the spacetime will be noted as $(\partial_t, \partial_r, \partial_\vartheta, \partial_\varphi)$, whereas its dual basis will be noted as $(dt, dr, d\vartheta, d\varphi)$
-
-Although, historically, the origin of these coordinates did not have any physical meaning, an observer placed at the infinity would understand them as follows:
-\begin{enumerate}
-	\item $t\in\R$ is the time coordinate.
-	\item $(r, \vartheta, \varphi)$ are the spatial coordinates:
-	\begin{enumerate}
-		\item $r \in \R^+$ is the distance to the centre of the black hole.
-		\item $\vartheta \in \R$ is the polar angle with respect to the centre of the black hole.
-		\item $\varphi \in \R$ is the azimuthal angle with respect to the centre of the black hole, with the black hole itself rotating in the positive $\varphi$ direction.
-	\end{enumerate}
-\end{enumerate}
-
-Kerr spacetime depends on two parameters that models the black hole:
-\begin{enumerate}
-	\item $M > 0$, which could be considered as its mass.
-	\item $a \neq 0$, its angular momentum per unit of mass.
-\end{enumerate}
-
-As all units, the mass will be set to $M = 1$, and so the black hole will only be parametrized by its angular momentum, that is, how fast its rotation is.
-
-To introduce the Kerr metric, we first need to define two functions that will be omnipresent in the study of this particular spacetime:
+The Kerr metric is defined as follows:
 \begin{align}
-\rho^2 &= r^2 + a^2\cos^2\vartheta, \\
-\Delta &= r^2 + -2r + a^2.
-\end{align}
-
-From these equations, the Kerr metric is defined as follows.
-\begin{definition}[Kerr metric]
-	The \emph{Kerr metric}, described by its line element using \ac{BL} coordinates, is:
-	\begin{align}
 	\label{eq:kerrmetric}
 	ds^2 = &-dt^2 + \rho^2\left(\frac{dr^2}{\Delta} + d\vartheta^2\right) + \left(r^2 + a^2\right)\sin^2\vartheta d\varphi^2 + \\
 	\nonumber
-	&+ \frac{2r}{\rho^2}\left(a\sin^2\vartheta d\varphi - dt\right).
-	\end{align}
-\end{definition}
-
-From the definition, some properties of the Kerr metric can be observed \cite[Sec. 2.1]{galindo14}, \cite[pp. 58-59]{oneill95}:
-\begin{enumerate}
-	\item The Kerr metric is stationary, that is, it does not depend on the time coordinate, $t$.
-	\item The Kerr metric is axially symmetric, that is, it does not depend on the azimuthal angle coordinate, $\varphi$.
-	\item Since the Kerr metric does not depend on the coordinates $t$ and $\varphi$, the coordinate vector fields $\partial_t$ and $\partial_\varphi$ are Killing. This summarises the two previous properties.
-	\item The Kerr metric is invariant when applying the transformation
-	\begin{align*}
-	t &\to -t \\
-	\varphi &\to -\varphi,
-	\end{align*}
-	that is, travelling to the past reverses the rotation.
-	\item The Kerr spacetime is asymptotically flat, that is, far from the black hole, the spacetime is flat and the coordinate $r$ can be really viewed as the distance to the black hole. The coordinates $(r, \vartheta, \varphi)$ can then, and only then, be understood as spherical coordinates.
-\end{enumerate}
-
-\subsection{Symmetries}
-
-As seen before, Kerr metric is stationary and axially symmetric, from where two symmetries can be obtained using the two Killing vector fields.
-
-If we consider $\mathbf{v}^\alpha$ the tangent vector to a geodesic $\gamma$ and we note
-\[
-\xi_1 = \partial_t, \qquad \xi_2 = \partial_\varphi,
-\]
-the two quantities $\mathbf{v}^\alpha \xi_{1\alpha}$ and $\mathbf{v}^\alpha \xi_{1\alpha}$ are conserved, and can be noted as
-\begin{align}
-\label{eq:energy}
--E &\defeq \mathbf{v}^\alpha \xi_{1\alpha}, \\
-L_z &\defeq \mathbf{v}^\alpha \xi_{1\alpha}.
+	&+ \frac{2r}{\rho^2}\left(a\sin^2\vartheta d\varphi - dt\right),
 \end{align}
+where $\rho^2 = r^2 + a^2\cos^2\vartheta$ and $\Delta = r^2 + -2r + a^2$.
 
-Considering a timelike geodesic, the previous quantities can be understood as the energy of the particle and the angular momentum, both per unit mass and measured from the infinity.
-
-Even if we consider a lightlike geodesic, this interpretation can be maintained by means of parametrizing the geodesic flow with the affine parameter of the geodesic.
-
-The convention for these two conserved quantities will be hold until the end of the document, and will prove key when trying to obtain the equations of motion for a free fall causal particle.
-
+It was observed \cite[Sec. 2.1]{galindo14}, \cite[pp. 58-59]{oneill95} that the Kerr metric is stationary, axially symmetric and invariant when applying the transformation $t \to -t$, $\varphi \to -\varphi$, from where we saw that the energy of the particle and the angular momentum, both per unit mass and measured from the infinity, are conserved.
 
 \subsection{Horizons and Singularities}
 
-There are whole books, as \cite{oneill95}, whose only aim is to study Kerr spacetime and, in particular, its singularities and horizons, that is, the surfaces on the spacetime which prevent the particles inside them to go out of its region.
+The Kerr metric is singular if $\rho^2 = 0$, which makes the Kretschmann invariant divergent, and that can be physically understood as a divergent curvature of the spacetime itself.
 
-This study is beyond the scope of this work, but a short summary of the singularities found on Kerr spacetime is developed below. All of them are explained in detail on \cite[Sec. 2.4]{galindo14}.
-
-From \autoref{eq:kerrmetric}, one can see that the Kerr metric is singular in any of the following cases:
-\begin{align}
-\rho^2 &= 0, \\
-\Delta &= 0.
-\end{align}
-
-These \emph{singularity equations} throw two different types of singularities: the ones produced by the choice on the coordinate system, but which are not real singularities of the metric (i.e., that can be avoided when changing the coordinate system), and the ones that can be obtained using any coordinate system.
-
-The first singularity, which is caused by the nature of the spacetime and not by the choice of the coordinate system, is obtained when assuming $\rho^2 = 0$, which makes the Kretschmann invariant\footnote{In Kerr spacetimes, the usual scalar curvature (see \autoref{def:scalarcurvature}) vanishes, as $Ric = 0$. However, one can define another invariant quantity in order to describe the spacetime curvature. This description is usually carried out with the help of the Kretschmann invariant, that is defined as $K = Ric_{\alpha\beta\gamma\delta}Ric^{\alpha\beta\gamma\delta}$.} divergent, and that can be physically understood as a divergent curvature of the spacetime itself.
-
-From the second singularity equation, we obtain two coordinate singularities:
-\[
-r_{\pm} \defeq M \pm \sqrt{M - a^2}.
-\]
-
-These singularities are called \emph{horizons}, as it can be proved \cite[p. 15]{galindo14} that, on them, the constant-$r$ hypersurfaces are null. The two horizons divide the spacetime in three regions:
+If we assume $\Delta = 0$, we obtain two coordinate singularities: $r_{\pm} \defeq M \pm \sqrt{M - a^2}$, which are called \emph{horizons}, as it was proved that, on them, the constant-$r$ hypersurfaces are null. The two horizons divide the spacetime in three regions:
 \begin{enumerate}
 	\item The region where $r > r_+$, that can be seen as the outside of the black hole.
 	\item The region where $r_- < r < r_+$. Here, any particle falling through $r_+$ is forced to reach $r_-$, hence, the hypersurface defined by $r = r_+$ is called the \emph{event horizon}.
 	\item The region where $r < r_-$, which contains the spacetime singularity.
 \end{enumerate}
-
-\begin{remark}
-	From this second singularity equation, one could think that $a$ should always satisfy $a^2 < M^2$. This is not exactly true, as, theoretically, black holes with $a^2 \geq M^2$, called \emph{fast and extreme Kerr black holes} can be studied. When $a^2 > M^2$, the singularity equation has no real solution and therefore no horizons exist.
-	
-	Although these theoretical spacetimes exist, we will always assume that $a^2 < 1 = M^2$.
-\end{remark}
-
-\subsection{Kerr Metric Notation}
-
-In the following pages, the Kerr metric will be repeatedly used, so its matrix, along with its inverse, is depicted here for consultation purposes.
-
-The Kerr metric tensor matrix, described on a \ac{BL} system coordinate, is
-\[
-g_{\mu\nu} = \begin{pmatrix}
--\alpha^2 + \varpi^2\omega^2 & 0 & 0 & -\varpi^2\omega \\
-0 & \nicefrac{\rho^2}{\Delta} & 0 & 0 \\
-0 & 0 & \rho^2 & 0 \\
--\varpi^2\omega^2 & 0 & 0 & \varpi^2
-\end{pmatrix}.
-\]
-
-The inverse of the Kerr metric is then
-\[
-g^{\mu\nu} = \begin{pmatrix}
--\nicefrac{1}{\alpha^2} & 0 & 0 & -\nicefrac{\omega}{\alpha^2} \\
-0 & \nicefrac{\Delta}{\rho^2} & 0 & 0 \\
-0 & 0 & \nicefrac{1}{\rho^2} & 0 \\
--\nicefrac{\omega}{\alpha^2} & 0 & 0 & (\nicefrac{1}{\varpi^2}) - (\nicefrac{\omega^2}{\alpha^2})
-\end{pmatrix}.
-\]
-
-
-In both notations, the following formulas are used:
-\begin{align}
-\omega &= \frac{2ar}{\Sigma^2},  \quad \varpi = \frac{\Sigma\sin\vartheta}{\rho}, \quad \alpha = \frac{\rho\sqrt{\Delta}}{\Sigma}, \quad \rho = \sqrt{r^2 + a^2\cos^2\vartheta},\nonumber\\
-\Delta &= r^2 - 2r + a^2 \, \textrm{ and } \Sigma = \sqrt{(r^2+a^2)^2 - a^2\Delta\sin^2\vartheta}.
-\label{eq:termdef}
-\end{align}
 
 
 
@@ -345,232 +87,16 @@ In both notations, the following formulas are used:
 \section{Equations of Motion}
 \label{chapter:equations}
 
-This chapter aims to find the most computationally stable equations of motion for $\gamma$, a free falling causal particle moving on a Kerr spacetime.
+In the work we aimed to find the most computationally stable equations of motion for $\gamma$, a free falling causal particle moving on a Kerr spacetime.
 
-The classical equations derived from the definition of geodesic in terms of the Christoffel symbols,
-\[
-\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0, \quad k = 1, \dots, n,
-\]
-are the first stop in our journey to find an equation system that suits our needs.
+The classical equations derived from the definition of geodesic in terms of the Christoffel symbols, $\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0$, had some flaws that forced us to discard them: it is a second order system of differential equations, which does not really fit the numerical algorithm to integrate them; furthermore, it was found very difficult to get the conserved quantities \emph{into} the equations.
 
-These equations, although really interesting when, for example, one cannot obtain analytic expression for the differential equations, have some flaws that will force us to discard them:
-\begin{itemize}
-	\item It is a second order system of differential equations, which does not really fit the numerical algorithm to integrate them: when converting the system to first order, we double the number of equations to solve.
-	\item The conserved quantities of the system, which will prove key in the computation of the final equations, can be obtained from these equations as well as for the versions we will see later. However, this system has a problem: it is very difficult to get the conserved quantities \emph{into} the equations.
-\end{itemize}
+However, the classical Hamiltonian formulation \cite[Sec. 33.5]{thorne73} gave us a first order system with the conserved quantities in the equations. In this formulation, however, another problem arose, as a pair of square roots appeared on the right hand side of the equations.
 
-Having discarded this obvious system of equations, we will look for the classical Hamiltonian formulation \cite[Sec. 33.5]{thorne73}, which gives us a first order system with the conserved quantities in the equations. These quantities are derived from the Hamiltonian formulation, but not the Hamiltonian nor its derived equations will be used here, as the final system equations will be integrated by quadrature. In this formulation, however, another problem arises, as a pair of square roots appear on the right hand side of the equations. This problem will be analysed in the corresponding section.
-
-Finally, we will be able to get rid of those square roots, simply by defining the Hamiltonian and using a version of it that will ease our analytical computations. This approach will lead us to a first order system with conserved quantities and which will be numerically-friendly. This is the approach followed on \cite{thorne15}.
-
-From now on, and valid throughout this chapter, let $\gamma$ be a causal particle, whose tangent vector components, expressed in Boyer-Lindquist coordinates, are
-\begin{equation}
-\label{eq:blcoord1}
-\mathbf{v}^\alpha = (\dot{t}, \dot{r}, \dot{\vartheta}, \dot{\varphi}),
-\end{equation}
-whereas its covariant equivalent version, the momentum, is noted as
-\begin{equation}
-\label{eq:blcoord2}
-\mathbf{p}_\alpha = \mathbf{v}_\alpha = (p_t, p_r, p_\vartheta, p_\varphi).
-\end{equation}
-
-The relation between the two quantities is obtained through the operation of lower and raising indices using the metric. Therefore, we have the two equations
-\begin{align}
-\label{eq:raisep}
-\mathbf{v}^\alpha &= g^{\beta\alpha} \mathbf{p}_\beta, \\
-\label{eq:lowerv}
-\mathbf{p}_\alpha &= g_{\beta\alpha} \mathbf{v}^\beta.
-\end{align}
-
-\subsection{Classical Hamiltonian Formulation}
-
-It is known \cite[Sec. 33.5]{thorne73} that the geodesic equation $\gamma'' = 0$ is equivalent to the system
-\begin{align*}
-\frac{dx^\mu}{d\lambda} = \pd{\mathcal{H}}{p_\mu} \\
-\frac{dp_\mu}{d\lambda} = - \pd{\mathcal{H}}{x^\mu},
-\end{align*}
-where $\lambda$ is an affine parameter such that $d/d\lambda = \mathbb{p}$ and where
-\[
-\mathcal{H} = \frac{1}{2} g^{\mu\nu} p_\mu p_\nu
-\]
-is the usual Hamiltonian, obtained from the kinetic energy (with mass equal to one): half of the square of the velocity.
-
-This Hamiltonian formalism let us obtain four first integrals of motion \cite[pp. 898-899]{thorne73}, that come as a result from the stationary and axial symmetry of the geometry of Kerr spacetimes, from the nearly miraculous work of Carter when computing the constant named after him \cite{carter68} and from the modulus of the momentum:
-\begin{itemize}
-	\item The killing vector $\partial_t$ raises the conserved quantity
-	\begin{equation}
-	\label{eq:conservedpt}
-	g_{\alpha\beta}(\partial_t)^\alpha u^\beta = (\partial_t)^\alpha p_\alpha = p_t = -E.
-	\end{equation}
-	\item Similarly, we can obtain another conserved quantity from the killing vector $\partial_\phi$:
-	\begin{equation}
-	\label{eq:conservedpphi}
-	g_{\alpha\beta}(\partial_\phi)^\alpha u^\beta = (\partial_\phi)^\alpha p_\alpha = p_\phi = L_z.
-	\end{equation}
-	\item The Carter's constant, which can be written as
-	\begin{equation}
-	\label{eq:carter}
-	Q = p_\vartheta^2 + \cos^2\vartheta \left( a^2 \left( \mu^2 - E^2 \right) + \frac{L_z^2}{\sin^2\vartheta} \right).
-	\end{equation}
-	\item The modulus of the tangent vector $p_\alpha$:
-	\begin{equation}
-	\label{eq:modulus}
-	p_\alpha p_\beta g^{\alpha\beta} = -\mu^2,
-	\end{equation}
-	where $\mu$ is 1 if the considered particle has mass and 0 in any other case, as when considering a photon. Writing the value of the left hand side of \autoref{eq:modulus} and restructuring, we have that
-	\[
-	\mu^2 + \frac{p_\vartheta^2 + p_r^2 \Delta}{\rho^2} + \frac{L_z^2}{\varpi^2} = \frac{E - L_z \omega}{\alpha^2}.
-	\]
-\end{itemize}
-
-
-Using the constants of motion, the relation in \autoref{eq:raisep} and the components notation used in equations \ref{eq:blcoord1} and  \ref{eq:blcoord2}, we obtain four equations:
-\begin{align}
-\label{eq:initt}
-\dot{t} &= \frac{E}{\alpha^2} - \frac{L_z \omega}{\alpha^2} \\
-\label{eq:initr}
-\dot{r} &= \frac{p_r \Delta}{\rho^2} \\
-\label{eq:inittheta}
-\dot{\vartheta} &= \frac{p_\vartheta}{\rho^2} \\
-\label{eq:initphi}
-\dot{\varphi} &= \frac{E \omega}{\alpha^2} + L_z\left( \frac{1}{\varpi^2} - \frac{\omega^2}{\alpha^2} \right).
-\end{align}
-
-From this direct computation, we can express all four equations in terms of the constants $E$, $L_z$, $Q$ and $\mu$, which yields the following result \cite[p. 899]{thorne73}.
-
-\begin{theorem}
-	\label{theo:firsteqs}
-	A free falling lightlike particle $\gamma$ satisfies:
-	\begin{align}
-	\label{eq:teq}
-	\rho^2 \dot{t} &=-( aE\sin^2\vartheta - L_z) + \frac{r^2+a^2}{\Delta}P \\
-	\label{eq:req}
-	\rho^2 \dot{r} &= \sqrt{R} \\
-	\label{eq:thetaeq}
-	\rho^2 \dot{\vartheta} &= \sqrt{\Theta} \\
-	\label{eq:phieq}
-	\rho^2 \dot{\varphi} &=-( aE - \frac{L_z}{\sin^2\vartheta}) + \frac{a}{\Delta}P,
-	\end{align}
-	where $R$ and $\Theta$ are the functions defined as follows:
-	\begin{align}
-	\label{eq:defR}
-	R &\defeq P^2 - \Delta \left( r^2\mu^2 + Q + \left(L_z - aE \right)^2 \right), \\
-	\label{eq:defTheta}
-	\Theta &\defeq Q - \cos^2\vartheta \left( \frac{L_z^2}{\sin^2\vartheta} + \omega^2\left(\mu^2 - E^2 \right)\right),
-	\end{align}
-	with $P$ an auxiliary function defined as
-	\begin{equation}
-	\label{eq:defP}
-	P \defeq E(r^2 + a^2) - aL_z.
-	\end{equation}
-\end{theorem}
-
-Before proving the theorem, it is interesting to analyse these equations. At first sight, the system looks like a good candidate for our purposes, but there is a subtle problem that has to be managed: the square roots on equations \ref{eq:req} and \ref{eq:thetaeq}.
-
-This will make the numeric computation more difficult, as it will force us to continuously check the sign of the derivative on the \emph{turning points}. At these points, we will have to decide which branch to continue the computation on.
-
-This can be handled, but not without effort and particular care on the numerical side of our algorithm: the turning points would be a great source of errors that we want to avoid.
-
-Is for this reasoning that we continue looking for a better system of equations on \autoref{sec:variational}.
-
-\section{Variational Formulation}
-\label{sec:variational}
-
-The study of the variational characterization of geodesics gave us an interesting result, from which we can change the problem of finding a geodesic by an equivalent one: to find the solution of a variational problem.
-
-\autoref{pro:variationalgeodesic} states that $\gamma$ is a geodesic if and only if
-\[
-\frac{dE_f}{ds}(0) = 0.
-\]
-
-This lead us to understand geodesics ---we could even define them that way--- as the critical points of the energy, and yields a variational problem whose Lagrangian depends on the proper variation $f(s,t)$.
-
-Using the characterization from \autoref{def:energy}, the variational problem equivalent to finding the equations of motion for $\gamma$ has the following Lagrangian density:
-\begin{equation}
-\label{eq:1stlagrangian}
-\mathcal{L} = g\left( \pd{f}{t}, \pd{f}{t} \right).
-\end{equation}
-
-This Lagrangian density can now be expressed in terms of $\gamma$ components. We can then write the usual form of the Lagrangian density:
-\begin{align}
-\mathcal{L} =\,& \frac{1}{2} \mathbf{v}^\mu \mathbf{v}_\mu = \\
-=\,& \frac{1}{2} \Biggl( \dot{t}\biggl( -\dot{\varphi}^2\omega\varpi^2 + \dot{t} \left( -\alpha^2 + \omega^2\varpi^2 \right) \biggr) +\\
-&\quad + \dot{r}^2\frac{\rho^2}{\Delta} + \dot{\vartheta}\rho^2 + \dot{\varphi}\left( \dot{\varphi} r^2 - \dot{t} \omega \varpi^2 \right) \Biggr).
-\end{align}
-
-This is similar to the formalism we developed in the previous section, but we can now consider the Hamiltonian version of this formulation, which appear simply by applying the Legendre transform:
-\begin{equation*}
-\mathcal{H} = \sum p_i q_i - \mathcal{L}.
-\end{equation*}
-
-Our goal now is to recover the system described at \cite[Eq. (A.15)]{thorne15}. In order to do that, we can rewrite $\mathcal{H}$ as follows:
-\begin{equation}
-\label{eq:hamiltonian}
-\mathcal{H} = \frac{p_r^2 \Delta}{2\rho^2} + \frac{p_\vartheta^2}{2\rho^2} + \mathfrak{f},
-\end{equation}
-where $\mathfrak{f}$ is the function consisting on the remaining terms of $\mathcal{H}$.
-
-Although $\mathfrak{f}$ is completely defined and can be written as is, we are using the fact that $\mathcal{H} = \frac{-\mu^2}{2}$, and we will write it using the remaining terms.
-
-Let us first work a little bit more on $\mathcal{H}$, rewriting \autoref{eq:hamiltonian}. First of all, we realize that we can write the definition of the components of $\mathbf{p}_\alpha$ from \autoref{eq:lowerv}:
-\begin{align}
-\label{eq:pteq}
-p_t &= -\dot{t}\alpha^2 - \dot{\varphi}\omega\varpi^2 + \dot{t}\omega^2\varpi^2 \\
-\label{eq:preq}
-p_r &= \frac{\dot{r}\rho^2}{\Delta}\\
-\label{eq:pthetaeq}
-p_\vartheta &= \dot{\vartheta}\rho^2\\
-\label{eq:pphieq}
-p_\varphi &= \dot{\varphi}\varpi^2 - \dot{t}\omega\varpi^2.\\
-\end{align}
-
-Now, using these equations and the ones obtained in \autoref{theo:firsteqs}, we can rewrite $\mathcal{H}$ as follows:
-\begin{align*}
-\mathcal{H} &= \frac{p_r^2 \Delta}{2\rho^2} + \frac{p_\vartheta^2}{2\rho^2} + \mathfrak{f} \eqnote{=}{\ref{eq:preq}, \ref{eq:pthetaeq}} \frac{\left( \frac{\dot{r}\rho^2}{\Delta} \right)^2 \Delta}{2\rho^2} + \frac{\left(\dot{\vartheta}\rho^2\right)^2}{2\rho^2} + \mathfrak{f} = \\
-&= \dot{r}^2\frac{\rho^2}{2\Delta} + \frac{\dot{\vartheta}^2\rho^2}{2} + \mathfrak{f} \eqnote{=}{\ref{eq:req}, \ref{eq:thetaeq}} \frac{R}{\rho^4 }\frac{\rho^2}{2\Delta} + \frac{\Theta}{2\rho^4}\rho^2 + \mathfrak{f} =\\
-&= \frac{R}{2\rho^2\Delta} + \frac{\Theta}{2\rho^2} + \mathfrak{f}.
-\end{align*}
-
-We can use now an interesting property of the Hamiltonian, which is a conserved quantity itself.
-
-We know that $\mathcal{H} = \frac{1}{2} \mathbf{v}^\alpha \mathbf{v}_\alpha$. Taking into account that $\mathbf{v}$ is a normalized timelike vector, we have
-\[
-\vert \mathbf{v} \vert = - \frac{\mu}{2}.
-\]
-
-Then, it is clear that
-\[
-\mathcal{H} = \frac{-\mu^2}{2}
-\]
-and therefore
-\[
-\frac{R}{2\rho^2\Delta} + \frac{\Theta}{2\rho^2} + \mathfrak{f} = \frac{-\mu^2}{2}.
-\]
-
-We can finally obtain the expression for $\mathfrak{f}$ easily:
-\[
-\mathfrak{f} = - \frac{R + \Delta \Theta}{2\Delta\rho^2} - \frac{\mu^2}{2}.
-\]
-
-The final version of the Hamiltonian is:
-\begin{equation}
-\mathcal{H} = \frac{p_r^2 \Delta}{2\rho^2} + \frac{p_\vartheta^2}{2\rho^2} - \frac{R + \Delta \Theta}{2\Delta\rho^2} - \frac{\mu^2}{2}.
-\end{equation}
-
-From the general Hamilton's equations:
-\[
-\dot{p}_i = -\pd{\mathcal{H}}{q_i}, \quad \dot{q}_i = \pd{\mathcal{H}}{p_i},
-\]
-which in this case read as follows
-\begin{align*}
-\dot{r} &= \pd{\mathcal{H}}{p_r}, \quad \dot{\vartheta} = \pd{\mathcal{H}}{p_\vartheta}, \quad \dot{\varphi} = \pd{\mathcal{H}}{p_\varphi}, \\
-\dot{p}_r &= - \pd{\mathcal{H}}{r}, \quad \dot{p}_\vartheta = - \pd{\mathcal{H}}{\vartheta},
-\end{align*}
-we obtain the expected first order system, without the problems caused by the previous square roots.
+Finally, we were able to get rid of those square roots by defining the Hamiltonian and using a version of it that eased our analytical computations. This approach led us to a first order system with conserved quantities and which was numerically-friendly. After a long study detailed in the original work, the equations derived were the following:
 
 \begin{theorem}[Equations of motion]
 	\label{theo:eqsmotion}
-	A free falling lightlike particle $\gamma$ satisfies:
 	\begin{align}
 	\dot{r} &= \frac{\Delta}{\rho^2} p_r \\
 	\dot{\vartheta} &= \frac{1}{\rho^2}p_\vartheta \\ \label{eq:eqsmotionp}
