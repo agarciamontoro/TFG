@@ -1,7 +1,9 @@
 \chapter{Mathematics}
 \label{chapter:mathematicss}
 
-The part summarised in this chapter set up the basic background needed to understand what we later called a spacetime, the main mathematical object in which we developed our work.
+The part summarised in this chapter set up the basic background needed to understand what we called a spacetime, the main mathematical object in which we developed our work.
+
+The contents here are greatly summarised, and one cannot understand the needed mathematical background by just reading these three pages. The reader should look up the original text in order to understand the complexity and depth of the studied results, and this part of the abridgment has to be read just as a slight walk over the main concepts studied in the work.
 
 \section{Introduction to Differential Geometry}
 \label{chapter:diffgeom}
@@ -23,27 +25,23 @@ Finally, we proved every smooth curve was differentiable in the manifold sense, 
 \subsection{Affine Connections}
 \label{sec:affineconnections}
 
-Another important concept on manifolds was studied: the affine connections. They gave us in turn the tools to generalize the concept of directional derivative arriving to the definition of covariant derivative. The concept of covariant derivative was shown to be a generalization of the directional derivative on $\R^n$. The concept of connection provided us with a way of derivating vectors along curves; \ie, we had then the possibility to consider the concept of \emph{acceleration} on curves on manifolds.
+Another important concept on manifolds was studied: the affine connections. They gave us in turn the tools to generalize the concept of directional derivative arriving to the definition of covariant derivative, which was shown to be a generalization of the directional derivative on $\R^n$. The concept of connection provided us with a way of derivating vectors along curves; \ie, we had then the possibility to consider the concept of \emph{acceleration} on curves on manifolds.
 
 
 \section{Semi-Riemannian Geometry}
 \label{chapter:semiriemannian}
 
-This section introduced the notion of \emph{spacetime}, a mathematical object with a really interesting meaning in physics, as it models the geometry of the Universe. We needed first some basic concepts, such as the Lorentzian manifolds and the time orientation we can define on them. From this we were ready to define what a spacetime is and study its properties.
+This section introduced the notion of \emph{spacetime}, a mathematical object with a really interesting meaning in physics, as it models the geometry of the Universe. We needed first some basic concepts, such as the Lorentzian manifolds and the time orientation we were able to define on them. As these concepts are deeply studied in the original work, only the notion of spacetime will be detailed here:
 
 A \emph{spacetime} is a four dimensional time oriented Lorentzian manifold. Roughly speaking, a time orientation is a map that assigns one of the two time cones defined on the tangent space to a point on a manifold; \ie, is a map that assigns a time orientatio in $T_pM$ for every $p \in M$.
-\end{definition}
 
 \subsection{Semi-Riemannian Connections}
 
 On \autoref{sec:affineconnections}, we studied connections on general manifolds, regardless of the addition of a metric. However, the existence of an interesting connection is naturally assured when one adds a semi-Riemannian metric to the manifold: the Levi-Civita connection, whose interest will be shown along this section.
 
-We can conclude what we state at the beginning of this section: when restricted to the euclidean spaces, the covariant derivative and the directional derivative agree.
+We concludes then that, when restricted to the euclidean spaces, the covariant derivative and the directional derivative agree.
 
 \subsection{Geodesics}
-
-
-\subsubsection*{Basic Definition}
 
 \begin{definition}[Geodesic]
 	% doCarmo, 52
@@ -56,13 +54,11 @@ We can conclude what we state at the beginning of this section: when restricted 
 
 It is a common abuse of notation, using that the covariant derivative is an actual derivation, to write that a curve $\gamma$ on $M$ is a geodesic when $\gamma'' = 0$.
 
-One milestone on the development of this work is to obtain the equations that characterise geodesics: these kind of equations will let us apply a numerical algorithm in order to obtain positions of particles moving on manifolds. We will see later that a spacetime can be modelled as a 4-dimensional manifold whose geodesics will tell us the path light follows.
+One milestone on the development of this work was to obtain the equations that characterise geodesics: these kind of equations let us apply a numerical algorithm in order to obtain positions of particles moving on manifolds. As a spacetime can be modelled as a 4-dimensional manifold, its geodesics will tell us the path light follows.
 
-As our primary objective is to study the movement of light, this first small step in understanding what a geodesic is and what equation it satisfies is very important.
+As our primary objective was to study the movement of light, this first small step in understanding what a geodesic is and what equation it satisfies was very important.
 
 \begin{remark}[Differential equations satisfied by a geodesic]
-	% doCarmo, 53
-	Therefore, let us see the local equations satisfied by a geodesic $\gamma$ on a coordinate system $(U,x)$ around $\gamma(t_0)$, $t_0 \in I$.
 	
 	Let $\gamma(t) = (x^1(t), \dots, x^n(t)$ be the coordinates of the curve on $U$. Using the expression of the covariant derivative and assuming $\gamma$ is a geodesic; \ie, that its velocity vector field is parallel, we can write:
 	\[
@@ -79,6 +75,6 @@ As our primary objective is to study the movement of light, this first small ste
 
 \subsubsection*{Variational Characterization of Geodesics}
 
-When working with geodesics, its natural, elegant definition, although really interesting for theoretical purposes, is not practical. This section aims to find a characterization that let us study geodesics.
+When working with geodesics, its natural, elegant definition, although really interesting for theoretical purposes, was not practical. This section of the work aimed to find a characterization that let us study geodesics and we found that geodesics are, in short, the critical points of the energy of every proper variation.
 
-Geodesics are, in short, the critical points of the energy of every proper variation.
+All details and results can be consulted in the original work.

@@ -4,11 +4,11 @@
 \section{Solution Design}
 \label{chapter:design}
 
-This section aims to fully describe the solution design from a top to bottom approach. First of all, the general idea of the design is described, abstracting every detail to easily understand the whole. Later on, the different sections of the design are explained with all their characteristics described. The implementation details are left for the following chapters, whereas here we only focus on the ideas and methods used.
+This section aimed to fully describe the solution design from a top to bottom approach. First of all, the general idea of the design was described, abstracting every detail to easily understand the whole. Later on, the different sections of the design were explained with all their characteristics described. The implementation details were left for the following sections, whereas here we only focused on the ideas and methods used.
 
 In short, the solution to the problem of studying what an observer near a black hole would see is a ray tracer, that is, a device that computes the origin of the rays of light that arrives to a virtual camera placed in a virtual universe.
 
-This work implements a general relativity ray tracer; \ie, a ray tracer for which the path followed by light is not always a straight line.
+This work implemented a general relativity ray tracer; \ie, a ray tracer for which the path followed by light is not always a straight line.
 
 In \autoref{sec:gendesc}, the layout of the solution is depicted, whereas in \autoref{sec:parallel}, the parallelization designed is explained. \autoref{sec:pinhole} explains the pinhole camera model, describing the identification of each pixel on the camera with a lightlike particle coming from the celestial sphere. Finally, \autoref{sec:initcond} and \autoref{sec:numerical} describes the necessary work to numerically solve the geodesic equations.
 
@@ -17,13 +17,13 @@ In \autoref{sec:gendesc}, the layout of the solution is depicted, whereas in \au
 
 Imagine a spacetime defined by a Kerr metric, with a black hole on its centre, and a camera with a digital sensor placed near it.
 
-As we have studied, all rays that hit the sensor have followed a geodesic to finally arrive to the camera, and their paths are of great interest for us: the origin of the ray will tell us what the particular pixels see and the curvature of the geodesic will let us understand the geometric nature of the spacetime.
+As we have had studied, all rays that hit the sensor followed a geodesic to finally arrive to the camera, and their paths were of great interest for us: the origin of the ray told us what the particular pixels saw and the curvature of the geodesic let us understand the geometric nature of the spacetime.
 
-For every pixel on the sensor, the ray tracer work can be abstracted as a function that computes the path of the ray that hit it. Therefore, from the pixel coordinates, $p = (p_x, p_y)$, it computes the geodesic path followed by the ray.
+For every pixel on the sensor, the ray tracer work was abstracted as a function that computed the path of the ray that hit it. Therefore, from the pixel coordinates, $p = (p_x, p_y)$, it computed the geodesic path followed by the ray.
 
-This point is computed using the \ac{ODE} system described in \autoref{theo:eqsmotion}, derived from the Kerr spacetime. Therefore, a numerical solver for such systems is needed, along with the initial conditions of each ray. This conforms an \ac{IVP}, a kind of well-known problem whose numerical solutions are widely studied.
+This point was computed using the \ac{ODE} system described in \autoref{theo:eqsmotion}, derived from the Kerr spacetime. Therefore, a numerical solver for such systems was needed, along with the initial conditions of each ray. This conformed an \ac{IVP}, a well-known problem whose numerical solutions were widely studied.
 
-Abstracting all these tasks out, the general outline of the ray tracer is described on \autoref{alg:raytracer}.
+Abstracting all these tasks out, the general outline of the ray tracer was described on \autoref{alg:raytracer}.
 
 \begin{algorithm}
 	\caption{High-level abstraction of the ray tracer}
@@ -43,7 +43,7 @@ Abstracting all these tasks out, the general outline of the ray tracer is descri
 	\end{algorithmic}
 \end{algorithm}
 
-The solution designed for the ray tracer is based on the algorithm described in \cite{thorne15}, which assumes the following:
+The solution designed for the ray tracer was based on the algorithm described in \cite{thorne15}, which assumes the following:
 \begin{enumerate}
 	\item The spacetime is defined by the Kerr metric written in \ac{BL} coordinates with a black hole in the centre, parametrized by its spin $a$, with mass 1.
 	\item The \ac{FIDO} is a locally non-rotating observer. We define a family of \acp{FIDO} at rest in space with orthonormal basis vectors $\{e_r, e_\vartheta, e_\varphi\}$, pointing along the spatial coordinate lines.
@@ -53,12 +53,12 @@ The solution designed for the ray tracer is based on the algorithm described in 
 			\item $e_x$ is perpendicular to $e_y$ and contained on the plane $\langle e_{\widehat{r}}, e_{\widehat{\vartheta}} \rangle$.
 			\item $e_z$ is perpendicular to $e_x$ and to $e_y$.
 		\end{itemize}
-		We also set up a spherical coordinate system derived from the previous one, noted as $\{\vartheta_{cs}, \varphi_{cs}\}$, where$\vartheta$ is the polar angle with respect to the coordinate system origin and $\varphi$ is the azimuthal angle with respect to the coordinate system origin. The black hole is assumed to rotate in the positive $\varphi$ direction.
+		We also set up a spherical coordinate system derived from the previous one, noted as $\{\vartheta_{cs}, \varphi_{cs}\}$, where $\vartheta$ is the polar angle with respect to the coordinate system origin and $\varphi$ is the azimuthal angle with respect to the coordinate system origin. The black hole is assumed to rotate in the positive $\varphi$ direction.
 \end{enumerate}
 
-The algorithm consider a set of timelike geodesics arriving at the camera. These geodesics are then integrated backwards to obtain the ray's point of origin on the celestial sphere (at $r = \infty$). These points are noted as $(\vartheta', \varphi')$.
+The algorithm considered a set of timelike geodesics arriving at the camera. These geodesics were then integrated backwards to obtain the ray's point of origin on the celestial sphere (at $r = \infty$). These points were noted as $(\vartheta', \varphi')$.
 
-In short, the algorithm goal is to compute the following map
+In short, the algorithm goal was to compute the following map
 \begin{equation}
 \label{eq:initmap}
 (\vartheta_{cs}, \varphi_{cs}) \xmapsto{\mathfrak{h}_1} (\vartheta', \varphi')
@@ -68,11 +68,11 @@ for each considered geodesic arriving at the camera.
 \subsection{Parallelization Techniques}
 \label{sec:parallel}
 
-A ray tracer is in general highly parallelizable, and our design is not different: it performs the exact same operation on a large set of different data, namely it solves the \ac{ODE} system, whose equations (\autoref{theo:eqsmotion}) are always the same, on a large number of different initial conditions.
+A ray tracer is in general highly parallelizable, and our design was not different: it performed the exact same operation on a large set of different data; namely it solved the \ac{ODE} system, whose equations (\autoref{theo:eqsmotion}) were always the same, on a large number of different initial conditions.
 
-The idea behind the parallelization design is easy: for each parallelized node, we have to feed the numerical solver with a different initial condition, computed from each pixel of the image. Using the classic Flynn's taxonomy \cite{flynn72} terminology, our architecture follows a \ac{SIMD} paradigm, where a single generalized task works on multiple data streams in order to compute multiple results.
+The idea behind the parallelization design was easy: for each parallelized node, we have to feed the numerical solver with a different initial condid tion, computefrom each pixel of the image. Using the classic Flynn's taxonomy \cite{flynn72} terminology, our architecture followed a \ac{SIMD} paradigm, where a single generalized task works on multiple data streams in order to compute multiple results.
 
-Ideally, we would like to design a completely parallel solution, in which we have the same number of nodes in the parallel architecture as pixels we have in the image. Although this is highly difficult for large images with the classic parallelization on \acp{CPU}, the new \ac{GPU} techniques will help us get closer to this goal.
+Ideally, we would have liked to design a completely parallel solution, in which we had the same number of nodes in the parallel architecture as pixels we had in the image. Although this was highly difficult for large images with the classic parallelization on \acp{CPU}, the new \ac{GPU} techniques helped us get closer to this goal.
 
 \subsubsection*{General-Purpose Computing on Graphics Processing Units}
 
@@ -82,13 +82,13 @@ In recent years, a new powerful technique has been deeply studied: the so-called
 
 Although each of the cores on a \ac{GPU} is much less powerful than a single \ac{CPU}, the great order of parallelization ---thousands of cores in a \ac{GPU} against just a few dozens of them on \acp{CPU}--- and the specific design to handle a parallel architecture makes the use of \ac{GPGPU} appealing when one wants to design an efficient solution.
 
-Our ray tracer uses this paradigm, virtually parallelizing the computation of each geodesic in a different \ac{GPU} core. We say \emph{virtually} because the number of cores in a \ac{GPU} is always finite, and for large images, some computations will have to be serialized. However, as we will see in the following chapter, this will be transparent to us, developers, by using a proper \ac{GPGPU} library.
+Our ray tracer used this paradigm, virtually parallelizing the computation of each geodesic in a different \ac{GPU} core. We say \emph{virtually} because the number of cores in a \ac{GPU} is always finite, and for large images, some computations were serialized. However, as we saw later, this was transparent to us, developers, by using a proper \ac{GPGPU} library.
 
 \subsubsection*{Parallelized Solution}
 
-With this paradigm in mind, we can describe the parallelized solution by modifying the main loop on \autoref{alg:raytracer}, whose iterations will be split across all the nodes on the \ac{GPU}.
+With this paradigm in mind, we described the parallelized solution by modifying the main loop on \autoref{alg:raytracer}, whose iterations were split across all the nodes on the \ac{GPU}.
 
-If we abstract the computation of the geodesic that hits one single pixel in a function, as shown in \autoref{alg:onepixel}, we can finally define the layout of the parallelized solution.
+If we abstract the computation of the geodesic that hits one single pixel in a function, as shown in \autoref{alg:onepixel}, we were able to finally define the layout of the parallelized solution.
 
 \begin{algorithm}[bth]
 	\caption{Single pixel geodesic computation}
@@ -102,7 +102,7 @@ If we abstract the computation of the geodesic that hits one single pixel in a f
 	\end{algorithmic}
 \end{algorithm}
 
-\autoref{alg:raytracer2} shows the parallelized solution following the \ac{SIMD} paradigm. The solution is similar to the one shown at \autoref{alg:raytracer} but with a little change: the loop is now parallelized and each pixel is computed at a different node of the parallel architecture.
+\autoref{alg:raytracer2} shows the parallelized solution following the \ac{SIMD} paradigm. The solution was similar to the one shown at \autoref{alg:raytracer} but with a little change: the loop was parallelized and each pixel was computed at a different node of the parallel architecture.
 
 \begin{algorithm}
 	\caption{High-level abstraction of the ray tracer}
@@ -124,17 +124,17 @@ If we abstract the computation of the geodesic that hits one single pixel in a f
 \subsection{Pinhole Camera}
 \label{sec:pinhole}
 
-The camera is abstracted as a simple, yet effective, model that will let us produce realistic images of what an observer would see when looking at a black hole from near distances 
+The camera was abstracted as a simple, yet effective, model that let us produce realistic images of what an observer would see when looking at a black hole from near distances 
 
 \subsubsection*{Foundations}
 
-The camera considered in the work follows the \emph{pinhole camera model}, which assumes a camera with an infinitely small diaphragm that focuses all the incoming rays onto its sensor.
+The camera considered in the work followed the \emph{pinhole camera model}, which assumes a camera with an infinitely small diaphragm that focuses all the incoming rays onto its sensor.
 
-The camera is described by the following parameters:
+The camera was described by the following parameters:
 \begin{enumerate}
 	\item The position on the Kerr spacetime, described by the spatial \ac{BL} coordinates $\{r_c, \vartheta_c, \varphi_c\}$.
 	\item The \emph{sensor} (that can be thought as the film or the CCD of a usual camera), which is described by its \emph{resolution} (number of pixels per column and number of pixels per row) and by its size (width and height in physical units).
-	\item The \emph{focal point}, $F$: a point in the line perpendicular to the sensor and going through its centre. This point will collect all incoming rays and can be though as the diaphragm, whose aperture is infinitely small.
+	\item The \emph{focal point}, $F$: a point in the line perpendicular to the sensor and going through its centre. This point collected all incoming rays and can be though as the diaphragm, whose aperture is infinitely small.
 	\item The \emph{focal distance}, $d$: distance from the focal point to the sensor.
 	\item The \emph{pitch}, \emph{roll} and \emph{yaw} angles, that describe the rotation of the sensor on each of its axis, depicted in \autoref{fig:pitchrollyaw}.
 \end{enumerate}
@@ -153,11 +153,11 @@ This model let us compute the direction of the incoming rays just by indexing th
 \end{equation}
 where $(p_x, p_y)$ are the components of the pixel in a system of coordinates whose origin is placed at the top-left corner of the sensor.
 
-By composing \autoref{eq:initmap} and \autoref{eq:pixelmap}, we define the map
+By composing \autoref{eq:initmap} and \autoref{eq:pixelmap}, we defined the map
 \begin{equation}
 (p_x, p_y) \xmapsto{\mathfrak{h} = \mathfrak{h_1}\circ\mathfrak{h_2}} (\vartheta', \varphi'),
 \end{equation}
-that summarises all the work the algorithm does: from a pixel on the camera's reference frame, we compute the origin of the incoming ray that hit that pixel.
+that summarises all the work the algorithm does: from a pixel on the camera's reference frame, we computed the origin of the incoming ray that hit that pixel.
 
 \subsubsection*{Pixel to Ray Map}
 \label{subcsec:pixeltoray}
@@ -171,7 +171,7 @@ Let us consider a pixel $P$ whose coordinates on the sensor's reference frame ar
 	\label{fig:pinhole}
 \end{figure}
 
-All rays that hit the sensor are assumed, by our model, to pass through the focal point $F$. Thus, we can compute the angles $\vartheta$ and $\varphi$ for the ray hitting the sensor at pixel $P$ with elementary trigonometry. This is detailed in the original work, and as a result we get the equations
+All rays that hit the sensor were assumed, by our model, to pass through the focal point $F$. Thus, we computed the angles $\vartheta$ and $\varphi$ for the ray hitting the sensor at pixel $P$ with elementary trigonometry. This is detailed in the original work, and as a result we got the equations
 \begin{align}
 \label{eq:pinhole1}
 \vartheta_{cs} &= \eta + \frac{\pi}{2} + \arctan{\frac{p'_y}{\sqrt{p_x^{'2} + d^2}}}, \\
@@ -187,18 +187,18 @@ p'_y = p_x\sin\alpha + p_y\cos\alpha.
 \subsection{Initial Conditions Computation}
 \label{sec:initcond}
 
-The algorithm kernel integrates, backwards in time, an \ac{ODE} system. We already know the system we are working with, \autoref{theo:eqsmotion}, but for such a system to be uniquely solved, a set of initial conditions is needed; \ie, for each ray we need to know its components, $(r, \vartheta, \varphi, p_r, p_\vartheta)$, at the time $\tau = 0$.
+The algorithm kernel integrated, backwards in time, an \ac{ODE} system. We already knew the system we were working with, \autoref{theo:eqsmotion}, but for such a system to be uniquely solved, a set of initial conditions were needed; \ie, for each ray we needed to know its components, $(r, \vartheta, \varphi, p_r, p_\vartheta)$, at the time $\tau = 0$.
 
 All rays hitting the camera share the same $r$, namely the position of the camera $r_c$.
 
 In \autoref{subcsec:pixeltoray}, the initial $\vartheta_{cs}$ and $\varphi_{cs}$ for each ray were computed.
 
-Therefore, we only need to compute the initial momentum components, $p_r$ and $p_\vartheta$, for each ray. In short, assuming we know the pixel the incoming ray is hitting and, thus, the $\vartheta_{cs}$ and $\varphi_{cs}$ components of the ray on the camera's local sky, we expect to obtain the map
+Therefore, we only needed to compute the initial momentum components, $p_r$ and $p_\vartheta$, for each ray. In short, assuming we knew the pixel the incoming ray is hitting and, thus, the $\vartheta_{cs}$ and $\varphi_{cs}$ components of the ray on the camera's local sky, we expected to obtain the map
 \[
 (\vartheta_{cs}, \varphi_{cs}) \xmapsto{IC} (p_r, p_\vartheta).
 \]
 
-This is not a difficult task but a very delicate one, as some coordinate systems have to be taken into account and we should have a good understanding of them in order to properly compute the bases changes. A short summary of the study done on the original work is listed here:
+This was not a difficult task but a very delicate one, as some coordinate systems had to be taken into account and we should have a good understanding of them in order to properly compute the bases changes. A short summary of the study done on the original work is listed here:
 \begin{enumerate}
 	\item The initial position of the ray is known to be $(r_c, \vartheta_{cs}, \varphi_{cs})$. The components of the unit vector that points on the direction of motion of the camera, $B$, are noted as $(B_{\widehat{r}}, B_{\widehat{\vartheta}}, B_{\widehat{\varphi}})$, whereas its speed relative to the \ac{FIDO}, that is, the modulus of $B$, is noted as $\beta$.
 	\item From $(\vartheta_{cs}, \varphi_{cs})$ we compute the unit vector in Cartesian coordinates, $N = (N^x, N^y, N^z)$, pointing to the direction of the incoming ray. This is computed on the camera's reference frame: a simple change to Cartesian coordinates is needed.
@@ -208,14 +208,16 @@ This is not a difficult task but a very delicate one, as some coordinate systems
 \end{enumerate}
 
 
-The final components of the momentum \cite[Eq. (A.11)]{thorne15} are:
+The final components of the momentum \cite[Eq. (A.11)]{thorne15} were found to be:
 \begin{align}
 p_t &= -1, \\
 p_r &= E_f \frac{\rho}{\sqrt{\Delta}} n^r, \\
 p_\vartheta &= E_f \rho n^t, \\
 p_\varphi &= E_f \varpi n^\varphi,
 \end{align}
-where $E_f = - \frac{1}{p_t}$. The two ray's conserved quantities \cite[Eq. (A.12)]{thorne15} are
+where $E_f = - \frac{1}{p_t}$.
+
+The two ray's conserved quantities \cite[Eq. (A.12)]{thorne15} were
 \begin{equation}
 b \defeq p_\varphi, \quad q \defeq p_\vartheta^2 + \cos^2\vartheta \left( \frac{b^2}{\sin^2\vartheta} - a^2 \right).
 \end{equation}
@@ -223,28 +225,28 @@ b \defeq p_\varphi, \quad q \defeq p_\vartheta^2 + \cos^2\vartheta \left( \frac{
 \subsection{Numerical Solver}
 \label{sec:numerical}
 
-Once we have the \ac{ODE} system and the initial conditions for the ray we want to solve, the final step is to numerically integrate, backwards in time, the geodesic followed by the ray.
+Once we had the \ac{ODE} system and the initial conditions for the ray we wanted to solve, the final step was to numerically integrate, backwards in time, the geodesic followed by the ray.
 
-The problem reduces then to numerically integrate an \ac{ODE} system, which is a well-known problem and widely studied in the literature.
+The problem reduced then to numerically integrate an \ac{ODE} system, which is a well-known problem and widely studied in the literature.
 
-In order to accomplish this task, the algorithm used by our ray tracer uses a classic \ac{RK} method, along with an automated step size computation based on the estimated error of the step.
+In order to accomplish this task, the algorithm used by our ray tracer used a classic \ac{RK} method, along with an automated step size computation based on the estimated error of the step.
 
 The \ac{RK} method is based on the \texttt{DOPRI5} algorithm, described in \cite{hairer93} and \cite{hairer96}.
 
-The automated control for the step size based on the estimated error follows the ideas in \cite[Sec. II.4, Subsec. Automatic Step Size Control]{hairer93}.
+The automated control for the step size based on the estimated error followed the ideas in \cite[Sec. II.4, Subsec. Automatic Step Size Control]{hairer93}.
 
-Furthermore, the step size is stabilized using the algorithm described in \cite[Sec. IV.2]{hairer96}.
+Furthermore, the step size was stabilized using the algorithm described in \cite[Sec. IV.2]{hairer96}.
 
 \subsubsection*{Adaptive Runge-Kutta Method}
 
-Our system of \ac{ODE}, \autoref{theo:eqsmotion}, follows a general \ac{RK} model:
+Our system of \ac{ODE}, \autoref{theo:eqsmotion}, followed a general \ac{RK} model:
 \begin{enumerate}
 	\item $\dot{y} = (\dot{r}, \dot{\vartheta}, \dot{\varphi}, \dot{p}_r, \dot{p}_\vartheta)$,
-	\item $f(t,y)$ is the right hand side of the equations and actually it does not depend on $t$, thus it can be written as $f(y)$.
+	\item $f(t,y)$ was the right hand side of the equations and actually it did not depend on $t$, thus it was written as $f(y)$.
 	\item $t_0 = 0$ and $y_0 = (r_c, \vartheta_{cs}, \varphi_{cs}, p_{r}, p_{\vartheta})$ are the initial conditions computed in \autoref{sec:initcond}.
 \end{enumerate}
 
-The selected \ac{RK} algorithm is a fourth order method with an estimation of the error based on a fifth order approximation, and whose Butcher's table is described on \autoref{tab:butcher}.
+The selected \ac{RK} algorithm was a fourth order method with an estimation of the error based on a fifth order approximation, and whose Butcher's table is described on \autoref{tab:butcher}.
 
 \begin{table}[bth]
 	\myfloatalign
@@ -267,23 +269,23 @@ The selected \ac{RK} algorithm is a fourth order method with an estimation of th
 
 Accretion disks are disk-like structures, usually made of gas or dust, orbiting around massive objects, such as the black holes we are dealing with.
 
-The design of the ray tracer has taken this into account, including a feature that provides the user with the possibility of adding an infinitely thin accretion disk orbiting on the equatorial plane.
+The design of the ray tracer took this into account, including a feature that provided the user with the possibility of adding an infinitely thin accretion disk orbiting on the equatorial plane.
 
-This disk, always placed on the equatorial plane and that shares its centre with the black hole's, is defined as an annulus characterised by its inner and outer radii, denoted as $r_{in}$ and $r_{out}$.
+This disk, always placed on the equatorial plane and that shared its centre with the black hole's, wass defined as an annulus characterised by its inner and outer radii, denoted as $r_{in}$ and $r_{out}$.
 
-The interaction between the geodesics and the accretion disk is really interesting to see the distortion in the spacetime near the shadow. It is then mandatory to have a way of detecting if an integrated geodesic collides with the disk.
+The interaction between the geodesics and the accretion disk was really interesting to see the distortion in the spacetime near the shadow. It was then mandatory to have a way of detecting if an integrated geodesic collided with the disk.
 
-The only way of detecting this collision is continuously checking if the geodesic has crossed the equatorial plane. If the geodesic is on the equatorial plane, \ie, if its $\vartheta$ coordinate is equal to $\nicefrac{\pi}{2}$, it is in collision with the disk if, and only if, its $r$ coordinate satisfies
+The only way of detecting this collision was continuously checking if the geodesic had crossed the equatorial plane. If the geodesic wass on the equatorial plane, \ie, if its $\vartheta$ coordinate was equal to $\nicefrac{\pi}{2}$, it was in collision with the disk if, and only if, its $r$ coordinate satisfied
 \begin{equation}
 \label{eq:collision}
 r_{out} > r > r_{in}.
 \end{equation}
 
-The solver works with discrete time intervals, \ie, we know the value $y(t_0)$ and it can compute the value $y(t_1)$. Therefore, it is probable that if a geodesic crosses the equatorial plane, it does it at a time $t \in (t_0, t_1)$. The only way of assuring that we detect the equatorial plane crossing, is to look at the change of the sign of $\vartheta$ with respect to $\nicefrac{\pi}{2}$ at the edges of the interval. That is, we know that a geodesic crosses the equatorial plane in an interval $[t_0, t_1]$ if and only if $\vartheta(t_0) < \nicefrac{\pi}{2}$ and $\vartheta(t_1) \geq \nicefrac{\pi}{2}$, or the other way around.
+The solver worked with discrete time intervals, \ie, we knew the value $y(t_0)$ and it computed the value $y(t_1)$. Therefore, it was probable that if a geodesic have crossed the equatorial plane, it did it at a time $t \in (t_0, t_1)$. The only way of assuring that we detected the equatorial plane crossing, was to look at the change of the sign of $\vartheta$ with respect to $\nicefrac{\pi}{2}$ at the edges of the interval. That is, we knew that a geodesic had crossed the equatorial plane in an interval $[t_0, t_1]$ if and only if $\vartheta(t_0) < \nicefrac{\pi}{2}$ and $\vartheta(t_1) \geq \nicefrac{\pi}{2}$, or the other way around.
 
 \subsubsection*{Bisection Algorithm}
 
-With this constraint in mind, it is necessary to design a way of computing the exact point where a geodesic crosses the equatorial plane. A bisection algorithm is the solution proposed: when we detect that a geodesic crosses the equatorial plane in an interval $[t_0, t_1]$, we ask the solver to compute whether it crossed it in the interval $[t_0, \nicefrac{(t_1 - t_0)}{2}]$. If the answer is affirmative, we repeat the process by changing $t_1 = \nicefrac{(t_1 - t_0)}{2}$; otherwise, we make the check assuming $t_0 = \nicefrac{(t_1 - t_0)}{2}$. The process repeats until a pre defined error tolerance, or a pre defined maximum number of iterations, is reached. This usual bisection technique let us find the exact point where the crossing took place, and let us check whether the geodesic satisfies \autoref{eq:collision} when $\vartheta \approx \nicefrac{\pi}{2}$.
+With this constraint in mind, it was necessary to design a way of computing the exact point where a geodesic crosses the equatorial plane. A bisection algorithm was the solution proposed: when we detected that a geodesic had crossed the equatorial plane in an interval $[t_0, t_1]$, we asked the solver to compute whether it has crossed it in the interval $[t_0, \nicefrac{(t_1 - t_0)}{2}]$. If the answer was affirmative, we repeated the process by changing $t_1 = \nicefrac{(t_1 - t_0)}{2}$; otherwise, we made the check assuming $t_0 = \nicefrac{(t_1 - t_0)}{2}$. The process repeated until a pre defined error tolerance, or a pre defined maximum number of iterations, was reached. This usual bisection technique let us find the exact point where the crossing took place, and let us check whether the geodesic satisfied \autoref{eq:collision} when $\vartheta \approx \nicefrac{\pi}{2}$.
 
 The first design assumed the collision detection and the \ac{RK} solver to be independent tasks. That is, the ray tracer called the solver several times with very small time intervals in order to check, between these calls, whether the geodesic has collided with the disk.
 
@@ -305,7 +307,7 @@ The first design assumed the collision detection and the \ac{RK} solver to be in
 
 This idea, depicted on \ref{alg:collision}, caused a great loss on the efficiency ---we were artificially bounding the step size computed by the automatic step algorithm---, as well as the addition of the parameter resolution, which changed the final performance greatly. This was difficult and a bad design decision, so the solution was redesigned. The final idea, that was then proved to be very efficient, consisted on assimilating the collision detection inside the solver itself.
 
-That way, the \ac{RK} solver is called only once, with the final time interval $[t_0, t_{end}]$. The resolution variable is removed, as it is the same solver, with its automatic step size detection, who decides when to call the check and the bisection.
+That way, the \ac{RK} solver was called only once, with the final time interval $[t_0, t_{end}]$. The resolution variable was removed, as it was the same solver, with its automatic step size detection, who decided when to call the check and the bisection.
 
 
 
@@ -326,37 +328,37 @@ That way, the \ac{RK} solver is called only once, with the final time interval $
 \section{Solution Implementation}
 \label{chapter:implementation}
 
-This chapter covers the implementation details, the technologies used, the different decisions made and the reasons that led us to make them.
+This section covered the implementation details, the technologies used, the different decisions made and the reasons that led us to make them.
 
-In short, the software developed is a Python package that implements a general relativity ray tracer using the library \ac{CUDA} as the back-end, generating images of a Kerr black hole from close distances.
+In short, the software developed was a Python package that implemented a general relativity ray tracer using the library \ac{CUDA} as the back-end, generating images of a Kerr black hole from close distances.
 
-The primary requirement when designing and implementing the software has been the \emph{ease of use}. The Python package exposes a minimal yet powerful public \ac{API}, abstracting all \ac{CUDA}-related code and letting the user configure the properties of the black hole and the cameras placed near it.
+The primary requirement when designing and implementing the software was the \emph{ease of use}. The Python package exposed a minimal yet powerful public \ac{API}, abstracting all \ac{CUDA}-related code and letting the user configure the properties of the black hole and the cameras placed near it.
 
 \subsection{Technologies Used}
 
-The base code, exposed to the final user and with an easy to understand \ac{API}, is written in Python. The reason to choose this language is that it is widely used in the scientific community, and whose rise on these fields is increasing. Furthermore, it let us write simple understandable code withouth losing the power of the \ac{OOP}.
+The base code, exposed to the final user and with an easy to understand \ac{API}, was written in Python. The reason to choose this language was that it is widely used in the scientific community, and its rise on these fields is increasing. Furthermore, it let us write simple understandable code withouth losing the power of the \ac{OOP}.
 
-The \ac{CUDA} code is written in \ac{CUDA}-C, an extension of the well-known C language that permits to manage the \ac{GPU} and to establish a communication between the host (the \ac{CPU}) and the device (the \ac{GPU}). This is the most difficult code, highly optimised and where the ray tracer kernel and \ac{RK} solver are implemented.
+The \ac{CUDA} code was written in \ac{CUDA}-C, an extension of the well-known C language that permits to manage the \ac{GPU} and to establish a communication between the host (the \ac{CPU}) and the device (the \ac{GPU}). This was the most difficult code, highly optimised and where the ray tracer kernel and \ac{RK} solver were implemented.
 
-In order to glue together the Python package and the \ac{CUDA} kernel, the PyCUDA library is used.
+In order to glue together the Python package and the \ac{CUDA} kernel, the PyCUDA library was used.
 
-Finally, Sphinx has been used to manage the documentation of the package, letting the user access the Python docstrings on the objects defined. The C code has been documented using Doxygen, whose output is takes as an input by Sphinx in order to generate a complete documentation.
+Finally, Sphinx was used to manage the documentation of the package, letting the user access the Python docstrings on the objects defined. The C code was documented using Doxygen, whose output was taken as an input by Sphinx in order to generate a complete documentation.
 
 \subsubsection*{Python Package}
 
-The Python package is organised in four main files:
+The Python package was organised in four main files:
 \begin{enumerate}
-	\item \lstinline{universe.py}: defines a \lstinline{Universe} class, and exposes an instance of it to the package. This instace, called \lstinline{universe}, has all the general information about the spacetime, namely the black hole's spin and the accretion disk radius.
-	\item \lstinline{camera.py}: defines a \lstinline{Camera} class, that contains all the necessary information that characterise it: the sensor size in physical units, the sensor resolution, the roll, pitch and yaw angles and its position with respect to the black hole centre. Internally, the \lstinline{Camera} class has an attribute called \lstinline{engine}, which is an instance of the \lstinline{RayTracer} class. The \lstinline{Camera} class is in charge of computing the $\alpha$, $\omega$ and $\varpi$ quantities, that defines the value of the Kerr metric on the point where the camera is placed.
-	\item \lstinline{raytracer.py}: defines a \lstinline{RayTracer} class, which implements the PyCUDA calls to the \ac{CUDA} kernels. From the user perspective, it is the class that solves the \ac{ODE} system, although it delegates this work on the \ac{CUDA} methods.
-	\item \lstinline{geodesics.py}: defines a main \lstinline{Congruence} class, which is a set of solved geodesics with their position at every computed time. There are two more classes defined in this file: \lstinline{GeodesicSnapshot}, which is a slice of the \lstinline{Congruence} containing the position of all computed geodesics at a single instant and \lstinline{Geodesic}, which is a slice of \lstinline{Congruence} containing one single geodesic with its position at all computed times.
+	\item \lstinline{universe.py}: defined a \lstinline{Universe} class, and exposed an instance of it to the package. This instace, called \lstinline{universe}, had all the general information about the spacetime, namely the black hole's spin and the accretion disk radius.
+	\item \lstinline{camera.py}: defined a \lstinline{Camera} class, that contained all the necessary information that characterised it: the sensor size in physical units, the sensor resolution, the roll, pitch and yaw angles and its position with respect to the black hole centre. Internally, the \lstinline{Camera} class had an attribute called \lstinline{engine}, which was an instance of the \lstinline{RayTracer} class. The \lstinline{Camera} class was in charge of computing the $\alpha$, $\omega$ and $\varpi$ quantities, that defined the value of the Kerr metric on the point where the camera was placed.
+	\item \lstinline{raytracer.py}: defined a \lstinline{RayTracer} class, which implemented the PyCUDA calls to the \ac{CUDA} kernels. From the user perspective, it is the class that solves the \ac{ODE} system, although it delegated this work on the \ac{CUDA} methods.
+	\item \lstinline{geodesics.py}: defined a main \lstinline{Congruence} class, which is a set of solved geodesics with their position at every computed time. There were two more classes defined in this file: \lstinline{GeodesicSnapshot}, which is a slice of the \lstinline{Congruence} containing the position of all computed geodesics at a single instant and \lstinline{Geodesic}, which is a slice of \lstinline{Congruence} containing one single geodesic with its position at all computed times.
 \end{enumerate}
 
-The workflow when using this package as a user would be: import the \lstinline{universe} instance and the \lstinline{Camera} class from the package, define as much cameras as desired and configure their properties, configure the spin of the black hole and the accretion disk through the \lstinline{universe} instance if the default values are not wanted and call the method \lstinline{shoot()} from an instance of the camera. This returns a \lstinline{CongruenceSnapshot} instance that can be plotted with its method \lstinline{plot()}.
+The workflow when using this package as a user was: import the \lstinline{universe} instance and the \lstinline{Camera} class from the package, define as much cameras as desired and configure their properties, configure the spin of the black hole and the accretion disk through the \lstinline{universe} instance if the default values are not wanted and call the method \lstinline{shoot()} from an instance of the camera. This returned a \lstinline{CongruenceSnapshot} instance that could be plotted with its method \lstinline{plot()}.
 
 \subsubsection*{CUDA}
 
-All \ac{CUDA} related files are stored in a directory inside the package. There are four main files inside that directory:
+All \ac{CUDA} related files were stored in a directory inside the package. There were four main files inside that directory:
 \begin{enumerate}
 	\item \lstinline{raytracer.cu}: defines two kernels, \lstinline{setInitialConditions} and \lstinline{kernel}. They are explained with detail in \autoref{sec:cuda}.
 	\item \lstinline{solvers.cu}: implements the \ac{RK} solver along with the automatic step size computation algorithm.

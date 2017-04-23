@@ -6,7 +6,11 @@ The part summarised in this chapter introduced some notions to understand the ma
 \section{Geometric Description of Gravity}
 \label{chapter:einstein}
 
+This section aimed to obtain the Einstein field equations, that in detail the spacetime, its shape and its properties.
+
 \subsection{Einstein Tensor of a Metric}
+
+Before describing the Einstein field equations, we needed two basic concepts: the Einstein tensor of a metric and a stress-energy tensor.
 
 Let $(M,g)$ be a spacetime. The symmetric 2-covariant tensor field $G \defeq \operatorname{Ric}-\frac{1}{2}Sg$, where Ric is the Ricci tensor of $g$ and $S$ the scalar curvature of $g$, is called the \emph{Einstein tensor of $g$}.
 
@@ -14,9 +18,9 @@ A \emph{stress-energy tensor} on $M$ is a symmetric 2-covariant tensor field $T$
 
 \subsection{Einstein Field Equation}
 
-Consider a stress-energy tensor $T$ on $(M,g)$ such that $T - \frac{1}{2}(\operatorname{trace}_g T) g$ is also a stress-energy tensor and that $T$ satisfies the conservation law $\operatorname{div} \widehat{T} = 0$, where $\widehat{T}$ is the 2-contravariant tensor field $g$-equivalent to $T$.
+Consider now a stress-energy tensor $T$ on $(M,g)$ such that $T - \frac{1}{2}(\operatorname{trace}_g T) g$ is also a stress-energy tensor and that $T$ satisfies the conservation law $\operatorname{div} \widehat{T} = 0$, where $\widehat{T}$ is the 2-contravariant tensor field $g$-equivalent to $T$.
 
-We say that the spacetime $(M,g)$ obeys the Einstein field equation with respect to $T$ (using the terminology of \cite[Sec. 6.2]{sachswu77}) if
+We said that the spacetime $(M,g)$ obeys the Einstein field equation with respect to $T$ (using the terminology of \cite[Sec. 6.2]{sachswu77}) if
 
 \begin{equation}
 \label{eq:einstein3}
@@ -25,9 +29,9 @@ T - \frac{1}{2}(\operatorname{trace}_g T)g = \Ric.
 
 Einstein field equation postulated how matter and radiation in a region of the universe can be described by a Lorentzian metric $g$.
 
-If $(M,g)$ obeys the Einstein field equation with respect to $T = 0$, then, we know that $Ric = 0$. Assume now that $(M,g)$ obeys the Einstein field equation $Ric = 0$. Then, it is trivial that $T=0$.
+If $(M,g)$ obeys the Einstein field equation with respect to $T = 0$, then, we proved that $Ric = 0$. Assuming then that $(M,g)$ obeys the Einstein field equation $Ric = 0$, then it is trivial that $T=0$.
 
-We can conclude that the \emph{vacuum Einstein field equation} is the mathematical way of expressing the absence of matter and radiation on the spacetime.
+That way, we were able to conclude that the \emph{vacuum Einstein field equation} was the mathematical way of expressing the absence of matter and radiation on the spacetime.
 
 
 
@@ -67,7 +71,7 @@ It was observed \cite[Sec. 2.1]{galindo14}, \cite[pp. 58-59]{oneill95} that the 
 
 The Kerr metric is singular if $\rho^2 = 0$, which makes the Kretschmann invariant divergent, and that can be physically understood as a divergent curvature of the spacetime itself.
 
-If we assume $\Delta = 0$, we obtain two coordinate singularities: $r_{\pm} \defeq M \pm \sqrt{M - a^2}$, which are called \emph{horizons}, as it was proved that, on them, the constant-$r$ hypersurfaces are null. The two horizons divide the spacetime in three regions:
+Assuming $\Delta = 0$, we obtained two coordinate singularities: $r_{\pm} \defeq M \pm \sqrt{M - a^2}$, which are called \emph{horizons}, as it was proved that, on them, the constant-$r$ hypersurfaces are null. The two horizons divide the spacetime in three regions:
 \begin{enumerate}
 	\item The region where $r > r_+$, that can be seen as the outside of the black hole.
 	\item The region where $r_- < r < r_+$. Here, any particle falling through $r_+$ is forced to reach $r_-$, hence, the hypersurface defined by $r = r_+$ is called the \emph{event horizon}.
@@ -89,7 +93,7 @@ If we assume $\Delta = 0$, we obtain two coordinate singularities: $r_{\pm} \def
 
 In the work we aimed to find the most computationally stable equations of motion for $\gamma$, a free falling causal particle moving on a Kerr spacetime.
 
-The classical equations derived from the definition of geodesic in terms of the Christoffel symbols, $\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0$, had some flaws that forced us to discard them: it is a second order system of differential equations, which does not really fit the numerical algorithm to integrate them; furthermore, it was found very difficult to get the conserved quantities \emph{into} the equations.
+The classical equations derived from the definition of geodesic in terms of the Christoffel symbols, $\frac{d^2x^k}{dt^2} + \Gamma^k_{ij} \frac{d x^i}{dt} \frac{d x^j}{dt} = 0$, had some flaws that forced us to discard them: it is a second order system of differential equations, which does not really fitted the numerical algorithm to integrate them; furthermore, it was found very difficult to get the conserved quantities \emph{into} the equations.
 
 However, the classical Hamiltonian formulation \cite[Sec. 33.5]{thorne73} gave us a first order system with the conserved quantities in the equations. In this formulation, however, another problem arose, as a pair of square roots appeared on the right hand side of the equations.
 
