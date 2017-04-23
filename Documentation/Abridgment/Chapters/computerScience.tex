@@ -70,7 +70,7 @@ for each considered geodesic arriving at the camera.
 
 A ray tracer is in general highly parallelizable, and our design was not different: it performed the exact same operation on a large set of different data; namely it solved the \ac{ODE} system, whose equations (\autoref{theo:eqsmotion}) were always the same, on a large number of different initial conditions.
 
-The idea behind the parallelization design was easy: for each parallelized node, we have to feed the numerical solver with a different initial condid tion, computefrom each pixel of the image. Using the classic Flynn's taxonomy \cite{flynn72} terminology, our architecture followed a \ac{SIMD} paradigm, where a single generalized task works on multiple data streams in order to compute multiple results.
+The idea behind the parallelization design was easy: for each parallelized node, we have to feed the numerical solver with a different initial condition, compute from each pixel of the image. Using the classic Flynn's taxonomy \cite{flynn72} terminology, our architecture followed a \ac{SIMD} paradigm, where a single generalized task works on multiple data streams in order to compute multiple results.
 
 Ideally, we would have liked to design a completely parallel solution, in which we had the same number of nodes in the parallel architecture as pixels we had in the image. Although this was highly difficult for large images with the classic parallelization on \acp{CPU}, the new \ac{GPU} techniques helped us get closer to this goal.
 
@@ -124,40 +124,13 @@ If we abstract the computation of the geodesic that hits one single pixel in a f
 \subsection{Pinhole Camera}
 \label{sec:pinhole}
 
-The camera was abstracted as a simple, yet effective, model that let us produce realistic images of what an observer would see when looking at a black hole from near distances 
+The camera was abstracted as a simple, yet effective, model that let us produce realistic images of what an observer would see when looking at a black hole from near distances. It followed the \emph{pinhole camera model}, which assumes a camera with an infinitely small diaphragm that focuses all the incoming rays onto its sensor.
 
-\subsubsection*{Foundations}
+The camera was described by the following parameters: the position on the Kerr spacetime, described by the spatial \ac{BL} coordinates $\{r_c, \vartheta_c, \varphi_c\}$;the \emph{sensor} (that can be thought as the film or the CCD of a usual camera), which is described by its \emph{resolution} (number of pixels per column and number of pixels per row) and by its size (width and height in physical units); the \emph{focal point}, $F$: a point in the line perpendicular to the sensor and going through its centre ---this point collected all incoming rays and can be though as the diaphragm, whose aperture is infinitely small---; the \emph{focal distance}, $d$: distance from the focal point to the sensor; the \emph{pitch}, \emph{roll} and \emph{yaw} angles, that describe the rotation of the sensor on each of its axis.
 
-The camera considered in the work followed the \emph{pinhole camera model}, which assumes a camera with an infinitely small diaphragm that focuses all the incoming rays onto its sensor.
+This model let us compute the direction of the incoming rays just by indexing the particular pixel they hit, obtaining a map $(p_x, p_y) \xmapsto{\mathfrak{h}_2} (\vartheta_{cs}, \varphi_{cs})$, where $(p_x, p_y)$ are the components of the pixel in a system of coordinates whose origin is placed at the top-left corner of the sensor.
 
-The camera was described by the following parameters:
-\begin{enumerate}
-	\item The position on the Kerr spacetime, described by the spatial \ac{BL} coordinates $\{r_c, \vartheta_c, \varphi_c\}$.
-	\item The \emph{sensor} (that can be thought as the film or the CCD of a usual camera), which is described by its \emph{resolution} (number of pixels per column and number of pixels per row) and by its size (width and height in physical units).
-	\item The \emph{focal point}, $F$: a point in the line perpendicular to the sensor and going through its centre. This point collected all incoming rays and can be though as the diaphragm, whose aperture is infinitely small.
-	\item The \emph{focal distance}, $d$: distance from the focal point to the sensor.
-	\item The \emph{pitch}, \emph{roll} and \emph{yaw} angles, that describe the rotation of the sensor on each of its axis, depicted in \autoref{fig:pitchrollyaw}.
-\end{enumerate}
-
-\begin{figure}[bth]
-	\myfloatalign
-	\includegraphics[width=.5\linewidth]{gfx/rollpitchyaw.png}
-	\caption[Pitch, roll and yaw angles]{Pitch, roll and yaw angles}
-	\label{fig:pitchrollyaw}
-\end{figure}
-
-This model let us compute the direction of the incoming rays just by indexing the particular pixel they hit, obtaining a map
-\begin{equation}
-\label{eq:pixelmap}
-(p_x, p_y) \xmapsto{\mathfrak{h}_2} (\vartheta_{cs}, \varphi_{cs}),
-\end{equation}
-where $(p_x, p_y)$ are the components of the pixel in a system of coordinates whose origin is placed at the top-left corner of the sensor.
-
-By composing \autoref{eq:initmap} and \autoref{eq:pixelmap}, we defined the map
-\begin{equation}
-(p_x, p_y) \xmapsto{\mathfrak{h} = \mathfrak{h_1}\circ\mathfrak{h_2}} (\vartheta', \varphi'),
-\end{equation}
-that summarises all the work the algorithm does: from a pixel on the camera's reference frame, we computed the origin of the incoming ray that hit that pixel.
+By composing \autoref{eq:initmap} and previous map, we defined the map $(p_x, p_y) \xmapsto{\mathfrak{h} = \mathfrak{h_1}\circ\mathfrak{h_2}} (\vartheta', \varphi')$, that summarises all the work the algorithm does: from a pixel on the camera's reference frame, we computed the origin of the incoming ray that hit that pixel.
 
 \subsubsection*{Pixel to Ray Map}
 \label{subcsec:pixeltoray}
@@ -166,23 +139,18 @@ Let us consider a pixel $P$ whose coordinates on the sensor's reference frame ar
 
 \begin{figure}[bth]
 	\myfloatalign
-	\includegraphics[width=.8\linewidth]{gfx/pinhole.png}
+	\includegraphics[width=.7\linewidth]{gfx/pinhole.png}
 	\caption[Pinhole camera model]{Pinhole camera model}
 	\label{fig:pinhole}
 \end{figure}
 
 All rays that hit the sensor were assumed, by our model, to pass through the focal point $F$. Thus, we computed the angles $\vartheta$ and $\varphi$ for the ray hitting the sensor at pixel $P$ with elementary trigonometry. This is detailed in the original work, and as a result we got the equations
-\begin{align}
+\begin{equation}
 \label{eq:pinhole1}
-\vartheta_{cs} &= \eta + \frac{\pi}{2} + \arctan{\frac{p'_y}{\sqrt{p_x^{'2} + d^2}}}, \\
-\label{eq:pinhole2}
-\varphi_{cs} &= \lambda + \pi + \arctan{\frac{p'_x}{d}},
-\end{align}
-where
-\[
-p'_x = p_x\cos\alpha - p_y\sin\alpha, \qquad
-p'_y = p_x\sin\alpha + p_y\cos\alpha.
-\]
+\vartheta_{cs} = \eta + \frac{\pi}{2} + \arctan{\frac{p'_y}{\sqrt{p_x^{'2} + d^2}}}, \quad
+\varphi_{cs} = \lambda + \pi + \arctan{\frac{p'_x}{d}},
+\end{equation}
+where $p'_x = p_x\cos\alpha - p_y\sin\alpha$ and $p'_y = p_x\sin\alpha + p_y\cos\alpha$.
 
 \subsection{Initial Conditions Computation}
 \label{sec:initcond}
@@ -193,34 +161,19 @@ All rays hitting the camera share the same $r$, namely the position of the camer
 
 In \autoref{subcsec:pixeltoray}, the initial $\vartheta_{cs}$ and $\varphi_{cs}$ for each ray were computed.
 
-Therefore, we only needed to compute the initial momentum components, $p_r$ and $p_\vartheta$, for each ray. In short, assuming we knew the pixel the incoming ray is hitting and, thus, the $\vartheta_{cs}$ and $\varphi_{cs}$ components of the ray on the camera's local sky, we expected to obtain the map
-\[
-(\vartheta_{cs}, \varphi_{cs}) \xmapsto{IC} (p_r, p_\vartheta).
-\]
+Therefore, we only needed to compute the initial momentum components, $p_r$ and $p_\vartheta$, for each ray. In short, assuming we knew the pixel the incoming ray is hitting and, thus, the $\vartheta_{cs}$ and $\varphi_{cs}$ components of the ray on the camera's local sky, we expected to obtain the map $(\vartheta_{cs}, \varphi_{cs}) \xmapsto{IC} (p_r, p_\vartheta)$.
 
 This was not a difficult task but a very delicate one, as some coordinate systems had to be taken into account and we should have a good understanding of them in order to properly compute the bases changes. A short summary of the study done on the original work is listed here:
 \begin{enumerate}
-	\item The initial position of the ray is known to be $(r_c, \vartheta_{cs}, \varphi_{cs})$. The components of the unit vector that points on the direction of motion of the camera, $B$, are noted as $(B_{\widehat{r}}, B_{\widehat{\vartheta}}, B_{\widehat{\varphi}})$, whereas its speed relative to the \ac{FIDO}, that is, the modulus of $B$, is noted as $\beta$.
+	\item The initial position of the ray is known to be $(r_c, \vartheta_{cs}, \varphi_{cs})$. The components of the unit vector that points on the direction of motion of the camera, $B$, are noted as $(B_{\widehat{r}}, B_{\widehat{\vartheta}}, B_{\widehat{\varphi}})$, whereas its speed relative to the \ac{FIDO} is noted as $\beta$.
 	\item From $(\vartheta_{cs}, \varphi_{cs})$ we compute the unit vector in Cartesian coordinates, $N = (N^x, N^y, N^z)$, pointing to the direction of the incoming ray. This is computed on the camera's reference frame: a simple change to Cartesian coordinates is needed.
 	\item The relativistic aberration caused by the motion of the camera and its speed around the black hole causes the \ac{FIDO} to measure the direction of motion of the incoming ray slightly different. The Cartesian components of this derived unit vector, $n = (n^x, n^y, n^z)$ need to be computed.
 	\item Then, $n_F$ needs to be seen from the \ac{FIDO}'s orthonormal basis by means of the ligatures provided by the vector $B$ and the orthogonal relations. This gives us the components $(n^r, n^\vartheta, n^\varphi)$.
-	\item From $n_F$ expressed on the right coordinate system, we need to compute the covariant components of the four momentum $(p_t, p_r, p_\vartheta, p_\varphi)$.
+	\item From $n_F$ expressed on the right coordinate system, we compute the covariant components of the 4-momentum $(p_t, p_r, p_\vartheta, p_\varphi)$.
 \end{enumerate}
 
 
-The final components of the momentum \cite[Eq. (A.11)]{thorne15} were found to be:
-\begin{align}
-p_t &= -1, \\
-p_r &= E_f \frac{\rho}{\sqrt{\Delta}} n^r, \\
-p_\vartheta &= E_f \rho n^t, \\
-p_\varphi &= E_f \varpi n^\varphi,
-\end{align}
-where $E_f = - \frac{1}{p_t}$.
-
-The two ray's conserved quantities \cite[Eq. (A.12)]{thorne15} were
-\begin{equation}
-b \defeq p_\varphi, \quad q \defeq p_\vartheta^2 + \cos^2\vartheta \left( \frac{b^2}{\sin^2\vartheta} - a^2 \right).
-\end{equation}
+The final components of the momentum \cite[Eq. (A.11)]{thorne15} were found to be $p_t = -1$, $p_r = E_f \frac{\rho}{\sqrt{\Delta}} n^r$, $p_\vartheta = E_f \rho n^t$ and $p_\varphi = E_f \varpi n^\varphi$, where $E_f = - \frac{1}{p_t}$. The two ray's conserved quantities \cite[Eq. (A.12)]{thorne15} were $b \defeq p_\varphi$ and $q \defeq p_\vartheta^2 + \cos^2\vartheta \left( \frac{b^2}{\sin^2\vartheta} - a^2 \right)$.
 
 \subsection{Numerical Solver}
 \label{sec:numerical}
@@ -231,39 +184,13 @@ The problem reduced then to numerically integrate an \ac{ODE} system, which is a
 
 In order to accomplish this task, the algorithm used by our ray tracer used a classic \ac{RK} method, along with an automated step size computation based on the estimated error of the step.
 
-The \ac{RK} method is based on the \texttt{DOPRI5} algorithm, described in \cite{hairer93} and \cite{hairer96}.
-
-The automated control for the step size based on the estimated error followed the ideas in \cite[Sec. II.4, Subsec. Automatic Step Size Control]{hairer93}.
-
-Furthermore, the step size was stabilized using the algorithm described in \cite[Sec. IV.2]{hairer96}.
+The \ac{RK} method is based on the \texttt{DOPRI5} algorithm, described in \cite{hairer93} and \cite{hairer96}. The automated control for the step size based on the estimated error followed the ideas in \cite[Sec. II.4, Subsec. Automatic Step Size Control]{hairer93}. Furthermore, the step size was stabilized using the algorithm described in \cite[Sec. IV.2]{hairer96}.
 
 \subsubsection*{Adaptive Runge-Kutta Method}
 
-Our system of \ac{ODE}, \autoref{theo:eqsmotion}, followed a general \ac{RK} model:
-\begin{enumerate}
-	\item $\dot{y} = (\dot{r}, \dot{\vartheta}, \dot{\varphi}, \dot{p}_r, \dot{p}_\vartheta)$,
-	\item $f(t,y)$ was the right hand side of the equations and actually it did not depend on $t$, thus it was written as $f(y)$.
-	\item $t_0 = 0$ and $y_0 = (r_c, \vartheta_{cs}, \varphi_{cs}, p_{r}, p_{\vartheta})$ are the initial conditions computed in \autoref{sec:initcond}.
-\end{enumerate}
+Our system of \ac{ODE}, \autoref{theo:eqsmotion}, followed a general \ac{RK} model: $\dot{y} = (\dot{r}, \dot{\vartheta}, \dot{\varphi}, \dot{p}_r, \dot{p}_\vartheta)$; $f(t,y)$ was the right hand side of the equations and actually it did not depend on $t$, thus it was written as $f(y)$; $t_0 = 0$ and $y_0 = (r_c, \vartheta_{cs}, \varphi_{cs}, p_{r}, p_{\vartheta})$ were the initial conditions computed in \autoref{sec:initcond}.
 
-The selected \ac{RK} algorithm was a fourth order method with an estimation of the error based on a fifth order approximation, and whose Butcher's table is described on \autoref{tab:butcher}.
-
-\begin{table}[bth]
-	\myfloatalign
-	\begin{tabularx}{.9\textwidth}{c|ccccccc}
-		$0$&  & & & & & & \\
-		$\frac{1}{5}$&  $\frac{1}{5}$& & & & & & \\
-		$\frac{3}{10}$&  $\frac{3}{40}$&  $\frac{9}{40}$& & & & & \\
-		$\frac{4}{5}$&  $\frac{44}{45}$&  $-\frac{56}{15}$&  $\frac{32}{9}$& & & & \\
-		$\frac{8}{9}$&  $\frac{19372}{6561}$&  $-\frac{25360}{2187}$&  $\frac{64448}{6561}$&  $-\frac{212}{729}$& & & \\
-		$1$&  $\frac{9017}{3168}$&  $-\frac{355}{33}$&  $\frac{46732}{5247}$&  $\frac{49}{176}$&  $-\frac{5103}{18656}$& & \\
-		$1$&  $\frac{35}{384}$&  $0$&  $\frac{500}{1113}$&  $\frac{125}{192}$&  $-\frac{2187}{6784}$&  $\frac{11}{84}$& \\ \hline
-		$y_1$&  $\frac{35}{384}$&  $0$&  $\frac{500}{1113}$&  $\frac{125}{192}$&  $-\frac{2187}{6784}$&  $\frac{11}{84}$&  $0$ \\ \hline
-		$\widehat{y}_1$&  $\frac{5179}{57600}$&  $0$&  $\frac{7571}{16695}$&  $\frac{393}{640}$&  $-\frac{92097}{339200}$&  $\frac{187}{2100}$&  $\frac{1}{40}$
-	\end{tabularx}
-	\caption{Butcher's table for the ray tracer solver}
-	\label{tab:butcher}
-\end{table}
+The selected \ac{RK} algorithm was a fourth order method with an estimation of the error based on a fifth order approximation, and whose Butcher's table is described on the original work.
 
 \subsection{Accretion Disk}
 
@@ -354,27 +281,27 @@ The Python package was organised in four main files:
 	\item \lstinline{geodesics.py}: defined a main \lstinline{Congruence} class, which is a set of solved geodesics with their position at every computed time. There were two more classes defined in this file: \lstinline{GeodesicSnapshot}, which is a slice of the \lstinline{Congruence} containing the position of all computed geodesics at a single instant and \lstinline{Geodesic}, which is a slice of \lstinline{Congruence} containing one single geodesic with its position at all computed times.
 \end{enumerate}
 
-The workflow when using this package as a user was: import the \lstinline{universe} instance and the \lstinline{Camera} class from the package, define as much cameras as desired and configure their properties, configure the spin of the black hole and the accretion disk through the \lstinline{universe} instance if the default values are not wanted and call the method \lstinline{shoot()} from an instance of the camera. This returned a \lstinline{CongruenceSnapshot} instance that could be plotted with its method \lstinline{plot()}.
+The workflow when using this package as a user was thought to be as follows: import the \lstinline{universe} instance and the \lstinline{Camera} class from the package, define as much cameras as desired and configure their properties, configure the spin of the black hole and the accretion disk through the \lstinline{universe} instance if the default values are not wanted and call the method \lstinline{shoot()} from an instance of the camera. This would returne a \lstinline{CongruenceSnapshot} instance that could be plotted with its method \lstinline{plot()}.
 
 \subsubsection*{CUDA}
 
 All \ac{CUDA} related files were stored in a directory inside the package. There were four main files inside that directory:
 \begin{enumerate}
-	\item \lstinline{raytracer.cu}: defines two kernels, \lstinline{setInitialConditions} and \lstinline{kernel}. They are explained with detail in \autoref{sec:cuda}.
-	\item \lstinline{solvers.cu}: implements the \ac{RK} solver along with the automatic step size computation algorithm.
-	\item \lstinline{image_transformation.cu}: defines a third kernel, \lstinline{generate_image}, that manages the texture maps. See \autoref{sec:cuda} for more details.
-	\item \lstinline{functions.cu}: implements the right hand side of the \ac{ODE} system; \ie, the $f(y)$ function.
+	\item \lstinline{raytracer.cu}: defined two kernels, \lstinline{setInitialConditions} and \lstinline{kernel}. They are explained with detail in \autoref{sec:cuda}.
+	\item \lstinline{solvers.cu}: implemented the \ac{RK} solver along with the automatic step size computation algorithm.
+	\item \lstinline{image_transformation.cu}: defined a third kernel, \lstinline{generate_image}, that managed the texture maps. See \autoref{sec:cuda} for more details.
+	\item \lstinline{functions.cu}: implemented the right hand side of the \ac{ODE} system; \ie, the $f(y)$ function.
 \end{enumerate}
 
 \subsubsection*{PyCUDA}
 
-The interface between Python and \ac{CUDA} is implemented in the Python class \lstinline{RayTracer}. This class uses the PyCUDA module to configure the device, to manage the memory transactions between host and device and to execute the kernels on the device when the user on the host requests it.
+The interface between Python and \ac{CUDA} was implemented in the Python class \lstinline{RayTracer}. This class used the PyCUDA module to configure the device, to manage the memory transactions between host and device and to execute the kernels on the device when the user on the host requests it.
 
 \subsubsection*{Documentation: Sphinx and Doxygen}
 
-The documentation of the software has been made with Sphinx on the Python code and with Doxygen in the C code.
+The documentation of the software was made with Sphinx on the Python code and with Doxygen in the C code.
 
-This let us set up a workflow where we document the objects and methods and then we generate different outputs.
+This let us set up a workflow where we documented the objects and methods and then we generated different outputs.
 
 \subsection{Algorithm Implementation}
 
@@ -393,7 +320,7 @@ This section covers the implementation details for some of the most complex bloc
 	\item \emph{Grid}: a three dimensional (although one can omit any of the dimensions) matrix where every element is a block. The memory accessible by all threads in all blocks is called the \emph{global memory}, and it is the slowest one. Every block has a unique identifier within the grid.
 \end{itemize}
 
-The \ac{CUDA} device is configured once at the beginning of the program as a set of threads, uniquely identified by their block indices and thread indices relative to the blocks.
+The \ac{CUDA} device was configured once at the beginning of the program as a set of threads, uniquely identified by their block indices and thread indices relative to the blocks.
 
 \begin{figure}[bth]
 	\myfloatalign
@@ -404,93 +331,81 @@ The \ac{CUDA} device is configured once at the beginning of the program as a set
 
 An example configuration of the \ac{CUDA} device can be seen on \autoref{fig:cudagrid}, where 6 two dimensional blocks are arranged on the grid in two rows and three columns. Every block has 256 threads, arranged on a 16$\times$16 matrix.
 
-The shape of the \ac{CUDA} grid and blocks are customizable by the user, but the warps are automatically created by \ac{CUDA}, picking up always sets of successive 32 threads, going first through the $X$ axis, then through the $Y$ axis and finally through the $Z$ axis.
+The shape of the \ac{CUDA} grid and blocks were customizable by the user, but the warps were automatically created by \ac{CUDA}, picking up always sets of successive 32 threads, going first through the $X$ axis, then through the $Y$ axis and finally through the $Z$ axis.
 
-This section will study how the grid and blocks are shaped on our software and the implemented parallelized code, as well as some fine-tuning techniques used to speed up the computations.
+This section studies how the grid and blocks were shaped on our software and the implemented parallelized code, as well as some fine-tuning techniques used to speed up the computations.
 
 \subsubsection*{Device Setup}
 
-The configuration of the grid for a ray tracer seems natural. As we are working with images, which are simply two dimensional matrices, the grid will be shaped as a two dimensional matrix, where every thread will compute the geodesic corresponding to a pixel.
+The configuration of the grid for a ray tracer seemed natural. As we were working with images, which are simply two dimensional matrices, the grid was shaped as a two dimensional matrix, where every thread computed the geodesic corresponding to a pixel.
 
-The important question now is how to configure the pixels between the blocks; \ie, how to define the number of blocks per column and per row in the grid.
+The important question was how to configure the pixels between the blocks; \ie, how to define the number of blocks per column and per row in the grid.
 
-The simplest answer is to define one dimensional blocks of a fixed size that extend along the rows of the image. The very first implementation of the ray tracer used this configuration, but the speed up against the \ac{CPU} implementation was very poor.
+The simplest answer was to define one dimensional blocks of a fixed size that extend along the rows of the image. The very first implementation of the ray tracer used this configuration, but the speed up against the \ac{CPU} implementation was very poor.
 
-The branch divergence was guilty of the poor performance: along a row of the image, the behaviour of the corresponding geodesics is very different, and the so-called \emph{warp divergence} occurs: in a warp, which in this configuration is defined along the rows of the image, all threads execute the same instruction at the same time; if the control flow varies between the threads in a warp, some of them will be idle, which causes a great loss of parallel efficiency.
+The branch divergence was guilty of the poor performance: along a row of the image, the behaviour of the corresponding geodesics was very different, and the so-called \emph{warp divergence} occurred: in a warp, which in this configuration was defined along the rows of the image, all threads executed the same instruction at the same time; if the control flow varied between the threads in a warp, some of them would be idle, which caused a great loss of parallel efficiency.
 
-This is avoided by designing a configuration that ensures, or at least that facilitates, that all the threads in a warp execute the same exact code without branch divergence. In our case, this means that the geodesics hitting the pixels in a warp should have followed a nearby path.
+This was avoided by designing a configuration that ensured, or at least that facilitated, that all the threads in a warp executed the same exact code without branch divergence. In our case, this meant that the geodesics hitting the pixels in a warp should have followed a nearby path.
 
-However, without knowing a priori the origin of the geodesics, we can only guess which pixels will have similar geodesics. The configuration design follows then this sensible guess: \emph{nearby pixels are hit by geodesics with nearby origins}.
+However, without knowing a priori the origin of the geodesics, we could only guess which pixels had similar geodesics. The configuration design followed then this sensible guess: \emph{nearby pixels are hit by geodesics with nearby origins}.
 
 From this assumption, we designed warps as squared as possible, configuring the blocks to have an integer number of warps. This resulted in the following configuration:
 \begin{enumerate}
-	\item Each block has $8\times8$ threads; \ie, two warps of $8\times4$ threads are located per block. See \autoref{fig:warpconf}.
+	\item Each block had $8\times8$ threads; \ie, two warps of $8\times4$ threads were located per block. See \autoref{fig:warpconf}.
 	\begin{figure}[bth]
 		\myfloatalign
 		\includegraphics[width=.3\linewidth]{gfx/warpconf.png}
 		\caption[Raytracer block configuration]{Raytracer block configuration}
 		\label{fig:warpconf}
 	\end{figure}
-	\item The grid size is dynamically computed using the image size provided by the user. The number of rows and columns of the grid are computed with the following formulas:
+	\item The grid size was dynamically computed using the image size provided by the user. The number of rows and columns of the grid were computed with the following formulas:
 	\begin{equation*}
 	G_C = \left \lfloor{\frac{I_C - 1}{B_C} + 1}\right \rfloor, \qquad
 	G_R = \left \lfloor{\frac{I_R - 1}{B_R} + 1}\right \rfloor,
 	\end{equation*}
-	where $G_C$ and $G_R$ are the number of blocks per column and per row, $I_C$ and $I_R$ are the columns and rows of pixels of the image and $B_C = B_R = 8$ are the number of columns and rows of a block. These formulas ensure we have enough threads to compute each pixel. The remaining threads, which do not have any geodesic to compute, will be idle during all the program execution.
+	where $G_C$ and $G_R$ are the number of blocks per column and per row, $I_C$ and $I_R$ are the columns and rows of pixels of the image and $B_C = B_R = 8$ are the number of columns and rows of a block. These formulas ensured we had enough threads to compute each pixel. The remaining threads, which did not have any geodesic to compute, were idle during all the program execution.
 \end{enumerate}
 
 \subsubsection*{CUDA Kernels}
 
-The main function executed by \ac{CUDA} on the \ac{GPU} is called the \emph{kernel}. Our implementation has three kernels, where every thread is identified with a pixel via its unique identifier in the \ac{CUDA} device. The kernels are:
+The main function executed by \ac{CUDA} on the \ac{GPU} is called the \emph{kernel}. Our implementation had three kernels, where every thread was identified with a pixel via its unique identifier in the \ac{CUDA} device. The kernels were:
 \begin{enumerate}
-	\item \lstinline{setInitialConditions()}: it is the kernel to compute the initial conditions for every pixel, as designed in \autoref{sec:initcond}. From the pixel coordinates, it computes the corresponding pair $(\vartheta_{cs}, \varphi_{cs})$.
-	\item  \lstinline{kernel()}: it is the main kernel. It receives the initial conditions for every pixel and the final time until which the \ac{ODE} system will be integrated. It computes the origin of each geodesic, \ie, the pair $(\vartheta', \varphi')$, using the design described at \autoref{sec:numerical}, while continuously checking for collisions with the accretion disk.
-	\item \lstinline{generate_image()}: it is an auxiliary kernel to map textures into the images. It receives the origin of the geodesic corresponding to each pixel in the image and maps it to a pixel in the provided texture.
+	\item \lstinline{setInitialConditions()}: it was the kernel to compute the initial conditions for every pixel, as designed in \autoref{sec:initcond}. From the pixel coordinates, it computed the corresponding pair $(\vartheta_{cs}, \varphi_{cs})$.
+	\item  \lstinline{kernel()}: it was the main kernel. It received the initial conditions for every pixel and the final time until which the \ac{ODE} system was integrated. It computed the origin of each geodesic, \ie, the pair $(\vartheta', \varphi')$, using the design described at \autoref{sec:numerical}, while continuously checking for collisions with the accretion disk.
+	\item \lstinline{generate_image()}: it was an auxiliary kernel to map textures into the images. It received the origin of the geodesic corresponding to each pixel in the image and mapped it to a pixel in the provided texture.
 \end{enumerate}
 
 \subsubsection*{Optimizations}
 
-The computational bottleneck of the ray tracer is the \ac{ODE} solver. In particular, the computation of the right hand side of the system ---in terms of the \autoref{sec:numerical}, the function $f(y,t)$---, which involves a lot of operations, some of them really expensive, as the \lstinline{sin()} and \lstinline{cos()} functions.
+The computational bottleneck of the ray tracer was the \ac{ODE} solver. In particular, the computation of the right hand side of the system ---in terms of the \autoref{sec:numerical}, the function $f(y,t)$---, which involved a lot of operations, some of them really expensive, as the \lstinline{sin()} and \lstinline{cos()} functions.
 
-This chunk of code has been highly optimised, pre-computing all repeated operations and using efficient implementations such as the \lstinline{sincos()} function. The derivatives on equations \ref{eq:eqsmotionp}, \ref{eq:eqsmotionpr} and \ref{eq:eqsmotionpt} have been expressed in their most elementary terms and all common quantities between them have been also pre-computed. To optimise the memory access time, the thread's local memory has been used whenever it was possible.
+This chunk of code was highly optimised, pre-computing all repeated operations and using efficient implementations such as the \lstinline{sincos()} function. The derivatives on equations \ref{eq:eqsmotionp}, \ref{eq:eqsmotionpr} and \ref{eq:eqsmotionpt} were expressed in their most elementary terms and all common quantities between them were also pre-computed. To optimise the memory access time, the thread's local memory was used whenever it was possible.
 
-Furthermore, a specific issue has been taking into account: the \ac{ILP}. It is clear that a single thread cannot keep the \ac{GPU} busy, so the device schedules threads and instructions in such a way that the \ac{GPU} is always busy.
+Furthermore, a specific issue was taken into account: the \ac{ILP}. It is clear that a single thread cannot keep the \ac{GPU} busy, so the device schedules threads and instructions in such a way that the \ac{GPU} is always busy.
 
-One way of helping the \ac{CUDA} scheduler to maximize the device occupancy is to design the code optimising the \ac{ILP}. For example, imagine the following three lines of code:
-
-\begin{lstlisting}
-int rho = a + b;
-int theta = c + d;
-int m = rho * theta;
-\end{lstlisting}
-
-It is clear that the third one depends on the other two to be executed. However, the first two lines can be run in parallel. The scheduler then can run these two operations on different processor in order to speed up the computation.
-
-All the ray tracer implementation is coded in such a way that independent instructions are together, whereas dependent ones are as far as possible one of the other. This let the scheduler issue instructions in parallel without having to wait for dependent computations to finish.
-
-In particular, the code of the computation of $f(y,t)$ has been deeply studied in order to maximize the \ac{ILP}.
+One way of helping the \ac{CUDA} scheduler to maximize the device occupancy is to design the code optimising the \ac{ILP}. All the ray tracer implementation was coded in such a way that independent instructions were together, whereas dependent ones were as far as possible one of the other. This let the scheduler issue instructions in parallel without having to wait for dependent computations to finish. In particular, the code of the computation of $f(y,t)$ was deeply studied in order to maximize the \ac{ILP}.
 
 \subsubsection*{Initial Conditions Computation}
 
-The initial conditions computation is implemented as a kernel on the \lstinline{raytracer.cu} file.
+The initial conditions computation was implemented as a kernel on the \lstinline{raytracer.cu} file.
 
-It receives a pointer to two allocated sections of memory in the device: one to store the output of the initial conditions and another to store the output of the computation of the conserved quantities $b$ and $q$.
+It received a pointer to two allocated sections of memory in the device: one to store the output of the initial conditions and another to store the output of the computation of the conserved quantities $b$ and $q$.
 
-Each thread solve the formulas obtained in \autoref{sec:pinhole}: equations \ref{eq:pinhole1} and \ref{eq:pinhole2} and the ones obtained in \autoref{sec:initcond}, and store the computed values in the pointed sections of the memory.
+Each thread solved the formulas obtained in \autoref{sec:pinhole}: equations \ref{eq:pinhole1} and the ones obtained in \autoref{sec:initcond}, and stored the computed values in the pointed sections of the memory.
 
 \subsubsection*{Ray Tracing}
 
-The ray tracing kernel implements the main logic of the software: it executes the \ac{RK} solver while continuously checking for collisions with either the disk or the black hole, following the design on \autoref{sec:numerical}.
+The ray tracing kernel implemented the main logic of the software: it executed the \ac{RK} solver while continuously checking for collisions with either the disk or the black hole, following the design on \autoref{sec:numerical}.
 
-It receives a pointer to an allocated section of the memory where the initial conditions of the system are stored. After solving the \ac{ODE} system, it rewrites this buffer to provide the user with the final \ac{BL} coordinates of the considered geodesics.
+It received a pointer to an allocated section of the memory where the initial conditions of the system were stored. After solving the \ac{ODE} system, it rewrote this buffer to provide the user with the final \ac{BL} coordinates of the considered geodesics.
 
-An auxiliary buffer is used in order to known if a given geodesic has hit the disk, has fallen into the black hole or if it points to the celestial sphere.
+An auxiliary buffer was used in order to known if a given geodesic had hit the disk, had fallen into the black hole or if it pointed to the celestial sphere.
 
 \subsubsection*{Texture Mapping}
 
-The texture mapping is a simple kernel implemented in the \lstinline{image_transformation.cu} file. It receives the final computed solution of the \ac{ODE} system, a pointer to a section of the memory where the textures pixels are assumed to be stored along with the size of the textures and a pointer to another previously allocated section of memory where the final pixels of the image will be stored.
+The texture mapping was a simple kernel implemented in the \lstinline{image_transformation.cu} file. It received the final computed solution of the \ac{ODE} system, a pointer to a section of the memory where the textures pixels were assumed to be stored along with the size of the textures and a pointer to another previously allocated section of memory where the final pixels of the image would be stored.
 
-It then computes the texture mapping and outputs the result to the final image.
+It then computed the texture mapping and output the result to the final image.
 
 
 
@@ -527,13 +442,13 @@ Furthermore, the implemented \ac{ODE} solver accuracy was successfully tested, w
 
 \subsection{Ray Tracer Features}
 
-The ray tracer generates images with a wide range of possibilities: it can simulate photographies made with a common camera near the black hole, an accretion disk can be added to show the curvature of the light near its surroundings and arbitrary textures can be configured, letting the user experiment with the light and the distortions produced by the greatly curved spacetime near the Kerr black hole.
+The ray tracer generated images with a wide range of possibilities: it simulated photographies made with a common camera near the black hole, an accretion disk could be added to show the curvature of the light near its surroundings and arbitrary textures could be configured, letting the user experiment with the light and the distortions produced by the greatly curved spacetime near the Kerr black hole.
 
-\autoref{fig:blackhole} is one example of a fully featured image with a cinematographic look: the celestial sphere is textured with an image of the Milky Way; an accretion disk around the black hole is added and a texture on the disk is rendered.
+\autoref{fig:blackhole} is one example of a fully featured image with a cinematographic look: the celestial sphere was textured with an image of the Milky Way; an accretion disk around the black hole was added and a texture on the disk was rendered.
 
-The rendered images can be plotted as three dimensional projections, letting the user observe the paths followed by the geodesics, as seen on \autoref{fig:3dprojection}. Blue lines represent geodesics that come from the celestial sphere, red lines are geodesics that never existed, as they would have originated inside the black hole's horizon; green lines are the geodesics whose origin is on the accretion disk.
+The rendered images could also be plotted as three dimensional projections, letting the user observe the paths followed by the geodesics, as seen on \autoref{fig:3dprojection}. Blue lines represent geodesics that come from the celestial sphere, red lines are geodesics that never existed, as they would have originated inside the black hole's horizon; green lines are the geodesics whose origin is on the accretion disk.
 
-The computed information can be rendered independently as a three dimensional projection or as an image. \autoref{fig:3dprojectionimage} shows the photography whose three dimensional representation was depicted on \autoref{fig:3dprojection}.
+The computed information could be rendered independently as a three dimensional projection or as an image. \autoref{fig:3dprojectionimage} shows the photography whose three dimensional representation was depicted on \autoref{fig:3dprojection}.
 
 \begin{figure}[bth]
 	\myfloatalign
@@ -550,7 +465,7 @@ The computed information can be rendered independently as a three dimensional pr
 
 \begin{figure}[bth]
 	\myfloatalign
-	\includegraphics[width=.7\linewidth]{gfx/3d_01_image}
+	\includegraphics[width=.5\linewidth]{gfx/3d_01_image}
 	\caption[Photography from a 3D scenario]{Photography of the 3D scenario rendered in \autoref{fig:3dprojection}}
 	\label{fig:3dprojectionimage}
 \end{figure}
@@ -559,44 +474,42 @@ The computed information can be rendered independently as a three dimensional pr
 
 \subsubsection*{Runge-Kutta Solver Accuracy}
 
-The \ac{RK} solver has been tested not only against the geodesics \ac{ODE} system, but against usual functions whose analytic expression is known. This test was done to prove that the solver was accurate and to study the behaviour of the automatic step size computation.
+The \ac{RK} solver was tested not only against the geodesics \ac{ODE} system, but against usual functions whose analytic expression was known. This test was done to prove that the solver was accurate and to study the behaviour of the automatic step size computation.
 
 \autoref{fig:stepsize} shows the behaviour of the \ac{RK} solver on the Airy function $Bi(x)$. The orange line is its analytic expression, while the blue points are the solution computed by the \ac{RK} solver of the associated \ac{ODE}: $\frac{d^2y}{dx^2} - xy = 0$.
 
 \begin{figure}[bth]
 	\myfloatalign
-	\includegraphics[width=1.3\linewidth]{gfx/analytic}
+	\includegraphics[trim={4cm 0 12cm 5cm},clip,width=.5\linewidth]{gfx/analytic}
 	\caption[Solver in an analytic function]{\ac{RK} solver in an analytic function}
 	\label{fig:stepsize}
 \end{figure}
 
-The automatic step computation algorithm worked smoothly: when the function can be approximated as a straight line, the step is very large. In intervals where the function curvature changes rapidly, the algorithm reduces the step in order to better approximate the function value.
+The automatic step computation algorithm worked smoothly: when the function could be approximated as a straight line, the step was very large. In intervals where the function curvature changed rapidly, the algorithm reduced the step in order to better approximate the function value.
 
-\begin{figure}[bth]
-	\myfloatalign
-	\includegraphics[width=0.7\linewidth]{gfx/kretschmann}
-	\caption[Step, $r$, $\vartheta$ and Kretschmann]{Step, radius, $\vartheta$ and Kretschmann}
-	\label{fig:kretschmann}
-\end{figure}
-
-This behaviour can also be seen on the geodesics \ac{ODE} system. \autoref{fig:kretschmann} shows the normalized values of four quantities: the Kretschmann invariant, which measures the curvature of the spacetime; the distance to the black hole; the value of $\vartheta$ and the step computed by the automatic step algorithm. When the particle approaches the black hole, the Kretschmann increases, the system becomes unstable and so the algorithm reduces the step size in order to better approximate its value. In fact, both the step line and the radius line are very similar, showing the correlation between the computed step and the distance to the black hole centre.
+This behaviour was also seen on the geodesics \ac{ODE} system. \autoref{fig:kretschmann} shows the normalized values of four quantities: the Kretschmann invariant, which measures the curvature of the spacetime; the distance to the black hole; the value of $\vartheta$ and the step computed by the automatic step algorithm. When the particle approached the black hole, the Kretschmann increased, the system became unstable and so the algorithm reduced the step size in order to better approximate its value. In fact, both the step line and the radius line were very similar, showing the correlation between the computed step and the distance to the black hole centre.
 
 \subsubsection*{Efficiency}
 
-Regarding the efficiency of the ray tracer, a benchmark against a \ac{CPU} implementation has been done. The \ac{CPU} implementation has essentially the same code that the \ac{GPU}-parallelized version, except for the obvious changes that were made to adapt the code to the \ac{CUDA} grid.
+Regarding the efficiency of the ray tracer, a benchmark against a \ac{CPU} implementation was done. The \ac{CPU} implementation had essentially the same code that the \ac{GPU}-parallelized version, except for the obvious changes that were made to adapt the code to the \ac{CUDA} grid.
 
-\autoref{fig:speedup} shows two benchmarks using both versions of the ray tracer: one with a Kerr spacetime where the black hole has a spin of $a = 0.0001$ and another one where the spin is $a = 0.999$. For both benchmarks, the speed up is plotted: the line represented for each of them shows how many times faster is the \ac{GPU}-parallelized version against the \ac{CPU} implementation.
+\autoref{fig:speedup} shows two benchmarks using both versions of the ray tracer: one with a Kerr spacetime where the black hole had a spin of $a = 0.0001$ and another one where the spin was $a = 0.999$. For both benchmarks, the speed up is plotted: the line represented for each of them shows how many times faster was the \ac{GPU}-parallelized version against the \ac{CPU} implementation.
 
 \begin{figure}[bth]
 	\myfloatalign
-	\includegraphics[width=0.8\linewidth]{gfx/speedup}
-	\caption[Speed up with different spins]{Speed up with different spins}
-	\label{fig:speedup}
+	\subfloat[Step, $r$, $\vartheta$ and Kretschmann]
+	{\label{fig:kretschmann}%
+		\includegraphics[width=.45\linewidth]{gfx/kretschmann}} \quad
+	\subfloat[Speed up with different spins]
+	{\label{fig:speedup}%
+		\includegraphics[width=.45\linewidth]{gfx/speedup}}
+	\caption[Benchmark results]{Benchmark results}\label{fig:benchmark}
 \end{figure}
 
-The speed up increases at a great speed when the number of pixels are augmented. It stabilizes around 20 megapixels with a speed up of about $125$. The mean speed up equals $108.5$ on the low spin case, whereas in the high spin case equals $107.2$. The maximum speedup obtained equals $125.3$ on the first case, with a maximum speed up of $124.7$ on the second.
 
-The speed up seems to be stable against changes on the spin. This figure summarises the power of \ac{GPGPU}, that can increase the performance of a piece of software by several orders of magnitude.
+The speed up increased at a great speed when the number of pixels were augmented. It stabilized around 20 megapixels with a speed up of about $125$. The mean speed up equalled $108.5$ on the low spin case, whereas in the high spin case equalled $107.2$. The maximum speedup obtained equalled $125.3$ on the first case, with a maximum speed up of $124.7$ on the second.
+
+The speed up seemed to be stable against changes on the spin. This figure summarises the power of \ac{GPGPU}, that can increase the performance of a piece of software by several orders of magnitude.
 
 
 \subsection{Scientific Results}
@@ -605,50 +518,48 @@ The main objective of the ray tracer implementation was to serve as a tool for s
 
 \subsubsection*{Spin}
 
-We generated images without any accretion disk or textures, obtaining binaries images where the black pixels represent the shadow of the black hole and the white pixels the celestial sphere.
-
-\autoref{fig:shadow} shows four images taken with the same camera, which is placed on the equatorial plane, with a null speed and focusing the black hole's centre. The only change between images is the black hole's spin. The first one shows a perfect sphere. This is the edge case where the Kerr metric can be reduced to the more simple Schwarzschild metric. \autoref{fig:shadow-b} and \autoref{fig:shadow-c} shows the same image with an increased spin. There is a slight change on the virtual position of the shadow and, although it is difficult to see, the shape is not circular. The edge case, depicted on \autoref{fig:shadow-d}, makes clear the effect of a large spin on the shadow of the black hole. As it curves the geodesics rapidly, it is seen slightly moved to the right and with a flat side on the left.
+We generated images without any accretion disk or textures, obtaining binaries images where the black pixels represented the shadow of the black hole and the white pixels the celestial sphere. \autoref{fig:shadow} shows four images taken with the same camera, which was placed on the equatorial plane, with a null speed and focusing the black hole's centre. The only change between images was the black hole's spin. The first one shows a perfect sphere, where the Kerr metric can be reduced to Schwarzschild metric. \autoref{fig:shadow-b} and \autoref{fig:shadow-c} show that there was a slight change on the virtual position of the shadow and, although it is difficult to see, the shape was not circular. The edge case, depicted on \autoref{fig:shadow-d}, made clear the effect of a large spin on the shadow of the black hole. As it curved the geodesics rapidly, it was seen slightly moved to the right and with a flat side on the left.
 
 \begin{figure}[bth]
 	\myfloatalign
 	\subfloat[Spin $\approx$ 0]
-	{\frame{\includegraphics[width=.35\linewidth]{gfx/bh_shadow_spin0001}}} \quad
+	{\frame{\includegraphics[width=.3\linewidth]{gfx/bh_shadow_spin0001}}} \quad
 	\subfloat[Spin = 0.25]
 	{\label{fig:shadow-b}%
-		\frame{\includegraphics[width=.35\linewidth]{gfx/bh_shadow_spin25}}} \\
+		\frame{\includegraphics[width=.3\linewidth]{gfx/bh_shadow_spin25}}} \\
 	\subfloat[Spin = 0.75]
 	{\label{fig:shadow-c}%
-		\frame{\includegraphics[width=.35\linewidth]{gfx/bh_shadow_spin75}}} \quad
+		\frame{\includegraphics[width=.3\linewidth]{gfx/bh_shadow_spin75}}} \quad
 	\subfloat[Spin $\approx$ 1]
 	{\label{fig:shadow-d}%
-		\frame{\includegraphics[width=.35\linewidth]{gfx/bh_shadow_spin999}}}
+		\frame{\includegraphics[width=.3\linewidth]{gfx/bh_shadow_spin999}}}
 	\caption[Black hole shadow for different spins]{Black hole shadow for different spins}\label{fig:shadow}
 \end{figure}
 
 We also studied what happens with straight lines that fall inside the black hole. Imagine an accretion disk around the black hole, with its inner radius minor than the horizon radius and an infinite outer radius. If we visualize this disk with a patched texture made by white and red squares, we can see the effect of the spin on its shape.
 
-\autoref{fig:xmas-a} shows the most simple version of this scenario, where the black hole does not rotate: straight lines falling inside the black hole on the equatorial plane remain intact. Taking this as the base case, we can see what happens when we increase the black hole's spin. \autoref{fig:xmas-b} and \autoref{fig:xmas-c} shows the scenario for spins of $0.25$ and $0.75$. The straight lines start to rotate accordingly with the black hole. On \autoref{fig:xmas-d} ---where the spin nearly equals 1---, the lines curve greatly when they approach the shadow, and start rotating rapidly when they are close to the horizon.
+\autoref{fig:xmas-a} shows the most simple version of this scenario, where the black hole did not rotate: straight lines falling inside the black hole on the equatorial plane remained intact. Taking this as the base case, we saw what happens when we increase the black hole's spin. \autoref{fig:xmas-b} and \autoref{fig:xmas-c} shows the scenario for spins of $0.25$ and $0.75$. The straight lines started to rotate accordingly with the black hole. On \autoref{fig:xmas-d} ---where the spin nearly equalled 1---, the lines curved greatly when they approach the shadow, and start rotating rapidly when they were close to the horizon.
 
 \begin{figure}[bth]
 	\myfloatalign
 	\subfloat[Spin $\approx$ 0]
 	{\label{fig:xmas-a}%
-		\frame{\includegraphics[width=.35\linewidth]{gfx/bh_xmas_spin0001}}} \quad
+		\frame{\includegraphics[width=.3\linewidth]{gfx/bh_xmas_spin0001}}} \quad
 	\subfloat[Spin = 0.25]
 	{\label{fig:xmas-b}%
-		\frame{\includegraphics[width=.35\linewidth]{gfx/bh_xmas_spin25}}} \\
+		\frame{\includegraphics[width=.3\linewidth]{gfx/bh_xmas_spin25}}} \\
 	\subfloat[Spin = 0.75]
 	{\label{fig:xmas-c}%
-		\frame{\includegraphics[width=.35\linewidth]{gfx/bh_xmas_spin75}}} \quad
+		\frame{\includegraphics[width=.3\linewidth]{gfx/bh_xmas_spin75}}} \quad
 	\subfloat[Spin $\approx$ 1]
 	{\label{fig:xmas-d}%
-		\frame{\includegraphics[width=.35\linewidth]{gfx/bh_xmas_spin999}}}
+		\frame{\includegraphics[width=.3\linewidth]{gfx/bh_xmas_spin999}}}
 	\caption[Black hole shadow for different spins]{Black hole shadow for different spins}\label{fig:xmas}
 \end{figure}
 
 \subsubsection*{Shadow}
 
-One can also map a texture on the black hole's horizon to really know what we are seeing when looking at the shadow. \autoref{fig:texhoriz} shows such an image, where a patched texture drawing the meridians and the parallels has been mapped onto the horizon's surface. This image tells us that, when we are looking at the shadow of a Kerr black hole, we are seeing the whole surface of the horizon.
+One could also map a texture on the black hole's horizon to really know what we are seeing when looking at the shadow. \autoref{fig:texhoriz} shows such an image, where a patched texture drawing the meridians and the parallels was mapped onto the horizon's surface. This image told us that, when we are looking at the shadow of a Kerr black hole, we are seeing the whole surface of the horizon.
 
 \begin{figure}[bth]
 	\myfloatalign
@@ -659,18 +570,7 @@ One can also map a texture on the black hole's horizon to really know what we ar
 
 \subsubsection*{Accretion Disk}
 
-\begin{figure}[bth]
-	\myfloatalign
-	\includegraphics[width=\linewidth]{gfx/bh_simple}
-	\caption[Accretion disk explained]{Accretion disk explained}
-	\label{fig:explanation}
-\end{figure}
-
-The curvature of the disk around the black hole let us understand the nature of the distortion produced by the spacetime.
-
-\autoref{fig:explanation} shows an image where the shadow is depicted with black pixels, the celestial sphere with white pixels and the disk with red ones, and where we have noted the different parts of the disk we will talk about.
-
-The disk bottom is formed by particles that travel below the black hole and hit the disk just at the back of the shadow. A three dimensional projection of a set of these geodesics can be seen on \autoref{fig:under_disk}.
+The curvature of the disk around the black hole let us understand the nature of the distortion produced by the spacetime. We saw that the disk bottom is formed by particles that travel below the black hole and hit the disk just at the back of the shadow. A three dimensional projection of a set of these geodesics can be seen on \autoref{fig:under_disk}.
 
 \autoref{fig:insidehalo} shows a set of geodesics that formed the final image of the inner halo. \autoref{fig:upperhalo} shows the intricate paths followed by the geodesics of the upper part of the inner halo, that twist around the black hole, get behind the disk and scatter to cover a great part of the bottom part of the disk. \autoref{fig:wholehalo} summarises all this tour by plotting all geodesics that form the inner halo in just one image.
 
@@ -691,28 +591,17 @@ The disk bottom is formed by particles that travel below the black hole and hit 
 	\caption[Disk geodesics study]{Disk geodesics study}\label{fig:diskgeodesicstudy}
 \end{figure}
 
-Finally, \autoref{fig:detail} shows a close up of the left side of the shadow where even more halos are appreciated. This time, for the sake of its beauty, a texture on the celestial sphere is added and the disk is drawn completely white.
-
-\begin{figure}[bth]
-	\myfloatalign
-	\includegraphics[width=.6\linewidth]{gfx/bh_detail_texture_disk-white}
-	\caption[Close up of the shadow]{Close up of the shadow.}
-	\label{fig:detail}
-\end{figure}
-
 \subsubsection*{Infinite Images}
 
-The shadow and the \ac{ISCO} are very close, so near the \ac{ISCO}, the particles turn around the black holes a great number of times. The previous study showed only the case where the particles make one full turn, but between that inner halo and the shadow there are an infinite number of halos, as for every turn completed by a geodesic, an image of the halo is generated near the black hole. A study on the shadow formation and geodesics near the \ac{ISCO} follows.
-
-First of all, \autoref{fig:virtualshadow} depicts parallel geodesics that fall in the black hole. As we can see, the shadow seen on the right part of the image is much greater than the actual diameter of the black hole's horizon. That way, the shadow is not the black hole's horizon but the diameter for which the contained geodesics fall inside it. We can study the \ac{ISCO} by studying geodesics that turn close to the horizon. \autoref{fig:isco} shows two examples of a set of geodesics on the equatorial plane that turn around the horizon once.
+The shadow and the \ac{ISCO} are very close, so near the \ac{ISCO}, the particles turn around the black holes a great number of times. The previous study showed only the case where the particles make one full turn, but between that inner halo and the shadow there are an infinite number of halos, as for every turn completed by a geodesic, an image of the halo is generated near the black hole. A study on the shadow formation and geodesics near the \ac{ISCO} was also done. \autoref{fig:virtualshadow} depicts parallel geodesics that fall in the black hole. As we saw, the shadow seen on the right part of the image is much greater than the actual diameter of the black hole's horizon. That way, the shadow is not the black hole's horizon but the diameter for which the contained geodesics fall inside it. We could study the \ac{ISCO} by studying geodesics that turn close to the horizon. \autoref{fig:isco} shows two examples of a set of geodesics on the equatorial plane that turn around the horizon once.
 
 \begin{figure}[bth]
 	\myfloatalign
 	\subfloat[Horizon and shadow]
 	{\label{fig:virtualshadow}
-		\includegraphics[width=.9\linewidth]{gfx/shadow}} \\
-	{\includegraphics[width=.45\linewidth]{gfx/isco1}} \quad
-	{\includegraphics[width=.45\linewidth]{gfx/isco2}}
+		\includegraphics[width=.45\linewidth]{gfx/shadow}} \quad
+	\subfloat[Loop around the shadow]
+	{\includegraphics[width=.45\linewidth]{gfx/isco1}}
 	\caption[Geodesics around the horizon]{Geodesics around the horizon.}
 	\label{fig:isco}
 \end{figure}

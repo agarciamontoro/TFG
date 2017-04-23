@@ -71,15 +71,17 @@
    % \cleardoublepage\include{FrontBackmatter/Abstract}
    % \cleardoublepage\include{FrontBackmatter/Publications}
     \pagestyle{scrheadings}
-    \cleardoublepage\include{FrontBackmatter/Contents}
+    %\cleardoublepage
+    \include{FrontBackmatter/Contents}
 
 %********************************************************************
 % Mainmatter
 %*******************************************************
-    \cleardoublepage\pagenumbering{arabic}
+    %\cleardoublepage
+    \pagenumbering{arabic}
     %\setcounter{page}{90}
     % use \cleardoublepage here to avoid problems with pdfbookmark
-    \cleardoublepage
+    %\cleardoublepage
 
     %\ctparttext{You can put some informational part preamble text here.
     %Illo principalmente su nos. Non message \emph{occidental} angloromanic
@@ -120,7 +122,7 @@
     % \part{Conclusions}
     % \include{Chapters/conclusions}
 
-    \cleardoublepage
+    % \cleardoublepage
 
 % ********************************************************************
 % Backmatter
@@ -134,7 +136,8 @@
 %********************************************************************
 % Other Stuff in the Back
 %*******************************************************
-   \cleardoublepage\include{FrontBackmatter/Bibliography}
+   %\cleardoublepage
+   \include{FrontBackmatter/Bibliography}
    % \cleardoublepage\include{FrontBackmatter/Declaration}
    % \cleardoublepage\include{FrontBackmatter/ProfDeclaration}
    % \cleardoublepage\include{FrontBackmatter/Colophon}
